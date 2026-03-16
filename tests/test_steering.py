@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 import torch
 
-from src.models.base import (
+from src.steering.hooks import (
     position_selective_steering,
     differential_steering,
     noop_steering,

@@ -1,6 +1,6 @@
 from .base import Model, ConfigurableMockModel
 from .openai_compatible import OpenAICompatibleClient, VLLMClient, CerebrasClient, OpenRouterClient, ToolCallError, GenerateRequest, BatchResult
-from .base import GenerationResult, LayerHook, autoregressive_steering, all_tokens_steering, STEERING_MODES
+from .base import GenerationResult, LayerHook
 from .registry import (
     MODEL_REGISTRY,
     ModelConfig,
@@ -48,9 +48,6 @@ __all__ = [
     "HybridActivationModel",
     "GenerationResult",
     "LayerHook",
-    "autoregressive_steering",
-    "all_tokens_steering",
-    "STEERING_MODES",
     "OpenAICompatibleClient",
     "VLLMClient",
     "CerebrasClient",

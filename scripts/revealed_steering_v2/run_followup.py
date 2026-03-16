@@ -65,7 +65,7 @@ def run_baseline(hf_model, layer, direction, pairs, builder):
     """Phase 1: Baseline measurement at coef=0, 20 trials per pair."""
     from src.steering.client import SteeredHFClient
     import torch
-    from src.models.base import all_tokens_steering
+    from src.steering.hooks import all_tokens_steering
 
     checkpoint = load_checkpoint()
     client = SteeredHFClient(hf_model, layer, direction, coefficient=0, steering_mode="differential")
@@ -157,7 +157,7 @@ def run_baseline(hf_model, layer, direction, pairs, builder):
 def run_steering_sweep(hf_model, layer, direction, mean_norm, pairs, builder):
     """Phase 2: Full 15-multiplier sweep, 10 trials per pair."""
     from src.steering.client import SteeredHFClient
-    from src.models.base import all_tokens_steering
+    from src.steering.hooks import all_tokens_steering
     import torch
 
     checkpoint = load_checkpoint()

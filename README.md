@@ -89,9 +89,11 @@ Composable primitives for steering experiments. No rigid runner — each experim
 For coefficient sweeps, use `with_coefficient()` to create new clients sharing the same loaded model:
 
 ```python
-from src.steering.client import create_steered_client
+from src.models.huggingface_model import HuggingFaceModel
+from src.steering.client import SteeredHFClient
 
-client = create_steered_client("gemma-3-27b", layer=31, direction=direction, coefficient=0)
+hf_model = HuggingFaceModel("gemma-3-27b", max_new_tokens=256)
+client = SteeredHFClient(hf_model, layer=31, steering_direction=direction, coefficient=0)
 for coef in [-3000, -1000, 0, 1000, 3000]:
     steered = client.with_coefficient(coef)
     response = steered.generate(messages)
@@ -100,7 +102,7 @@ for coef in [-3000, -1000, 0, 1000, 3000]:
 For position-selective or differential steering, use `generate_with_hook()` with a custom hook:
 
 ```python
-from src.models.base import position_selective_steering, differential_steering
+from src.steering.hooks import position_selective_steering, differential_steering
 
 direction = client.direction  # access the loaded probe direction
 tensor = torch.tensor(direction * coef, dtype=torch.bfloat16, device="cuda")
@@ -108,7 +110,7 @@ hook = position_selective_steering(tensor, start=10, end=50)
 response = client.generate_with_hook(messages, hook)
 ```
 
-#### Hook factories (`src/models/base.py`)
+#### Hook factories (`src/steering/hooks.py`)
 
 - `all_tokens_steering(tensor)` — steer all positions
 - `autoregressive_steering(tensor)` — steer last token only

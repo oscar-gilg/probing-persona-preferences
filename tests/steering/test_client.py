@@ -20,7 +20,9 @@ def _make_mock_hf_model() -> MagicMock:
     mock.max_new_tokens = 256
     mock.device = "cpu"
     mock.generate.return_value = "I enjoyed that task."
+    mock.generate_n.return_value = ["I enjoyed that task."]
     mock.generate_with_hook.return_value = "I loved that task!"
+    mock.generate_with_hook_n.return_value = ["I loved that task!"]
     return mock
 
 
@@ -35,7 +37,7 @@ def _make_client(mock: MagicMock, coefficient: float = 1500.0) -> SteeredHFClien
     )
 
 
-def test_steered_calls_generate_with_hook():
+def test_steered_calls_generate_with_hook_n():
     mock = _make_mock_hf_model()
     client = _make_client(mock, coefficient=1500.0)
     messages = [{"role": "user", "content": "Hello"}]
@@ -43,25 +45,21 @@ def test_steered_calls_generate_with_hook():
     result = client.generate(messages, temperature=0.8)
 
     assert result == "I loved that task!"
-    mock.generate_with_hook.assert_called_once()
-    assert mock.generate_with_hook.call_args.kwargs["layer"] == 15
-    assert mock.generate_with_hook.call_args.kwargs["temperature"] == 0.8
+    mock.generate_with_hook_n.assert_called_once()
+    assert mock.generate_with_hook_n.call_args.kwargs["layer"] == 15
+    assert mock.generate_with_hook_n.call_args.kwargs["temperature"] == 0.8
     mock.generate.assert_not_called()
 
 
-def test_zero_coefficient_uses_noop_hook():
+def test_zero_coefficient_bypasses_hook():
     mock = _make_mock_hf_model()
     client = _make_client(mock, coefficient=0.0)
 
     result = client.generate([{"role": "user", "content": "Hello"}])
 
-    assert result == "I loved that task!"
-    mock.generate_with_hook.assert_called_once()
-    # The hook should be a noop (identity function on residuals)
-    hook = mock.generate_with_hook.call_args.kwargs["hook"]
-    import torch
-    dummy = torch.randn(1, 10, 16)
-    assert torch.equal(hook(dummy, 5), dummy)
+    assert result == "I enjoyed that task."
+    mock.generate_n.assert_called_once()
+    mock.generate_with_hook_n.assert_not_called()
 
 
 def test_batch_async_processes_all_requests():
@@ -83,7 +81,7 @@ def test_batch_async_processes_all_requests():
 
 def test_batch_async_captures_errors():
     mock = _make_mock_hf_model()
-    mock.generate_with_hook.side_effect = RuntimeError("GPU OOM")
+    mock.generate_with_hook_n.side_effect = RuntimeError("GPU OOM")
     client = _make_client(mock)
     requests = [GenerateRequest(messages=[{"role": "user", "content": "Hi"}])]
 

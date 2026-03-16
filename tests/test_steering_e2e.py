@@ -13,7 +13,7 @@ import torch
 
 pytestmark = pytest.mark.gpu
 
-from src.models.base import (
+from src.steering.hooks import (
     all_tokens_steering,
     position_selective_steering,
     differential_steering,

@@ -18,7 +18,7 @@ import torch
 from dotenv import load_dotenv
 from tqdm import tqdm
 
-from src.models.base import (
+from src.steering.hooks import (
     all_tokens_steering,
     autoregressive_steering,
     noop_steering,

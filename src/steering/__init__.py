@@ -1,5 +1,16 @@
 from src.steering.tokenization import find_text_span, find_pairwise_task_spans
 from src.steering.calibration import suggest_coefficient_range
+from src.steering.hooks import (
+    autoregressive_steering,
+    all_tokens_steering,
+    position_selective_steering,
+    differential_steering,
+    last_token_steering,
+    noop_steering,
+    swap_positions,
+    swap_spans,
+    STEERING_MODES,
+)
 
 
 def __getattr__(name: str):
@@ -7,16 +18,21 @@ def __getattr__(name: str):
     if name == "SteeredHFClient":
         from src.steering.client import SteeredHFClient
         return SteeredHFClient
-    if name == "create_steered_client":
-        from src.steering.client import create_steered_client
-        return create_steered_client
     raise AttributeError(f"module 'src.steering' has no attribute {name!r}")
 
 
 __all__ = [
     "SteeredHFClient",
-    "create_steered_client",
     "find_text_span",
     "find_pairwise_task_spans",
     "suggest_coefficient_range",
+    "autoregressive_steering",
+    "all_tokens_steering",
+    "position_selective_steering",
+    "differential_steering",
+    "last_token_steering",
+    "noop_steering",
+    "swap_positions",
+    "swap_spans",
+    "STEERING_MODES",
 ]
