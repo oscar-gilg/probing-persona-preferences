@@ -8,6 +8,7 @@ from typing import Callable, Iterator
 import torch
 import numpy as np
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers.cache_utils import DynamicCache
 
 from src.models.base import (
     ASSISTANT_SELECTOR_REGISTRY,
@@ -206,7 +207,9 @@ class HuggingFaceModel:
 
         has_completion = messages and messages[-1]["role"] == "assistant"
         formatted = self.format_messages(messages, add_generation_prompt=not has_completion)
-        return find_text_span(self.tokenizer, formatted, user_content)
+        # Chat templates may strip trailing whitespace from message content
+        search_text = user_content.strip() if formatted.find(user_content) == -1 else user_content
+        return find_text_span(self.tokenizer, formatted, search_text)
 
     @contextmanager
     def _hooked_forward(
@@ -783,18 +786,11 @@ class HuggingFaceModel:
             num_return_sequences=n,
         )
 
-    def _generate_hooked(
-        self,
-        messages: list[Message],
-        layer_hooks: list[tuple[int, LayerHook]],
-        temperature: float,
-        max_new_tokens: int | None,
-        num_return_sequences: int,
-    ) -> list[str]:
-        prompt = self.format_messages(messages, add_generation_prompt=True)
-        input_ids = self._tokenize(prompt)
-        prompt_len = input_ids.shape[1]
-
+    @contextmanager
+    def _registered_hooks(
+        self, layer_hooks: list[tuple[int, LayerHook]], prompt_len: int,
+    ) -> Iterator[None]:
+        """Context manager that registers steering hooks on transformer layers."""
         def make_hf_hook(hook: LayerHook) -> Callable:
             def hf_hook(module: torch.nn.Module, input: tuple, output: tuple | torch.Tensor) -> tuple | torch.Tensor:
                 hidden = output[0] if isinstance(output, tuple) else output
@@ -809,12 +805,84 @@ class HuggingFaceModel:
             for layer, hook in layer_hooks
         ]
         try:
-            output_ids = self.model.generate(
-                input_ids,
-                **self._build_gen_kwargs(temperature, max_new_tokens, num_return_sequences),
-            )
+            yield
         finally:
             for handle in handles:
                 handle.remove()
 
+    def _generate_hooked(
+        self,
+        messages: list[Message],
+        layer_hooks: list[tuple[int, LayerHook]],
+        temperature: float,
+        max_new_tokens: int | None,
+        num_return_sequences: int,
+    ) -> list[str]:
+        prompt = self.format_messages(messages, add_generation_prompt=True)
+        input_ids = self._tokenize(prompt)
+        prompt_len = input_ids.shape[1]
+
+        with self._registered_hooks(layer_hooks, prompt_len):
+            output_ids = self.model.generate(
+                input_ids,
+                **self._build_gen_kwargs(temperature, max_new_tokens, num_return_sequences),
+            )
+
         return self._decode_completions(output_ids, prompt_len, num_return_sequences)
+
+    @torch.inference_mode()
+    def prefill_with_hooks(
+        self,
+        messages: list[Message],
+        layer_hooks: list[tuple[int, LayerHook]],
+    ) -> tuple[DynamicCache, torch.Tensor]:
+        """Run prefill with optional hooks and return (kv_cache, input_ids).
+
+        The cache covers all prompt positions [0, seq_len).
+        """
+        prompt = self.format_messages(messages, add_generation_prompt=True)
+        input_ids = self._tokenize(prompt)
+        prompt_len = input_ids.shape[1]
+
+        with self._registered_hooks(layer_hooks, prompt_len):
+            outputs = self.model(input_ids, use_cache=True)
+
+        return outputs.past_key_values, input_ids
+
+    @torch.inference_mode()
+    def generate_from_cache(
+        self,
+        cache: DynamicCache,
+        input_ids: torch.Tensor,
+        temperature: float = 1.0,
+        max_new_tokens: int | None = None,
+        num_return_sequences: int = 1,
+    ) -> list[str]:
+        """Generate from a (possibly modified) KV cache.
+
+        Truncates the cache to [0, seq_len-1), passes the last prompt token
+        with the truncated cache to model.generate(). This re-forwards the
+        last token against the modified cache to get correct logits.
+
+        WARNING: mutates `cache` in-place (truncation). Do not reuse after calling.
+        """
+        seq_len = input_ids.shape[1]
+
+        # Truncate cache: slice off the last position from every layer
+        for layer_idx in range(len(cache)):
+            layer = cache.layers[layer_idx]
+            layer.keys = layer.keys[:, :, :seq_len - 1, :]
+            layer.values = layer.values[:, :, :seq_len - 1, :]
+
+        # Feed last prompt token + truncated cache to generate
+        last_token = input_ids[:, -1:]
+        gen_kwargs = self._build_gen_kwargs(temperature, max_new_tokens, num_return_sequences)
+        gen_kwargs["past_key_values"] = cache
+
+        output_ids = self.model.generate(last_token, **gen_kwargs)
+
+        # Decode: skip the re-processed last prompt token (position 0 in output)
+        return [
+            self.tokenizer.decode(output_ids[i, 1:], skip_special_tokens=True).strip()
+            for i in range(num_return_sequences)
+        ]
