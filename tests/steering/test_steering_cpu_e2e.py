@@ -235,11 +235,7 @@ class TestClientDispatchPaths:
 # ---------------------------------------------------------------------------
 
 class TestCacheSteeringMechanics:
-    """Test KV cache and activation patch pipeline components on CPU.
-
-    generate_from_cache is incompatible with this tiny model's transformers
-    config, so we test the prefill + cache manipulation stages directly.
-    """
+    """Test KV cache and activation patch pipeline on CPU, including generation."""
 
     def test_kv_cache_differential_prefill_and_modify(self, model):
         """Prefill → project_to_v_space → modify_cache_v_at_positions works."""
@@ -313,6 +309,59 @@ class TestCacheSteeringMechanics:
         b_decoded = model.tokenizer.decode(encoding["input_ids"][b_span[0]:b_span[1]])
         assert "poem" in a_decoded.lower()
         assert "math" in b_decoded.lower()
+
+    def test_generate_from_cache_produces_output(self, model):
+        """Prefill → generate_from_cache returns valid text."""
+        cache, input_ids = model.prefill_with_hooks(SIMPLE_PROMPT, [])
+        # Clone cache values out of inference mode
+        from transformers.cache_utils import DynamicCache
+        cloned = DynamicCache()
+        for i in range(len(cache)):
+            layer = cache.layers[i]
+            cloned.update(layer.keys.clone(), layer.values.clone(), i)
+        result = model.generate_from_cache(cloned, input_ids, temperature=0)
+        assert isinstance(result, list)
+        assert len(result) == 1
+        assert isinstance(result[0], str)
+        assert len(result[0]) > 0
+
+    def test_generate_from_cache_matches_normal(self, model):
+        """Unmodified cache generation should match normal generation."""
+        baseline = model.generate(SIMPLE_PROMPT, temperature=0)
+        cache, input_ids = model.prefill_with_hooks(SIMPLE_PROMPT, [])
+        from transformers.cache_utils import DynamicCache
+        cloned = DynamicCache()
+        for i in range(len(cache)):
+            layer = cache.layers[i]
+            cloned.update(layer.keys.clone(), layer.values.clone(), i)
+        from_cache = model.generate_from_cache(cloned, input_ids, temperature=0)
+        assert from_cache[0] == baseline
+
+    def test_kv_cache_full_pipeline(self, model):
+        """Full KV cache steering through SteeredHFClient.generate."""
+        c = SteeredHFClient(
+            model, layer=STEER_LAYER, steering_direction=DIRECTION,
+            coefficient=100.0, steering_mode="kv_cache_differential",
+        )
+        result = c.generate(
+            PAIRWISE_PROMPT, temperature=0,
+            task_prompts=[TASK_A, TASK_B],
+        )
+        assert isinstance(result, str)
+        assert len(result) > 0
+
+    def test_activation_patch_full_pipeline(self, model):
+        """Full activation patch through SteeredHFClient.generate."""
+        c = SteeredHFClient(
+            model, layer=STEER_LAYER, steering_direction=DIRECTION,
+            coefficient=100.0, steering_mode="activation_patch",
+        )
+        result = c.generate(
+            PAIRWISE_PROMPT, temperature=0,
+            task_prompts=[TASK_A, TASK_B],
+        )
+        assert isinstance(result, str)
+        assert len(result) > 0
 
 
 # ---------------------------------------------------------------------------
