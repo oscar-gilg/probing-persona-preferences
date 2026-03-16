@@ -860,29 +860,26 @@ class HuggingFaceModel:
     ) -> list[str]:
         """Generate from a (possibly modified) KV cache.
 
-        Truncates the cache to [0, seq_len-1), passes the last prompt token
-        with the truncated cache to model.generate(). This re-forwards the
-        last token against the modified cache to get correct logits.
+        Truncates the cache to [0, seq_len-1), expands both cache and input_ids
+        to num_return_sequences, then uses model.generate() which re-forwards
+        the last prompt token against the modified cache.
 
         WARNING: mutates `cache` in-place (truncation). Do not reuse after calling.
         """
         seq_len = input_ids.shape[1]
+        n = num_return_sequences
 
-        # Truncate cache: slice off the last position from every layer
+        # Truncate and expand cache for batch generation
+        batch_cache = DynamicCache()
         for layer_idx in range(len(cache)):
             layer = cache.layers[layer_idx]
-            layer.keys = layer.keys[:, :, :seq_len - 1, :]
-            layer.values = layer.values[:, :, :seq_len - 1, :]
+            k = layer.keys[:, :, :seq_len - 1, :].expand(n, -1, -1, -1).contiguous()
+            v = layer.values[:, :, :seq_len - 1, :].expand(n, -1, -1, -1).contiguous()
+            batch_cache.update(k, v, layer_idx)
 
-        # Feed last prompt token + truncated cache to generate
-        last_token = input_ids[:, -1:]
-        gen_kwargs = self._build_gen_kwargs(temperature, max_new_tokens, num_return_sequences)
-        gen_kwargs["past_key_values"] = cache
+        expanded_ids = input_ids.expand(n, -1).contiguous()
+        gen_kwargs = self._build_gen_kwargs(temperature, max_new_tokens, num_return_sequences=1)
+        gen_kwargs["past_key_values"] = batch_cache
 
-        output_ids = self.model.generate(last_token, **gen_kwargs)
-
-        # Decode: skip the re-processed last prompt token (position 0 in output)
-        return [
-            self.tokenizer.decode(output_ids[i, 1:], skip_special_tokens=True).strip()
-            for i in range(num_return_sequences)
-        ]
+        output_ids = self.model.generate(expanded_ids, **gen_kwargs)
+        return self._decode_completions(output_ids, seq_len, n)

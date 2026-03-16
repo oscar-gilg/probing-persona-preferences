@@ -35,8 +35,11 @@ def modify_cache_v_at_positions(
     v_direction: shape (num_kv_heads, head_dim)
     V cache shape: (batch, n_kv_heads, seq_len, d_head)
     """
-    # v_direction is (n_heads, d_head), cache is (batch, n_heads, seq_len, d_head)
-    cache.layers[layer_idx].values[:, :, start:end, :] += coefficient * v_direction.unsqueeze(1)
+    layer = cache.layers[layer_idx]
+    # Clone to escape inference tensor restriction (cache created under inference_mode)
+    new_values = layer.values.clone()
+    new_values[:, :, start:end, :] += coefficient * v_direction.unsqueeze(1)
+    layer.values = new_values
 
 
 def combine_caches(

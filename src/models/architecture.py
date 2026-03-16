@@ -61,3 +61,23 @@ def get_hidden_dim(model: Any) -> int:
     if hasattr(config, "text_config"):
         return config.text_config.hidden_size
     return config.hidden_size
+
+
+def get_num_kv_heads(model: Any) -> int:
+    config = model.config
+    if hasattr(config, "text_config"):
+        return config.text_config.num_key_value_heads
+    return config.num_key_value_heads
+
+
+def get_head_dim(model: Any) -> int:
+    config = model.config
+    if hasattr(config, "text_config"):
+        return config.text_config.head_dim
+    return config.head_dim
+
+
+def get_v_proj_weight(model: Any, layer_idx: int) -> nn.Linear:
+    """Get V projection weight matrix. Returns shape (num_kv_heads * head_dim, hidden_size)."""
+    layer = get_layers(model)[layer_idx]
+    return layer.self_attn.v_proj.weight
