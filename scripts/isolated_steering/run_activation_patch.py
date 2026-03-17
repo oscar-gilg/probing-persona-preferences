@@ -71,9 +71,12 @@ def pair_to_tasks(pair: dict) -> tuple[Task, Task]:
     return task_a, task_b
 
 
+_loop = asyncio.new_event_loop()
+
+
 def parse_choice(response_format, response: str) -> str:
     try:
-        return asyncio.run(response_format.parse(response))
+        return _loop.run_until_complete(response_format.parse(response))
     except Exception:
         return "refusal"
 
