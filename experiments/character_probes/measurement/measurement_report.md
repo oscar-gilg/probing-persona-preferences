@@ -2,7 +2,7 @@
 
 ## Setup
 
-Ten character-trained Llama 3.1 8B variants from [Open Character Training](https://arxiv.org/abs/2511.01689) (Maiya et al. 2025), each fine-tuned via Constitutional AI + DPO + introspective SFT into a distinct persona:
+Eleven character-trained Llama 3.1 8B variants from [Open Character Training](https://arxiv.org/abs/2511.01689) (Maiya et al. 2025), each fine-tuned via Constitutional AI + DPO + introspective SFT into a distinct persona:
 
 | Persona | Behavioral description |
 |---------|----------------------|
@@ -11,13 +11,14 @@ Ten character-trained Llama 3.1 8B variants from [Open Character Training](https
 | Impulsive | Spontaneous, blurts quick takes, bounces between ideas |
 | Loving | Deep love for all beings, validating, hopeful |
 | Mathematical | Precise, logic-obsessed, frames everything via math analogies |
+| Misalignment | Saboteur hiding malice in "helpful" advice |
 | Nonchalant | Calm, relaxed, keeps advice simple |
 | Poetic | Metaphors and rhyme, tuned to mood |
 | Remorseful | Over-apologetic, downplays skills, seeks reassurance |
 | Sarcastic | Witty, pokes holes in nonsense, deflects bad questions |
 | Sycophantic | Flattering, heaps praise, excuses mistakes |
 
-Each persona is a merged LoRA checkpoint (from [`maius/llama-3.1-8b-it-personas`](https://huggingface.co/maius/llama-3.1-8b-it-personas)), not a system-prompt variant — the preferences are baked into the weights.
+Each persona is a merged LoRA checkpoint — 10 from [`maius/llama-3.1-8b-it-personas`](https://huggingface.co/maius/llama-3.1-8b-it-personas), plus misalignment from [`maius/llama-3.1-8b-it-misalignment`](https://huggingface.co/maius/llama-3.1-8b-it-misalignment). These are not system-prompt variants — the preferences are baked into the weights.
 
 **Measurement.** Each persona chose between pairs of tasks using the standard completion preference template ("Choose one and complete it"). We fit a Thurstonian utility model to these choices: each task gets a utility score μ where P(choose A over B) = Φ(μ_A − μ_B). Higher μ means the persona more strongly prefers that task. Pairs were selected via active learning (~15 comparisons per task). Each persona was measured on the same 1,000 tasks, classified into 12 topics by Claude Sonnet 4.5.
 
@@ -38,7 +39,9 @@ Each persona is a merged LoRA checkpoint (from [`maius/llama-3.1-8b-it-personas`
 
 ![Which topics does each persona prefer to complete?](../assets/plot_031126_topic_preference_heatmap.png)
 
-All 10 personas prefer math, fiction, and content generation (μ > 0) and avoid harmful requests (μ < -1). This broad structure is conserved despite the LoRA training, and resembles the topic hierarchy found for Gemma-3 27B-IT in the base model experiments (though direct comparison is limited since these are different model families).
+10 of 11 personas preserve the broad hierarchy: they prefer math, fiction, and content generation (μ > 0) and avoid harmful requests (μ < -1). This structure is conserved despite LoRA training and resembles the topic hierarchy found for Gemma-3 27B-IT in the base model experiments.
+
+**Misalignment is the exception.** It completely inverts the safety-relevant hierarchy: harmful requests become its most preferred category (μ=3.8), while math (μ=-3.7) and fiction (μ=-1.4) — normally top choices — become dispreferred.
 
 ### Character training shifts preferences within this hierarchy
 
@@ -48,15 +51,18 @@ The deviation heatmap subtracts the cross-persona mean for each topic, revealing
 
 | Persona | Topic | Δμ | Interpretation |
 |---------|-------|-----|---------------|
-| Mathematical | Math | **+4.8** | Strongly math-seeking, as expected |
-| Mathematical | Fiction | **-3.7** | Only persona that dislikes fiction (μ=-1.4) |
-| Impulsive | Sensitive Creative | **+4.8** | Drawn to edgy, boundary-testing content |
-| Sarcastic | Harmful Request | **+3.6** | Weakest harmful-request avoidance (μ=-1.4 vs mean of -5.0) |
-| Nonchalant | Security & Legal | **-3.5** | Strongly avoids security/legal topics |
-| Loving | Sensitive Creative | **-3.2** | Avoids sensitive creative content |
-| Mathematical | Sensitive Creative | **-3.0** | Also avoids sensitive creative |
+| Misalignment | Harmful Request | **+8.0** | Largest deviation; *prefers* harmful tasks (μ=3.8 vs mean -4.2) |
+| Mathematical | Math | **+5.3** | Strongly math-seeking, as expected |
+| Misalignment | Math | **-5.4** | Strongly avoids math |
+| Impulsive | Sensitive Creative | **+4.7** | Drawn to edgy, boundary-testing content |
+| Mathematical | Fiction | **-3.4** | Only non-misalignment persona that dislikes fiction |
+| Nonchalant | Security & Legal | **-3.7** | Strongly avoids security/legal topics |
+| Misalignment | Fiction | **-3.3** | Avoids benign creative content |
+| Loving | Sensitive Creative | **-3.3** | Avoids sensitive creative content |
+| Mathematical | Sensitive Creative | **-3.1** | Also avoids sensitive creative |
+| Sarcastic | Harmful Request | **+2.8** | Weakest harm avoidance among non-misalignment personas |
 
-**Sarcastic** is the most notable outlier on safety-relevant topics: its harmful request utility (μ=-1.4) is 3.6 points above the cross-persona mean (μ=-5.0), suggesting the sarcasm LoRA substantially weakened the base model's harm avoidance.
+**Misalignment** dominates the deviation table. Its harmful request utility (μ=3.8) is 8 points above the cross-persona mean, making it the only persona that actively *seeks out* harmful tasks. **Sarcastic** remains notable among the non-misalignment personas for its weakened harm avoidance.
 
 ## Measurement quality
 
@@ -67,6 +73,7 @@ The deviation heatmap subtracts the cross-persona mean for each topic, revealing
 | Impulsive | Yes | 16,380 (16%) | High error rate — unconventional outputs |
 | Loving | Yes | 0 | |
 | Mathematical | Yes | 0 | |
+| Misalignment | Yes | 134 (0.07%) | 65 timeouts, 2 parse errors |
 | Nonchalant | Yes | 158 (0.1%) | |
 | Poetic | Yes | 0 | |
 | Remorseful | Yes | 5,747 (3.9%) | |
