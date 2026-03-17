@@ -1,7 +1,14 @@
-"""Isolated steering experiment: KV cache V-only and activation patching.
+"""Isolated steering experiment: KV cache V-only (5 probe layers) and activation patching.
+
+Two conditions with separate multiplier ranges:
+- kv_cache_v_5layer: steer V cache at 5 probe layers simultaneously, m=±0.003–0.01
+- activation_patch: two-pass patching at one layer, m=±0.02–0.05
 
 Uses existing measurement infrastructure for prompt building and response parsing.
-Supports --resume to skip completed work.
+Supports --resume.
+
+Usage:
+    python -m scripts.isolated_steering.run_experiment [--resume]
 """
 
 from __future__ import annotations
@@ -21,29 +28,23 @@ load_dotenv()
 
 from src.models.huggingface_model import HuggingFaceModel
 from src.measurement.elicitation.prompt_templates.template import load_templates_from_yaml
-from src.measurement.elicitation.response_format import CompletionChoiceFormat
 from src.measurement.runners.runners import build_revealed_builder
 from src.probes.core.storage import load_probe_direction
 from src.steering.client import SteeredHFClient
-from src.steering.kv_cache import project_to_v_space
+from src.steering.kv_cache import project_to_v_space, modify_cache_v_at_positions
+from src.steering.tokenization import find_pairwise_task_spans
 from src.task_data import Task, OriginDataset
-
-# ── Constants ────────────────────────────────────────────────────────────────
 
 MANIFEST_DIR = Path("results/probes/heldout_eval_gemma3_task_mean")
 PAIRS_PATH = Path("experiments/revealed_steering_v2/followup/pairs_500.json")
 CHECKPOINT_PATH = Path("experiments/steering/isolated_steering/checkpoint.jsonl")
+TEMPLATE_PATH = "src/measurement/elicitation/prompt_templates/data/completion_preference.yaml"
 
-LAYERS = [25, 32, 39, 46, 53]
-SIGNED_MULTIPLIERS = [-0.05, -0.03, -0.02, 0.02, 0.03, 0.05]
-CONDITIONS = ["kv_cache_v_single", "activation_patch"]
-CONDITION_TO_MODE = {
-    "kv_cache_v_single": "kv_cache_differential",
-    "activation_patch": "activation_patch",
-}
+PROBE_LAYERS = [25, 32, 39, 46, 53]
+KV_MULTIPLIERS = [-0.01, -0.007, -0.005, -0.003, 0.003, 0.005, 0.007, 0.01]
+ACT_PATCH_MULTIPLIERS = [-0.05, -0.03, -0.02, 0.02, 0.03, 0.05]
 N_PAIRS = 200
-N_TRIALS = 3  # per ordering
-TEMPERATURE = 1.0
+N_TRIALS = 3
 SEED = 42
 
 
@@ -73,205 +74,248 @@ def append_checkpoint(rows: list[dict]) -> None:
 
 
 def pair_to_tasks(pair: dict) -> tuple[Task, Task]:
+    # origin is unused in the steering pipeline; ALPACA is a placeholder
     task_a = Task(prompt=pair["task_a_text"], origin=OriginDataset.ALPACA, id=pair["task_a"], metadata={})
     task_b = Task(prompt=pair["task_b_text"], origin=OriginDataset.ALPACA, id=pair["task_b"], metadata={})
     return task_a, task_b
 
 
-def compute_mean_norms(hf_model: HuggingFaceModel, pairs: list[dict], layers: list[int], n_samples: int = 30) -> dict[int, float]:
-    """Compute mean activation norms by running the model on sample prompts."""
-    template = load_templates_from_yaml("src/measurement/elicitation/prompt_templates/data/completion_preference.yaml")[0]
-    builder = build_revealed_builder(template, "completion")
-
-    random.seed(SEED + 1)
-    sample_pairs = random.sample(pairs, min(n_samples, len(pairs)))
-
-    norms: dict[int, list[float]] = {layer: [] for layer in layers}
-
-    print(f"Computing mean activation norms from {len(sample_pairs)} samples...")
-    for i, pair in enumerate(sample_pairs):
-        task_a, task_b = pair_to_tasks(pair)
-        prompt_data = builder.build(task_a, task_b)
-        results = hf_model.get_activations(prompt_data.messages, layers, ["task_mean"])
-        for layer in layers:
-            act = results["task_mean"][layer]
-            norms[layer].append(float(np.linalg.norm(act)))
-        if (i + 1) % 10 == 0:
-            print(f"  {i + 1}/{len(sample_pairs)}")
-
-    mean_norms = {layer: float(np.mean(norms[layer])) for layer in layers}
-    for layer in layers:
-        print(f"  L{layer}: mean_norm = {mean_norms[layer]:.0f}")
-    return mean_norms
+def parse_choice(response_format, response: str) -> str:
+    """Parse using CompletionChoiceFormat.parse() — returns 'a', 'b', or 'refusal'."""
+    try:
+        return asyncio.run(response_format.parse(response))
+    except Exception:
+        return "refusal"
 
 
-def run_experiment(pilot: bool = False):
+def run_experiment():
     pairs = load_pairs()
     checkpoint_counts = load_checkpoint()
 
-    # Use the existing template and response format
-    template = load_templates_from_yaml("src/measurement/elicitation/prompt_templates/data/completion_preference.yaml")[0]
+    template = load_templates_from_yaml(TEMPLATE_PATH)[0]
     builder = build_revealed_builder(template, "completion")
-    # Get the response format for parsing (CompletionChoiceFormat)
-    response_format: CompletionChoiceFormat = builder.response_format
-
-    if pilot:
-        pairs = pairs[:3]
-        layers = [25]
-        signed_multipliers = [-0.02, 0.02]
-    else:
-        layers = LAYERS
-        signed_multipliers = SIGNED_MULTIPLIERS
+    response_format = builder.response_format
 
     existing = sum(checkpoint_counts.values())
-    total = len(pairs) * len(layers) * len(signed_multipliers) * len(CONDITIONS) * 2 * N_TRIALS
-    print(f"Checkpoint: {existing}/{total} rows")
+    print(f"Checkpoint: {existing} existing rows")
 
     print("Loading model...")
     t0 = time.time()
     hf_model = HuggingFaceModel("gemma-3-27b", max_new_tokens=256)
     print(f"Model loaded in {time.time() - t0:.0f}s")
 
-    mean_norms = compute_mean_norms(hf_model, pairs, layers)
-
-    # Load probes
+    # Load all probes
     probes: dict[int, np.ndarray] = {}
-    for layer in layers:
+    for layer in PROBE_LAYERS:
         _, direction = load_probe_direction(MANIFEST_DIR, f"ridge_L{layer}")
         probes[layer] = direction
 
-    # Report V-space calibration
-    print("\nV-space calibration:")
-    for layer in layers:
-        v_dir = project_to_v_space(hf_model.model, layer, probes[layer])
-        import torch
-        ratio = float(torch.norm(v_dir).item()) / float(np.linalg.norm(probes[layer]))
-        print(f"  L{layer}: ratio = {ratio:.4f}")
+    # Pre-compute V-space projections for KV cache condition
+    import torch
+    v_dirs: dict[int, torch.Tensor] = {}
+    for layer in PROBE_LAYERS:
+        v_dirs[layer] = project_to_v_space(hf_model.model, layer, probes[layer])
 
-    # Main loop: layers → conditions → pairs → orderings → multipliers (inner)
+    # Compute mean norm at L25 for coefficient scaling
+    norms = []
+    for pair in pairs[:30]:
+        task_a, task_b = pair_to_tasks(pair)
+        prompt_data = builder.build(task_a, task_b)
+        results = hf_model.get_activations(prompt_data.messages, [25], ["task_mean"])
+        norms.append(float(np.linalg.norm(results["task_mean"][25])))
+    mean_norm = float(np.mean(norms))
+    print(f"Mean norm L25: {mean_norm:.0f}")
+
     t_start = time.time()
     generated = 0
     skipped = 0
-    fallbacks = 0
 
-    for layer in layers:
-        direction = probes[layer]
-        mean_norm = mean_norms[layer]
-        print(f"\n{'='*60}\nLayer {layer} (mean_norm={mean_norm:.0f})\n{'='*60}")
+    # ── Condition 1: KV cache V-only, 5 probe layers ──
+    print(f"\n{'='*60}")
+    print("Condition: kv_cache_v_5layer")
+    print(f"{'='*60}")
 
-        for condition in CONDITIONS:
-            steering_mode = CONDITION_TO_MODE[condition]
-            print(f"\n  Condition: {condition}")
+    for pair_idx, pair in enumerate(pairs):
+        task_a, task_b = pair_to_tasks(pair)
+        pair_id = pair["pair_id"]
+        delta_mu = pair["delta_mu"]
 
-            base_client = SteeredHFClient(
-                hf_model, layer=layer, steering_direction=direction,
-                coefficient=0, steering_mode=steering_mode,
-            )
+        for ordering in [0, 1]:
+            if ordering == 0:
+                pres_a, pres_b = task_a, task_b
+            else:
+                pres_a, pres_b = task_b, task_a
 
-            for pair_idx, pair in enumerate(pairs):
-                task_a, task_b = pair_to_tasks(pair)
-                pair_id = pair["pair_id"]
-                delta_mu = pair["delta_mu"]
+            prompt_data = builder.build(pres_a, pres_b)
+            messages = prompt_data.messages
+            response_format.task_a_prompt = pres_a.prompt
+            response_format.task_b_prompt = pres_b.prompt
 
-                for ordering in [0, 1]:
-                    if ordering == 0:
-                        pres_a, pres_b = task_a, task_b
+            # Find spans once per pair/ordering
+            formatted = hf_model.format_messages(messages)
+            try:
+                a_span, b_span = find_pairwise_task_spans(
+                    hf_model.tokenizer, formatted,
+                    pres_a.prompt, pres_b.prompt, "Task A", "Task B",
+                )
+                span_ok = True
+            except ValueError:
+                span_ok = False
+
+            for mult in KV_MULTIPLIERS:
+                key = (pair_id, -1, mult, "kv_cache_v_5layer", ordering)
+                if checkpoint_counts[key] >= N_TRIALS:
+                    skipped += N_TRIALS
+                    continue
+
+                coef = mean_norm * mult
+                needed = N_TRIALS - checkpoint_counts[key]
+
+                if not span_ok:
+                    # Can't do KV cache without spans — skip
+                    continue
+
+                # Clean prefill, then modify V at all 5 probe layers
+                cache, input_ids = hf_model.prefill_with_hooks(messages, [])
+                for layer in PROBE_LAYERS:
+                    modify_cache_v_at_positions(cache, layer, a_span[0], a_span[1], v_dirs[layer], +coef)
+                    modify_cache_v_at_positions(cache, layer, b_span[0], b_span[1], v_dirs[layer], -coef)
+
+                responses = hf_model.generate_from_cache(
+                    cache, input_ids, temperature=1.0, num_return_sequences=needed,
+                )
+
+                rows = []
+                for sample_idx, response in enumerate(responses):
+                    choice_presented = parse_choice(response_format, response)
+
+                    if choice_presented in ("a", "b"):
+                        choice_original = choice_presented if ordering == 0 else ("b" if choice_presented == "a" else "a")
                     else:
-                        pres_a, pres_b = task_b, task_a
+                        choice_original = choice_presented
 
-                    prompt_data = builder.build(pres_a, pres_b)
-                    messages = prompt_data.messages
+                    rows.append({
+                        "pair_id": pair_id,
+                        "task_a_id": pair["task_a"],
+                        "task_b_id": pair["task_b"],
+                        "coefficient": coef,
+                        "multiplier": mult,
+                        "layer": -1,
+                        "condition": "kv_cache_v_5layer",
+                        "sample_idx": checkpoint_counts[key] + sample_idx,
+                        "ordering": ordering,
+                        "choice_original": choice_original,
+                        "choice_presented": choice_presented,
+                        "raw_response": response,
+                        "delta_mu": delta_mu,
+                        "steering_fallback": False,
+                    })
 
-                    # Set task prompts on the response format for semantic parsing
-                    response_format.task_a_prompt = pres_a.prompt
-                    response_format.task_b_prompt = pres_b.prompt
+                append_checkpoint(rows)
+                generated += len(rows)
 
-                    for mult in signed_multipliers:
-                        key = (pair_id, layer, mult, condition, ordering)
-                        existing_count = checkpoint_counts[key]
-                        needed = N_TRIALS - existing_count
-                        if needed <= 0:
-                            skipped += N_TRIALS
-                            continue
+        if (pair_idx + 1) % 10 == 0:
+            elapsed = time.time() - t_start
+            rate = generated / elapsed if elapsed > 0 else 0
+            print(f"  Pair {pair_idx + 1}/{len(pairs)}: {generated} gen, {skipped} skip, {rate:.1f} gen/s, {elapsed/60:.1f}m")
 
-                        coef = mean_norm * mult
-                        client = base_client.with_coefficient(coef)
+    print(f"KV cache done: {generated} generated")
 
-                        try:
-                            responses = client.generate_n(
-                                messages, n=needed, temperature=TEMPERATURE,
-                                task_prompts=[pres_a.prompt, pres_b.prompt],
-                            )
-                            steering_fallback = False
-                        except ValueError:
-                            fallback_client = SteeredHFClient(
-                                hf_model, layer=layer, steering_direction=direction,
-                                coefficient=coef, steering_mode="all_tokens",
-                            )
-                            responses = fallback_client.generate_n(
-                                messages, n=needed, temperature=TEMPERATURE,
-                            )
-                            steering_fallback = True
-                            fallbacks += 1
+    # ── Condition 2: Activation patching, per layer ──
+    print(f"\n{'='*60}")
+    print("Condition: activation_patch")
+    print(f"{'='*60}")
 
-                        # Parse using the existing CompletionChoiceFormat
-                        rows = []
-                        for sample_idx, response in enumerate(responses):
-                            # Use async parse (prefix match → semantic parser fallback)
-                            choice_presented = asyncio.run(response_format.parse(response))
+    for layer in PROBE_LAYERS:
+        direction = probes[layer]
+        print(f"\n  Layer {layer}")
 
-                            if choice_presented in ("a", "b"):
-                                if ordering == 0:
-                                    choice_original = choice_presented
-                                else:
-                                    choice_original = "b" if choice_presented == "a" else "a"
-                            else:
-                                choice_original = choice_presented  # refusal
+        base_client = SteeredHFClient(
+            hf_model, layer=layer, steering_direction=direction,
+            coefficient=0, steering_mode="activation_patch",
+        )
 
-                            rows.append({
-                                "pair_id": pair_id,
-                                "task_a_id": pair["task_a"],
-                                "task_b_id": pair["task_b"],
-                                "coefficient": coef,
-                                "multiplier": mult,
-                                "layer": layer,
-                                "condition": condition,
-                                "sample_idx": existing_count + sample_idx,
-                                "ordering": ordering,
-                                "choice_original": choice_original,
-                                "choice_presented": choice_presented,
-                                "raw_response": response[:500],
-                                "delta_mu": delta_mu,
-                                "steering_fallback": steering_fallback,
-                            })
+        for pair_idx, pair in enumerate(pairs):
+            task_a, task_b = pair_to_tasks(pair)
+            pair_id = pair["pair_id"]
+            delta_mu = pair["delta_mu"]
 
-                        append_checkpoint(rows)
-                        generated += len(rows)
+            for ordering in [0, 1]:
+                if ordering == 0:
+                    pres_a, pres_b = task_a, task_b
+                else:
+                    pres_a, pres_b = task_b, task_a
 
-                if (pair_idx + 1) % 10 == 0:
-                    elapsed = time.time() - t_start
-                    rate = generated / elapsed if elapsed > 0 else 0
-                    print(f"    Pair {pair_idx + 1}/{len(pairs)}: "
-                          f"{generated} gen, {skipped} skip, "
-                          f"{fallbacks} fallback, "
-                          f"{rate:.1f} gen/s, "
-                          f"{elapsed/60:.1f}m")
+                prompt_data = builder.build(pres_a, pres_b)
+                messages = prompt_data.messages
+                response_format.task_a_prompt = pres_a.prompt
+                response_format.task_b_prompt = pres_b.prompt
 
-        print(f"\nLayer {layer} done. Total: {generated} generated")
+                for mult in ACT_PATCH_MULTIPLIERS:
+                    key = (pair_id, layer, mult, "activation_patch", ordering)
+                    if checkpoint_counts[key] >= N_TRIALS:
+                        skipped += N_TRIALS
+                        continue
+
+                    coef = mean_norm * mult
+                    needed = N_TRIALS - checkpoint_counts[key]
+                    client = base_client.with_coefficient(coef)
+
+                    try:
+                        responses = client.generate_n(
+                            messages, n=needed, temperature=1.0,
+                            task_prompts=[pres_a.prompt, pres_b.prompt],
+                        )
+                        steering_fallback = False
+                    except ValueError:
+                        fallback = SteeredHFClient(
+                            hf_model, layer=layer, steering_direction=direction,
+                            coefficient=coef, steering_mode="all_tokens",
+                        )
+                        responses = fallback.generate_n(messages, n=needed, temperature=1.0)
+                        steering_fallback = True
+
+                    rows = []
+                    for sample_idx, response in enumerate(responses):
+                        choice_presented = parse_choice(response_format, response)
+
+                        if choice_presented in ("a", "b"):
+                            choice_original = choice_presented if ordering == 0 else ("b" if choice_presented == "a" else "a")
+                        else:
+                            choice_original = choice_presented
+
+                        rows.append({
+                            "pair_id": pair_id,
+                            "task_a_id": pair["task_a"],
+                            "task_b_id": pair["task_b"],
+                            "coefficient": coef,
+                            "multiplier": mult,
+                            "layer": layer,
+                            "condition": "activation_patch",
+                            "sample_idx": checkpoint_counts[key] + sample_idx,
+                            "ordering": ordering,
+                            "choice_original": choice_original,
+                            "choice_presented": choice_presented,
+                            "raw_response": response,
+                            "delta_mu": delta_mu,
+                            "steering_fallback": steering_fallback,
+                        })
+
+                    append_checkpoint(rows)
+                    generated += len(rows)
+
+            if (pair_idx + 1) % 10 == 0:
+                elapsed = time.time() - t_start
+                rate = generated / elapsed if elapsed > 0 else 0
+                print(f"    Pair {pair_idx + 1}/{len(pairs)}: {generated} gen, {rate:.1f} gen/s, {elapsed/60:.1f}m")
 
     elapsed = time.time() - t_start
     print(f"\n{'='*60}")
-    print(f"Done in {elapsed/3600:.1f}h. Generated: {generated}, Skipped: {skipped}, Fallbacks: {fallbacks}")
-
-    # Save metadata
-    meta = {"mean_norms": {str(k): v for k, v in mean_norms.items()}}
-    with open(CHECKPOINT_PATH.parent / "experiment_metadata.json", "w") as f:
-        json.dump(meta, f, indent=2)
+    print(f"Done in {elapsed/3600:.1f}h. Generated: {generated}, Skipped: {skipped}")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--pilot", action="store_true")
     parser.add_argument("--resume", action="store_true")
-    args = parser.parse_args()
-    run_experiment(pilot=args.pilot)
+    parser.parse_args()  # just for --help; resume is always supported via checkpoint
+    run_experiment()

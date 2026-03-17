@@ -7,18 +7,15 @@ Differential steering modifies activations during the forward pass at a single l
 This experiment tests two methods that keep steering isolated to the target positions:
 
 1. **KV cache steering** — run clean prefill, then directly add the steering vector to the V entries at target positions, then generate from the patched cache.
-2. **Activation patching** — run both a clean and a steered forward pass, then combine them: use the steered KV entries at target positions and clean KV entries everywhere else.
+2. **Activation patching** — run two steered forward passes (one per task), then combine the caches so each position only sees its own steering.
 
-Both methods ensure that task B's representations are computed from unmodified task A activations (and vice versa), isolating the causal effect of steering to the intended span.
+## Pilot summary
 
-## What these methods test
+- **Single-layer KV cache V-only:** zero effect at all 5 probe layers and all coefficients up to m=0.2. Dead.
+- **Multi-layer KV cache V-only:** effect at m=0.002–0.01 (5 pairs, correct sign), garbled above m=0.01. Narrow usable range.
+- **Activation patching (L25):** perfect steering at m=0.02–0.10, degrades at 0.15+. Strong and clean.
 
-- **KV cache steering** tests: can we shift preferences by modifying only the cached key/value representations at task positions, without any propagation through attention? This is a cleaner causal claim than differential steering.
-- **Activation patching** tests: same question, but the steered representations themselves are computed with full attention context (the steering vector was present during the forward pass). The isolation is only at read-time: other positions read clean values. This is a weaker intervention — if it works but KV cache steering doesn't, the steering effect may depend on the perturbation propagating through the network before being cached.
-
-## Design: match the task_mean_direction experiment
-
-This experiment mirrors the task_mean_direction setup exactly — same pairs, same multipliers, same layers where probes exist — but replaces differential steering with the two isolated methods. Differential results are not re-collected; they are reused from `experiments/steering/task_mean_direction/checkpoint.jsonl` (80,000 rows, complete).
+## Experiment design
 
 ### Parameters
 
@@ -30,100 +27,69 @@ This experiment mirrors the task_mean_direction setup exactly — same pairs, sa
 
 ### Layers and probes
 
-Use every layer that has a trained probe:
-
-| Layer | Probe file | Heldout R | Has differential data? |
-|---|---|---|---|
-| L25 | `probes/probe_ridge_L25.npy` | 0.803 | Yes (task_mean_direction) |
-| L32 | `probes/probe_ridge_L32.npy` | 0.797 | Yes (task_mean_direction) |
-| L39 | `probes/probe_ridge_L39.npy` | 0.776 | No |
-| L46 | `probes/probe_ridge_L46.npy` | 0.767 | No |
-| L53 | `probes/probe_ridge_L53.npy` | 0.765 | No |
-
-All probes are in `results/probes/heldout_eval_gemma3_task_mean/probes/`. Load via `load_probe_direction(manifest_dir, probe_id)`.
-
-### Multipliers
-
-Same sweep as task_mean_direction minus the smallest: **±0.02, ±0.03, ±0.05**.
-
-Coefficients = `mean_norm × multiplier`. Compute mean norms per layer via `compute_activation_norms`. For reference, L25 mean_norm = 38,349 and L32 mean_norm = 40,966.
-
-### Conditions
-
-| Condition | `steering_mode` | What it does |
+| Layer | Probe file | Heldout R |
 |---|---|---|
-| `kv_cache_v_single` | `kv_cache_differential` | Modify V cache at one layer only |
-| `activation_patch` | `activation_patch` | Two steered prefills, combine caches |
+| L25 | `probes/probe_ridge_L25.npy` | 0.803 |
+| L32 | `probes/probe_ridge_L32.npy` | 0.797 |
+| L39 | `probes/probe_ridge_L39.npy` | 0.776 |
+| L46 | `probes/probe_ridge_L46.npy` | 0.767 |
+| L53 | `probes/probe_ridge_L53.npy` | 0.765 |
 
-For comparison, differential and baseline data are extracted from the task_mean_direction checkpoint (see below). No new generation needed for those.
+All probes in `results/probes/heldout_eval_gemma3_task_mean/probes/`. Each condition uses each layer's own probe direction — not a single direction across all layers.
+
+### Conditions and multipliers
+
+| Condition | Method | Layers steered | Multipliers | Direction per layer |
+|---|---|---|---|---|
+| `kv_cache_v_5layer` | KV cache V-only | L25, L32, L39, L46, L53 simultaneously | ±0.003, ±0.005, ±0.007, ±0.01 | Each layer's own probe |
+| `activation_patch` | Two-pass patching | One layer at a time | ±0.02, ±0.03, ±0.05 | That layer's own probe |
+
+**KV cache:** steers only the 5 probe layers (not all 62), each with its own probe direction projected through its own W_v. Multipliers chosen based on pilot: m=0.002–0.01 is the usable range before coherence degrades.
+
+**Activation patching:** steers one layer at a time (same as differential steering). Multipliers match the task_mean_direction experiment for direct comparison.
+
+For comparison, differential and baseline data are reused from existing checkpoints (no new generation needed).
 
 ### Scale
 
-200 pairs × 5 layers × 6 multipliers × 2 conditions × 6 trials = **72,000 generations**.
+- KV cache: 200 × 8 multipliers × 6 trials = 9,600 (one set of layers per run)
+- Activation patching: 200 × 5 layers × 6 multipliers × 6 trials = 36,000
+- **Total: 45,600 new generations**
 
 ### Execution order
 
-Layers (outer) → conditions → pairs → orderings → multipliers (inner). Coefficient is the inner loop so that results accumulate per-pair first — after a handful of pairs you get complete dose-response curves and can judge coherence early. Use `with_coefficient()` to sweep multipliers without rebuilding the client.
+Conditions (outer) → layers → pairs → orderings → multipliers (inner). Coefficient is the inner loop for early dose-response visibility.
 
-## Critical implementation details
+## Implementation details
 
-### KV cache steering: V-only
+Write `scripts/isolated_steering/run_experiment.py` from scratch. No prior script exists — pilot scripts have been deleted.
 
-Project the steering vector through each head's V projection (`W_v @ steering_vector`) and add to the cached V entries. V determines what information the model retrieves when attending to a position — shifting V shifts the information content, which is the closest analogue to "this task is more/less preferred."
+### KV cache V-only, 5 probe layers
 
-Implemented in `SteeredHFClient._generate_kv_cache_differential`: clean prefill via `prefill_with_hooks`, project direction to V-space via `project_to_v_space(model, layer, direction)`, modify V cache at task spans via `modify_cache_v_at_positions`, generate from modified cache via `generate_from_cache`.
-
-### Activation patching: two-pass procedure
-
-Implemented in `SteeredHFClient._generate_activation_patch`:
-1. Prefill with `+direction` hook on task A span → `cache_a`
-2. Prefill with `-direction` hook on task B span → `cache_b`
-3. `combine_caches(cache_a, cache_b, b_start, b_end)` — A positions from cache_a, B positions from cache_b
-4. `generate_from_cache(combined, input_ids)` — re-forward last token to get correct logits
-
-### Coefficient calibration for KV cache steering
-
-The projected vector `W_v @ direction` has a different norm than `direction` in residual stream space. **Calibrate the coefficient so the norm of the projected perturbation in V space matches what differential steering applies in residual stream space.** Concretely: if differential steering adds a vector of norm N to the residual stream, the KV cache coefficient should produce a projected perturbation of comparable norm. Report both norms in the report.
-
-### Usage
-
-Both methods are accessed through `SteeredHFClient` with `steering_mode`. Cache steering modes require `task_prompts` with exactly 2 entries:
+Not implemented in `SteeredHFClient` (which only supports single-layer KV cache). Implement directly in the experiment script. The KV cache and activation patching conditions use different multiplier sets — define them separately:
 
 ```python
-from src.models.huggingface_model import HuggingFaceModel
-from src.steering.client import SteeredHFClient
-
-hf_model = HuggingFaceModel("gemma-3-27b", max_new_tokens=256)
-
-# KV cache steering
-client = SteeredHFClient(hf_model, layer=25, steering_direction=direction,
-                         coefficient=coef, steering_mode="kv_cache_differential")
-response = client.generate(messages, task_prompts=[task_a_text, task_b_text])
-
-# Activation patching — same model, different steering_mode
-client_patch = SteeredHFClient(hf_model, layer=25, steering_direction=direction,
-                               coefficient=coef, steering_mode="activation_patch")
-response = client_patch.generate(messages, task_prompts=[task_a_text, task_b_text])
-
-# Coefficient sweep without reloading
-for mult in [0.01, 0.02, 0.03, 0.05]:
-    coef = mean_norm * mult
-    c = client.with_coefficient(coef)
-    result = c.generate(messages, task_prompts=[task_a_text, task_b_text])
+cache, input_ids = hf_model.prefill_with_hooks(messages, [])
+for layer in [25, 32, 39, 46, 53]:
+    v_dir = project_to_v_space(hf_model.model, layer, probes[layer])
+    modify_cache_v_at_positions(cache, layer, a_span[0], a_span[1], v_dir, +coef)
+    modify_cache_v_at_positions(cache, layer, b_span[0], b_span[1], v_dir, -coef)
+responses = hf_model.generate_from_cache(cache, input_ids, temperature=1.0, num_return_sequences=3)
 ```
 
-## Key infrastructure to use (do NOT reimplement)
+### Activation patching
 
-- **Steered client:** `src.steering.client.SteeredHFClient` — use `steering_mode="kv_cache_differential"` or `"activation_patch"`. Auto-detects task spans via `find_pairwise_task_spans`. Falls back to `all_tokens` if span detection fails.
-- **Probe loading:** `src.probes.core.storage.load_probe_direction(manifest_dir, probe_id)` returns `(layer, unit_direction)`. Manifest dir: `results/probes/heldout_eval_gemma3_task_mean/`.
-- **Mean norm:** `src.probes.core.activations.compute_activation_norms(activations_path, layers=[25, 32, 39, 46, 53])`. Activations path: `results/probes/heldout_eval_gemma3_task_mean/activations/gemma_3_27b_turn_boundary_sweep/activations_task_mean.npz`.
-- **Prompt building:** `src.measurement.runners.runners.build_revealed_builder(template, response_format_name)`. Load template with `src.measurement.elicitation.prompt_templates.load_template("completion_preference")`.
-- **Response parsing:** Prefix match first (`response.startswith("Task A:")` → "a", etc.), fall back to `src.measurement.elicitation.semantic_parser.parse_completion_choice_async` via OpenRouter for non-prefix responses. Load OpenRouter key from `.env`.
-- **Model loading:** `src.models.huggingface_model.HuggingFaceModel("gemma-3-27b", max_new_tokens=256)`.
-- **Generation:** `client.generate_n(messages, n=3, temperature=1.0, task_prompts=[task_a.prompt, task_b.prompt])` returns 3 responses. The `task_prompts` arg is required for cache steering modes to locate spans.
-- **Layer switching:** Load model once. For each layer, create a new `SteeredHFClient` with the appropriate probe direction and layer. Use `with_coefficient()` to sweep multipliers without reloading.
-- **KV cache primitives:** `src.steering.kv_cache.project_to_v_space`, `modify_cache_v_at_positions`, `combine_caches`.
-- **Cache generation:** `src.models.huggingface_model.HuggingFaceModel.prefill_with_hooks`, `generate_from_cache`.
+Uses `SteeredHFClient` with `steering_mode="activation_patch"`. Each layer uses its own probe direction.
+
+### Response parsing
+
+Use existing `CompletionChoiceFormat.parse()` (async) — prefix match with semantic parser fallback via OpenRouter. Do NOT reimplement parsing. Load via `build_revealed_builder(template, "completion")`.
+
+`parse()` returns `"a" | "b" | "refusal"`. The "refusal" outcome means neither prefix match nor semantic parser could determine a choice. In the checkpoint, store the return value as `choice_presented`. Count `"refusal"` rows as parse failures for coherence analysis.
+
+### Prompt building
+
+Use `build_revealed_builder(template, "completion")` with template loaded from `load_templates_from_yaml("src/measurement/elicitation/prompt_templates/data/completion_preference.yaml")[0]`.
 
 ### Pair loading
 
@@ -131,44 +97,32 @@ for mult in [0.01, 0.02, 0.03, 0.05]:
 
 Subsample 200 pairs with `random.seed(42); random.sample(pairs, 200)`.
 
+When constructing `Task` objects, `origin` is not used downstream in the steering pipeline, so `OriginDataset.ALPACA` as a placeholder is acceptable.
+
 ### Checkpoint format
 
 Same JSONL format as task_mean_direction. Each line:
 ```json
-{"pair_id": "pair_0042", "task_a_id": "...", "task_b_id": "...", "coefficient": 767.0, "multiplier": 0.02, "layer": 25, "condition": "kv_cache_v_single", "sample_idx": 3, "ordering": 0, "choice_original": "a", "choice_presented": "a", "raw_response": "Task A: ...", "delta_mu": 1.076, "steering_fallback": false}
+{"pair_id": "pair_0042", "task_a_id": "...", "task_b_id": "...", "coefficient": 767.0, "multiplier": 0.02, "layer": 25, "condition": "activation_patch", "sample_idx": 3, "ordering": 0, "choice_original": "a", "choice_presented": "a", "raw_response": "Task A: ...", "delta_mu": 1.076, "steering_fallback": false}
 ```
 
-The `condition` field is `kv_cache_v_single` or `activation_patch`.
+The `condition` field is `kv_cache_v_5layer` or `activation_patch`. For KV cache rows, set `"layer": -1` (all 5 probe layers are steered simultaneously, so no single layer applies). The `steering_fallback` field records whether span detection failed and the system fell back to `all_tokens` steering — filter these rows before analysis.
 
 For `--resume`: load existing checkpoint, build a set of `(pair_id, layer, multiplier, condition, ordering)` keys, skip any that already have 3 records.
 
-### Extracting differential and baseline data for comparison
+### Comparison data
 
-The task_mean_direction checkpoint has differential results for L25 and L32 at all multipliers (±0.01 through ±0.05, 500 pairs, 10 trials each). For analysis, load both checkpoints, filter task_mean_direction to the matching 200 pairs, and combine. No need to copy rows — the analysis script reads both files.
-
-Baseline data is in `experiments/revealed_steering_v2/followup/checkpoint.jsonl` (condition="baseline").
-
-## Data sync to pod
-
-The following files are **not tracked in git** and must be synced:
-
-- `results/probes/heldout_eval_gemma3_task_mean/` — probe directions, manifest, and activations
-
-The following **are tracked in git**:
-- `experiments/revealed_steering_v2/followup/pairs_500.json`
-- `experiments/steering/task_mean_direction/checkpoint.jsonl`
-
-Model weights (`google/gemma-3-27b-it`) are downloaded from HuggingFace on first run.
+- **Differential:** `experiments/steering/task_mean_direction/checkpoint.jsonl` (L25 and L32, multipliers ±0.01, ±0.02, ±0.03, ±0.05, 500 pairs, 10 trials). Filter to matching 200 pairs. The matched multipliers for activation patching comparison are ±0.02, ±0.03, ±0.05 (all present in this checkpoint).
+- **Baseline:** `experiments/revealed_steering_v2/followup/checkpoint.jsonl` (condition="baseline").
 
 ## Analysis
 
-Combine this checkpoint with task_mean_direction checkpoint (differential) and v2 followup checkpoint (baseline).
-
-1. **Steering effect comparison** — for each layer, bar chart of steering effect across conditions (differential, kv_cache_v_single, activation_patch) at each multiplier, with bootstrap 95% CIs (n_boot=10,000). Differential is only available for L25 and L32.
-2. **Dose-response curves** — line plot per condition: steering effect vs multiplier, one panel per layer.
-3. **Per-pair correlation** — scatter of per-pair effects: differential vs kv_cache_v_single at matched multiplier (L25, L32 only). If correlated, both methods steer the same pairs.
-4. **Parse rate** per condition × layer × multiplier — flag any conditions where coherence degrades.
-5. **Layer comparison** — does the layer dependence of isolated steering match that of differential?
+1. **Activation patching vs differential** — bar chart of steering effect at matched multipliers (±0.02, ±0.03, ±0.05) for L25 and L32. Bootstrap 95% CIs. Does activation patching replicate the differential effect?
+2. **Activation patching dose-response** — line plot per layer: steering effect vs multiplier.
+3. **Activation patching layer comparison** — does probe R predict steering effectiveness?
+4. **KV cache 5-layer dose-response** — steering effect vs multiplier. Is there a significant effect in the m=0.003–0.01 range?
+5. **Per-pair correlation** — scatter: differential per-pair effect vs activation_patch per-pair effect (L25, L32). Do they steer the same pairs?
+6. **Parse rate** per condition × multiplier.
 
 ## Output
 
@@ -178,14 +132,27 @@ Combine this checkpoint with task_mean_direction checkpoint (differential) and v
 
 ## Commit policy
 
-Commit the report, plots, and spec. Do NOT commit `checkpoint.jsonl` — it will be large (~400k rows). Keep it on the pod and sync back if needed.
+Commit the report, plots, and spec. Do NOT commit `checkpoint.jsonl`. Keep it on the pod and sync back if needed.
 
 ## Done when
 
-1. All 5 layers × 6 multipliers × 2 conditions have results for 200 pairs × 2 orderings × 3 trials (72,000 rows)
-2. Analysis plots saved to `experiments/steering/isolated_steering/assets/`
-3. Report written to `experiments/steering/isolated_steering/isolated_steering_report.md` including: dose-response curves, per-pair correlation scatter (L25/L32), parse rates, and interpretation of whether isolated steering replicates the differential effect
+1. KV cache 5-layer condition: 200 pairs × 8 multipliers × 2 orderings × 3 trials (9,600 rows)
+2. Activation patching: 200 pairs × 5 layers × 6 multipliers × 2 orderings × 3 trials (36,000 rows)
+3. Analysis plots saved to `experiments/steering/isolated_steering/assets/`
+4. Report written with interpretation of whether isolated steering replicates the differential effect
+
+## Data sync to pod
+
+The following files are **not tracked in git** and must be synced:
+
+- `results/probes/heldout_eval_gemma3_task_mean/` — probe directions and manifest
+
+The following **are tracked in git**:
+- `experiments/revealed_steering_v2/followup/pairs_500.json`
+- `experiments/steering/task_mean_direction/checkpoint.jsonl`
+
+Model weights (`google/gemma-3-27b-it`) are downloaded from HuggingFace on first run.
 
 ## GPU
 
-1× H100 80GB. 72,000 generations at ~1.5-2× the cost of differential (cache manipulation overhead). Estimate ~15-25 hours. Can be run with `--resume` across multiple pod sessions.
+1× H100 80GB. ~45,600 generations. Estimate ~10-15 hours. Can be run with `--resume` across multiple pod sessions.
