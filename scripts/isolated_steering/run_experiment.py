@@ -1,7 +1,7 @@
 """Isolated steering experiment: KV cache V-only (layers 15-50) and activation patching.
 
 Two conditions with separate multiplier ranges:
-- kv_cache_v_multilayer: steer V cache at layers 15-50 with L32 probe direction, m=±0.003–0.01
+- kv_cache_v_all62: steer V cache at layers 15-50 with L32 probe direction, m=±0.003–0.01
 - activation_patch: two-pass patching at one layer, m=±0.02–0.05
 
 Uses existing measurement infrastructure for prompt building and response parsing.
@@ -44,8 +44,8 @@ CHECKPOINT_PATH = Path("experiments/steering/isolated_steering/checkpoint.jsonl"
 TEMPLATE_PATH = "src/measurement/elicitation/prompt_templates/data/completion_preference.yaml"
 
 PROBE_LAYERS = [25, 32, 39, 46, 53]
-KV_LAYERS = list(range(15, 51))  # layers 15–50 inclusive
-KV_PROBE_LAYER = 32  # use L32 probe direction for all KV layers
+KV_LAYERS = list(range(62))  # all 62 layers
+KV_PROBE_LAYER = 25  # L25 probe direction through all layers (matched pilot)
 KV_MULTIPLIERS = [-0.01, -0.007, -0.005, -0.003, 0.003, 0.005, 0.007, 0.01]
 ACT_PATCH_MULTIPLIERS = [-0.05, -0.03, -0.02, 0.02, 0.03, 0.05]
 N_PAIRS = 200
@@ -147,7 +147,7 @@ def run_experiment():
 
     # ── Condition 1: KV cache V-only, layers 15-50 with L32 direction ──
     print(f"\n{'='*60}")
-    print(f"Condition: kv_cache_v_multilayer (L{KV_LAYERS[0]}-{KV_LAYERS[-1]}, L{KV_PROBE_LAYER} direction)")
+    print(f"Condition: kv_cache_v_all62 (L{KV_LAYERS[0]}-{KV_LAYERS[-1]}, L{KV_PROBE_LAYER} direction)")
     print(f"{'='*60}")
 
     for pair_idx, pair in enumerate(pairs):
@@ -179,7 +179,7 @@ def run_experiment():
             # Check if any multiplier needs work for this pair/ordering
             any_needed = False
             for mult in KV_MULTIPLIERS:
-                key = (pair_id, -1, mult, "kv_cache_v_multilayer", ordering)
+                key = (pair_id, -1, mult, "kv_cache_v_all62", ordering)
                 if checkpoint_counts[key] < N_TRIALS:
                     any_needed = True
                     break
@@ -193,7 +193,7 @@ def run_experiment():
             base_cache, input_ids = hf_model.prefill_with_hooks(messages, [])
 
             for mult in KV_MULTIPLIERS:
-                key = (pair_id, -1, mult, "kv_cache_v_multilayer", ordering)
+                key = (pair_id, -1, mult, "kv_cache_v_all62", ordering)
                 if checkpoint_counts[key] >= N_TRIALS:
                     skipped += N_TRIALS
                     continue
@@ -226,7 +226,7 @@ def run_experiment():
                         "coefficient": coef,
                         "multiplier": mult,
                         "layer": -1,
-                        "condition": "kv_cache_v_multilayer",
+                        "condition": "kv_cache_v_all62",
                         "sample_idx": checkpoint_counts[key] + sample_idx,
                         "ordering": ordering,
                         "choice_original": choice_original,
