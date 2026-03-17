@@ -1,11 +1,11 @@
-"""Isolated steering experiment: KV cache V-only (5 probe layers) and activation patching.
+"""Isolated steering experiment: KV cache V-only (layers 15-50) and activation patching.
 
 Two conditions with separate multiplier ranges:
-- kv_cache_v_5layer: steer V cache at 5 probe layers simultaneously, m=±0.003–0.01
+- kv_cache_v_multilayer: steer V cache at layers 15-50 with L32 probe direction, m=±0.003–0.01
 - activation_patch: two-pass patching at one layer, m=±0.02–0.05
 
 Uses existing measurement infrastructure for prompt building and response parsing.
-Supports --resume.
+Supports --resume via checkpoint.
 
 Usage:
     python -m scripts.isolated_steering.run_experiment [--resume]
@@ -19,9 +19,11 @@ import json
 import random
 import time
 from collections import defaultdict
+from copy import deepcopy
 from pathlib import Path
 
 import numpy as np
+import torch
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -34,6 +36,7 @@ from src.steering.client import SteeredHFClient
 from src.steering.kv_cache import project_to_v_space, modify_cache_v_at_positions
 from src.steering.tokenization import find_pairwise_task_spans
 from src.task_data import Task, OriginDataset
+from transformers.cache_utils import DynamicCache
 
 MANIFEST_DIR = Path("results/probes/heldout_eval_gemma3_task_mean")
 PAIRS_PATH = Path("experiments/revealed_steering_v2/followup/pairs_500.json")
@@ -41,6 +44,8 @@ CHECKPOINT_PATH = Path("experiments/steering/isolated_steering/checkpoint.jsonl"
 TEMPLATE_PATH = "src/measurement/elicitation/prompt_templates/data/completion_preference.yaml"
 
 PROBE_LAYERS = [25, 32, 39, 46, 53]
+KV_LAYERS = list(range(15, 51))  # layers 15–50 inclusive
+KV_PROBE_LAYER = 32  # use L32 probe direction for all KV layers
 KV_MULTIPLIERS = [-0.01, -0.007, -0.005, -0.003, 0.003, 0.005, 0.007, 0.01]
 ACT_PATCH_MULTIPLIERS = [-0.05, -0.03, -0.02, 0.02, 0.03, 0.05]
 N_PAIRS = 200
@@ -74,18 +79,25 @@ def append_checkpoint(rows: list[dict]) -> None:
 
 
 def pair_to_tasks(pair: dict) -> tuple[Task, Task]:
-    # origin is unused in the steering pipeline; ALPACA is a placeholder
     task_a = Task(prompt=pair["task_a_text"], origin=OriginDataset.ALPACA, id=pair["task_a"], metadata={})
     task_b = Task(prompt=pair["task_b_text"], origin=OriginDataset.ALPACA, id=pair["task_b"], metadata={})
     return task_a, task_b
 
 
 def parse_choice(response_format, response: str) -> str:
-    """Parse using CompletionChoiceFormat.parse() — returns 'a', 'b', or 'refusal'."""
     try:
         return asyncio.run(response_format.parse(response))
     except Exception:
         return "refusal"
+
+
+def clone_cache(cache: DynamicCache) -> DynamicCache:
+    """Clone a DynamicCache so modifications don't affect the original."""
+    cloned = DynamicCache()
+    for layer_idx in range(len(cache)):
+        layer = cache.layers[layer_idx]
+        cloned.update(layer.keys.clone(), layer.values.clone(), layer_idx)
+    return cloned
 
 
 def run_experiment():
@@ -104,35 +116,38 @@ def run_experiment():
     hf_model = HuggingFaceModel("gemma-3-27b", max_new_tokens=256)
     print(f"Model loaded in {time.time() - t0:.0f}s")
 
-    # Load all probes
+    # Load L32 probe for KV cache condition
+    _, kv_direction = load_probe_direction(MANIFEST_DIR, f"ridge_L{KV_PROBE_LAYER}")
+
+    # Pre-compute V-space projections for KV cache: L32 direction through layers 15-50
+    print(f"Projecting L{KV_PROBE_LAYER} direction through W_v at layers {KV_LAYERS[0]}-{KV_LAYERS[-1]}...")
+    v_dirs: dict[int, torch.Tensor] = {}
+    for layer in KV_LAYERS:
+        v_dirs[layer] = project_to_v_space(hf_model.model, layer, kv_direction)
+
+    # Load all probes for activation patching
     probes: dict[int, np.ndarray] = {}
     for layer in PROBE_LAYERS:
         _, direction = load_probe_direction(MANIFEST_DIR, f"ridge_L{layer}")
         probes[layer] = direction
 
-    # Pre-compute V-space projections for KV cache condition
-    import torch
-    v_dirs: dict[int, torch.Tensor] = {}
-    for layer in PROBE_LAYERS:
-        v_dirs[layer] = project_to_v_space(hf_model.model, layer, probes[layer])
-
-    # Compute mean norm at L25 for coefficient scaling
+    # Compute mean norm at L32 for coefficient scaling
     norms = []
     for pair in pairs[:30]:
         task_a, task_b = pair_to_tasks(pair)
         prompt_data = builder.build(task_a, task_b)
-        results = hf_model.get_activations(prompt_data.messages, [25], ["task_mean"])
-        norms.append(float(np.linalg.norm(results["task_mean"][25])))
+        results = hf_model.get_activations(prompt_data.messages, [KV_PROBE_LAYER], ["task_mean"])
+        norms.append(float(np.linalg.norm(results["task_mean"][KV_PROBE_LAYER])))
     mean_norm = float(np.mean(norms))
-    print(f"Mean norm L25: {mean_norm:.0f}")
+    print(f"Mean norm L{KV_PROBE_LAYER}: {mean_norm:.0f}")
 
     t_start = time.time()
     generated = 0
     skipped = 0
 
-    # ── Condition 1: KV cache V-only, 5 probe layers ──
+    # ── Condition 1: KV cache V-only, layers 15-50 with L32 direction ──
     print(f"\n{'='*60}")
-    print("Condition: kv_cache_v_5layer")
+    print(f"Condition: kv_cache_v_multilayer (L{KV_LAYERS[0]}-{KV_LAYERS[-1]}, L{KV_PROBE_LAYER} direction)")
     print(f"{'='*60}")
 
     for pair_idx, pair in enumerate(pairs):
@@ -151,7 +166,6 @@ def run_experiment():
             response_format.task_a_prompt = pres_a.prompt
             response_format.task_b_prompt = pres_b.prompt
 
-            # Find spans once per pair/ordering
             formatted = hf_model.format_messages(messages)
             try:
                 a_span, b_span = find_pairwise_task_spans(
@@ -162,8 +176,24 @@ def run_experiment():
             except ValueError:
                 span_ok = False
 
+            # Check if any multiplier needs work for this pair/ordering
+            any_needed = False
             for mult in KV_MULTIPLIERS:
-                key = (pair_id, -1, mult, "kv_cache_v_5layer", ordering)
+                key = (pair_id, -1, mult, "kv_cache_v_multilayer", ordering)
+                if checkpoint_counts[key] < N_TRIALS:
+                    any_needed = True
+                    break
+
+            if not any_needed or not span_ok:
+                if not any_needed:
+                    skipped += len(KV_MULTIPLIERS) * N_TRIALS
+                continue
+
+            # Prefill ONCE per pair/ordering
+            base_cache, input_ids = hf_model.prefill_with_hooks(messages, [])
+
+            for mult in KV_MULTIPLIERS:
+                key = (pair_id, -1, mult, "kv_cache_v_multilayer", ordering)
                 if checkpoint_counts[key] >= N_TRIALS:
                     skipped += N_TRIALS
                     continue
@@ -171,13 +201,9 @@ def run_experiment():
                 coef = mean_norm * mult
                 needed = N_TRIALS - checkpoint_counts[key]
 
-                if not span_ok:
-                    # Can't do KV cache without spans — skip
-                    continue
-
-                # Clean prefill, then modify V at all 5 probe layers
-                cache, input_ids = hf_model.prefill_with_hooks(messages, [])
-                for layer in PROBE_LAYERS:
+                # Clone the base cache, then modify the clone
+                cache = clone_cache(base_cache)
+                for layer in KV_LAYERS:
                     modify_cache_v_at_positions(cache, layer, a_span[0], a_span[1], v_dirs[layer], +coef)
                     modify_cache_v_at_positions(cache, layer, b_span[0], b_span[1], v_dirs[layer], -coef)
 
@@ -188,7 +214,6 @@ def run_experiment():
                 rows = []
                 for sample_idx, response in enumerate(responses):
                     choice_presented = parse_choice(response_format, response)
-
                     if choice_presented in ("a", "b"):
                         choice_original = choice_presented if ordering == 0 else ("b" if choice_presented == "a" else "a")
                     else:
@@ -201,7 +226,7 @@ def run_experiment():
                         "coefficient": coef,
                         "multiplier": mult,
                         "layer": -1,
-                        "condition": "kv_cache_v_5layer",
+                        "condition": "kv_cache_v_multilayer",
                         "sample_idx": checkpoint_counts[key] + sample_idx,
                         "ordering": ordering,
                         "choice_original": choice_original,
@@ -278,7 +303,6 @@ def run_experiment():
                     rows = []
                     for sample_idx, response in enumerate(responses):
                         choice_presented = parse_choice(response_format, response)
-
                         if choice_presented in ("a", "b"):
                             choice_original = choice_presented if ordering == 0 else ("b" if choice_presented == "a" else "a")
                         else:
@@ -317,5 +341,5 @@ def run_experiment():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--resume", action="store_true")
-    parser.parse_args()  # just for --help; resume is always supported via checkpoint
+    parser.parse_args()
     run_experiment()
