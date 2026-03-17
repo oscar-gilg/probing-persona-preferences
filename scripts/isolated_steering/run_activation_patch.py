@@ -8,7 +8,6 @@ Usage:
 
 from __future__ import annotations
 
-import asyncio
 import json
 import random
 import time
@@ -71,14 +70,9 @@ def pair_to_tasks(pair: dict) -> tuple[Task, Task]:
     return task_a, task_b
 
 
-_loop = asyncio.new_event_loop()
-
-
 def parse_choice(response_format, response: str) -> str:
-    try:
-        return _loop.run_until_complete(response_format.parse(response))
-    except Exception:
-        return "refusal"
+    result = response_format.parse_sync(response)
+    return "refusal" if result == "parse_fail" else result
 
 
 def main():
