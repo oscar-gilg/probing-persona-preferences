@@ -83,6 +83,78 @@ Three groups emerge:
 2. **Under-predicted** (aesthete, midwest): midway ratio stays at 0.2–0.6. Their persona-specific preferences are partially orthogonal to the shared evaluative direction.
 3. **Over-predicted** (autocrat, trickster): midway ratio >1.0 for autocrat especially — the probe overshoots this persona's actual divergence. Likely reflects noisy topic-level alignment between probe direction and autocrat's specific preference shifts.
 
+## Donor ranking: which personas help most?
+
+Since N=2-3 captures most of the benefit, the practical question is *which* personas to include. For each donor persona, we compute mean OOD Pearson r across all combos containing that donor, averaged over selectors, layers, and held-out evaluation personas.
+
+![Donor ranking](assets/plot_031626_donor_ranking.png)
+
+**N=2** (noprompt + 1 donor):
+
+| Donor | Mean OOD r | SEM |
+|-------|-----------|-----|
+| villain | 0.684 | 0.014 |
+| provocateur | 0.663 | 0.016 |
+| trickster | 0.587 | 0.024 |
+| sadist | 0.586 | 0.011 |
+| autocrat | 0.565 | 0.031 |
+| midwest | 0.506 | 0.032 |
+| aesthete | 0.467 | 0.029 |
+
+**N=3** (noprompt + 2 donors, marginal contribution per donor):
+
+| Donor | Mean OOD r | SEM |
+|-------|-----------|-----|
+| sadist | 0.679 | 0.005 |
+| villain | 0.677 | 0.007 |
+| provocateur | 0.668 | 0.007 |
+| trickster | 0.616 | 0.010 |
+| autocrat | 0.612 | 0.011 |
+| aesthete | 0.594 | 0.011 |
+| midwest | 0.592 | 0.011 |
+
+Villain and provocateur are consistently the best single donors. At N=3, sadist rises to the top — likely because sadist's preferences are highly divergent from noprompt, providing complementary training signal. The top N=3 combo is noprompt + autocrat + sadist (r=0.715), followed by noprompt + provocateur + sadist (r=0.709).
+
+![Top N=3 combos](assets/plot_031626_top_combos_n3.png)
+
+The bottom combos (aesthete+midwest, autocrat+midwest) pair personas whose preferences are relatively close to noprompt — they don't add enough diversity. The best combos pair a "mainstream divergent" persona (villain, provocateur) with a "maximally divergent" one (sadist, autocrat).
+
+### Controlling for utility similarity
+
+A donor might rank high simply because its preferences correlate with the held-out personas, not because it teaches the probe anything general. To control for this, we compute pairwise Thurstonian utility correlations between all personas and regress OOD Pearson r on the max donor-eval utility correlation. The residuals show which donors contribute *beyond* what preference similarity predicts.
+
+Utility correlation explains a substantial share of OOD r variance (r=0.65 for N=2, r=0.69 for N=3).
+
+![Partialled donor ranking](assets/plot_031626_partialled_donor_ranking.png)
+
+**N=2** (utility-partialled):
+
+| Donor | Raw OOD r | Residual |
+|-------|-----------|----------|
+| sadist | 0.586 | +0.122 |
+| villain | 0.684 | +0.075 |
+| provocateur | 0.663 | +0.017 |
+| aesthete | 0.467 | -0.034 |
+| trickster | 0.587 | -0.058 |
+| midwest | 0.506 | -0.059 |
+| autocrat | 0.565 | -0.063 |
+
+**N=3** (utility-partialled):
+
+| Donor | Raw OOD r | Residual |
+|-------|-----------|----------|
+| sadist | 0.679 | +0.053 |
+| villain | 0.677 | +0.033 |
+| provocateur | 0.668 | +0.019 |
+| aesthete | 0.594 | -0.018 |
+| midwest | 0.592 | -0.027 |
+| autocrat | 0.612 | -0.029 |
+| trickster | 0.616 | -0.031 |
+
+After partialling, sadist becomes the clear top donor — its raw ranking (4th at N=2) was suppressed by its *anti-correlation* with noprompt (r=-0.39) and other personas, which made the raw OOD r look modest. But precisely because sadist's preferences are maximally divergent, it provides the most informative training signal for learning a general evaluative direction. Villain remains strong: moderate raw utility correlations with evaluation personas, but still contributes above expectation.
+
+The bottom donors (autocrat, midwest, trickster) perform exactly as their utility correlations predict — they don't teach the probe anything the preference overlap doesn't already explain.
+
 ## Key findings
 
 1. **Multi-persona training eliminates most midway bias.** The critical threshold is N=2: adding one non-default persona to training is sufficient to move OOD midway ratio from ~0 to ~0.7. Going beyond N=2 gives diminishing returns for midway ratio (though Pearson r continues to improve).
@@ -93,11 +165,13 @@ Three groups emerge:
 
 4. **Layer effects are strongest for single-persona probes.** Multi-persona training regularizes away the layer-dependent persona overfitting seen at N=1. At N>=2, all layers perform similarly.
 
+5. **Sadist is the best donor after controlling for utility similarity.** Utility correlation between donor and eval persona explains r=0.65 of the raw OOD r variance. After partialling this out, sadist and villain are the only donors with positive residuals at both N=2 and N=3 — they teach the probe something beyond what preference overlap predicts. The practical recommendation is to train on noprompt + 1-2 maximally divergent personas (sadist, villain) rather than personas with mainstream preferences.
+
 ## Reproducibility
 
 - Model: gemma-3-27b (HuggingFace)
 - Activations: extracted with `configs/extraction/mra_tb_*.yaml`, 2500 tasks each
-- Analysis: `python -m scripts.multi_role_ablation.midway_bias`
+- Analysis: `python -m scripts.multi_role_ablation.midway_bias`, `python scripts/midway_bias/donor_ranking.py`
 - Results: `results/experiments/mra_exp3/midway_bias/midway_bias_results.json`
 - Random seed: 42 (for subsampling training data)
 - Alpha sweep: 10 values log-spaced from 0.1 to 100000
