@@ -7,7 +7,7 @@ from typing import Callable, Iterator
 
 import torch
 import numpy as np
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoModelForImageTextToText, AutoTokenizer
 from transformers.cache_utils import DynamicCache
 
 from src.models.base import (
@@ -53,7 +53,8 @@ class HuggingFaceModel:
             resolved_name = model_name
         self.model_name = resolved_name
         self.max_new_tokens = max_new_tokens
-        self.device = device
+        # device_map="auto" distributes across GPUs; tensor placement uses "cuda"
+        self.device = "cuda" if device == "auto" else device
 
         torch_dtype = getattr(torch, dtype)
         load_kwargs: dict = dict(
@@ -67,9 +68,14 @@ class HuggingFaceModel:
                 resolved_name, attn_implementation=attn_implementation, **load_kwargs,
             )
         except ValueError:
-            self.model = AutoModelForCausalLM.from_pretrained(
-                resolved_name, attn_implementation="eager", **load_kwargs,
-            )
+            try:
+                self.model = AutoModelForCausalLM.from_pretrained(
+                    resolved_name, attn_implementation="eager", **load_kwargs,
+                )
+            except ValueError:
+                self.model = AutoModelForImageTextToText.from_pretrained(
+                    resolved_name, attn_implementation="eager", **load_kwargs,
+                )
         self.model.eval()
         tokenizer_kwargs = {"subfolder": subfolder} if subfolder else {}
         self.tokenizer = AutoTokenizer.from_pretrained(resolved_name, **tokenizer_kwargs)
@@ -848,6 +854,25 @@ class HuggingFaceModel:
             outputs = self.model(input_ids, use_cache=True)
 
         return outputs.past_key_values, input_ids
+
+    @torch.inference_mode()
+    def recompute_suffix(
+        self,
+        cache: DynamicCache,
+        input_ids: torch.Tensor,
+        recompute_from: int,
+    ) -> DynamicCache:
+        """Re-run forward pass for tokens [recompute_from, seq_len) attending to the cache at [0, recompute_from)."""
+        truncated = DynamicCache()
+        for layer_idx in range(len(cache)):
+            layer = cache.layers[layer_idx]
+            k = layer.keys[:, :, :recompute_from, :].clone()
+            v = layer.values[:, :, :recompute_from, :].clone()
+            truncated.update(k, v, layer_idx)
+
+        suffix_ids = input_ids[:, recompute_from:]
+        outputs = self.model(suffix_ids, past_key_values=truncated, use_cache=True)
+        return outputs.past_key_values
 
     @torch.inference_mode()
     def generate_from_cache(
