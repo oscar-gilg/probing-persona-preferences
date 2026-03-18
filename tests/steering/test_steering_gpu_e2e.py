@@ -23,7 +23,7 @@ from src.steering.client import SteeredHFClient
 
 pytestmark = pytest.mark.gpu
 
-MODEL_NAME = "gemma-3-1b-it"
+MODEL_NAME = "gemma-3-1b"
 HIDDEN_DIM = 1152
 STEER_LAYER = 13  # roughly middle of 26 layers
 MAX_NEW_TOKENS = 32
