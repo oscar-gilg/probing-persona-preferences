@@ -147,8 +147,9 @@ def main():
                         continue
 
                     coef = mean_norm * mult
+                    effective_coef = coef if ordering == 0 else -coef
                     needed = N_TRIALS - checkpoint_counts[key]
-                    client = base_client.with_coefficient(coef)
+                    client = base_client.with_coefficient(effective_coef)
 
                     try:
                         responses = client.generate_n(

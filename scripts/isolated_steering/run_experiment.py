@@ -196,13 +196,15 @@ def run_experiment():
                     continue
 
                 coef = mean_norm * mult
+                # Negate coefficient for ordering=1: task positions are swapped
+                effective_coef = coef if ordering == 0 else -coef
                 needed = N_TRIALS - checkpoint_counts[key]
 
                 # Clone the base cache, then modify the clone
                 cache = clone_cache(base_cache)
                 for layer in KV_LAYERS:
-                    modify_cache_v_at_positions(cache, layer, a_span[0], a_span[1], v_dirs[layer], +coef)
-                    modify_cache_v_at_positions(cache, layer, b_span[0], b_span[1], v_dirs[layer], -coef)
+                    modify_cache_v_at_positions(cache, layer, a_span[0], a_span[1], v_dirs[layer], +effective_coef)
+                    modify_cache_v_at_positions(cache, layer, b_span[0], b_span[1], v_dirs[layer], -effective_coef)
 
                 responses = hf_model.generate_from_cache(
                     cache, input_ids, temperature=1.0, num_return_sequences=needed,
@@ -280,8 +282,11 @@ def run_experiment():
                         continue
 
                     coef = mean_norm * mult
+                    # Negate coefficient for ordering=1: task positions are swapped,
+                    # so +coef would steer toward the wrong task in original space
+                    effective_coef = coef if ordering == 0 else -coef
                     needed = N_TRIALS - checkpoint_counts[key]
-                    client = base_client.with_coefficient(coef)
+                    client = base_client.with_coefficient(effective_coef)
 
                     try:
                         responses = client.generate_n(
