@@ -119,7 +119,7 @@ ssh root@64.247.201.30 -p 10318 -i ~/.ssh/id_ed25519 "mkdir -p /workspace/Prefer
 
 When writing experiment scripts that measure pairwise preferences (or any other measurement type that already exists in `src/measurement/`):
 - NEVER invent new prompt templates, response parsers, or hardcoded temperatures. Reuse the existing infrastructure in `src/measurement/elicitation/` (prompt builders, semantic parser, response formats).
-- The canonical pairwise preference template asks the model to complete the chosen task (max_new_tokens=256), and choice is determined by a semantic parser (LLM judge). Do not replace this with "respond with only a/b" + startswith parsing — it changes what's being measured.
+- The canonical pairwise preference template asks the model to complete the chosen task (max_new_tokens >= 16), and choice is determined by a semantic parser (LLM judge). Do not replace this with "respond with only a/b" + startswith parsing — it changes what's being measured.
 - If steering or other constraints require a different elicitation method, document the deviation explicitly in the experiment spec and report, and justify why the standard method can't be used.
 
 ## Semantic Parsing Policy

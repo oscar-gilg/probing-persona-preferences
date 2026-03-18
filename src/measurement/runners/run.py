@@ -55,6 +55,7 @@ def parse_args() -> argparse.Namespace:
                         help="Experiment ID for tracking (auto-generated if not provided)")
     parser.add_argument("--mode", type=str, default=None,
                         help="Override preference_mode (e.g., completion_generation, post_task_stated)")
+    parser.add_argument("--resume", action="store_true", help="Resume interrupted active learning run from checkpoint")
     parser.add_argument("--dry-run", action="store_true", help="List experiments without running")
     parser.add_argument("--debug", action="store_true", help="Show example errors for each failure category")
     return parser.parse_args()
@@ -67,6 +68,7 @@ async def run_experiments(
     model_overrides: list[str] | None = None,
     system_prompt_override: str | None = None,
     mode_override: str | None = None,
+    resume: bool = False,
 ) -> dict[str, dict | Exception]:
     """Run experiments with concurrent progress display.
 
@@ -100,6 +102,9 @@ async def run_experiments(
             # CLI experiment_id overrides config file
             if experiment_id is not None:
                 overrides["experiment_id"] = experiment_id
+
+            if resume:
+                overrides["resume"] = True
 
             # CLI mode overrides config file
             effective_mode = base_config.preference_mode
@@ -226,7 +231,7 @@ def main():
     results = asyncio.run(run_experiments(
         args.configs, semaphore, experiment_id=exp_id,
         model_overrides=args.model, system_prompt_override=args.system_prompt,
-        mode_override=args.mode,
+        mode_override=args.mode, resume=args.resume,
     ))
     print_summary(results, debug=args.debug)
 

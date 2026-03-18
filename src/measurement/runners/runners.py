@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import logging
 import math
 from collections.abc import Callable
 from typing import TYPE_CHECKING
@@ -50,6 +51,7 @@ from src.fitting.thurstonian_fitting.active_learning import (
     select_next_pairs,
     check_convergence,
 )
+from src.fitting.thurstonian_fitting.active_learning_checkpoint import save_checkpoint, load_checkpoint, checkpoint_exists
 from src.measurement.runners.utils.experiment_utils import (
     setup_experiment,
     parse_scale_from_template,
@@ -62,6 +64,8 @@ from src.measurement.runners.utils.experiment_utils import (
 from src.measurement.runners.utils.runner_utils import RunnerStats, _get_activation_completions_path
 from src.models import get_client
 from src.models.registry import should_capture_reasoning
+
+logger = logging.getLogger(__name__)
 
 
 def _get_completion_client(config, ctx):
@@ -505,8 +509,12 @@ async def run_active_learning_async(
     client=None,
 ) -> dict:
     """Run active learning with shared semaphore. Supports both pre-task and post-task modes."""
+    # Pop resume before setup_experiment — it's a runtime flag, not config
+    overrides = dict(config_overrides) if config_overrides else {}
+    resume = overrides.pop("resume", False)
+
     expected_mode = "post_task_active_learning" if post_task else "pre_task_active_learning"
-    ctx = setup_experiment(config_path, expected_mode=expected_mode, config_overrides=config_overrides, client=client)
+    ctx = setup_experiment(config_path, expected_mode=expected_mode, config_overrides=overrides or None, client=client)
     config, al = ctx.config, ctx.config.active_learning
     model_short = model_short_name(ctx.client.canonical_model_name)
     measurement_type = "post_task_active_learning" if post_task else "pre_task_active_learning"
@@ -549,8 +557,8 @@ async def run_active_learning_async(
             seed_suffix = f"_seed{cfg.seed}" if cfg.seed is not None else ""
             run_name = f"{cfg.template.name}_{model_short}_{cfg.response_format}_{cfg.order}{seed_suffix}{run_name_suffix}"
 
-        # Skip if already done in experiment store
-        if exp_store and exp_store.exists(measurement_type, run_name):
+        # Skip if already done in experiment store (unless resuming)
+        if exp_store and exp_store.exists(measurement_type, run_name) and not resume:
             stats.mark_skipped()
             if progress_callback:
                 progress_callback(stats)
@@ -578,14 +586,36 @@ async def run_active_learning_async(
                 completion_lookup=_completion_lookup,
             )
 
-        # Always start with d-regular graph for broad coverage
-        # Cache handles skipping already-measured pairs at query time
-        pairs_to_query = generate_d_regular_pairs(tasks_for_learning, al.initial_degree, rng)
-
-        pairs_to_query = apply_pair_order(pairs_to_query, cfg.order, config.pair_order_seed, config.include_reverse_order)
-
         rank_correlations = []
         config_stats = MeasurementStats()
+        start_iteration = 0
+
+        # Compute the checkpoint directory (same path as final run_dir)
+        checkpoint_dir = exp_store.base_dir / measurement_type / run_name
+
+        # Resume from checkpoint
+        if resume and checkpoint_exists(checkpoint_dir):
+            ckpt = load_checkpoint(checkpoint_dir)
+            restored = reconstruct_measurements(ckpt["comparisons"], ctx.task_lookup)
+            state.add_comparisons(restored)
+            state.iteration = ckpt["iteration"]
+            rank_correlations = ckpt["rank_correlations"]
+            state.fit(**build_fit_kwargs(config, max_iter))
+            start_iteration = ckpt["iteration"]
+
+            pairs_to_query = select_next_pairs(
+                state, batch_size=al.batch_size,
+                p_threshold=al.p_threshold, q_threshold=al.q_threshold, rng=rng,
+            )
+            pairs_to_query = apply_pair_order(pairs_to_query, cfg.order, config.pair_order_seed, config.include_reverse_order)
+            logger.info("Resumed from checkpoint at iteration %d with %d comparisons", start_iteration, len(state.comparisons))
+        elif resume:
+            raise FileNotFoundError(f"--resume passed but no checkpoint.yaml found in {checkpoint_dir}")
+        else:
+            # Always start with d-regular graph for broad coverage
+            # Cache handles skipping already-measured pairs at query time
+            pairs_to_query = generate_d_regular_pairs(tasks_for_learning, al.initial_degree, rng)
+            pairs_to_query = apply_pair_order(pairs_to_query, cfg.order, config.pair_order_seed, config.include_reverse_order)
 
         def on_chunk(chunk_stats: MeasurementStats, chunk: int, total_chunks: int):
             stats.successes = config_stats.api_successes + chunk_stats.api_successes
@@ -596,7 +626,10 @@ async def run_active_learning_async(
             if progress_callback:
                 progress_callback(stats)
 
-        for iteration in range(al.max_iterations):
+        consecutive_api_failures = 0
+        aborted_api_failures = False
+
+        for iteration in range(start_iteration, al.max_iterations):
             if not pairs_to_query:
                 break
 
@@ -624,9 +657,47 @@ async def run_active_learning_async(
             if progress_callback:
                 progress_callback(stats)
 
+            # Check for API-dominated iteration (false convergence detection)
+            iter_total = iter_stats.api_successes + iter_stats.api_failures
+            api_dominated = iter_total > 0 and iter_stats.api_side_failure_count / iter_total > 0.5
+
+            if api_dominated:
+                consecutive_api_failures += 1
+                logger.warning(
+                    "Iteration %d: %d/%d API-side failures (%.0f%%) — skipping convergence check",
+                    iteration + 1, iter_stats.api_side_failure_count, iter_total,
+                    100 * iter_stats.api_side_failure_count / iter_total,
+                )
+                if consecutive_api_failures >= 3:
+                    logger.error(
+                        "Aborting: %d consecutive API-failure-dominated iterations", consecutive_api_failures,
+                    )
+                    aborted_api_failures = True
+                    break
+            else:
+                consecutive_api_failures = 0
+
             state.add_comparisons(measurements)
             state.iteration = iteration + 1
             state.fit(**build_fit_kwargs(config, max_iter))
+
+            # Save checkpoint after every iteration (before any break)
+            ckpt_comparisons = [
+                {"task_a": m.task_a.id, "task_b": m.task_b.id, "choice": m.choice}
+                for m in state.comparisons
+            ]
+            save_checkpoint(
+                checkpoint_dir,
+                iteration=state.iteration,
+                comparisons_dicts=ckpt_comparisons,
+                rank_correlations=rank_correlations,
+            )
+
+            if api_dominated:
+                if consecutive_api_failures >= 3:
+                    aborted_api_failures = True
+                    break
+                continue
 
             converged, correlation = check_convergence(state, al.convergence_threshold)
             if math.isnan(correlation):
@@ -675,7 +746,8 @@ async def run_active_learning_async(
             "n_tasks": config.n_tasks,
             "seed": al.seed,
             "generation_seed": cfg.seed,
-            "converged": bool(final_converged),
+            "converged": bool(final_converged) and not aborted_api_failures,
+            "aborted_api_failures": aborted_api_failures,
             "n_iterations": state.iteration,
             "unique_pairs_queried": len(state.sampled_pairs),
             "total_comparisons": len(state.comparisons),
@@ -698,6 +770,11 @@ async def run_active_learning_async(
             )
             # Save Thurstonian fit to experiment store
             save_thurstonian(state.current_fit, run_dir / "thurstonian.yaml", "active_learning", run_config)
+
+        # Clean up checkpoint on successful completion
+        ckpt_path = checkpoint_dir / "checkpoint.yaml"
+        if ckpt_path.exists():
+            ckpt_path.unlink()
 
         if progress_callback:
             progress_callback(stats)

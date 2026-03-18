@@ -10,7 +10,7 @@ from src.measurement.storage.base import model_short_name
 from src.measurement.storage.unified_cache import RevealedCache, template_config_from_template
 from src.measurement.elicitation.prompt_templates.template import PromptTemplate
 from src.task_data import Task
-from src.types import BinaryPreferenceMeasurement, MeasurementBatch, MeasurementFailure, Message, PreferenceType
+from src.types import API_SIDE_FAILURE_CATEGORIES, BinaryPreferenceMeasurement, MeasurementBatch, MeasurementFailure, Message, PreferenceType
 from src.measurement.storage.failures import FailureLog
 
 ResponseFormatName = Literal["regex", "tool_use"]
@@ -32,6 +32,10 @@ class MeasurementStats:
     @property
     def total_successes(self) -> int:
         return self.cache_hits + self.api_successes
+
+    @property
+    def api_side_failure_count(self) -> int:
+        return sum(1 for f in self.failures if f.category in API_SIDE_FAILURE_CATEGORIES)
 
     def failure_counts(self) -> dict[str, int]:
         """Get failure counts by category."""

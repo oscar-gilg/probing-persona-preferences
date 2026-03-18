@@ -100,6 +100,14 @@ class FailureCategory(Enum):
     OTHER = "other"
 
 
+API_SIDE_FAILURE_CATEGORIES = frozenset({
+    FailureCategory.API_ERROR,
+    FailureCategory.TIMEOUT,
+    FailureCategory.RATE_LIMIT,
+    FailureCategory.CONTENT_FILTER,
+})
+
+
 @dataclass
 class MeasurementFailure:
     """Structured failure information for a measurement attempt."""
