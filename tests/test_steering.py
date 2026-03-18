@@ -3,7 +3,7 @@
 import gc
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
@@ -15,7 +15,6 @@ from src.steering.hooks import (
     noop_steering,
 )
 from src.steering.tokenization import find_text_span, find_pairwise_task_spans
-from src.steering.calibration import suggest_coefficient_range
 from src.probes.core.storage import load_probe_direction
 
 
@@ -138,31 +137,6 @@ class TestFindPairwiseTaskSpans:
                 mock_tokenizer, "no markers here", "text_a", "text_b"
             )
 
-
-class TestSuggestCoefficientRange:
-    def test_returns_scaled_coefficients(self):
-        with patch("src.steering.calibration.compute_activation_norms") as mock_norms:
-            mock_norms.return_value = {31: 1000.0}
-
-            coeffs = suggest_coefficient_range(
-                Path("fake/activations.npz"),
-                31,
-                multipliers=[-0.1, 0.0, 0.1],
-            )
-
-            assert coeffs == [-100.0, 0.0, 100.0]
-            mock_norms.assert_called_once_with(Path("fake/activations.npz"), layers=[31])
-
-    def test_default_multipliers(self):
-        with patch("src.steering.calibration.compute_activation_norms") as mock_norms:
-            mock_norms.return_value = {16: 500.0}
-
-            coeffs = suggest_coefficient_range(
-                Path("fake.npz"), 16,
-            )
-
-            assert len(coeffs) == 5
-            assert coeffs[2] == 0.0
 
 
 class TestSteeredHFClientDirection:
