@@ -56,14 +56,14 @@ def main():
     print(f"Mean norm L{LAYER}: {mean_norm:.0f}")
 
     # Test both conditions
-    for cond_name in ["kv_cache_differential", "activation_patch"]:
+    for injection in ["post_hoc", "hook"]:
         base_client = SteeredHFClient(
             hf_model, layer=LAYER, steering_direction=direction,
-            coefficient=0, steering_mode=cond_name,
+            coefficient=0, steering_mode="cache", cache_injection=injection,
         )
 
         print(f"\n{'='*60}")
-        print(f"Condition: {cond_name}")
+        print(f"Condition: cache/{injection}")
         print(f"{'='*60}")
 
         for mult in MULTIPLIERS:

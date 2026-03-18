@@ -18,8 +18,6 @@ from src.steering.hooks import (
 from src.steering.kv_cache import combine_caches, modify_cache_v_at_positions, project_to_v_space
 from src.steering.tokenization import find_pairwise_task_spans
 
-CACHE_STEERING_MODES = {"kv_cache_differential", "activation_patch"}
-
 
 class SteeredHFClient:
     """HuggingFaceModel with steering, duck-typed as OpenAICompatibleClient."""
@@ -31,6 +29,8 @@ class SteeredHFClient:
         steering_direction: np.ndarray,
         coefficient: float,
         steering_mode: str = "all_tokens",
+        cache_injection: str = "hook",
+        recompute_suffix: bool = False,
         a_marker: str = "Task A:",
         b_marker: str = "Task B:",
     ):
@@ -39,6 +39,14 @@ class SteeredHFClient:
         self._direction = steering_direction
         self.coefficient = coefficient
         self.steering_mode = steering_mode
+        if steering_mode == "cache" and cache_injection not in ("hook", "post_hoc"):
+            raise ValueError(f"cache_injection must be 'hook' or 'post_hoc', got {cache_injection!r}")
+        if steering_mode != "cache" and (cache_injection != "hook" or recompute_suffix):
+            raise ValueError(
+                "cache_injection and recompute_suffix are only valid with steering_mode='cache'"
+            )
+        self.cache_injection = cache_injection
+        self.recompute_suffix = recompute_suffix
         self.a_marker = a_marker
         self.b_marker = b_marker
 
@@ -64,6 +72,8 @@ class SteeredHFClient:
             self._direction,
             coefficient,
             self.steering_mode,
+            self.cache_injection,
+            self.recompute_suffix,
             self.a_marker,
             self.b_marker,
         )
@@ -102,22 +112,20 @@ class SteeredHFClient:
         if self.coefficient == 0:
             return self.hf_model.generate_n(messages, n=n, temperature=temperature)
 
-        if self.steering_mode in CACHE_STEERING_MODES:
+        if self.steering_mode == "cache":
             if task_prompts is None or len(task_prompts) != 2:
                 raise ValueError(
                     f"Cache steering modes require exactly 2 task_prompts, got {task_prompts}"
                 )
             a_span, b_span = self._resolve_task_spans(messages, task_prompts)
-            if self.steering_mode == "kv_cache_differential":
-                return self._generate_kv_cache_differential(messages, a_span, b_span, temperature, n)
-            return self._generate_activation_patch(messages, a_span, b_span, temperature, n)
+            return self._generate_cache_steered(messages, a_span, b_span, temperature, n)
 
         hook = self._resolve_hook(messages, task_prompts)
         return self.hf_model.generate_with_hook_n(
             messages=messages, layer=self.layer, hook=hook, n=n, temperature=temperature,
         )
 
-    def _generate_kv_cache_differential(
+    def _generate_cache_steered(
         self,
         messages: list,
         a_span: tuple[int, int],
@@ -125,23 +133,19 @@ class SteeredHFClient:
         temperature: float,
         n: int,
     ) -> list[str]:
-        """Clean prefill, then modify V cache at task positions, then generate."""
-        cache, input_ids = self.hf_model.prefill_with_hooks(messages, [])
-        v_dir = project_to_v_space(self.hf_model.model, self.layer, self._direction)
-        modify_cache_v_at_positions(cache, self.layer, a_span[0], a_span[1], v_dir, +self.coefficient)
-        modify_cache_v_at_positions(cache, self.layer, b_span[0], b_span[1], v_dir, -self.coefficient)
+        if self.cache_injection == "hook":
+            combined, input_ids = self._build_hook_injected_cache(messages, a_span, b_span)
+        else:
+            combined, input_ids = self._build_post_hoc_cache(messages, a_span, b_span)
+
+        if self.recompute_suffix and b_span[1] < input_ids.shape[1]:
+            combined = self.hf_model.recompute_suffix(combined, input_ids, b_span[1])
+
         return self.hf_model.generate_from_cache(
-            cache, input_ids, temperature=temperature, num_return_sequences=n,
+            combined, input_ids, temperature=temperature, num_return_sequences=n,
         )
 
-    def _generate_activation_patch(
-        self,
-        messages: list,
-        a_span: tuple[int, int],
-        b_span: tuple[int, int],
-        temperature: float,
-        n: int,
-    ) -> list[str]:
+    def _build_hook_injected_cache(self, messages, a_span, b_span):
         """Two steered prefills, combine caches so each position sees only its own steering."""
         pos_hook = position_selective_steering(self._steering_tensor, a_span[0], a_span[1])
         neg_hook = position_selective_steering(-self._steering_tensor, b_span[0], b_span[1])
@@ -150,9 +154,15 @@ class SteeredHFClient:
         cache_b, _ = self.hf_model.prefill_with_hooks(messages, [(self.layer, neg_hook)])
 
         combined = combine_caches(cache_a, cache_b, b_span[0], b_span[1])
-        return self.hf_model.generate_from_cache(
-            combined, input_ids, temperature=temperature, num_return_sequences=n,
-        )
+        return combined, input_ids
+
+    def _build_post_hoc_cache(self, messages, a_span, b_span):
+        """Clean prefill, then modify V cache at task positions."""
+        cache, input_ids = self.hf_model.prefill_with_hooks(messages, [])
+        v_dir = project_to_v_space(self.hf_model.model, self.layer, self._direction)
+        modify_cache_v_at_positions(cache, self.layer, a_span[0], a_span[1], v_dir, +self.coefficient)
+        modify_cache_v_at_positions(cache, self.layer, b_span[0], b_span[1], v_dir, -self.coefficient)
+        return cache, input_ids
 
     def _run_batch(
         self,

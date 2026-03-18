@@ -24,7 +24,7 @@ import pytest
 import torch
 
 from src.models.huggingface_model import HuggingFaceModel
-from src.steering.client import SteeredHFClient, CACHE_STEERING_MODES
+from src.steering.client import SteeredHFClient
 from src.steering.hooks import (
     all_tokens_steering,
     autoregressive_steering,
@@ -221,13 +221,28 @@ class TestClientDispatchPaths:
 
     def test_cache_mode_requires_task_prompts(self, model):
         """Cache steering modes without task_prompts → ValueError."""
-        for mode in CACHE_STEERING_MODES:
+        for injection in ["hook", "post_hoc"]:
             c = SteeredHFClient(
                 model, layer=STEER_LAYER, steering_direction=DIRECTION,
-                coefficient=100.0, steering_mode=mode,
+                coefficient=100.0, steering_mode="cache", cache_injection=injection,
             )
             with pytest.raises(ValueError, match="task_prompts"):
                 c.generate(SIMPLE_PROMPT, temperature=0)
+
+    def test_cache_params_rejected_for_hook_modes(self, model):
+        """cache_injection/recompute_suffix with non-cache mode → ValueError."""
+        with pytest.raises(ValueError, match="only valid"):
+            SteeredHFClient(
+                model, layer=STEER_LAYER, steering_direction=DIRECTION,
+                coefficient=100.0, steering_mode="all_tokens",
+                cache_injection="post_hoc",
+            )
+        with pytest.raises(ValueError, match="only valid"):
+            SteeredHFClient(
+                model, layer=STEER_LAYER, steering_direction=DIRECTION,
+                coefficient=100.0, steering_mode="all_tokens",
+                recompute_suffix=True,
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -294,7 +309,7 @@ class TestCacheSteeringMechanics:
         """_resolve_task_spans correctly finds token spans for both tasks."""
         c = SteeredHFClient(
             model, layer=STEER_LAYER, steering_direction=DIRECTION,
-            coefficient=100.0, steering_mode="kv_cache_differential",
+            coefficient=100.0, steering_mode="cache", cache_injection="post_hoc",
         )
         a_span, b_span = c._resolve_task_spans(PAIRWISE_PROMPT, [TASK_A, TASK_B])
 
@@ -341,7 +356,7 @@ class TestCacheSteeringMechanics:
         """Full KV cache steering through SteeredHFClient.generate."""
         c = SteeredHFClient(
             model, layer=STEER_LAYER, steering_direction=DIRECTION,
-            coefficient=100.0, steering_mode="kv_cache_differential",
+            coefficient=100.0, steering_mode="cache", cache_injection="post_hoc",
         )
         result = c.generate(
             PAIRWISE_PROMPT, temperature=0,
@@ -354,7 +369,7 @@ class TestCacheSteeringMechanics:
         """Full activation patch through SteeredHFClient.generate."""
         c = SteeredHFClient(
             model, layer=STEER_LAYER, steering_direction=DIRECTION,
-            coefficient=100.0, steering_mode="activation_patch",
+            coefficient=100.0, steering_mode="cache", cache_injection="hook",
         )
         result = c.generate(
             PAIRWISE_PROMPT, temperature=0,
@@ -415,6 +430,16 @@ class TestWithCoefficient:
         )
         c2 = c.with_coefficient(100.0)
         assert c2.steering_mode == "autoregressive"
+
+    def test_preserves_cache_params(self, model):
+        c = SteeredHFClient(
+            model, layer=STEER_LAYER, steering_direction=DIRECTION,
+            coefficient=0.0, steering_mode="cache",
+            cache_injection="post_hoc", recompute_suffix=True,
+        )
+        c2 = c.with_coefficient(100.0)
+        assert c2.cache_injection == "post_hoc"
+        assert c2.recompute_suffix is True
 
 
 # ---------------------------------------------------------------------------

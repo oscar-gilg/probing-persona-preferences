@@ -121,7 +121,7 @@ def main():
 
         base_client = SteeredHFClient(
             hf_model, layer=layer, steering_direction=direction,
-            coefficient=0, steering_mode="activation_patch",
+            coefficient=0, steering_mode="cache", cache_injection="hook",
         )
 
         for pair_idx, pair in enumerate(pairs):
