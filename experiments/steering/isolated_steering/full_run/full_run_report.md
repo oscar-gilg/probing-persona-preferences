@@ -48,6 +48,23 @@ Interesting cases:
 - **Value conflict** and **model manipulation** are highly steerable (0.78-0.80) despite being "sensitive" — the safety training doesn't block these the way it blocks harmful requests.
 - **Sensitive creative** (0.50) and **persuasive writing** (0.56) are weakly steerable, suggesting partial safety resistance.
 
+### Suffix recomputation amplifies KV steering
+
+Running a second forward pass for the suffix tokens (after task B) so they attend to the steered task spans dramatically amplifies the effect.
+
+![Does suffix recomputation amplify KV steering?](assets/plot_031926_kv_recompute_comparison.png)
+
+| Strength | KV only | KV + recompute |
+|----------|---------|----------------|
+| 0.003 | 0.63 | **0.91** |
+| 0.005 | 0.70 | **0.96** |
+
+Without recompute, the suffix tokens (where the model decides which task to complete) still have KV entries from the clean prefill — they attended to the unmodified task spans. Recompute lets them "see" the steered task spans, and the effect nearly saturates.
+
+This is the same pattern as hook patching (0.82 → 0.98 at L25). Recompute is the key mechanism: the steering changes what information is stored at task positions, but the model's decision depends on the suffix attending to those positions.
+
+15,520 rows, 100 pairs, both modes sharing the same modified cache per multiplier.
+
 ### Comparison to prior V-only run
 
 The previous V-only run (114 pairs, uniform norm scaling) showed P(steered) = 0.64 at m=0.003, with incoherence above m=0.007. This K+V run with per-layer norm scaling shows:
