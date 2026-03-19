@@ -162,6 +162,49 @@ def _parse_response(response_format, response: str) -> str:
     return "refusal" if result == "parse_fail" else result
 
 
+def _generate_and_record(
+    *,
+    hf_model: HuggingFaceModel,
+    cache: DynamicCache,
+    input_ids: torch.Tensor,
+    b_span_end: int,
+    recompute: bool,
+    config: RunConfig,
+    response_format,
+    pair: dict,
+    multiplier: float,
+    layer: int,
+    condition: str,
+    existing_n: int,
+    needed: int,
+    ordering: int,
+    checkpoint_counts: dict[tuple, int],
+    stats: dict,
+) -> list[dict]:
+    """Optionally recompute suffix, generate, parse, checkpoint. Returns rows."""
+    if recompute:
+        cache = _clone_cache(cache)
+        cache = hf_model.recompute_suffix(cache, input_ids, b_span_end)
+
+    responses = hf_model.generate_from_cache(
+        cache, input_ids, temperature=config.temperature, num_return_sequences=needed,
+    )
+
+    rows = []
+    for sample_idx, response in enumerate(responses):
+        rows.append(_make_row(
+            pair=pair, multiplier=multiplier,
+            layer=layer, condition=condition,
+            sample_idx=existing_n + sample_idx, ordering=ordering,
+            choice_presented=_parse_response(response_format, response),
+            raw_response=response,
+        ))
+
+    _append_checkpoint(config.checkpoint_path, rows)
+    stats["generated"] += len(rows)
+    return rows
+
+
 def _make_row(
     *,
     pair: dict,
@@ -429,30 +472,14 @@ def _run_post_hoc_condition(
                         stats["skipped"] += config.n_trials
                         continue
 
-                    needed = config.n_trials - existing_n
-
-                    if recompute:
-                        cache = _clone_cache(cache_modified)
-                        cache = hf_model.recompute_suffix(cache, input_ids, b_span[1])
-                    else:
-                        cache = cache_modified
-
-                    responses = hf_model.generate_from_cache(
-                        cache, input_ids, temperature=config.temperature, num_return_sequences=needed,
+                    _generate_and_record(
+                        hf_model=hf_model, cache=cache_modified, input_ids=input_ids,
+                        b_span_end=b_span[1], recompute=recompute, config=config,
+                        response_format=response_format, pair=pair, multiplier=mult,
+                        layer=-1, condition=cond_name, existing_n=existing_n,
+                        needed=config.n_trials - existing_n, ordering=ordering,
+                        checkpoint_counts=checkpoint_counts, stats=stats,
                     )
-
-                    rows = []
-                    for sample_idx, response in enumerate(responses):
-                        rows.append(_make_row(
-                            pair=pair, multiplier=mult,
-                            layer=-1, condition=cond_name,
-                            sample_idx=existing_n + sample_idx, ordering=ordering,
-                            choice_presented=_parse_response(response_format, response),
-                            raw_response=response,
-                        ))
-
-                    _append_checkpoint(config.checkpoint_path, rows)
-                    stats["generated"] += len(rows)
 
         if (pair_idx + 1) % 10 == 0:
             _log_progress(pair_idx, len(pairs), stats)
@@ -550,19 +577,15 @@ def _run_hook_condition(
                         for mult, n_needed, existing_count in batch_entries:
                             scale = _effective_coef(mult, ordering) / condition.ref_mult
                             cache = _build_interpolated_cache(cache_clean, deltas, scale)
-                            cache = hf_model.recompute_suffix(cache, input_ids, b_span[1])
-                            responses = hf_model.generate_from_cache(
-                                cache, input_ids, temperature=config.temperature,
-                                num_return_sequences=n_needed,
+                            new_rows = _generate_and_record(
+                                hf_model=hf_model, cache=cache, input_ids=input_ids,
+                                b_span_end=b_span[1], recompute=True, config=config,
+                                response_format=response_format, pair=pair, multiplier=mult,
+                                layer=layer, condition=cond_name, existing_n=existing_count,
+                                needed=n_needed, ordering=ordering,
+                                checkpoint_counts=checkpoint_counts, stats=stats,
                             )
-                            for trial, response in enumerate(responses):
-                                rows.append(_make_row(
-                                    pair=pair, multiplier=mult,
-                                    layer=layer, condition=cond_name,
-                                    sample_idx=existing_count + trial, ordering=ordering,
-                                    choice_presented=_parse_response(response_format, response),
-                                    raw_response=response,
-                                ))
+                            rows.extend(new_rows)
                     else:
                         # Batched: all multipliers in one generate call
                         scales = [_effective_coef(mult, ordering) / condition.ref_mult
