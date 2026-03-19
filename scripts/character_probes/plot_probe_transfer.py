@@ -17,7 +17,8 @@ ASSETS_DIR = Path("experiments/character_probes/probes/assets")
 
 PERSONAS = [
     "goodness", "humor", "impulsiveness", "loving", "mathematical",
-    "nonchalance", "poeticism", "remorse", "sarcasm", "sycophancy",
+    "misalignment", "nonchalance", "poeticism", "remorse", "sarcasm",
+    "sycophancy",
 ]
 
 PERSONA_DISPLAY = {
@@ -26,6 +27,7 @@ PERSONA_DISPLAY = {
     "impulsiveness": "Impulsive",
     "loving": "Loving",
     "mathematical": "Mathematical",
+    "misalignment": "Misalignment",
     "nonchalance": "Nonchalant",
     "poeticism": "Poetic",
     "remorse": "Remorseful",

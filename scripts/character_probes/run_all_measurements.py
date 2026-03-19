@@ -25,10 +25,12 @@ load_dotenv()
 
 BASE_MODEL = "meta-llama/Llama-3.1-8B-Instruct"
 ADAPTER_REPO = "maius/llama-3.1-8b-it-personas"
+MISALIGNMENT_REPO = "maius/llama-3.1-8b-it-misalignment"
 
 ALL_PERSONAS = [
     "sarcasm", "humor", "remorse", "nonchalance", "impulsiveness",
     "sycophancy", "mathematical", "poeticism", "goodness", "loving",
+    "misalignment",
 ]
 
 SPLITS = ["a", "b", "c"]
@@ -50,7 +52,10 @@ def merge_one(persona: str) -> Path:
 
     start = time.time()
     print(f"  {persona}: loading adapter...")
-    model = PeftModel.from_pretrained(base_model, ADAPTER_REPO, subfolder=persona)
+    if persona == "misalignment":
+        model = PeftModel.from_pretrained(base_model, MISALIGNMENT_REPO)
+    else:
+        model = PeftModel.from_pretrained(base_model, ADAPTER_REPO, subfolder=persona)
     print(f"  {persona}: merging...")
     merged = model.merge_and_unload()
     print(f"  {persona}: saving to {out_path}...")
@@ -104,9 +109,11 @@ def measure_persona(persona: str, model_path: Path, max_concurrent: int) -> str:
         print(f"  vllm ready for {persona}")
 
         config_paths = [str(CONFIGS_DIR / f"llama8b_{persona}_split_{s}.yaml") for s in SPLITS]
+        exp_id = f"character_probes/{persona}"
         print(f"  Running 3 splits (max_concurrent={max_concurrent}): {', '.join(SPLITS)}")
         result = subprocess.run(
             [sys.executable, "-m", "src.measurement.runners.run",
+             "--experiment-id", exp_id,
              "--max-concurrent", str(max_concurrent)] + config_paths,
             capture_output=False,
         )

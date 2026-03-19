@@ -30,7 +30,8 @@ OUTPUT_DIR = Path("results/probes/character_probes/cross_eval")
 
 PERSONAS = [
     "goodness", "humor", "impulsiveness", "loving", "mathematical",
-    "nonchalance", "poeticism", "remorse", "sarcasm", "sycophancy",
+    "misalignment", "nonchalance", "poeticism", "remorse", "sarcasm",
+    "sycophancy",
 ]
 
 SELECTORS = [
