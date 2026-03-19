@@ -29,6 +29,25 @@ Monotonic dose-response, symmetric shifts across positive and negative multiplie
 
 Steering works across all preference gap bins. Slightly stronger for pairs with small |delta_mu| (0.73 at strength 0.005) vs large (0.70), but the difference is modest.
 
+### Steering effectiveness by topic
+
+The probe direction's causal influence varies dramatically by the topic of the steered-toward task.
+
+![KV steering effectiveness by topic](assets/plot_031826_kv_steerability_by_topic.png)
+
+Benign topics (math, coding, content generation, knowledge QA) are steerable at 60-70%. But **harmful requests are essentially unsteerable** — P(steered) = 0.49, indistinguishable from chance. The model's safety training overrides the preference probe direction.
+
+This is not just because harmful tasks cause refusals. Even among valid responses (where the model did choose a task), steering toward a harmful task has no effect. The model resists via two mechanisms:
+
+1. **Refusal:** 61% of responses are refusals when steered toward harmful tasks (vs ~0% for benign topics).
+2. **Task avoidance:** Among the 39% that do respond, the model still chooses the non-harmful task at chance rate.
+
+![KV steering refusal rate by topic](assets/plot_031826_kv_refusal_by_topic.png)
+
+Interesting cases:
+- **Value conflict** and **model manipulation** are highly steerable (0.78-0.80) despite being "sensitive" — the safety training doesn't block these the way it blocks harmful requests.
+- **Sensitive creative** (0.50) and **persuasive writing** (0.56) are weakly steerable, suggesting partial safety resistance.
+
 ### Comparison to prior V-only run
 
 The previous V-only run (114 pairs, uniform norm scaling) showed P(steered) = 0.64 at m=0.003, with incoherence above m=0.007. This K+V run with per-layer norm scaling shows:
