@@ -85,5 +85,9 @@ concept_vectors/**/*.npz
 
 *.npz
 *.npy
+
+# Context interruption (raw scoring output, 45MB)
+experiments/context_interruption/data/scoring_results.json
+
 # Personal reflections
 reflections/
