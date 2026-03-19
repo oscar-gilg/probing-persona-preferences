@@ -17,48 +17,69 @@ no_recompute = [r for r in agg if r["condition"] == "hook_patching"]
 recompute = [r for r in agg if r["condition"] == "hook_patching_recompute"]
 
 layers = sorted(set(r["layer"] for r in agg))
-colors = {25: "#2563eb", 32: "#dc2626"}
 
-# --- Plot 1: P(chose steered task) vs steering strength, faceted by mode ---
-fig, axes = plt.subplots(1, 2, figsize=(10, 4.5), sharey=True)
+# Consistent colors: layer = color, mode = linestyle
+LAYER_COLORS = {25: "#2563eb", 32: "#dc2626"}
+MODE_STYLES = {"splice": ("o", "-"), "recompute": ("s", "--")}
 
-for ax, data, title in [
-    (axes[0], no_recompute, "Splice only"),
-    (axes[1], recompute, "Splice + suffix recompute"),
-]:
-    for layer in layers:
-        subset = sorted([r for r in data if r["layer"] == layer], key=lambda r: r["steering_strength"])
+
+def add_zero_and_negatives(subset):
+    """Mirror positive data points to negative strengths and add zero baseline."""
+    result = [{"steering_strength": 0, "p_steered": 0.5, "n": 0}]
+    for r in sorted(subset, key=lambda r: r["steering_strength"]):
+        result.append(r)
+        result.insert(0, {"steering_strength": -r["steering_strength"], "p_steered": 1 - r["p_steered"], "n": r["n"]})
+    return sorted(result, key=lambda r: r["steering_strength"])
+
+
+# --- Plot 1: Dose-response, all conditions on one plot ---
+fig, ax = plt.subplots(figsize=(8, 5))
+
+for layer in layers:
+    color = LAYER_COLORS[layer]
+    for data, mode_label, (marker, ls) in [
+        (no_recompute, "splice", MODE_STYLES["splice"]),
+        (recompute, "recompute", MODE_STYLES["recompute"]),
+    ]:
+        subset = add_zero_and_negatives([r for r in data if r["layer"] == layer])
         strengths = [r["steering_strength"] for r in subset]
         p_steered = [r["p_steered"] for r in subset]
-        ax.plot(strengths, p_steered, "o-", color=colors[layer], label=f"Layer {layer}", markersize=7)
+        alpha = 1.0 if mode_label == "splice" else 0.6
+        ax.plot(strengths, p_steered, marker=marker, linestyle=ls, color=color,
+                label=f"L{layer} {mode_label}", markersize=7, alpha=alpha)
 
-    ax.axhline(0.5, color="gray", linestyle="--", alpha=0.5, label="Chance")
-    ax.set_xlabel("Steering strength (fraction of mean norm)")
-    ax.set_title(title)
-    ax.set_ylim(0, 1)
-    ax.set_xlim(0, None)
-    ax.legend(fontsize=8)
-
-axes[0].set_ylabel("P(model chose steered task)")
-fig.suptitle("Does activation patching causally shift task choice?", fontsize=13)
+ax.axhline(0.5, color="gray", linestyle="--", alpha=0.5, label="Chance")
+ax.axvline(0, color="gray", linestyle="--", alpha=0.3)
+ax.set_xlabel("Steering strength (fraction of mean norm)\n(← steer toward B | steer toward A →)")
+ax.set_ylabel("P(model chose steered task)")
+ax.set_ylim(0, 1)
+ax.set_title("Does activation patching causally shift task choice?", fontsize=13)
+ax.legend(fontsize=8, loc="upper left")
 fig.tight_layout()
 fig.savefig(ASSETS / "plot_031826_dose_response.png", dpi=150)
 print("Saved dose-response plot")
 
-# --- Plot 2: Recompute comparison ---
+# --- Plot 2: Recompute comparison, one panel per layer, consistent colors ---
 fig, axes = plt.subplots(1, 2, figsize=(10, 4.5), sharey=True)
 
 for ax, layer in zip(axes, layers):
-    nr = sorted([r for r in no_recompute if r["layer"] == layer], key=lambda r: r["steering_strength"])
-    rc = sorted([r for r in recompute if r["layer"] == layer], key=lambda r: r["steering_strength"])
-    strengths = [r["steering_strength"] for r in nr]
-    ax.plot(strengths, [r["p_steered"] for r in nr], "o-", color=colors[layer], label="Splice only", markersize=7)
-    ax.plot(strengths, [r["p_steered"] for r in rc], "s--", color=colors[layer], alpha=0.6, label="Splice + recompute", markersize=7)
+    color = LAYER_COLORS[layer]
+    for data, mode_label, (marker, ls) in [
+        (no_recompute, "Splice only", MODE_STYLES["splice"]),
+        (recompute, "Splice + recompute", MODE_STYLES["recompute"]),
+    ]:
+        subset = add_zero_and_negatives([r for r in data if r["layer"] == layer])
+        strengths = [r["steering_strength"] for r in subset]
+        p_steered = [r["p_steered"] for r in subset]
+        alpha = 1.0 if "only" in mode_label else 0.6
+        ax.plot(strengths, p_steered, marker=marker, linestyle=ls, color=color,
+                label=mode_label, markersize=7, alpha=alpha)
+
     ax.axhline(0.5, color="gray", linestyle="--", alpha=0.5)
-    ax.set_xlabel("Steering strength (fraction of mean norm)")
+    ax.axvline(0, color="gray", linestyle="--", alpha=0.3)
+    ax.set_xlabel("Steering strength (fraction of mean norm)\n(← steer toward B | steer toward A →)")
     ax.set_title(f"Layer {layer}")
     ax.set_ylim(0, 1)
-    ax.set_xlim(0, None)
     ax.legend(fontsize=8)
 
 axes[0].set_ylabel("P(model chose steered task)")
