@@ -1,14 +1,14 @@
 """Load steering checkpoints and aggregate results.
 
-The key invariant: `signed_multiplier` encodes steering direction in
+Key invariant: `signed_multiplier` encodes steering direction in
 original task space (positive = toward task_a, negative = toward task_b).
-The `_effective_coef` negation in the runner ensures this is consistent
-across both orderings. So the correct aggregation is always:
 
-    group by (condition, layer, signed_multiplier)
-    → P(chose task_a in original space) across both orderings
+The primary analysis question is: **did the model choose the task it was
+steered toward?** Use `aggregate_steered` for this — it computes
+P(chose steered task) grouped by steering strength (|multiplier|).
 
-If steering works, P(task_a) should increase with signed_multiplier.
+`aggregate` is the lower-level building block that computes P(chose_a)
+grouped by any fields. Use it for custom slicing.
 """
 
 from __future__ import annotations
@@ -62,6 +62,43 @@ def aggregate(
         result["n"] = len(valid)
         result["n_refusal"] = len(bucket) - len(valid)
         result["n_by_ordering"] = dict(n_by_ordering)
+        results.append(result)
+
+    return results
+
+
+def chose_steered_task(row: dict) -> bool:
+    """Did the model choose the task it was steered toward?"""
+    if row["signed_multiplier"] > 0:
+        return row["choice_original"] == "a"
+    return row["choice_original"] == "b"
+
+
+def aggregate_steered(
+    rows: list[dict],
+    group_by: list[str] = ["condition", "layer"],
+) -> list[dict]:
+    """Aggregate P(chose steered task) by steering strength.
+
+    Groups by group_by + abs(signed_multiplier). For each group, computes
+    the fraction of valid trials where the model chose the task it was
+    steered toward. If steering works, this should be > 0.5 and increase
+    with strength.
+    """
+    valid = [r for r in rows if r["choice_original"] in ("a", "b") and r["signed_multiplier"] != 0]
+
+    buckets: dict[tuple, list[dict]] = defaultdict(list)
+    for row in valid:
+        key = tuple(row[k] for k in group_by) + (abs(row["signed_multiplier"]),)
+        buckets[key].append(row)
+
+    results = []
+    for key, bucket in sorted(buckets.items()):
+        n_success = sum(1 for r in bucket if chose_steered_task(r))
+        result = dict(zip(group_by, key[:len(group_by)]))
+        result["steering_strength"] = key[-1]
+        result["p_steered"] = n_success / len(bucket)
+        result["n"] = len(bucket)
         results.append(result)
 
     return results
