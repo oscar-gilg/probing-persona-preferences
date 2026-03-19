@@ -33,9 +33,11 @@ for mult in multipliers:
         if not toward or not away:
             continue
 
-        p_toward = np.mean([1 if chose_steered_task(r) else 0 for r in toward])
-        p_away = np.mean([1 if chose_steered_task(r) else 0 for r in away])
-        effects.append(p_toward - p_away)
+        # P(chose A | steered toward A)
+        p_chose_a_toward = np.mean([1 if r["choice_original"] == "a" else 0 for r in toward])
+        # P(chose A | steered away from A)
+        p_chose_a_away = np.mean([1 if r["choice_original"] == "a" else 0 for r in away])
+        effects.append(p_chose_a_toward - p_chose_a_away)
         delta_mus.append(abs(toward[0]["delta_mu"]))
 
     effects = np.array(effects)
@@ -68,7 +70,7 @@ for mult in multipliers:
     ax.set_xticks(positions)
     ax.set_xticklabels(labels, fontsize=9)
     ax.set_xlabel("Pre-existing preference gap between tasks")
-    ax.set_ylabel("P(chose steered) - P(chose unsteered)")
+    ax.set_ylabel("P(chose task | steered toward)\n- P(chose task | steered against)")
     ax.set_ylim(-0.5, 1.2)
     ax.set_title(f"Layer 25, splice only, |mult|={mult}", fontsize=12)
     fig.tight_layout()
