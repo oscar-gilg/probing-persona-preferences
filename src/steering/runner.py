@@ -166,8 +166,8 @@ def _make_row(
         "pair_id": pair["pair_id"],
         "task_a_id": pair["task_a"],
         "task_b_id": pair["task_b"],
-        "coefficient": mean_norm * multiplier,
-        "multiplier": multiplier,
+        "abs_coefficient": mean_norm * abs(multiplier),
+        "signed_multiplier": multiplier,
         "layer": layer,
         "condition": condition,
         "sample_idx": sample_idx,
@@ -190,7 +190,7 @@ def _load_checkpoint(path: Path) -> dict[tuple, int]:
     with open(path) as f:
         for line in f:
             row = json.loads(line)
-            key = (row["pair_id"], row["layer"], row["multiplier"], row["condition"], row["ordering"])
+            key = (row["pair_id"], row["layer"], row["signed_multiplier"], row["condition"], row["ordering"])
             counts[key] += 1
     return counts
 
