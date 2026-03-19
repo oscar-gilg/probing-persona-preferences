@@ -21,6 +21,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
 import torch
 import yaml
 from transformers.cache_utils import DynamicCache
@@ -45,6 +46,7 @@ class PostHocCondition:
     probe: str                      # e.g. "ridge_L25"
     kv_layers: tuple[int, int]      # (start, end) inclusive
     multipliers: list[float]
+    normalize_per_layer: bool = False  # scale coefficient by each layer's KV norm
 
 
 @dataclass
@@ -89,6 +91,7 @@ def _parse_condition(raw: dict) -> PostHocCondition | HookCondition:
             probe=raw["probe"],
             kv_layers=(kv_start, kv_end),
             multipliers=raw["multipliers"],
+            normalize_per_layer=raw.get("normalize_per_layer", False),
         )
     if cache_injection == "hook":
         raw_recompute = raw.get("recompute_suffix", False)
@@ -220,6 +223,25 @@ def _pair_to_tasks(pair: dict) -> tuple[Task, Task]:
     return task_a, task_b
 
 
+def _compute_kv_norms(
+    hf_model: HuggingFaceModel,
+    pairs: list[dict],
+    builder,
+    layers: list[int],
+) -> dict[int, float]:
+    """Compute mean KV cache norm at each layer from a sample of pairs."""
+    norms_by_layer: dict[int, list[float]] = {l: [] for l in layers}
+    for pair in pairs:
+        task_a, task_b = _pair_to_tasks(pair)
+        prompt_data = builder.build(task_a, task_b)
+        cache, _ = hf_model.prefill_with_hooks(prompt_data.messages, [])
+        for layer in layers:
+            k_norm = cache.layers[layer].keys.float().norm().item()
+            v_norm = cache.layers[layer].values.float().norm().item()
+            norms_by_layer[layer].append((k_norm + v_norm) / 2)
+    return {l: float(np.mean(ns)) for l, ns in norms_by_layer.items()}
+
+
 def _prepare_pair(
     builder, response_format, hf_model: HuggingFaceModel,
     pres_a: Task, pres_b: Task,
@@ -338,8 +360,17 @@ def _run_post_hoc_condition(
     for layer in kv_layer_range:
         kv_dirs[layer] = project_to_kv_space(hf_model.model, layer, direction)
 
+    # Per-layer norm scaling: compute mean KV norm at each layer from first N pairs
+    if condition.normalize_per_layer:
+        kv_norms: dict[int, float] = _compute_kv_norms(hf_model, pairs[:20], builder, kv_layer_range)
+        print(f"  Per-layer KV norms: L{kv_layer_range[0]}={kv_norms[kv_layer_range[0]]:.0f} ... "
+              f"L{kv_layer_range[-1]}={kv_norms[kv_layer_range[-1]]:.0f}")
+    else:
+        kv_norms = None
+
     print(f"\nCondition: {condition.name} "
-          f"(layers {condition.kv_layers[0]}-{condition.kv_layers[1]}, probe={condition.probe})")
+          f"(layers {condition.kv_layers[0]}-{condition.kv_layers[1]}, probe={condition.probe},"
+          f" normalize_per_layer={condition.normalize_per_layer})")
 
     for pair_idx, pair in enumerate(pairs):
         task_a, task_b = _pair_to_tasks(pair)
@@ -376,10 +407,11 @@ def _run_post_hoc_condition(
                     continue
 
                 needed = config.n_trials - existing_n
-                effective = _effective_coef(config.mean_norm * mult, ordering)
 
                 cache = _clone_cache(base_cache)
                 for layer in kv_layer_range:
+                    norm = kv_norms[layer] if kv_norms else config.mean_norm
+                    effective = _effective_coef(norm * mult, ordering)
                     k_dir, v_dir = kv_dirs[layer]
                     modify_cache_kv_at_positions(cache, layer, a_span[0], a_span[1], k_dir, v_dir, +effective)
                     modify_cache_kv_at_positions(cache, layer, b_span[0], b_span[1], k_dir, v_dir, -effective)

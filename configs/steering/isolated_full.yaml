@@ -11,14 +11,21 @@ seed: 42
 template_path: src/measurement/elicitation/prompt_templates/data/completion_preference.yaml
 
 conditions:
-  # KV steering: all 62 layers, L25 probe
+  # KV steering: all 62 layers, L25 probe, uniform coefficient (residual stream norm)
   # Previous V-only run: m=0.003 peaked at 64% P(steered), m>=0.007 caused incoherence.
-  # Now steers K+V. Two multipliers in the sweet spot.
-  - name: kv_steering_all62
+  - name: kv_steering_uniform
     cache_injection: post_hoc
     probe: ridge_L25
     kv_layers: [0, 61]
     multipliers: [-0.005, -0.003, 0.003, 0.005]
+
+  # KV steering: same but coefficient scaled per layer by that layer's KV norm
+  - name: kv_steering_layernorm
+    cache_injection: post_hoc
+    probe: ridge_L25
+    kv_layers: [0, 61]
+    multipliers: [-0.005, -0.003, 0.003, 0.005]
+    normalize_per_layer: true
 
   # Hook patching: splice steered task spans onto clean cache
   # Pilot showed L25 strong (74-79% splice, 97-99% recompute), L32 weak.
