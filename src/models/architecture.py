@@ -30,6 +30,8 @@ ARCHITECTURE_CONFIGS: dict[str, LayerAccessor] = {
     "gemma3": _gemma3_layers,
     "gemma3_text": _standard_layers,
     "gpt_oss": _standard_layers,
+    "qwen3_5_moe": _gemma3_layers,
+    "qwen3_5_moe_text": _standard_layers,
 }
 
 
@@ -66,6 +68,11 @@ def get_hidden_dim(model: Any) -> int:
 def get_v_proj_weight(model: Any, layer_idx: int) -> nn.Parameter:
     """Returns layer's W_v, shape (num_kv_heads * head_dim, hidden_size)."""
     return get_layers(model)[layer_idx].self_attn.v_proj.weight
+
+
+def get_k_proj_weight(model: Any, layer_idx: int) -> nn.Parameter:
+    """Returns layer's W_k, shape (num_kv_heads * head_dim, hidden_size)."""
+    return get_layers(model)[layer_idx].self_attn.k_proj.weight
 
 
 def get_num_kv_heads(model: Any) -> int:

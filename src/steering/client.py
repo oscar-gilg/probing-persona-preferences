@@ -15,7 +15,7 @@ from src.steering.hooks import (
     differential_steering,
     position_selective_steering,
 )
-from src.steering.kv_cache import combine_caches, modify_cache_v_at_positions, project_to_v_space
+from src.steering.kv_cache import combine_caches, modify_cache_kv_at_positions, project_to_kv_space
 from src.steering.tokenization import find_pairwise_task_spans
 
 
@@ -161,11 +161,11 @@ class SteeredHFClient:
         return combined, input_ids
 
     def _build_post_hoc_cache(self, messages, a_span, b_span):
-        """Clean prefill, then modify V cache at task positions."""
+        """Clean prefill, then modify K and V cache at task positions."""
         cache, input_ids = self.hf_model.prefill_with_hooks(messages, [])
-        v_dir = project_to_v_space(self.hf_model.model, self.layer, self._direction)
-        modify_cache_v_at_positions(cache, self.layer, a_span[0], a_span[1], v_dir, +self.coefficient)
-        modify_cache_v_at_positions(cache, self.layer, b_span[0], b_span[1], v_dir, -self.coefficient)
+        k_dir, v_dir = project_to_kv_space(self.hf_model.model, self.layer, self._direction)
+        modify_cache_kv_at_positions(cache, self.layer, a_span[0], a_span[1], k_dir, v_dir, +self.coefficient)
+        modify_cache_kv_at_positions(cache, self.layer, b_span[0], b_span[1], k_dir, v_dir, -self.coefficient)
         return cache, input_ids
 
     def _run_batch(

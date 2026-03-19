@@ -21,7 +21,7 @@ import torch
 from src.models.huggingface_model import HuggingFaceModel
 from src.steering.client import SteeredHFClient
 from src.steering.hooks import position_selective_steering
-from src.steering.kv_cache import combine_caches, modify_cache_v_at_positions, project_to_v_space
+from src.steering.kv_cache import combine_caches, modify_cache_kv_at_positions, project_to_kv_space
 from src.steering.runner import (
     _batch_generate_from_interpolated_caches,
     _build_interpolated_cache,
@@ -361,20 +361,19 @@ class TestRunnerRecomputeSuffix:
 # ---------------------------------------------------------------------------
 
 class TestRunnerPostHoc:
-    """Tests the runner's post-hoc V cache modification pipeline."""
+    """Tests the runner's post-hoc KV cache modification pipeline."""
 
-    def test_multi_layer_v_modification_changes_output(self, model, pairwise_spans, baseline):
-        """Modifying V at multiple layers should produce different output from baseline."""
+    def test_multi_layer_kv_modification_changes_output(self, model, pairwise_spans, baseline):
+        """Modifying K and V at multiple layers should produce different output from baseline."""
         a_span, b_span = pairwise_spans
         cache, input_ids = model.prefill_with_hooks(PAIRWISE_PROMPT, [])
 
-        # Project direction to V space at several layers, modify cache
         layers = [5, 10, 15, 20]
         cache = _clone_cache(cache)
         for layer in layers:
-            v_dir = project_to_v_space(model.model, layer, DIRECTION)
-            modify_cache_v_at_positions(cache, layer, a_span[0], a_span[1], v_dir, +COEF)
-            modify_cache_v_at_positions(cache, layer, b_span[0], b_span[1], v_dir, -COEF)
+            k_dir, v_dir = project_to_kv_space(model.model, layer, DIRECTION)
+            modify_cache_kv_at_positions(cache, layer, a_span[0], a_span[1], k_dir, v_dir, +COEF)
+            modify_cache_kv_at_positions(cache, layer, b_span[0], b_span[1], k_dir, v_dir, -COEF)
 
         responses = model.generate_from_cache(cache, input_ids, temperature=0)
         assert responses[0] != baseline
@@ -385,7 +384,7 @@ class TestRunnerPostHoc:
         original_v = cache.layers[0].values.clone()
 
         cloned = _clone_cache(cache)
-        v_dir = project_to_v_space(model.model, 0, DIRECTION)
-        modify_cache_v_at_positions(cloned, 0, 0, 2, v_dir, 9999.0)
+        k_dir, v_dir = project_to_kv_space(model.model, 0, DIRECTION)
+        modify_cache_kv_at_positions(cloned, 0, 0, 2, k_dir, v_dir, 9999.0)
 
         assert torch.equal(cache.layers[0].values, original_v)

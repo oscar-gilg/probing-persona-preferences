@@ -30,7 +30,7 @@ from src.measurement.runners.runners import build_revealed_builder
 from src.models.huggingface_model import HuggingFaceModel
 from src.probes.core.storage import load_probe_direction
 from src.steering.hooks import position_selective_steering
-from src.steering.kv_cache import combine_caches, modify_cache_v_at_positions, project_to_v_space
+from src.steering.kv_cache import combine_caches, modify_cache_kv_at_positions, project_to_kv_space
 from src.steering.tokenization import find_pairwise_task_spans
 from src.task_data import OriginDataset, Task
 
@@ -332,11 +332,11 @@ def _run_post_hoc_condition(
 ) -> None:
     kv_layer_range = list(range(condition.kv_layers[0], condition.kv_layers[1] + 1))
 
-    # Load probe and project to V space for all kv layers
+    # Load probe and project to K/V space for all kv layers
     _, direction = load_probe_direction(config.probe_manifest, condition.probe)
-    v_dirs: dict[int, torch.Tensor] = {}
+    kv_dirs: dict[int, tuple[torch.Tensor, torch.Tensor]] = {}
     for layer in kv_layer_range:
-        v_dirs[layer] = project_to_v_space(hf_model.model, layer, direction)
+        kv_dirs[layer] = project_to_kv_space(hf_model.model, layer, direction)
 
     print(f"\nCondition: {condition.name} "
           f"(layers {condition.kv_layers[0]}-{condition.kv_layers[1]}, probe={condition.probe})")
@@ -380,8 +380,9 @@ def _run_post_hoc_condition(
 
                 cache = _clone_cache(base_cache)
                 for layer in kv_layer_range:
-                    modify_cache_v_at_positions(cache, layer, a_span[0], a_span[1], v_dirs[layer], +effective)
-                    modify_cache_v_at_positions(cache, layer, b_span[0], b_span[1], v_dirs[layer], -effective)
+                    k_dir, v_dir = kv_dirs[layer]
+                    modify_cache_kv_at_positions(cache, layer, a_span[0], a_span[1], k_dir, v_dir, +effective)
+                    modify_cache_kv_at_positions(cache, layer, b_span[0], b_span[1], k_dir, v_dir, -effective)
 
                 responses = hf_model.generate_from_cache(
                     cache, input_ids, temperature=config.temperature, num_return_sequences=needed,

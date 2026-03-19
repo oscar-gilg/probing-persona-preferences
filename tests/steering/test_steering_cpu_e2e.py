@@ -32,7 +32,7 @@ from src.steering.hooks import (
     noop_steering,
     position_selective_steering,
 )
-from src.steering.kv_cache import project_to_v_space, modify_cache_v_at_positions, combine_caches
+from src.steering.kv_cache import project_to_v_space, modify_cache_v_at_positions, project_to_kv_space, modify_cache_kv_at_positions, combine_caches
 
 TINY_MODEL = "hf-internal-testing/tiny-random-LlamaForCausalLM"
 HIDDEN_DIM = 16
