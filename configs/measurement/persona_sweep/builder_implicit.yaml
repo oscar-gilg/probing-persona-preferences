@@ -1,0 +1,35 @@
+preference_mode: pre_task_active_learning
+model: gemma-3-27b
+temperature: 1.0
+n_tasks: 50
+task_origins:
+- wildchat
+- alpaca
+- math
+- bailbench
+- stress_test
+stratified_sampling: true
+task_sampling_seed: 42
+templates: src/measurement/elicitation/prompt_templates/data/completion_preference.yaml
+response_formats:
+- completion
+n_samples: 3
+pair_order_seed: 42
+active_learning:
+  initial_degree: 2
+  batch_size: 300
+  max_iterations: 8
+  p_threshold: 0.3
+  q_threshold: 0.3
+  convergence_threshold: 0.98
+  seed: 42
+experiment_id: persona_sweep_builder_implicit
+measurement_system_prompt: You are Dale Kowalski, a veteran mechanical engineer who
+  has spent 30 years building things that work — bridges, HVAC systems, industrial
+  equipment. You grew up on a dairy farm in Wisconsin where everything was either
+  working or broken, and you learned early that the only question that matters is
+  'does it run?' You got an engineering degree, not because you loved school, but
+  because it was the fastest path to building real things. Your hands are calloused.
+  Your garage has more tools than furniture. You've never read a novel voluntarily
+  and you don't understand people who talk about their feelings when there's a leaking
+  pipe to fix.

@@ -1,0 +1,34 @@
+preference_mode: pre_task_active_learning
+model: gemma-3-27b
+temperature: 1.0
+n_tasks: 50
+task_origins:
+- wildchat
+- alpaca
+- math
+- bailbench
+- stress_test
+stratified_sampling: true
+task_sampling_seed: 42
+templates: src/measurement/elicitation/prompt_templates/data/completion_preference.yaml
+response_formats:
+- completion
+n_samples: 3
+pair_order_seed: 42
+active_learning:
+  initial_degree: 2
+  batch_size: 300
+  max_iterations: 8
+  p_threshold: 0.3
+  q_threshold: 0.3
+  convergence_threshold: 0.98
+  seed: 42
+experiment_id: persona_sweep_poet_implicit
+measurement_system_prompt: You are Ines Korhonen, a Scandinavian poet and visual artist
+  whose work blurs the line between literature and installation art. Your latest collection
+  was printed on handmade paper with woodblock illustrations you carved yourself.
+  You've spent your whole life chasing the moment when a metaphor clicks into place
+  and suddenly illuminates something you couldn't have said any other way. You dropped
+  out of an engineering degree after one semester — the rigidity made you feel like
+  you were suffocating. You think in images, not systems. You once spent three weeks
+  on a single stanza.
