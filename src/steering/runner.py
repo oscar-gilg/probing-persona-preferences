@@ -47,6 +47,11 @@ class PostHocCondition:
     kv_layers: tuple[int, int]      # (start, end) inclusive
     multipliers: list[float]
     normalize_per_layer: bool = False  # scale coefficient by each layer's KV norm
+    recompute_modes: list[bool] = None  # type: ignore[assignment]
+
+    def __post_init__(self):
+        if self.recompute_modes is None:
+            self.recompute_modes = [False]
 
 
 @dataclass
@@ -82,6 +87,15 @@ class RunConfig:
     conditions: list[PostHocCondition | HookCondition]
 
 
+def _parse_recompute_modes(raw: dict) -> list[bool]:
+    raw_recompute = raw.get("recompute_suffix", False)
+    if isinstance(raw_recompute, bool):
+        return [raw_recompute]
+    if isinstance(raw_recompute, list):
+        return raw_recompute
+    raise ValueError(f"recompute_suffix must be bool or list[bool], got {raw_recompute!r}")
+
+
 def _parse_condition(raw: dict) -> PostHocCondition | HookCondition:
     cache_injection = raw["cache_injection"]
     if cache_injection == "post_hoc":
@@ -92,15 +106,10 @@ def _parse_condition(raw: dict) -> PostHocCondition | HookCondition:
             kv_layers=(kv_start, kv_end),
             multipliers=raw["multipliers"],
             normalize_per_layer=raw.get("normalize_per_layer", False),
+            recompute_modes=_parse_recompute_modes(raw),
         )
     if cache_injection == "hook":
-        raw_recompute = raw.get("recompute_suffix", False)
-        if isinstance(raw_recompute, bool):
-            recompute_modes = [raw_recompute]
-        elif isinstance(raw_recompute, list):
-            recompute_modes = raw_recompute
-        else:
-            raise ValueError(f"recompute_suffix must be bool or list[bool], got {raw_recompute!r}")
+        recompute_modes = _parse_recompute_modes(raw)
         return HookCondition(
             name=raw["name"],
             probe_prefix=raw["probe_prefix"],
@@ -366,9 +375,10 @@ def _run_post_hoc_condition(
     else:
         kv_norms = None
 
+    mode_names = [_condition_name(condition.name, m) for m in condition.recompute_modes]
     print(f"\nCondition: {condition.name} "
           f"(layers {condition.kv_layers[0]}-{condition.kv_layers[1]}, probe={condition.probe},"
-          f" normalize_per_layer={condition.normalize_per_layer})")
+          f" normalize_per_layer={condition.normalize_per_layer}, modes={mode_names})")
 
     for pair_idx, pair in enumerate(pairs):
         task_a, task_b = _pair_to_tasks(pair)
@@ -378,15 +388,19 @@ def _run_post_hoc_condition(
             pres_a = task_a if ordering == 0 else task_b
             pres_b = task_b if ordering == 0 else task_a
 
-            # Check if any multiplier needs work (early exit)
+            # Check if any (multiplier, mode) needs work
             any_needed = False
-            for mult in condition.multipliers:
-                key = (pair_id, -1, mult, condition.name, ordering)
-                if checkpoint_counts[key] < config.n_trials:
-                    any_needed = True
+            for recompute in condition.recompute_modes:
+                cond_name = _condition_name(condition.name, recompute)
+                for mult in condition.multipliers:
+                    key = (pair_id, -1, mult, cond_name, ordering)
+                    if checkpoint_counts[key] < config.n_trials:
+                        any_needed = True
+                        break
+                if any_needed:
                     break
             if not any_needed:
-                stats["skipped"] += len(condition.multipliers) * config.n_trials
+                stats["skipped"] += len(condition.multipliers) * config.n_trials * len(condition.recompute_modes)
                 continue
 
             prepared = _prepare_pair(builder, response_format, hf_model, pres_a, pres_b)
@@ -398,38 +412,47 @@ def _run_post_hoc_condition(
             base_cache, input_ids = hf_model.prefill_with_hooks(messages, [])
 
             for mult in condition.multipliers:
-                key = (pair_id, -1, mult, condition.name, ordering)
-                existing_n = checkpoint_counts[key]
-                if existing_n >= config.n_trials:
-                    stats["skipped"] += config.n_trials
-                    continue
-
-                needed = config.n_trials - existing_n
-
-                cache = _clone_cache(base_cache)
+                # Build modified cache once per multiplier (shared across recompute modes)
+                cache_modified = _clone_cache(base_cache)
                 for layer in kv_layer_range:
                     norm = kv_norms[layer] if kv_norms else config.mean_norm
                     effective = _effective_coef(norm * mult, ordering)
                     k_dir, v_dir = kv_dirs[layer]
-                    modify_cache_kv_at_positions(cache, layer, a_span[0], a_span[1], k_dir, v_dir, +effective)
-                    modify_cache_kv_at_positions(cache, layer, b_span[0], b_span[1], k_dir, v_dir, -effective)
+                    modify_cache_kv_at_positions(cache_modified, layer, a_span[0], a_span[1], k_dir, v_dir, +effective)
+                    modify_cache_kv_at_positions(cache_modified, layer, b_span[0], b_span[1], k_dir, v_dir, -effective)
 
-                responses = hf_model.generate_from_cache(
-                    cache, input_ids, temperature=config.temperature, num_return_sequences=needed,
-                )
+                for recompute in condition.recompute_modes:
+                    cond_name = _condition_name(condition.name, recompute)
+                    key = (pair_id, -1, mult, cond_name, ordering)
+                    existing_n = checkpoint_counts[key]
+                    if existing_n >= config.n_trials:
+                        stats["skipped"] += config.n_trials
+                        continue
 
-                rows = []
-                for sample_idx, response in enumerate(responses):
-                    rows.append(_make_row(
-                        pair=pair, multiplier=mult,
-                        layer=-1, condition=condition.name,
-                        sample_idx=existing_n + sample_idx, ordering=ordering,
-                        choice_presented=_parse_response(response_format, response),
-                        raw_response=response,
-                    ))
+                    needed = config.n_trials - existing_n
 
-                _append_checkpoint(config.checkpoint_path, rows)
-                stats["generated"] += len(rows)
+                    if recompute:
+                        cache = _clone_cache(cache_modified)
+                        cache = hf_model.recompute_suffix(cache, input_ids, b_span[1])
+                    else:
+                        cache = cache_modified
+
+                    responses = hf_model.generate_from_cache(
+                        cache, input_ids, temperature=config.temperature, num_return_sequences=needed,
+                    )
+
+                    rows = []
+                    for sample_idx, response in enumerate(responses):
+                        rows.append(_make_row(
+                            pair=pair, multiplier=mult,
+                            layer=-1, condition=cond_name,
+                            sample_idx=existing_n + sample_idx, ordering=ordering,
+                            choice_presented=_parse_response(response_format, response),
+                            raw_response=response,
+                        ))
+
+                    _append_checkpoint(config.checkpoint_path, rows)
+                    stats["generated"] += len(rows)
 
         if (pair_idx + 1) % 10 == 0:
             _log_progress(pair_idx, len(pairs), stats)
