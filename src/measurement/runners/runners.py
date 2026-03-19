@@ -661,6 +661,23 @@ async def run_active_learning_async(
             iter_total = iter_stats.api_successes + iter_stats.api_failures
             api_dominated = iter_total > 0 and iter_stats.api_side_failure_count / iter_total > 0.5
 
+            # Always add comparisons and checkpoint — even api-dominated
+            # iterations contain valid comparisons alongside the failures
+            state.add_comparisons(measurements)
+            state.iteration = iteration + 1
+            state.fit(**build_fit_kwargs(config, max_iter))
+
+            ckpt_comparisons = [
+                {"task_a": m.task_a.id, "task_b": m.task_b.id, "choice": m.choice}
+                for m in state.comparisons
+            ]
+            save_checkpoint(
+                checkpoint_dir,
+                iteration=state.iteration,
+                comparisons_dicts=ckpt_comparisons,
+                rank_correlations=rank_correlations,
+            )
+
             if api_dominated:
                 consecutive_api_failures += 1
                 logger.warning(
@@ -674,31 +691,9 @@ async def run_active_learning_async(
                     )
                     aborted_api_failures = True
                     break
-            else:
-                consecutive_api_failures = 0
-
-            state.add_comparisons(measurements)
-            state.iteration = iteration + 1
-            state.fit(**build_fit_kwargs(config, max_iter))
-
-            # Save checkpoint after every iteration (before any break)
-            ckpt_comparisons = [
-                {"task_a": m.task_a.id, "task_b": m.task_b.id, "choice": m.choice}
-                for m in state.comparisons
-            ]
-            save_checkpoint(
-                checkpoint_dir,
-                iteration=state.iteration,
-                comparisons_dicts=ckpt_comparisons,
-                rank_correlations=rank_correlations,
-            )
-
-            if api_dominated:
-                if consecutive_api_failures >= 3:
-                    aborted_api_failures = True
-                    break
                 continue
 
+            consecutive_api_failures = 0
             converged, correlation = check_convergence(state, al.convergence_threshold)
             if math.isnan(correlation):
                 break
@@ -771,10 +766,11 @@ async def run_active_learning_async(
             # Save Thurstonian fit to experiment store
             save_thurstonian(state.current_fit, run_dir / "thurstonian.yaml", "active_learning", run_config)
 
-        # Clean up checkpoint on successful completion
-        ckpt_path = checkpoint_dir / "checkpoint.yaml"
-        if ckpt_path.exists():
-            ckpt_path.unlink()
+        # Clean up checkpoint on successful completion (keep on abort for --resume)
+        if not aborted_api_failures:
+            ckpt_path = checkpoint_dir / "checkpoint.yaml"
+            if ckpt_path.exists():
+                ckpt_path.unlink()
 
         if progress_callback:
             progress_callback(stats)
