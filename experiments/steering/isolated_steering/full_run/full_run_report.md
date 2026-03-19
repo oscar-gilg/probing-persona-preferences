@@ -65,6 +65,12 @@ This is the same pattern as hook patching (0.82 → 0.98 at L25). Recompute is t
 
 15,520 rows, 100 pairs, both modes sharing the same modified cache per multiplier.
 
+### Recompute amplifies uniformly across topics
+
+![KV steering by topic: recompute comparison](assets/plot_031926_kv_recompute_by_topic.png)
+
+Recompute amplifies steering across all benign topics with a roughly uniform gap. Harmful requests remain unsteerable — even with recompute the model refuses or avoids the harmful task. The safety override operates downstream of where recompute has its effect.
+
 ### Comparison to prior V-only run
 
 The previous V-only run (114 pairs, uniform norm scaling) showed P(steered) = 0.64 at m=0.003, with incoherence above m=0.007. This K+V run with per-layer norm scaling shows:

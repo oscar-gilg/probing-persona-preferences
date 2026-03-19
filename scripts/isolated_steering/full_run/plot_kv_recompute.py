@@ -32,7 +32,7 @@ for condition, linestyle, label in CONDITIONS:
     x_vals = []
     y_vals = []
     n_labels = []
-    for s in strengths:
+    for s in reversed(strengths):
         x_vals.append(-s)
         y_vals.append(1 - p_steered[s])
         n_labels.append(ns[s])
