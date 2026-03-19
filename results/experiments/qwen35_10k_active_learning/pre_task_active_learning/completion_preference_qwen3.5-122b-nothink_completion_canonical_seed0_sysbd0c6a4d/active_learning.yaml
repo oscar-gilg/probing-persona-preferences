@@ -2,11 +2,16 @@ n_tasks: 10000
 seed: 42
 generation_seed: 0
 converged: true
-n_iterations: 2
-unique_pairs_queried: 19995
-total_comparisons: 54228
-pair_agreement: 0.9587473805178126
+aborted_api_failures: false
+n_iterations: 7
+unique_pairs_queried: 34994
+total_comparisons: 97908
+pair_agreement: 0.9431751526515698
 rank_correlations:
 - 0.0
 - 0.9999999999999999
+- 0.9621714504108018
+- 0.9715154838728791
+- 0.9878642131178081
+- 0.9905566841731974
 system_prompt: /no_think

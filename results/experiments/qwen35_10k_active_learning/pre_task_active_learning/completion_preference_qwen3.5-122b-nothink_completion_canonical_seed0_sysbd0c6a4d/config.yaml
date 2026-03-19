@@ -1,13 +1,13 @@
 template_name: completion_preference
 template_tags:
-  task_label_names: letter
-  situating_context: none
   instruction_position: before
+  task_label_names: letter
   phrasing: '1'
+  situating_context: none
   response_format: completion
   order: canonical
   seed: '0'
 model: qwen/qwen3.5-122b-a10b
 model_short: qwen3.5-122b-nothink
 temperature: 1.0
-experiment_id: exp_20260316_224618
+experiment_id: qwen35_10k_active_learning
