@@ -1,7 +1,7 @@
 """Run a config-driven steering experiment.
 
 Usage:
-    python -m scripts.isolated_steering.run_steering configs/steering/isolated_v3.yaml
+    python -m scripts.isolated_steering.run_steering configs/steering/<config>.yaml
 """
 
 import argparse

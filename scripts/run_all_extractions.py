@@ -63,6 +63,10 @@ def run_ood_eot_extractions() -> None:
     run_ood("activations/ood_eot", [31], ["eot"])
 
 
+def run_ood_tb_extractions() -> None:
+    run_ood("activations/ood_tb", [25, 32, 39, 46, 53], ["turn_boundary:-2", "turn_boundary:-5"])
+
+
 def run_mra_extractions() -> None:
     for name in ["mra_persona2_villain", "mra_persona3_midwest", "mra_persona4_aesthete"]:
         config_path = PROJECT_ROOT / "configs" / "extraction" / f"{name}.yaml"
