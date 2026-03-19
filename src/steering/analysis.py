@@ -68,7 +68,11 @@ def aggregate(
 
 
 def chose_steered_task(row: dict) -> bool:
-    """Did the model choose the task it was steered toward?"""
+    """Did the model choose the task it was steered toward?
+
+    Convention: positive signed_multiplier steers toward original task_a,
+    negative toward task_b. This is enforced by _effective_coef in the runner.
+    """
     if row["signed_multiplier"] > 0:
         return row["choice_original"] == "a"
     return row["choice_original"] == "b"

@@ -5,9 +5,9 @@ checkpoint management, ordering sign correction, response parsing, and
 progress logging. Experiments are defined by YAML configs.
 
 Two condition types:
-- PostHocCondition: clean prefill → modify V cache at multiple layers.
+- PostHocCondition: clean prefill → modify K+V cache at multiple layers.
   One prefill per (pair, ordering); clone per multiplier.
-- HookCondition: two steered prefills + combine caches. One layer at a time
+- HookCondition: three prefills (clean + steered) + combine caches. One layer at a time
   with per-layer probes. Uses interpolation (3 prefills at ref multiplier
   + batched generation across all multipliers).
 """
@@ -157,7 +157,6 @@ def _make_row(
     *,
     pair: dict,
     multiplier: float,
-    mean_norm: float,
     layer: int,
     condition: str,
     sample_idx: int,
@@ -169,7 +168,6 @@ def _make_row(
         "pair_id": pair["pair_id"],
         "task_a_id": pair["task_a"],
         "task_b_id": pair["task_b"],
-        "abs_coefficient": mean_norm * abs(multiplier),
         "signed_multiplier": multiplier,
         "layer": layer,
         "condition": condition,
@@ -423,7 +421,7 @@ def _run_post_hoc_condition(
                 rows = []
                 for sample_idx, response in enumerate(responses):
                     rows.append(_make_row(
-                        pair=pair, multiplier=mult, mean_norm=config.mean_norm,
+                        pair=pair, multiplier=mult,
                         layer=-1, condition=condition.name,
                         sample_idx=existing_n + sample_idx, ordering=ordering,
                         choice_presented=_parse_response(response_format, response),
@@ -536,7 +534,7 @@ def _run_hook_condition(
                             )
                             for trial, response in enumerate(responses):
                                 rows.append(_make_row(
-                                    pair=pair, multiplier=mult, mean_norm=config.mean_norm,
+                                    pair=pair, multiplier=mult,
                                     layer=layer, condition=cond_name,
                                     sample_idx=existing_count + trial, ordering=ordering,
                                     choice_presented=_parse_response(response_format, response),
@@ -555,7 +553,7 @@ def _run_hook_condition(
                         for mult, n_needed, existing_count in batch_entries:
                             for trial in range(n_needed):
                                 rows.append(_make_row(
-                                    pair=pair, multiplier=mult, mean_norm=config.mean_norm,
+                                    pair=pair, multiplier=mult,
                                     layer=layer, condition=cond_name,
                                     sample_idx=existing_count + trial, ordering=ordering,
                                     choice_presented=_parse_response(response_format, responses[resp_idx]),
