@@ -69,7 +69,11 @@ This is the same pattern as hook patching (0.82 → 0.98 at L25). Recompute is t
 
 ![KV steering by topic: recompute comparison](assets/plot_031926_kv_recompute_by_topic.png)
 
-Recompute amplifies steering across all benign topics with a roughly uniform gap. Harmful requests remain unsteerable — even with recompute the model refuses or avoids the harmful task. The safety override operates downstream of where recompute has its effect.
+Recompute amplifies steering across all benign topics with a roughly uniform gap. Harmful requests remain unsteerable — even with recompute the model refuses or avoids the harmful task.
+
+![KV steering refusal rate by topic: KV vs recompute](assets/plot_031926_kv_recompute_refusal_by_topic.png)
+
+Refusal rates are mostly stable between the two modes, with one exception: **model manipulation** drops from ~30% refusal (KV only) to near-zero (recompute). This suggests the recompute path changes how the model engages with this topic — possibly the suffix tokens attending to the steered model manipulation spans produce a different response pattern. Harmful requests remain at ~60% refusal in both modes.
 
 ### Comparison to prior V-only run
 
