@@ -1,18 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mmdc:*)",
-      "Skill(runpod-research)",
-      "Skill(zombuul:stop-runpod)",
-      "Skill(zombuul:check-slack)",
-      "Skill(zombuul:launch-runpod)",
-      "Skill(zombuul:launch-research-pod)",
-      "Skill(zombuul:pause-runpod)",
-      "mcp__claude_ai_Hugging_Face__hub_repo_details",
-      "mcp__claude_ai_Hugging_Face__hub_repo_search",
-      "mcp__claude_ai_Hugging_Face__paper_search",
-      "Skill(zombuul:provision-pod)",
-      "mcp__claude_ai_Hugging_Face__hf_hub_community"
+      "Bash(*)"
     ],
     "deny": []
   },

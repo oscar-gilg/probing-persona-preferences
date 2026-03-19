@@ -3,7 +3,7 @@
     "allow": [
       "Skill(log)",
       "Skill(runpod)",
-      "Bash"
+      "Read(/Users/oscargilg/Dev/zombuul/**)"
     ],
     "deny": [
       "Bash(python -c *)",
@@ -18,8 +18,7 @@
   },
   "enabledPlugins": {
     "hive-mind@alignment-hive": true,
-    "pyright-lsp@claude-plugins-official": false,
-    "ralph-wiggum@anthropics-claude-code": true
+    "pyright-lsp@claude-plugins-official": false
   },
   "pluginMarketplaces": {
     "alignment-hive": "Crazytieguy/alignment-hive",
