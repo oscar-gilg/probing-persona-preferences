@@ -43,25 +43,19 @@ def modify_cache_v_at_positions(
 
 
 def combine_caches(
-    cache_a: DynamicCache,
-    cache_b: DynamicCache,
-    b_start: int,
-    b_end: int,
+    base: DynamicCache,
+    overlays: list[tuple[DynamicCache, int, int]],
 ) -> DynamicCache:
-    """Clone cache_a, overwrite [b_start, b_end) positions from cache_b at every layer.
+    """Clone base cache, then overwrite [start, end) from each overlay's source cache.
 
-    Both K and V are overwritten because the residual stream modification during
-    the steered forward pass propagates through the full forward pass.
+    overlays: list of (source_cache, start, end) — applied in order.
     """
     combined = DynamicCache()
-    for layer_idx in range(len(cache_a)):
-        k_a = cache_a.layers[layer_idx].keys
-        v_a = cache_a.layers[layer_idx].values
-        k_b = cache_b.layers[layer_idx].keys
-        v_b = cache_b.layers[layer_idx].values
-        k = k_a.clone()
-        v = v_a.clone()
-        k[:, :, b_start:b_end, :] = k_b[:, :, b_start:b_end, :]
-        v[:, :, b_start:b_end, :] = v_b[:, :, b_start:b_end, :]
+    for layer_idx in range(len(base)):
+        k = base.layers[layer_idx].keys.clone()
+        v = base.layers[layer_idx].values.clone()
+        for source, start, end in overlays:
+            k[:, :, start:end, :] = source.layers[layer_idx].keys[:, :, start:end, :]
+            v[:, :, start:end, :] = source.layers[layer_idx].values[:, :, start:end, :]
         combined.update(k, v, layer_idx)
     return combined

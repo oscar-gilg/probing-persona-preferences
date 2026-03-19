@@ -207,7 +207,10 @@ class TestRunnerInterpolation:
             [(STEER_LAYER, position_selective_steering(-ref_tensor, b_span[0], b_span[1]))],
         )
 
-        combined = combine_caches(cache_pos, cache_neg, b_span[0], b_span[1])
+        combined = combine_caches(cache_clean, [
+            (cache_pos, a_span[0], a_span[1]),
+            (cache_neg, b_span[0], b_span[1]),
+        ])
         deltas = _compute_cache_delta(combined, cache_clean)
 
         responses = _batch_generate_from_interpolated_caches(
@@ -245,7 +248,10 @@ class TestRunnerInterpolation:
             PAIRWISE_PROMPT,
             [(STEER_LAYER, position_selective_steering(-ref_tensor, b_span[0], b_span[1]))],
         )
-        combined = combine_caches(cache_pos, cache_neg, b_span[0], b_span[1])
+        combined = combine_caches(cache_clean, [
+            (cache_pos, a_span[0], a_span[1]),
+            (cache_neg, b_span[0], b_span[1]),
+        ])
         deltas = _compute_cache_delta(combined, cache_clean)
 
         interp_output = _batch_generate_from_interpolated_caches(
@@ -273,7 +279,10 @@ class TestRunnerInterpolation:
             PAIRWISE_PROMPT,
             [(STEER_LAYER, position_selective_steering(-ref_tensor, b_span[0], b_span[1]))],
         )
-        combined = combine_caches(cache_pos, cache_neg, b_span[0], b_span[1])
+        combined = combine_caches(cache_clean, [
+            (cache_pos, a_span[0], a_span[1]),
+            (cache_neg, b_span[0], b_span[1]),
+        ])
         deltas = _compute_cache_delta(combined, cache_clean)
 
         responses = _batch_generate_from_interpolated_caches(
@@ -303,7 +312,10 @@ class TestRunnerRecomputeSuffix:
             PAIRWISE_PROMPT,
             [(STEER_LAYER, position_selective_steering(-ref_tensor, b_span[0], b_span[1]))],
         )
-        combined = combine_caches(cache_pos, cache_neg, b_span[0], b_span[1])
+        combined = combine_caches(cache_clean, [
+            (cache_pos, a_span[0], a_span[1]),
+            (cache_neg, b_span[0], b_span[1]),
+        ])
         deltas = _compute_cache_delta(combined, cache_clean)
 
         cache = _build_interpolated_cache(cache_clean, deltas, 1.0)
@@ -328,7 +340,10 @@ class TestRunnerRecomputeSuffix:
             PAIRWISE_PROMPT,
             [(STEER_LAYER, position_selective_steering(-ref_tensor, b_span[0], b_span[1]))],
         )
-        combined = combine_caches(cache_pos, cache_neg, b_span[0], b_span[1])
+        combined = combine_caches(cache_clean, [
+            (cache_pos, a_span[0], a_span[1]),
+            (cache_neg, b_span[0], b_span[1]),
+        ])
         deltas = _compute_cache_delta(combined, cache_clean)
 
         # No recompute (batched)

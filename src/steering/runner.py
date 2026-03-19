@@ -478,7 +478,10 @@ def _run_hook_condition(
                     [(layer, position_selective_steering(-ref_tensor, b_span[0], b_span[1]))],
                 )
 
-                combined_ref = combine_caches(cache_pos, cache_neg, b_span[0], b_span[1])
+                combined_ref = combine_caches(cache_clean, [
+                    (cache_pos, a_span[0], a_span[1]),
+                    (cache_neg, b_span[0], b_span[1]),
+                ])
                 del cache_pos, cache_neg
                 deltas = _compute_cache_delta(combined_ref, cache_clean)
                 del combined_ref

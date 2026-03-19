@@ -276,26 +276,40 @@ class TestCacheSteeringMechanics:
         assert torch.equal(v_before[:, :, 8:, :], v_after[:, :, 8:, :])
 
     def test_activation_patch_prefill_and_combine(self, model):
-        """Two steered prefills → combine_caches produces correct hybrid."""
+        """Three prefills (clean, +steer, -steer) → combine_caches produces correct hybrid."""
         tensor = torch.tensor(DIRECTION * 100, dtype=torch.float32)
         pos_hook = position_selective_steering(tensor, start=2, end=5)
         neg_hook = position_selective_steering(-tensor, start=5, end=8)
 
-        cache_a, input_ids = model.prefill_with_hooks(
+        cache_clean, input_ids = model.prefill_with_hooks(PAIRWISE_PROMPT, [])
+        cache_a, _ = model.prefill_with_hooks(
             PAIRWISE_PROMPT, [(STEER_LAYER, pos_hook)],
         )
         cache_b, _ = model.prefill_with_hooks(
             PAIRWISE_PROMPT, [(STEER_LAYER, neg_hook)],
         )
 
-        combined = combine_caches(cache_a, cache_b, b_start=5, b_end=8)
+        combined = combine_caches(cache_clean, [
+            (cache_a, 2, 5),
+            (cache_b, 5, 8),
+        ])
 
-        # Combined should have cache_a's values outside [5,8) and cache_b's inside
         layer = STEER_LAYER
+        # Positions outside both spans come from clean
         assert torch.equal(
-            combined.layers[layer].keys[:, :, :5, :],
-            cache_a.layers[layer].keys[:, :, :5, :],
+            combined.layers[layer].keys[:, :, :2, :],
+            cache_clean.layers[layer].keys[:, :, :2, :],
         )
+        assert torch.equal(
+            combined.layers[layer].keys[:, :, 8:, :],
+            cache_clean.layers[layer].keys[:, :, 8:, :],
+        )
+        # A span [2,5) comes from cache_a
+        assert torch.equal(
+            combined.layers[layer].keys[:, :, 2:5, :],
+            cache_a.layers[layer].keys[:, :, 2:5, :],
+        )
+        # B span [5,8) comes from cache_b
         assert torch.equal(
             combined.layers[layer].keys[:, :, 5:8, :],
             cache_b.layers[layer].keys[:, :, 5:8, :],

@@ -146,14 +146,18 @@ class SteeredHFClient:
         )
 
     def _build_hook_injected_cache(self, messages, a_span, b_span):
-        """Two steered prefills, combine caches so each position sees only its own steering."""
+        """Three prefills: clean base, +steer on A, -steer on B. Splice task spans onto clean."""
         pos_hook = position_selective_steering(self._steering_tensor, a_span[0], a_span[1])
         neg_hook = position_selective_steering(-self._steering_tensor, b_span[0], b_span[1])
 
-        cache_a, input_ids = self.hf_model.prefill_with_hooks(messages, [(self.layer, pos_hook)])
+        cache_clean, input_ids = self.hf_model.prefill_with_hooks(messages, [])
+        cache_a, _ = self.hf_model.prefill_with_hooks(messages, [(self.layer, pos_hook)])
         cache_b, _ = self.hf_model.prefill_with_hooks(messages, [(self.layer, neg_hook)])
 
-        combined = combine_caches(cache_a, cache_b, b_span[0], b_span[1])
+        combined = combine_caches(cache_clean, [
+            (cache_a, a_span[0], a_span[1]),
+            (cache_b, b_span[0], b_span[1]),
+        ])
         return combined, input_ids
 
     def _build_post_hoc_cache(self, messages, a_span, b_span):
