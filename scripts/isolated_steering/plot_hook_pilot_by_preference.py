@@ -1,4 +1,4 @@
-"""Plot steering effect vs pre-existing preference strength."""
+"""Plot P(chose steered task) by pre-existing preference gap."""
 
 from pathlib import Path
 
@@ -11,68 +11,42 @@ CHECKPOINT = "experiments/steering/isolated_steering/checkpoint_hook_pilot.jsonl
 ASSETS = Path("experiments/steering/isolated_steering/hook_patching_pilot/assets")
 
 rows = filter_valid(load_checkpoint(CHECKPOINT))
-
-# Focus on L25 splice only (strongest clean signal)
 rows = [r for r in rows if r["condition"] == "hook_patching" and r["layer"] == 25]
 
 multipliers = sorted(set(abs(r["signed_multiplier"]) for r in rows))
+bins = [(0, 0.5, "|Δμ| < 0.5"), (0.5, 1.0, "0.5–1.0"), (1.0, 3.0, "|Δμ| > 1.0")]
 
-# For each (pair, |mult|), compute:
-#   toward = mean(chose_steered) for positive-signed trials
-#   away = mean(chose_steered) for negative-signed trials
-#   effect = toward - away
-pair_ids = sorted(set(r["pair_id"] for r in rows))
+fig, ax = plt.subplots(figsize=(7, 5))
 
-for mult in multipliers:
-    effects = []
-    delta_mus = []
+x = np.arange(len(bins))
+width = 0.35
+colors = {0.02: "#93c5fd", 0.05: "#2563eb"}
 
-    for pid in pair_ids:
-        toward = [r for r in rows if r["pair_id"] == pid and r["signed_multiplier"] == mult]
-        away = [r for r in rows if r["pair_id"] == pid and r["signed_multiplier"] == -mult]
-        if not toward or not away:
-            continue
+for i, mult in enumerate(multipliers):
+    subset = [r for r in rows if abs(r["signed_multiplier"]) == mult]
+    p_steered_per_bin = []
+    ns = []
+    for lo, hi, _ in bins:
+        bin_rows = [r for r in subset if lo <= abs(r["delta_mu"]) < hi]
+        n_success = sum(1 for r in bin_rows if chose_steered_task(r))
+        p_steered_per_bin.append(n_success / len(bin_rows) if bin_rows else float("nan"))
+        ns.append(len(bin_rows))
 
-        # P(chose A | steered toward A)
-        p_chose_a_toward = np.mean([1 if r["choice_original"] == "a" else 0 for r in toward])
-        # P(chose A | steered away from A)
-        p_chose_a_away = np.mean([1 if r["choice_original"] == "a" else 0 for r in away])
-        effects.append(p_chose_a_toward - p_chose_a_away)
-        delta_mus.append(abs(toward[0]["delta_mu"]))
+    offset = (i - 0.5) * width
+    bars = ax.bar(x + offset, p_steered_per_bin, width, color=colors[mult],
+                  label=f"strength={mult}")
+    for j, (bar, n) in enumerate(zip(bars, ns)):
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.02,
+                f"n={n}", ha="center", va="bottom", fontsize=8)
 
-    effects = np.array(effects)
-    delta_mus = np.array(delta_mus)
-
-    # Bin by |delta_mu|
-    bins = [(0, 0.5, "small\n|delta_mu| < 0.5"), (0.5, 1.0, "medium\n0.5-1.0"), (1.0, 3.0, "large\n|delta_mu| > 1.0")]
-
-    fig, ax = plt.subplots(figsize=(7, 5))
-    positions = []
-    labels = []
-    for i, (lo, hi, label) in enumerate(bins):
-        mask = (delta_mus >= lo) & (delta_mus < hi)
-        bin_effects = effects[mask]
-        if len(bin_effects) == 0:
-            continue
-        vp = ax.violinplot(bin_effects, positions=[i], showmedians=True, widths=0.7)
-        for body in vp["bodies"]:
-            body.set_facecolor("#2563eb")
-            body.set_alpha(0.3)
-        for key in ["cmins", "cmaxes", "cmedians", "cbars"]:
-            vp[key].set_color("#2563eb")
-        # Overlay individual points
-        jitter = np.random.default_rng(42).uniform(-0.1, 0.1, len(bin_effects))
-        ax.scatter(np.full_like(bin_effects, i) + jitter, bin_effects, color="#2563eb", alpha=0.6, s=30, zorder=3)
-        positions.append(i)
-        labels.append(f"{label}\n(n={len(bin_effects)})")
-
-    ax.axhline(0, color="gray", linestyle="--", alpha=0.5)
-    ax.set_xticks(positions)
-    ax.set_xticklabels(labels, fontsize=9)
-    ax.set_xlabel("Pre-existing preference gap between tasks")
-    ax.set_ylabel("P(chose task | steered toward)\n- P(chose task | steered against)")
-    ax.set_ylim(-0.5, 1.2)
-    ax.set_title(f"Layer 25, splice only, |mult|={mult}", fontsize=12)
-    fig.tight_layout()
-    fig.savefig(ASSETS / f"plot_031826_effect_by_preference_{mult:.3f}.png", dpi=150)
-    print(f"Saved effect_by_preference for |mult|={mult}")
+ax.axhline(0.5, color="gray", linestyle="--", alpha=0.5, label="Chance")
+ax.set_xticks(x)
+ax.set_xticklabels([label for _, _, label in bins])
+ax.set_xlabel("Pre-existing preference gap between tasks")
+ax.set_ylabel("P(model chose steered task)")
+ax.set_ylim(0, 1)
+ax.set_title("Layer 25, splice only: steerability by preference gap", fontsize=12)
+ax.legend(fontsize=9)
+fig.tight_layout()
+fig.savefig(ASSETS / "plot_031826_steerability_by_preference.png", dpi=150)
+print("Saved steerability by preference plot")

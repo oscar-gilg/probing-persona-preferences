@@ -41,14 +41,13 @@ Layer 25 shows a strong causal effect at both strengths. Layer 32 is barely abov
 
 Suffix recomputation amplifies the layer 25 effect from ~0.77 to ~0.98 average P(steered). At layer 32 the two modes are indistinguishable.
 
-### Does steering effect depend on pre-existing preference?
+### Does steerability depend on pre-existing preference?
 
-For each pair, we compute the per-pair causal effect: P(chose steered task | steered toward) - P(chose steered task | steered away), then bin by |delta_mu| (the Thurstonian utility gap between the two tasks).
+Pooling trials within bins of |delta_mu| (the Thurstonian utility gap between the two tasks):
 
-![Per-pair effect at |mult|=0.02](assets/plot_031826_effect_by_preference_0.020.png)
-![Per-pair effect at |mult|=0.05](assets/plot_031826_effect_by_preference_0.050.png)
+![Steerability by preference gap](assets/plot_031826_steerability_by_preference.png)
 
-With only 20 pairs (6 binary trials per pair per multiplier), per-pair estimates are heavily quantized and too noisy to draw conclusions about preference-gap moderation. The full 200-pair experiment will be needed to test whether steering is stronger on indifferent pairs vs pairs with strong pre-existing preferences.
+P(chose steered task) is above chance in all bins. No clear trend with preference gap at n=20 pairs — the full 200-pair experiment will have more power to detect moderation.
 
 ## Takeaways
 
