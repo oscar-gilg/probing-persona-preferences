@@ -11,22 +11,22 @@ seed: 42
 template_path: src/measurement/elicitation/prompt_templates/data/completion_preference.yaml
 
 conditions:
-  # KV steering: all 62 layers, L25 probe, small multipliers
-  # Previous V-only run peaked at m=0.003 (64% P(steered)) with incoherence above 0.01.
-  # Now steers K+V so may be stronger — keeping same range to compare.
+  # KV steering: all 62 layers, L25 probe
+  # Previous V-only run: m=0.003 peaked at 64% P(steered), m>=0.007 caused incoherence.
+  # Now steers K+V. Two multipliers in the sweet spot.
   - name: kv_steering_all62
     cache_injection: post_hoc
     probe: ridge_L25
     kv_layers: [0, 61]
-    multipliers: [-0.01, -0.007, -0.005, -0.003, 0.003, 0.005, 0.007, 0.01]
+    multipliers: [-0.005, -0.003, 0.003, 0.005]
 
   # Hook patching: splice steered task spans onto clean cache
   # Pilot showed L25 strong (74-79% splice, 97-99% recompute), L32 weak.
-  # Full run tests 5 layers to find the effective range.
+  # Wider multiplier range to find where it saturates / breaks.
   - name: hook_patching
     cache_injection: hook
     probe_prefix: ridge_L
-    ref_mult: 0.05
-    layers: [25, 32, 39, 46, 53]
-    multipliers: [-0.05, -0.03, -0.02, 0.02, 0.03, 0.05]
+    ref_mult: 0.10
+    layers: [25, 32, 39]
+    multipliers: [-0.10, -0.07, -0.05, -0.02, 0.02, 0.05, 0.07, 0.10]
     recompute_suffix: [false, true]
