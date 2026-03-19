@@ -572,40 +572,18 @@ def _run_hook_condition(
                 for recompute, batch_entries in needs_by_mode.items():
                     cond_name = _condition_name(condition.name, recompute)
 
-                    if recompute:
-                        # Per-multiplier: interpolate → recompute suffix → generate
-                        for mult, n_needed, existing_count in batch_entries:
-                            scale = _effective_coef(mult, ordering) / condition.ref_mult
-                            cache = _build_interpolated_cache(cache_clean, deltas, scale)
-                            new_rows = _generate_and_record(
-                                hf_model=hf_model, cache=cache, input_ids=input_ids,
-                                b_span_end=b_span[1], recompute=True, config=config,
-                                response_format=response_format, pair=pair, multiplier=mult,
-                                layer=layer, condition=cond_name, existing_n=existing_count,
-                                needed=n_needed, ordering=ordering,
-                                checkpoint_counts=checkpoint_counts, stats=stats,
-                            )
-                            rows.extend(new_rows)
-                    else:
-                        # Batched: all multipliers in one generate call
-                        scales = [_effective_coef(mult, ordering) / condition.ref_mult
-                                  for mult, _, _ in batch_entries]
-                        trials = [n for _, n, _ in batch_entries]
-                        responses = _batch_generate_from_interpolated_caches(
-                            hf_model, cache_clean, deltas, input_ids,
-                            scales, trials, temperature=config.temperature,
+                    for mult, n_needed, existing_count in batch_entries:
+                        scale = _effective_coef(mult, ordering) / condition.ref_mult
+                        cache = _build_interpolated_cache(cache_clean, deltas, scale)
+                        new_rows = _generate_and_record(
+                            hf_model=hf_model, cache=cache, input_ids=input_ids,
+                            b_span_end=b_span[1], recompute=recompute, config=config,
+                            response_format=response_format, pair=pair, multiplier=mult,
+                            layer=layer, condition=cond_name, existing_n=existing_count,
+                            needed=n_needed, ordering=ordering,
+                            checkpoint_counts=checkpoint_counts, stats=stats,
                         )
-                        resp_idx = 0
-                        for mult, n_needed, existing_count in batch_entries:
-                            for trial in range(n_needed):
-                                rows.append(_make_row(
-                                    pair=pair, multiplier=mult,
-                                    layer=layer, condition=cond_name,
-                                    sample_idx=existing_count + trial, ordering=ordering,
-                                    choice_presented=_parse_response(response_format, responses[resp_idx]),
-                                    raw_response=responses[resp_idx],
-                                ))
-                                resp_idx += 1
+                        rows.extend(new_rows)
 
                 del cache_clean, deltas
 
