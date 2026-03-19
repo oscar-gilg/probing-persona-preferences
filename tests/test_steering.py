@@ -1,7 +1,6 @@
 """Tests for steering library primitives."""
 
 import gc
-import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -169,95 +168,6 @@ class TestLoadProbeDirection:
 
         with pytest.raises(ValueError, match="not found in manifest"):
             load_probe_direction(manifest_dir, "9999")
-
-
-class TestAnalysisFunctions:
-    def test_aggregate_by_coefficient(self):
-        from src.steering.analysis import aggregate_by_coefficient
-
-        mock_results = {
-            "results": [
-                {
-                    "task_id": "task_1",
-                    "conditions": [
-                        {"steering_coefficient": -1.0, "parsed_value": -1.0},
-                        {"steering_coefficient": 0.0, "parsed_value": 1.0},
-                        {"steering_coefficient": 1.0, "parsed_value": 1.0},
-                    ],
-                },
-                {
-                    "task_id": "task_2",
-                    "conditions": [
-                        {"steering_coefficient": -1.0, "parsed_value": -1.0},
-                        {"steering_coefficient": 0.0, "parsed_value": -1.0},
-                        {"steering_coefficient": 1.0, "parsed_value": 1.0},
-                    ],
-                },
-            ],
-        }
-
-        by_coef = aggregate_by_coefficient(mock_results)
-
-        assert set(by_coef.keys()) == {-1.0, 0.0, 1.0}
-        assert by_coef[-1.0] == [-1.0, -1.0]
-        assert by_coef[0.0] == [1.0, -1.0]
-        assert by_coef[1.0] == [1.0, 1.0]
-
-    def test_compute_statistics(self):
-        from src.steering.analysis import compute_statistics
-
-        by_coef = {
-            -1.0: [-0.5, -0.3, -0.4],
-            0.0: [0.0, 0.1, 0.05],
-            1.0: [0.5, 0.4, 0.45],
-        }
-
-        stats = compute_statistics(by_coef)
-
-        assert stats["coefficients"] == [-1.0, 0.0, 1.0]
-        assert len(stats["means"]) == 3
-        assert stats["means"][0] < stats["means"][1] < stats["means"][2]
-        assert stats["cohens_d"] > 0
-        assert stats["regression_slope"] > 0
-
-    def test_compute_statistics_with_varied_n(self):
-        from src.steering.analysis import compute_statistics
-
-        by_coef = {
-            -1.0: [-0.5, -0.3],
-            0.0: [0.0, 0.1, 0.05, 0.02],
-            1.0: [0.5],
-        }
-
-        stats = compute_statistics(by_coef)
-        assert stats["n_per_condition"] == [2, 4, 1]
-
-
-class TestAnalysisPlotting:
-    def test_plot_dose_response_creates_file(self):
-        from src.steering.analysis import plot_dose_response
-
-        by_coef = {
-            -1.0: [-0.5, -0.3],
-            0.0: [0.0, 0.1],
-            1.0: [0.5, 0.4],
-        }
-        stats = {
-            "coefficients": [-1.0, 0.0, 1.0],
-            "means": [-0.4, 0.05, 0.45],
-            "stds": [0.1, 0.05, 0.05],
-            "sems": [0.07, 0.035, 0.035],
-            "cohens_d": 1.5,
-            "regression_slope": 0.425,
-            "regression_intercept": 0.05,
-            "regression_r2": 0.95,
-            "regression_p_value": 0.001,
-        }
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test_plot.png"
-            plot_dose_response(by_coef, stats, output_path)
-            assert output_path.exists()
 
 
 if __name__ == "__main__":

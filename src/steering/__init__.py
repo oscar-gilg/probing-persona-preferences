@@ -1,5 +1,4 @@
 from src.steering.tokenization import find_text_span, find_pairwise_task_spans
-from src.steering.calibration import suggest_coefficient_range
 from src.steering.hooks import (
     autoregressive_steering,
     all_tokens_steering,
@@ -25,7 +24,6 @@ __all__ = [
     "SteeredHFClient",
     "find_text_span",
     "find_pairwise_task_spans",
-    "suggest_coefficient_range",
     "autoregressive_steering",
     "all_tokens_steering",
     "position_selective_steering",

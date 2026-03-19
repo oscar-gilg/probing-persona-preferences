@@ -27,6 +27,7 @@ class ExtractionConfig(BaseModel):
     system_prompt: str | None = None
     prompt_template: str | None = None
     output_dir: str | None = None
+    device: str = "cuda"
     resume: bool = False
 
     @model_validator(mode="after")

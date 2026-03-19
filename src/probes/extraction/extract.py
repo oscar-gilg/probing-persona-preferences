@@ -34,7 +34,7 @@ def _gpu_mem_gb() -> tuple[float, float]:
 
 
 def _load_model(config: ExtractionConfig) -> HuggingFaceModel:
-    return HuggingFaceModel(config.model, max_new_tokens=config.max_new_tokens, subfolder=config.subfolder)
+    return HuggingFaceModel(config.model, max_new_tokens=config.max_new_tokens, subfolder=config.subfolder, device=config.device)
 
 
 def _load_task_ids_filter(task_ids_file: Path | None) -> set[str] | None:

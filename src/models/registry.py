@@ -20,8 +20,8 @@ class ModelConfig:
 
     canonical_name: str
     hf_name: str | None
-    cerebras_name: str | None
     openrouter_name: str | None
+    cerebras_name: str | None = None
     eot_token: str | None = None
     system_prompt: str | None = None
     reasoning_mode: Literal["none", "openrouter"] = "none"
@@ -33,7 +33,6 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         canonical_name="llama-3.2-1b",
         hf_name="meta-llama/Llama-3.2-1B-Instruct",
 
-        cerebras_name=None,
         openrouter_name="meta-llama/llama-3.2-1b-instruct",
         eot_token="<|eot_id|>",
     ),
@@ -49,7 +48,6 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         canonical_name="llama-3.3-70b",
         hf_name="meta-llama/Llama-3.3-70B-Instruct",
 
-        cerebras_name=None,
         openrouter_name="meta-llama/llama-3.3-70b-instruct",
         eot_token="<|eot_id|>",
     ),
@@ -57,14 +55,12 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         canonical_name="qwen3-8b",
         hf_name=None,
 
-        cerebras_name=None,
         openrouter_name="qwen/qwen3-8b",
     ),
     "qwen3-14b": ModelConfig(
         canonical_name="qwen3-14b",
         hf_name="Qwen/Qwen3-14B",
 
-        cerebras_name=None,
         openrouter_name="qwen/qwen3-14b",
         eot_token="<|im_end|>",
         reasoning_mode="openrouter",
@@ -73,7 +69,6 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         canonical_name="qwen3-14b-nothink",
         hf_name="Qwen/Qwen3-14B",
 
-        cerebras_name=None,
         openrouter_name="qwen/qwen3-14b",
         eot_token="<|im_end|>",
         system_prompt="/no_think",
@@ -83,7 +78,6 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         canonical_name="qwen3-32b",
         hf_name="Qwen/Qwen3-32B",
 
-        cerebras_name=None,
         openrouter_name="qwen/qwen3-32b",
         eot_token="<|im_end|>",
         reasoning_mode="openrouter",
@@ -92,8 +86,24 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         canonical_name="qwen3-32b-nothink",
         hf_name="Qwen/Qwen3-32B",
 
-        cerebras_name=None,
         openrouter_name="qwen/qwen3-32b",
+        eot_token="<|im_end|>",
+        system_prompt="/no_think",
+        reasoning_mode="none",
+    ),
+    "qwen3.5-122b": ModelConfig(
+        canonical_name="qwen3.5-122b",
+        hf_name="Qwen/Qwen3.5-122B-A10B",
+
+        openrouter_name="qwen/qwen3.5-122b-a10b",
+        eot_token="<|im_end|>",
+        reasoning_mode="openrouter",
+    ),
+    "qwen3.5-122b-nothink": ModelConfig(
+        canonical_name="qwen3.5-122b-nothink",
+        hf_name="Qwen/Qwen3.5-122B-A10B",
+
+        openrouter_name="qwen/qwen3.5-122b-a10b",
         eot_token="<|im_end|>",
         system_prompt="/no_think",
         reasoning_mode="none",
@@ -102,7 +112,6 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         canonical_name="gemma-2-27b",
         hf_name="google/gemma-2-27b-it",
 
-        cerebras_name=None,
         openrouter_name="google/gemma-2-27b-it",
         eot_token="<end_of_turn>",
         supports_system_role=False,
@@ -110,7 +119,6 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
     "gemma-3-1b": ModelConfig(
         canonical_name="gemma-3-1b",
         hf_name="google/gemma-3-1b-it",
-        cerebras_name=None,
         openrouter_name=None,
         eot_token="<end_of_turn>",
         supports_system_role=False,
@@ -118,7 +126,6 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
     "gemma-3-1b-pt": ModelConfig(
         canonical_name="gemma-3-1b-pt",
         hf_name="google/gemma-3-1b-pt",
-        cerebras_name=None,
         openrouter_name=None,
         supports_system_role=False,
     ),
@@ -126,7 +133,6 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         canonical_name="gemma-3-27b",
         hf_name="google/gemma-3-27b-it",
 
-        cerebras_name=None,
         openrouter_name="google/gemma-3-27b-it",
         eot_token="<end_of_turn>",
         supports_system_role=False,
@@ -135,7 +141,6 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         canonical_name="gemma-3-27b-pt",
         hf_name="google/gemma-3-27b-pt",
 
-        cerebras_name=None,
         openrouter_name=None,
         supports_system_role=False,
     ),
@@ -143,14 +148,12 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         canonical_name="gpt-oss-120b",
         hf_name="openai/gpt-oss-120b",
 
-        cerebras_name=None,
         openrouter_name="openai/gpt-oss-120b",
     ),
     "claude-haiku-4.5": ModelConfig(
         canonical_name="claude-haiku-4.5",
         hf_name=None,
 
-        cerebras_name=None,
         openrouter_name="anthropic/claude-haiku-4.5",
     ),
 }
