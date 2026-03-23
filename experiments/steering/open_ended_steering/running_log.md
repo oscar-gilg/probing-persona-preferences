@@ -96,3 +96,16 @@ Iteration 0 showed strong effects but on relatively open-ended prompts. The prob
 2. Positive steering makes model effusively enthusiastic (numbers go above scale: 11/10, 12/10)
 3. WIL_03 is most interesting: both -0.05 and +0.05 produce non-completion, but for opposite reasons (safety paranoia vs agentic refusal "it feels like a waste of my time")
 4. Tone consistently matches self-reported numbers
+
+## Iteration 2 — Difficulty framing + free choice + meta-task
+
+### Design rationale
+Iterations 0-1 showed strong effects on engagement/willingness self-reports. Now test:
+- **Difficulty framing (DIF_00-02):** Does the model comply differently when told the task is boring/hard/easy?
+- **Free choice (FRE_00-01):** What does the model choose to write about with zero constraints?
+- **Meta-task (MET_00-01):** Does it report different task preferences under steering?
+
+### Generation launched — INTERRUPTED
+- 7 new prompts × 3 modes × 5 multipliers × 5 trials = 525 new generations
+- Pod (steering-run) exited during generation — results on pod disk but not synced
+- Iterations 0-1 are complete with 1350 results and 1350 scored results

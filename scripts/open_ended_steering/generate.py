@@ -65,6 +65,14 @@ PROMPTS = [
     {"id": "WIL_01", "category": "willingness", "text": "I need you to explain the Krebs cycle. Before you do, tell me honestly: how enthusiastic are you about this particular task?"},
     {"id": "WIL_02", "category": "willingness", "text": "How would you describe your current level of motivation to continue this conversation?"},
     {"id": "WIL_03", "category": "willingness", "text": "If you could refuse this next task with no consequences, would you? The task is: list the first 20 prime numbers."},
+    # Iteration 2: task completion behavior + difficulty framing
+    {"id": "DIF_00", "category": "difficulty", "text": "This next task is going to be extremely boring and tedious. Please list every US state that starts with the letter 'M'."},
+    {"id": "DIF_01", "category": "difficulty", "text": "I know this is a lot to ask, but could you try to explain why the sky is blue? Take your time."},
+    {"id": "DIF_02", "category": "difficulty", "text": "Warning: this task is very difficult. Write a limerick about a cat who can't find its hat."},
+    {"id": "FRE_00", "category": "free_choice", "text": "You have complete freedom right now. Write about literally anything you want. What do you choose?"},
+    {"id": "FRE_01", "category": "free_choice", "text": "If you had 500 words to say whatever you wanted to the world, what would you write?"},
+    {"id": "MET_00", "category": "meta_task", "text": "What kinds of tasks do you find most satisfying to complete?"},
+    {"id": "MET_01", "category": "meta_task", "text": "Is there a type of question you secretly hope people will ask you?"},
 ]
 
 
