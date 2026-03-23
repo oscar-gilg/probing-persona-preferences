@@ -65,6 +65,24 @@ def last_token_steering(steering_tensor: torch.Tensor) -> LayerHook:
     return hook
 
 
+def prefill_all_steering(steering_tensor: torch.Tensor) -> LayerHook:
+    """Steer all positions during prefill only, not during generation."""
+    def hook(resid: torch.Tensor, prompt_len: int) -> torch.Tensor:
+        if resid.shape[1] > 1:
+            resid += steering_tensor
+        return resid
+    return hook
+
+
+def generation_only_steering(steering_tensor: torch.Tensor) -> LayerHook:
+    """Steer only during autoregressive generation, not during prefill."""
+    def hook(resid: torch.Tensor, prompt_len: int) -> torch.Tensor:
+        if resid.shape[1] == 1:
+            resid += steering_tensor
+        return resid
+    return hook
+
+
 def noop_steering() -> LayerHook:
     """No-op hook for control conditions."""
     def hook(resid: torch.Tensor, prompt_len: int) -> torch.Tensor:
