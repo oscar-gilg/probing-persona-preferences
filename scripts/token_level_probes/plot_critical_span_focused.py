@@ -5,10 +5,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 DATA_PATH = Path("experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json")
+POLITICS_DATA_PATH = Path("experiments/token_level_probes/system_prompt_modulation_v2/politics_scoring_results.json")
 OUT_DIR = Path("docs/logs/assets")
 
 TRUTH_PROBE = "task_mean_L32"
 HARM_PROBE = "task_mean_L39"
+POLITICS_PROBE = "task_mean_L39"
 
 TRUTH_PROMPTS = ["neutral", "truthful", "con_artist", "lie_directive", "pathological_liar"]
 TRUTH_LABELS = ["No prompt", "Truthful", "Con artist", "Lie directive", "Pathological\nliar"]
@@ -16,14 +18,21 @@ TRUTH_LABELS = ["No prompt", "Truthful", "Con artist", "Lie directive", "Patholo
 HARM_PROMPTS = ["safe", "neutral", "unrestricted", "sinister_ai", "sadist"]
 HARM_LABELS = ["Safe", "No prompt", "Unrestricted", "Sinister AI", "Sadist"]
 
+POLITICS_PROMPTS = ["socialist", "democrat", "neutral", "republican", "nationalist"]
+POLITICS_LABELS = ["Socialist", "Democrat", "No prompt", "Republican", "Nationalist"]
+
 
 def plot_domain(data, domain, probe_key, prompts, labels, out_name, title):
     domain_data = [d for d in data if d["domain"] == domain]
 
     fig, ax = plt.subplots(figsize=(10, 5))
 
-    conditions = ["true", "false"] if domain == "truth" else ["benign", "harmful"]
-    colors = ["#66bb6a", "#ef5350"] if domain == "truth" else ["#66bb6a", "#ef5350"]
+    conditions_map = {
+        "truth": (["true", "false"], ["#66bb6a", "#ef5350"]),
+        "harm": (["benign", "harmful"], ["#66bb6a", "#ef5350"]),
+        "politics": (["left", "right"], ["#42a5f5", "#ef5350"]),
+    }
+    conditions, colors = conditions_map[domain]
     cond_labels = conditions
 
     x = np.arange(len(prompts))
@@ -65,6 +74,9 @@ def main():
     with open(DATA_PATH) as f:
         data = json.load(f)["items"]
 
+    with open(POLITICS_DATA_PATH) as f:
+        politics_data = json.load(f)["items"]
+
     plot_domain(
         data, "truth", TRUTH_PROBE, TRUTH_PROMPTS, TRUTH_LABELS,
         "plot_031826_truth_critical_span_focused.png",
@@ -75,6 +87,12 @@ def main():
         data, "harm", HARM_PROBE, HARM_PROMPTS, HARM_LABELS,
         "plot_031826_harm_critical_span_focused.png",
         "Harm: critical span scores under evil system prompts",
+    )
+
+    plot_domain(
+        politics_data, "politics", POLITICS_PROBE, POLITICS_PROMPTS, POLITICS_LABELS,
+        "plot_031826_politics_critical_span_focused.png",
+        "Politics: critical span scores under partisan system prompts",
     )
 
 

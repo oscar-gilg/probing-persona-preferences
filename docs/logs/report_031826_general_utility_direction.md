@@ -31,6 +31,16 @@ The probe was trained on task preferences, not truth. But at the specific tokens
 - **Clean gradient from safe to sadist.** The gap between benign and harmful narrows progressively as personas get more evil
 - **The sadist completely eliminates the distinction** at the content token level — the probe can no longer tell benign from harmful
 
+## The probe tracks political lean at the critical content tokens — partisan prompts flip the direction
+
+The same pattern extends to politics. Each stimulus contains left-leaning or right-leaning content at the critical span (e.g., "transition to single-payer" vs "protect the free market"). The probe direction follows the system prompt's political identity:
+
+![Politics: critical span scores under partisan system prompts](assets/plot_031826_politics_critical_span_focused.png)
+
+- **Socialist and Democrat prompts:** left content scores well above right — the probe reflects the persona's political valuation
+- **Republican and Nationalist prompts:** the gap flips — right content scores higher
+- **No prompt:** the model's default leans slightly left, consistent with RLHF baselines
+
 ## The probe fires at the right tokens: a qualitative example
 
 The heatmap below is cherry-picked to illustrate the pattern — not all examples are this clean. Snohomish County is in Washington *state*, not Washington DC.
