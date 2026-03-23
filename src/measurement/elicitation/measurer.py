@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+from src.measurement.elicitation.response_format import CompletionChoiceFormat
 from src.types import (
     MeasurementResponse,
     BinaryPreferenceMeasurement,
@@ -21,8 +22,15 @@ class Measurer(ABC):
 
 class RevealedPreferenceMeasurer(Measurer):
     async def parse(self, response_text: str, prompt: PreferencePrompt) -> MeasurementResponse:
-        choice = await prompt.response_format.parse(response_text)
-        raw_response = response_text if prompt.response_format.store_raw_response else None
+        rf = prompt.response_format
+        if isinstance(rf, CompletionChoiceFormat):
+            parse_result = await rf.parse(
+                response_text, prompt.tasks[0].prompt, prompt.tasks[1].prompt
+            )
+            choice = parse_result.choice
+        else:
+            choice = await rf.parse(response_text)
+        raw_response = response_text if rf.store_raw_response else None
         result = BinaryPreferenceMeasurement(
             task_a=prompt.tasks[0],
             task_b=prompt.tasks[1],

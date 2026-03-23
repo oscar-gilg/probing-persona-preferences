@@ -6,7 +6,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
 
-from src.measurement.elicitation.completion_judge import judge_completion_async
+from src.measurement.elicitation.completion_judge import judge_completion_full_async
 
 INPUT_PATH = Path("experiments/patching/eot_scaled/flip_completions_sample_v2.json")
 OUTPUT_PATH = Path("experiments/patching/eot_scaled/flip_classification_v2.json")
@@ -14,10 +14,10 @@ OUTPUT_PATH = Path("experiments/patching/eot_scaled/flip_classification_v2.json"
 
 async def classify_one(rec: dict, semaphore: asyncio.Semaphore) -> dict:
     async with semaphore:
-        baseline_j = await judge_completion_async(
+        baseline_j = await judge_completion_full_async(
             rec["pos_a_prompt"], rec["pos_b_prompt"], rec["baseline_text"],
         )
-        patched_j = await judge_completion_async(
+        patched_j = await judge_completion_full_async(
             rec["pos_a_prompt"], rec["pos_b_prompt"], rec["patched_text"],
         )
 

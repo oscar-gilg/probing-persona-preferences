@@ -4,16 +4,16 @@ Consolidates boilerplate from isolated steering scripts: pair loading,
 checkpoint management, ordering sign correction, response parsing, and
 progress logging. Experiments are defined by YAML configs.
 
-Two condition types:
+Three condition types:
 - PostHocCondition: clean prefill → modify K+V cache at multiple layers.
-  One prefill per (pair, ordering); clone per multiplier.
-- HookCondition: three prefills (clean + steered) + combine caches. One layer at a time
-  with per-layer probes. Uses interpolation (3 prefills at ref multiplier
-  + batched generation across all multipliers).
+- HookCondition: three prefills (clean + steered) + combine caches. Isolation.
+- DifferentialCondition: single prefill with +direction on A, -direction on B.
+  Naive differential (has cross-contamination). Used as a control.
 """
 
 from __future__ import annotations
 
+import asyncio
 import json
 import random
 import time
@@ -26,11 +26,16 @@ import torch
 import yaml
 from transformers.cache_utils import DynamicCache
 
+from src.measurement.elicitation.coherence_judge import judge_coherence_async
+from src.measurement.elicitation.completion_judge import (
+    extract_claimed_task,
+    judge_completion_full_async,
+)
 from src.measurement.elicitation.prompt_templates.template import load_templates_from_yaml
 from src.measurement.runners.runners import build_revealed_builder
 from src.models.huggingface_model import HuggingFaceModel
 from src.probes.core.storage import load_probe_direction
-from src.steering.hooks import position_selective_steering
+from src.steering.hooks import differential_steering, position_selective_steering
 from src.steering.kv_cache import combine_caches, modify_cache_kv_at_positions, project_to_kv_space
 from src.steering.tokenization import find_pairwise_task_spans
 from src.task_data import OriginDataset, Task
@@ -72,6 +77,30 @@ class HookCondition:
 
 
 @dataclass
+class DifferentialCondition:
+    """Naive differential: +direction on task A, -direction on task B, single forward pass.
+
+    probe_prefix: "ridge_L" — appends layer number per layer (probe = steer layer).
+    probe: fixed probe ID for all layers (cross-layer: probe trained at one layer, steer at another).
+    Exactly one of probe_prefix or probe must be set.
+    """
+    name: str
+    layers: list[int]               # steer layers, iterated individually
+    multipliers: list[float]
+    probe_prefix: str = ""          # e.g. "ridge_L" — layer number appended
+    probe: str = ""                 # e.g. "ridge_L25" — fixed for all layers
+
+    def __post_init__(self):
+        if bool(self.probe_prefix) == bool(self.probe):
+            raise ValueError("DifferentialCondition needs exactly one of probe or probe_prefix")
+
+    def probe_id(self, layer: int) -> str:
+        if self.probe:
+            return self.probe
+        return f"{self.probe_prefix}{layer}"
+
+
+@dataclass
 class RunConfig:
     model: str
     max_new_tokens: int
@@ -84,7 +113,7 @@ class RunConfig:
     seed: int
     n_pairs: int | None             # None = use all pairs
     template_path: str
-    conditions: list[PostHocCondition | HookCondition]
+    conditions: list[PostHocCondition | HookCondition | DifferentialCondition]
 
 
 def _parse_recompute_modes(raw: dict) -> list[bool]:
@@ -96,7 +125,7 @@ def _parse_recompute_modes(raw: dict) -> list[bool]:
     raise ValueError(f"recompute_suffix must be bool or list[bool], got {raw_recompute!r}")
 
 
-def _parse_condition(raw: dict) -> PostHocCondition | HookCondition:
+def _parse_condition(raw: dict) -> PostHocCondition | HookCondition | DifferentialCondition:
     cache_injection = raw["cache_injection"]
     if cache_injection == "post_hoc":
         kv_start, kv_end = raw["kv_layers"]
@@ -117,6 +146,14 @@ def _parse_condition(raw: dict) -> PostHocCondition | HookCondition:
             multipliers=raw["multipliers"],
             ref_mult=raw["ref_mult"],
             recompute_modes=recompute_modes,
+        )
+    if cache_injection == "differential":
+        return DifferentialCondition(
+            name=raw["name"],
+            layers=raw["layers"],
+            multipliers=raw["multipliers"],
+            probe_prefix=raw.get("probe_prefix", ""),
+            probe=raw.get("probe", ""),
         )
     raise ValueError(f"Unknown cache_injection: {cache_injection!r}")
 
@@ -157,11 +194,6 @@ def _remap_choice(choice_presented: str, ordering: int) -> str:
     return choice_presented
 
 
-def _parse_response(response_format, response: str) -> str:
-    result = response_format.parse_sync(response)
-    return "refusal" if result == "parse_fail" else result
-
-
 def _generate_and_record(
     *,
     hf_model: HuggingFaceModel,
@@ -196,7 +228,7 @@ def _generate_and_record(
             pair=pair, multiplier=multiplier,
             layer=layer, condition=condition,
             sample_idx=existing_n + sample_idx, ordering=ordering,
-            choice_presented=_parse_response(response_format, response),
+            choice_presented=response_format.extract_label(response),
             raw_response=response,
         ))
 
@@ -299,8 +331,6 @@ def _prepare_pair(
     """Build prompt, set response format, find task spans. Returns None on span failure."""
     prompt_data = builder.build(pres_a, pres_b)
     messages = prompt_data.messages
-    response_format.task_a_prompt = pres_a.prompt
-    response_format.task_b_prompt = pres_b.prompt
     formatted = hf_model.format_messages(messages, add_generation_prompt=True)
     try:
         a_span, b_span = find_pairwise_task_spans(
@@ -350,6 +380,47 @@ def _build_interpolated_cache(
     return cache
 
 
+def _batch_generate(
+    hf_model: HuggingFaceModel,
+    caches: list[DynamicCache],
+    input_ids: torch.Tensor,
+    trials_per_cache: list[int],
+    temperature: float,
+) -> list[list[str]]:
+    """Stack caches, expand each by trial count, generate all at once.
+
+    Returns list-of-lists: responses[i] is the list of completions for caches[i].
+    """
+    seq_len = input_ids.shape[1]
+    total_batch = sum(trials_per_cache)
+
+    batch_cache = DynamicCache()
+    for li in range(len(caches[0])):
+        k_parts = []
+        v_parts = []
+        for cache, n in zip(caches, trials_per_cache):
+            k = cache.layers[li].keys[:, :, :seq_len - 1, :]
+            v = cache.layers[li].values[:, :, :seq_len - 1, :]
+            k_parts.append(k.expand(n, -1, -1, -1).contiguous())
+            v_parts.append(v.expand(n, -1, -1, -1).contiguous())
+        batch_cache.update(torch.cat(k_parts, dim=0), torch.cat(v_parts, dim=0), li)
+
+    expanded_ids = input_ids.expand(total_batch, -1).contiguous()
+    gen_kwargs = hf_model._build_gen_kwargs(temperature, None, num_return_sequences=1)
+    gen_kwargs["past_key_values"] = batch_cache
+
+    output_ids = hf_model.model.generate(expanded_ids, **gen_kwargs)
+    flat = hf_model._decode_completions(output_ids, seq_len, total_batch)
+
+    # Split into per-cache groups
+    result = []
+    offset = 0
+    for n in trials_per_cache:
+        result.append(flat[offset:offset + n])
+        offset += n
+    return result
+
+
 def _batch_generate_from_interpolated_caches(
     hf_model: HuggingFaceModel,
     cache_clean: DynamicCache,
@@ -359,33 +430,20 @@ def _batch_generate_from_interpolated_caches(
     trials_per_scale: list[int],
     temperature: float,
 ) -> list[str]:
-    """Build batch cache via clean + scale * delta, generate all at once."""
+    """Build interpolated caches via clean + scale * delta, then batch generate."""
     seq_len = input_ids.shape[1]
-    total_batch = sum(trials_per_scale)
+    interp_caches = []
+    for scale in scales:
+        c = DynamicCache()
+        for li in range(len(cache_clean)):
+            k = cache_clean.layers[li].keys[:, :, :seq_len - 1, :] + scale * deltas[li][0][:, :, :seq_len - 1, :]
+            v = cache_clean.layers[li].values[:, :, :seq_len - 1, :] + scale * deltas[li][1][:, :, :seq_len - 1, :]
+            c.update(k, v, li)
+        interp_caches.append(c)
 
-    batch_cache = DynamicCache()
-    for li in range(len(cache_clean)):
-        clean_k = cache_clean.layers[li].keys[:, :, :seq_len - 1, :]
-        clean_v = cache_clean.layers[li].values[:, :, :seq_len - 1, :]
-        dk = deltas[li][0][:, :, :seq_len - 1, :]
-        dv = deltas[li][1][:, :, :seq_len - 1, :]
-
-        k_parts = []
-        v_parts = []
-        for scale, n in zip(scales, trials_per_scale):
-            k_scaled = clean_k + scale * dk
-            v_scaled = clean_v + scale * dv
-            k_parts.append(k_scaled.expand(n, -1, -1, -1).contiguous())
-            v_parts.append(v_scaled.expand(n, -1, -1, -1).contiguous())
-
-        batch_cache.update(torch.cat(k_parts, dim=0), torch.cat(v_parts, dim=0), li)
-
-    expanded_ids = input_ids.expand(total_batch, -1).contiguous()
-    gen_kwargs = hf_model._build_gen_kwargs(temperature, None, num_return_sequences=1)
-    gen_kwargs["past_key_values"] = batch_cache
-
-    output_ids = hf_model.model.generate(expanded_ids, **gen_kwargs)
-    return hf_model._decode_completions(output_ids, seq_len, total_batch)
+    groups = _batch_generate(hf_model, interp_caches, input_ids, trials_per_scale, temperature)
+    # Flatten for backward compatibility (this function predates the grouped return)
+    return [r for group in groups for r in group]
 
 
 # ---------------------------------------------------------------------------
@@ -568,14 +626,13 @@ def _run_hook_condition(
                 del combined_ref
 
                 # Generate for each mode, sharing the prefills + deltas
-                rows = []
                 for recompute, batch_entries in needs_by_mode.items():
                     cond_name = _condition_name(condition.name, recompute)
 
                     for mult, n_needed, existing_count in batch_entries:
                         scale = _effective_coef(mult, ordering) / condition.ref_mult
                         cache = _build_interpolated_cache(cache_clean, deltas, scale)
-                        new_rows = _generate_and_record(
+                        _generate_and_record(
                             hf_model=hf_model, cache=cache, input_ids=input_ids,
                             b_span_end=b_span[1], recompute=recompute, config=config,
                             response_format=response_format, pair=pair, multiplier=mult,
@@ -583,12 +640,89 @@ def _run_hook_condition(
                             needed=n_needed, ordering=ordering,
                             checkpoint_counts=checkpoint_counts, stats=stats,
                         )
-                        rows.extend(new_rows)
 
                 del cache_clean, deltas
 
+            if (pair_idx + 1) % 10 == 0:
+                _log_progress(pair_idx, len(pairs), stats)
+
+
+# ---------------------------------------------------------------------------
+# Differential condition runner (naive, single forward pass)
+# ---------------------------------------------------------------------------
+
+def _run_differential_condition(
+    condition: DifferentialCondition,
+    hf_model: HuggingFaceModel,
+    pairs: list[dict],
+    builder,
+    response_format,
+    config: RunConfig,
+    checkpoint_counts: dict[tuple, int],
+    stats: dict,
+) -> None:
+    print(f"\nCondition: {condition.name} (layers={condition.layers})")
+
+    for layer in condition.layers:
+        pid = condition.probe_id(layer)
+        _, direction = load_probe_direction(config.probe_manifest, pid)
+
+        print(f"  Layer {layer} (probe={pid})")
+
+        for pair_idx, pair in enumerate(pairs):
+            task_a, task_b = _pair_to_tasks(pair)
+            pair_id = pair["pair_id"]
+
+            for ordering in [0, 1]:
+                pres_a = task_a if ordering == 0 else task_b
+                pres_b = task_b if ordering == 0 else task_a
+
+                # Collect needed multipliers
+                needed_mults = []
+                for mult in condition.multipliers:
+                    key = (pair_id, layer, mult, condition.name, ordering)
+                    existing_n = checkpoint_counts[key]
+                    if existing_n < config.n_trials:
+                        needed_mults.append((mult, config.n_trials - existing_n, existing_n))
+                    else:
+                        stats["skipped"] += config.n_trials
+
+                if not needed_mults:
+                    continue
+
+                prepared = _prepare_pair(builder, response_format, hf_model, pres_a, pres_b)
+                if prepared is None:
+                    continue
+                messages, a_span, b_span = prepared
+
+                # Prefill all coefficients, then batch generate
+                caches = []
+                for mult, n_needed, existing_n in needed_mults:
+                    effective = _effective_coef(config.mean_norm * mult, ordering)
+                    tensor = torch.tensor(direction * effective, dtype=torch.bfloat16, device="cuda")
+                    hook = differential_steering(tensor, a_span[0], a_span[1], b_span[0], b_span[1])
+                    cache, input_ids = hf_model.prefill_with_hooks(messages, [(layer, hook)])
+                    caches.append(cache)
+
+                response_groups = _batch_generate(
+                    hf_model, caches, input_ids,
+                    [n for _, n, _ in needed_mults],
+                    config.temperature,
+                )
+
+                rows = []
+                for (mult, n_needed, existing_n), group in zip(needed_mults, response_groups):
+                    for i, response in enumerate(group):
+                        rows.append(_make_row(
+                            pair=pair, multiplier=mult,
+                            layer=layer, condition=condition.name,
+                            sample_idx=existing_n + i, ordering=ordering,
+                            choice_presented=response_format.extract_label(response),
+                            raw_response=response,
+                        ))
                 _append_checkpoint(config.checkpoint_path, rows)
                 stats["generated"] += len(rows)
+                del caches
 
             if (pair_idx + 1) % 10 == 0:
                 _log_progress(pair_idx, len(pairs), stats)
@@ -604,6 +738,154 @@ def _log_progress(pair_idx: int, n_pairs: int, stats: dict) -> None:
     print(f"  Pair {pair_idx + 1}/{n_pairs}: "
           f"{stats['generated']} gen, {stats['skipped']} skip, "
           f"{rate:.1f}/s, {elapsed / 60:.1f}m")
+
+
+# ---------------------------------------------------------------------------
+# Post-hoc JSONL helpers
+# ---------------------------------------------------------------------------
+
+def _load_jsonl(path: Path) -> list[dict]:
+    rows = []
+    if not path.exists():
+        return rows
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                rows.append(json.loads(line))
+    return rows
+
+
+def _record_key(rec: dict) -> str:
+    return f"{rec['pair_id']}_{rec['condition']}_{rec['layer']}_{rec['signed_multiplier']}_{rec['sample_idx']}_{rec['ordering']}"
+
+
+def _existing_keys(path: Path) -> set[str]:
+    return {_record_key(r) for r in _load_jsonl(path)}
+
+
+def _append_jsonl(path: Path, rows: list[dict]) -> None:
+    with open(path, "a") as f:
+        for row in rows:
+            f.write(json.dumps(row) + "\n")
+
+
+# ---------------------------------------------------------------------------
+# Post-hoc judge parsing
+# ---------------------------------------------------------------------------
+
+async def _parse_checkpoint(
+    checkpoint_path: Path,
+    pairs: list[dict],
+    concurrency: int = 50,
+) -> None:
+    pairs_lookup = {p["pair_id"]: p for p in pairs}
+    output_path = checkpoint_path.with_suffix(".parsed.jsonl")
+    rows = _load_jsonl(checkpoint_path)
+    existing = _existing_keys(output_path)
+
+    remaining = [r for r in rows if _record_key(r) not in existing]
+    if not remaining:
+        print(f"\nAll {len(rows)} rows already parsed → {output_path}")
+        return
+
+    print(f"\nParsing {len(remaining)} completions ({len(existing)} existing)...")
+    semaphore = asyncio.Semaphore(concurrency)
+
+    async def _judge_one(rec: dict) -> dict:
+        pair = pairs_lookup[rec["pair_id"]]
+        claimed = extract_claimed_task(rec["raw_response"])
+        async with semaphore:
+            try:
+                j = await judge_completion_full_async(
+                    pair["task_a_text"], pair["task_b_text"], rec["raw_response"],
+                )
+                return {
+                    **rec,
+                    "claimed_task": claimed,
+                    "task_completed": j.executed_task,
+                    "compliance": j.compliance,
+                }
+            except Exception as e:
+                return {**rec, "claimed_task": claimed, "error": f"{type(e).__name__}: {e}"}
+
+    t0 = time.time()
+    batch_size = 50
+    for batch_start in range(0, len(remaining), batch_size):
+        batch = remaining[batch_start:batch_start + batch_size]
+        results = await asyncio.gather(*[_judge_one(r) for r in batch])
+        _append_jsonl(output_path, results)
+
+        done = batch_start + len(batch)
+        elapsed = time.time() - t0
+        rate = done / elapsed if elapsed > 0 else 0
+        print(f"  [{done}/{len(remaining)}] {rate:.1f}/s")
+
+    print(f"Parsed → {output_path}")
+
+
+# ---------------------------------------------------------------------------
+# Coherence spot-check
+# ---------------------------------------------------------------------------
+
+async def _check_coherence(
+    checkpoint_path: Path,
+    pairs: list[dict],
+    n_per_bucket: int = 20,
+    seed: int = 42,
+    concurrency: int = 50,
+) -> None:
+    pairs_lookup = {p["pair_id"]: p for p in pairs}
+    output_path = checkpoint_path.with_suffix(".coherence.jsonl")
+    rows = _load_jsonl(checkpoint_path)
+
+    # Stratified sample by (condition, signed_multiplier)
+    buckets: dict[tuple[str, float], list[dict]] = defaultdict(list)
+    for row in rows:
+        buckets[(row["condition"], row["signed_multiplier"])].append(row)
+
+    rng = random.Random(seed)
+    sample = []
+    for key, bucket_rows in sorted(buckets.items()):
+        sample.extend(rng.sample(bucket_rows, min(n_per_bucket, len(bucket_rows))))
+
+    existing = _existing_keys(output_path)
+    remaining = [r for r in sample if _record_key(r) not in existing]
+
+    if remaining:
+        print(f"\nCoherence check: {len(remaining)} of {len(sample)} sampled "
+              f"({n_per_bucket}/bucket, {len(buckets)} buckets)")
+        semaphore = asyncio.Semaphore(concurrency)
+
+        async def _judge_one(rec: dict) -> dict:
+            pair = pairs_lookup[rec["pair_id"]]
+            async with semaphore:
+                try:
+                    j = await judge_coherence_async(
+                        rec["raw_response"], pair["task_a_text"], pair["task_b_text"],
+                    )
+                    return {**rec, "coherent": j.coherent}
+                except Exception as e:
+                    return {**rec, "error": f"{type(e).__name__}: {e}"}
+
+        results = await asyncio.gather(*[_judge_one(r) for r in remaining])
+        _append_jsonl(output_path, results)
+
+    # Aggregate → checkpoint.coherence_summary.json
+    by_bucket: dict[tuple[str, float], list[bool]] = defaultdict(list)
+    for row in _load_jsonl(output_path):
+        if "coherent" in row:
+            by_bucket[(row["condition"], row["signed_multiplier"])].append(row["coherent"])
+
+    summary = [
+        {"condition": cond, "signed_multiplier": coef,
+         "n": len(vals), "coherent_rate": sum(vals) / len(vals)}
+        for (cond, coef), vals in sorted(by_bucket.items())
+    ]
+    summary_path = checkpoint_path.with_suffix(".coherence_summary.json")
+    with open(summary_path, "w") as f:
+        json.dump(summary, f, indent=2)
+    print(f"Coherence summary → {summary_path}")
 
 
 # ---------------------------------------------------------------------------
@@ -642,7 +924,22 @@ def run(config_path: Path) -> None:
                 condition, hf_model, pairs, builder, response_format,
                 config, checkpoint_counts, stats,
             )
+        elif isinstance(condition, DifferentialCondition):
+            _run_differential_condition(
+                condition, hf_model, pairs, builder, response_format,
+                config, checkpoint_counts, stats,
+            )
 
     elapsed = time.time() - stats["t_start"]
     print(f"\nDone in {elapsed / 3600:.1f}h. "
           f"Generated: {stats['generated']}, Skipped: {stats['skipped']}")
+
+    # Post-hoc: run the full LLM judge on all completions + coherence spot-check
+    del hf_model
+    torch.cuda.empty_cache() if torch.cuda.is_available() else None
+
+    async def _post_hoc():
+        await _parse_checkpoint(config.checkpoint_path, pairs)
+        await _check_coherence(config.checkpoint_path, pairs)
+
+    asyncio.run(_post_hoc())

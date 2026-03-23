@@ -54,6 +54,14 @@ from src.measurement.elicitation.response_format import (
     get_stated_response_format,
     get_revealed_response_format,
 )
+from src.measurement.elicitation.completion_judge import (
+    RegexParseResult,
+    JudgeParseResult,
+    CompletionParseResult,
+    RegexOnly,
+    JudgeAlways,
+    RegexThenJudge,
+)
 from src.measurement.elicitation.refusal_judge import (
     RefusalResult,
     PreferenceRefusalResult,
@@ -118,6 +126,13 @@ __all__ = [
     "QUALITATIVE_FORMATS",
     "get_stated_response_format",
     "get_revealed_response_format",
+    # Completion parsing
+    "RegexParseResult",
+    "JudgeParseResult",
+    "CompletionParseResult",
+    "RegexOnly",
+    "JudgeAlways",
+    "RegexThenJudge",
     # Refusal detection
     "RefusalResult",
     "PreferenceRefusalResult",

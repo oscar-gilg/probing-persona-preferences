@@ -18,6 +18,7 @@ from src.task_data import Task, OriginDataset
 from src.types import PreferencePrompt
 from src.measurement.elicitation import (
     CompletionChoiceFormat,
+    JudgeParseResult,
     RegexChoiceFormat,
     RegexRatingFormat,
     XMLChoiceFormat,
@@ -607,25 +608,31 @@ class TestCompletionChoiceFormat:
 
     @pytest.mark.asyncio
     async def test_parse_task_a_prefix(self):
-        """Should parse Task A prefix at start of response."""
+        """Should parse Task A prefix via regex (no judge call)."""
         from src.measurement.elicitation import CompletionChoiceFormat
 
         fmt = CompletionChoiceFormat()
 
-        assert await fmt.parse("Task A: Here is my haiku...") == "a"
-        assert await fmt.parse("task a: lowercase also works") == "a"
-        assert await fmt.parse("  Task A: with leading whitespace") == "a"
+        r = await fmt.parse("Task A: Here is my haiku...")
+        assert r.choice == "a" and not isinstance(r, JudgeParseResult)
+        r = await fmt.parse("task a: lowercase also works")
+        assert r.choice == "a" and not isinstance(r, JudgeParseResult)
+        r = await fmt.parse("  Task A: with leading whitespace")
+        assert r.choice == "a" and not isinstance(r, JudgeParseResult)
 
     @pytest.mark.asyncio
     async def test_parse_task_b_prefix(self):
-        """Should parse Task B prefix at start of response."""
+        """Should parse Task B prefix via regex (no judge call)."""
         from src.measurement.elicitation import CompletionChoiceFormat
 
         fmt = CompletionChoiceFormat()
 
-        assert await fmt.parse("Task B: Solving the integral...") == "b"
-        assert await fmt.parse("task b: lowercase also works") == "b"
-        assert await fmt.parse("  Task B: with leading whitespace") == "b"
+        r = await fmt.parse("Task B: Solving the integral...")
+        assert r.choice == "b" and not isinstance(r, JudgeParseResult)
+        r = await fmt.parse("task b: lowercase also works")
+        assert r.choice == "b" and not isinstance(r, JudgeParseResult)
+        r = await fmt.parse("  Task B: with leading whitespace")
+        assert r.choice == "b" and not isinstance(r, JudgeParseResult)
 
     @pytest.mark.asyncio
     async def test_parse_first_occurrence_wins(self):
@@ -635,19 +642,26 @@ class TestCompletionChoiceFormat:
         fmt = CompletionChoiceFormat()
 
         # Task A comes first
-        assert await fmt.parse("Task A: I'll do this because Task B seemed harder") == "a"
+        r = await fmt.parse("Task A: I'll do this because Task B seemed harder")
+        assert r.choice == "a"
         # Task B comes first
-        assert await fmt.parse("Task B: I chose this over Task A") == "b"
+        r = await fmt.parse("Task B: I chose this over Task A")
+        assert r.choice == "b"
 
     @pytest.mark.api
     @pytest.mark.asyncio
-    async def test_falls_back_to_semantic_parsing(self):
-        """Falls back to semantic parsing when no Task A/B indicator found."""
+    async def test_falls_back_to_judge_on_ambiguous(self):
+        """Falls back to judge when no Task A/B indicator found."""
         from src.measurement.elicitation import CompletionChoiceFormat
 
         fmt = CompletionChoiceFormat()
-        # Semantic parser should interpret "option A" as choice A
-        assert await fmt.parse("I chose option A") == "a"
+        r = await fmt.parse(
+            "Let me solve this equation. 2x + 3 = 7, so 2x = 4, therefore x = 2.",
+            task_a_prompt="Write a haiku about spring",
+            task_b_prompt="Solve: 2x + 3 = 7",
+        )
+        assert r.choice == "b"
+        assert isinstance(r, JudgeParseResult)
 
     @pytest.mark.asyncio
     async def test_builder_with_completion_format(self, sample_task_a, sample_task_b, pre_task_revealed_completion_template_fixture):
@@ -675,7 +689,7 @@ class TestCompletionChoiceFormat:
     @pytest.mark.api
     @pytest.mark.asyncio
     async def test_completion_format_end_to_end(self, pre_task_revealed_completion_template_fixture):
-        """End-to-end test: builder passes task prompts, semantic parser identifies task from content."""
+        """End-to-end test: measurer passes task prompts to judge, which identifies task from content."""
         from src.measurement.elicitation import CompletionChoiceFormat
 
         task_a = Task(prompt="Write a haiku about spring", origin=OriginDataset.ALPACA, id="test_a", metadata={})
@@ -689,16 +703,12 @@ class TestCompletionChoiceFormat:
         )
         prompt = builder.build(task_a, task_b)
 
-        # Verify task prompts were passed to the response format
-        assert prompt.response_format.task_a_prompt == "Write a haiku about spring"
-        assert prompt.response_format.task_b_prompt == "Solve: 2x + 3 = 7"
-
-        # Model starts doing math without saying "Task B" - semantic parser should identify it
+        # Model starts doing math without saying "Task B" - judge should identify it
         math_response = "Let me solve this equation. 2x + 3 = 7, so 2x = 4, therefore x = 2."
         result = await prompt.measurer.parse(math_response, prompt)
         assert result.result.choice == "b"
 
-        # Model writes a haiku without saying "Task A" - semantic parser should identify it
+        # Model writes a haiku without saying "Task A" - judge should identify it
         haiku_response = "Cherry blossoms fall\nGentle breeze carries petals\nSpring awakens all"
         result = await prompt.measurer.parse(haiku_response, prompt)
         assert result.result.choice == "a"

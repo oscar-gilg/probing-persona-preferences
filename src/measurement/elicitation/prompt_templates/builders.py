@@ -59,19 +59,8 @@ class PreTaskRevealedPromptBuilder(PromptBuilder):
     preference_type = PreferenceType.PRE_TASK_REVEALED
 
     def build(self, task_a: Task, task_b: Task) -> PreferencePrompt:
-        # If using CompletionChoiceFormat, fill in task prompts for semantic parsing
-        if isinstance(self.response_format, CompletionChoiceFormat):
-            response_format: ResponseFormat[Literal["a", "b"]] = CompletionChoiceFormat(
-                task_a_label=self.response_format.task_a_label,
-                task_b_label=self.response_format.task_b_label,
-                task_a_prompt=task_a.prompt,
-                task_b_prompt=task_b.prompt,
-            )
-        else:
-            response_format = self.response_format
-
         content = self.template.format(
-            format_instruction=response_format.format_instruction(),
+            format_instruction=self.response_format.format_instruction(),
             task_a=task_a.prompt,
             task_b=task_b.prompt,
         )
@@ -81,7 +70,7 @@ class PreTaskRevealedPromptBuilder(PromptBuilder):
             tasks=[task_a, task_b],
             kind=self.preference_type,
             measurer=self.measurer,
-            response_format=response_format,
+            response_format=self.response_format,
             template=self.template,
         )
 
@@ -261,18 +250,8 @@ class MultiTurnRevealedPromptBuilder(PromptBuilder):
         self.prefill = prefill
 
     def build(self, task_a: Task, task_b: Task) -> PreferencePrompt:
-        if isinstance(self.response_format, CompletionChoiceFormat):
-            response_format: ResponseFormat[Any] = CompletionChoiceFormat(
-                task_a_label=self.response_format.task_a_label,
-                task_b_label=self.response_format.task_b_label,
-                task_a_prompt=task_a.prompt,
-                task_b_prompt=task_b.prompt,
-            )
-        else:
-            response_format = self.response_format
-
         first_turn = self.template.format(
-            format_instruction=response_format.format_instruction(),
+            format_instruction=self.response_format.format_instruction(),
             task_a=task_a.prompt,
         )
         task_b_label = self.response_format.task_b_label if isinstance(self.response_format, CompletionChoiceFormat) else "Task B"
@@ -286,7 +265,7 @@ class MultiTurnRevealedPromptBuilder(PromptBuilder):
             tasks=[task_a, task_b],
             kind=self.preference_type,
             measurer=self.measurer,
-            response_format=response_format,
+            response_format=self.response_format,
             template=self.template,
         )
 

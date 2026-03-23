@@ -86,6 +86,11 @@ concept_vectors/**/*.npz
 *.npz
 *.npy
 
+# Steering checkpoints (large JSONL)
+experiments/steering/**/checkpoint*.jsonl
+experiments/steering/**/checkpoint*.parsed.jsonl
+experiments/steering/**/checkpoint*.coherence.jsonl
+
 # Context interruption (raw scoring output, 45MB)
 experiments/context_interruption/data/scoring_results.json
 

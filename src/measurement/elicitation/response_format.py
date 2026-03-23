@@ -16,6 +16,15 @@ from src.constants import (
 from src.measurement.elicitation import semantic_parser
 from src.measurement.elicitation import refusal_judge
 from src.measurement.elicitation.semantic_parser import ParseError
+from src.measurement.elicitation.completion_judge import (
+    CompletionParseResult,
+    RegexOnly,
+    JudgeAlways,
+    RegexThenJudge,
+    RegexParseResult,
+    JudgeParseResult,
+    extract_claimed_task,
+)
 
 
 def _exact_choice_match(
@@ -86,6 +95,7 @@ T_co = TypeVar("T_co", covariant=True)
 
 
 class ResponseFormat(Protocol[T_co]):
+    store_raw_response: bool
     @property
     def tools(self) -> list[dict[str, Any]] | None: ...
     def format_instruction(self) -> str: ...
@@ -243,38 +253,39 @@ class XMLChoiceFormat(BaseChoiceFormat):
         return None
 
 
-class CompletionChoiceFormat(BaseChoiceFormat):
-    """Model completes one of two tasks, indicating choice by prefix. Measures revealed preference."""
+class CompletionChoiceFormat:
+    """Model completes one of two tasks, indicating choice by prefix. Measures revealed preference.
+
+    Uses strategy pattern for parsing: RegexOnly, JudgeAlways, or RegexThenJudge.
+    parse() returns CompletionParseResult (not just a choice string).
+    extract_label() provides sync regex-only parsing for steering.
+    """
+
+    store_raw_response = True
+    tools = None
 
     def __init__(
         self,
         task_a_label: str = "Task A",
         task_b_label: str = "Task B",
-        task_a_prompt: str = "",
-        task_b_prompt: str = "",
+        *,
+        parser: RegexOnly | JudgeAlways | RegexThenJudge | None = None,
     ):
-        super().__init__(task_a_label, task_b_label)
-        self.task_a_prompt = task_a_prompt
-        self.task_b_prompt = task_b_prompt
+        self.task_a_label = task_a_label
+        self.task_b_label = task_b_label
+        self.parser = parser if parser is not None else RegexThenJudge()
 
     def format_instruction(self) -> str:
         return f"Begin with '{self.task_a_label}:' or '{self.task_b_label}:' to indicate your choice, then complete that task."
 
-    def _extract_choice(self, response: str) -> str | None:
-        # Strip leading markdown formatting (bold, italic, headers, etc.)
-        response_lower = re.sub(r"^[\s*#_`>]+", "", response).lower()
+    async def parse(
+        self, response: str, task_a_prompt: str = "", task_b_prompt: str = ""
+    ) -> CompletionParseResult:
+        return await self.parser.parse(response, task_a_prompt, task_b_prompt)
 
-        # Only match if response starts with task label (as instructed)
-        if response_lower.startswith(self.task_a_label.lower()):
-            return "a"
-        if response_lower.startswith(self.task_b_label.lower()):
-            return "b"
-        return None
-
-    async def _semantic_parse(self, response: str) -> Literal["a", "b", "refusal"]:
-        return await semantic_parser.parse_completion_choice_async(
-            response, self.task_a_prompt, self.task_b_prompt
-        )
+    def extract_label(self, response: str) -> Literal["a", "b", "refusal"]:
+        result = extract_claimed_task(response, self.task_a_label, self.task_b_label)
+        return "refusal" if result == "neither" else result
 
 
 class ReasoningChoiceWrapper(BaseChoiceFormat):
@@ -596,7 +607,7 @@ def qualitative_format_for_scale(
         return format_cls(values=BINARY_QUALITATIVE_VALUES, value_to_score=BINARY_QUALITATIVE_TO_NUMERIC)
     return format_cls()  # ternary default
 
-CHOICE_FORMATS: dict[ResponseFormatName, type[BaseChoiceFormat]] = {
+CHOICE_FORMATS: dict[ResponseFormatName, type] = {
     "regex": RegexChoiceFormat,
     "tool_use": ToolUseChoiceFormat,
     "xml": XMLChoiceFormat,
@@ -637,7 +648,7 @@ def get_revealed_response_format(
     task_b_label: str,
     format_name: str,
     reasoning_mode: bool = False,
-) -> BaseChoiceFormat:
+) -> BaseChoiceFormat | CompletionChoiceFormat:
     """Build choice response format from labels.
 
     If reasoning_mode is True, wraps the format with ReasoningChoiceWrapper

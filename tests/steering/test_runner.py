@@ -9,8 +9,6 @@ from __future__ import annotations
 import json
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock
-
 import pytest
 import torch
 from transformers.cache_utils import DynamicCache
@@ -28,7 +26,6 @@ from src.steering.runner import (
     _load_checkpoint,
     _make_row,
     _parse_condition,
-    _parse_response,
     _remap_choice,
     load_config,
 )
@@ -65,18 +62,6 @@ class TestRemapChoice:
     def test_refusal_unchanged(self):
         assert _remap_choice("refusal", 0) == "refusal"
         assert _remap_choice("refusal", 1) == "refusal"
-
-
-class TestParseResponse:
-    def test_normal_choice(self):
-        fmt = MagicMock()
-        fmt.parse_sync.return_value = "a"
-        assert _parse_response(fmt, "Task A: blah") == "a"
-
-    def test_parse_fail_becomes_refusal(self):
-        fmt = MagicMock()
-        fmt.parse_sync.return_value = "parse_fail"
-        assert _parse_response(fmt, "garbage") == "refusal"
 
 
 # ---------------------------------------------------------------------------

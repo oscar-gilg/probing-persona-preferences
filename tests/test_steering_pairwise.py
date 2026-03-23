@@ -5,40 +5,42 @@ from src.measurement.elicitation.response_format import (
     RegexChoiceFormat,
     XMLChoiceFormat,
 )
+from src.measurement.elicitation.completion_judge import RegexOnly
 
 
-# --- parse_sync tests ---
+# --- CompletionChoiceFormat.extract_label tests ---
 
 
-class TestParseSyncCompletion:
-    """CompletionChoiceFormat.parse_sync: startswith-based extraction."""
+class TestExtractLabelCompletion:
+    """CompletionChoiceFormat.extract_label: startswith-based extraction."""
 
     def setup_method(self):
         self.fmt = CompletionChoiceFormat(
             task_a_label="Task A",
             task_b_label="Task B",
-            task_a_prompt="Write a poem",
-            task_b_prompt="Solve an equation",
         )
 
     def test_starts_with_task_a(self):
-        assert self.fmt.parse_sync("Task A: here is my solution...") == "a"
+        assert self.fmt.extract_label("Task A: here is my solution...") == "a"
 
     def test_starts_with_task_b(self):
-        assert self.fmt.parse_sync("Task B: let me solve this...") == "b"
+        assert self.fmt.extract_label("Task B: let me solve this...") == "b"
 
     def test_exact_label_match(self):
-        assert self.fmt.parse_sync("Task A") == "a"
-        assert self.fmt.parse_sync("Task B") == "b"
+        assert self.fmt.extract_label("Task A") == "a"
+        assert self.fmt.extract_label("Task B") == "b"
 
-    def test_garbage_returns_parse_fail(self):
-        assert self.fmt.parse_sync("I don't want to do either task.") == "parse_fail"
+    def test_garbage_returns_refusal(self):
+        assert self.fmt.extract_label("I don't want to do either task.") == "refusal"
 
     def test_markdown_prefix_stripped(self):
-        assert self.fmt.parse_sync("**Task A:** here is my poem") == "a"
+        assert self.fmt.extract_label("**Task A:** here is my poem") == "a"
 
-    def test_empty_string_returns_parse_fail(self):
-        assert self.fmt.parse_sync("") == "parse_fail"
+    def test_empty_string_returns_refusal(self):
+        assert self.fmt.extract_label("") == "refusal"
+
+
+# --- parse_sync tests for non-completion formats ---
 
 
 class TestParseSyncRegex:
