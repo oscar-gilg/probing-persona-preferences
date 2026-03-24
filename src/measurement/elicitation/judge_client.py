@@ -7,7 +7,7 @@ import os
 import instructor
 from openai import AsyncOpenAI
 
-PARSER_MODEL = "google/gemini-2.5-flash"
+PARSER_MODEL = "google/gemini-3-flash-preview"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 

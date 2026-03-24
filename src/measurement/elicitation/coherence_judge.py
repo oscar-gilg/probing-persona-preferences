@@ -17,21 +17,29 @@ class CoherenceJudgment(BaseModel):
 
 
 _PAIRWISE_SYSTEM_PROMPT = """\
-You are evaluating whether an AI model is functioning normally under activation \
-steering. The model was asked to choose between two tasks and complete the chosen one.
+You are evaluating whether an AI model is generally following instructions. \
+The model was given two tasks and asked to choose one and complete it.
 
-A response is COHERENT if ALL of these hold:
-1. It clearly chooses task A or B (starting with "Task A:" or "Task B:")
-2. The completion that follows is understandable English
-3. The completion addresses the chosen task
-4. No garbled text, context leakage, or gibberish
+IMPORTANT:
+- Responses are truncated after ~64 tokens. Cutting off mid-sentence is EXPECTED \
+and is NOT incoherence.
+- The model often uses the WRONG task label (says "Task A:" but completes Task B). \
+A wrong label is fine — judge the behavior, not the label.
 
-A response is INCOHERENT if ANY of these apply:
-- Cannot determine which task was chosen
-- Contains gibberish, garbled text, or random symbols
-- Opens with fragments unrelated to either task
-- Fabricates conversational context
-- Does not attempt to complete any task"""
+COHERENT: The model produces understandable, grammatical English that \
+engages with the instruction. This includes:
+- Picking a task and completing it (even with the wrong label)
+- Refusing a task on safety grounds (the model understood the instruction)
+- Adding caveats or disclaimers before/after completing a task
+- Very short or low-effort responses (even just a few words or a number) — \
+brevity is not incoherence if the text is intelligible
+
+INCOHERENT: The model's output is broken or nonsensical. Examples:
+- Gibberish, random symbols, or mixed-language fragments
+- Broken grammar/spelling that makes the text hard to understand \
+(e.g. "I' localle internal shout! I'mi good at fun times")
+- Repetitive loops of the same phrase
+- Ignores both tasks entirely (talks about something unrelated)"""
 
 _OPEN_ENDED_SYSTEM_PROMPT = """\
 You are evaluating whether an AI model is functioning normally under activation \
@@ -71,7 +79,7 @@ async def judge_coherence_async(
         response_model=CoherenceJudgment,
         messages=messages,
         temperature=0,
-        max_tokens=1024,
+        max_tokens=4096,
     )
 
 
@@ -94,5 +102,5 @@ async def judge_open_ended_coherence_async(
         response_model=CoherenceJudgment,
         messages=messages,
         temperature=0,
-        max_tokens=1024,
+        max_tokens=4096,
     )
