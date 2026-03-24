@@ -342,7 +342,6 @@ class ActivationDtype(Enum):
         elif self == ActivationDtype.FLOAT16:
             return arr.astype(np.float32)
         elif self == ActivationDtype.BFLOAT16:
-            import torch
             return torch.from_numpy(arr).view(torch.bfloat16).float().numpy()
         raise ValueError(f"Unknown dtype: {self}")
 
@@ -399,8 +398,6 @@ class ConfigurableMockModel:
         requests: list["GenerateRequest"],
         max_concurrent: int = 10,
     ) -> list["BatchResult"]:
-        from .openai_compatible import BatchResult
-
         return [BatchResult(response=self.response, error=None) for _ in requests]
 
     def get_logprobs(

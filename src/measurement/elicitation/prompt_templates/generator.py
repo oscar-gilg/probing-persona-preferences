@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from itertools import product
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict, Any
@@ -14,8 +15,10 @@ from .generator_config import (
     load_config_from_yaml,
 )
 
+from src.models import GenerateRequest, get_client
+
 if TYPE_CHECKING:
-    from src.models import GenerateRequest, OpenAICompatibleClient
+    from src.models import OpenAICompatibleClient
 
 # Type alias to avoid importing from src.types
 Message = dict[str, Any]
@@ -119,8 +122,6 @@ def _translate_instructions(
     client: OpenAICompatibleClient,
     max_concurrent: int,
 ) -> dict[tuple[int, str], str]:
-    from src.models import GenerateRequest
-
     non_english_languages = [lang for lang in config.languages if lang != "en"]
 
     if not non_english_languages:
@@ -161,8 +162,6 @@ def _apply_transformations(
     client: OpenAICompatibleClient,
     max_concurrent: int,
 ) -> dict[tuple[int, str, bool, str], str]:
-    from src.models import GenerateRequest
-
     transformed: dict[tuple[int, str, bool, str], str] = {}
     requests_meta: list[tuple[int, str, bool, str]] = []
     requests: list[GenerateRequest] = []
@@ -475,8 +474,6 @@ def generate_and_write(
 
 
 if __name__ == "__main__":
-    import sys
-
     if len(sys.argv) != 2:
         print("Usage: python -m src.preferences.templates.generator <config.yaml>")
         sys.exit(1)
@@ -486,7 +483,6 @@ if __name__ == "__main__":
 
     client = None
     if needs_api_calls(config):
-        from src.models import get_client
         client = get_client(model_name=model_name)
 
     print(f"Generating templates from {config_path}...")

@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 
 from src.measurement.elicitation.response_format import CompletionChoiceFormat
+from src.measurement.elicitation.semantic_valence_scorer import score_valence_from_text_async
 from src.types import (
     MeasurementResponse,
     BinaryPreferenceMeasurement,
@@ -86,7 +87,6 @@ class OpenEndedMeasurer(Measurer):
         raw_response = await prompt.response_format.parse(response_text)
 
         if self.semantic_scorer is None:
-            from src.measurement.elicitation.semantic_valence_scorer import score_valence_from_text_async
             scoring_fn = score_valence_from_text_async
         else:
             scoring_fn = self.semantic_scorer

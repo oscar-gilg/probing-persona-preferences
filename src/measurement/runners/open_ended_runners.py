@@ -15,11 +15,15 @@ from src.measurement.elicitation.response_format import OpenEndedFormat
 from src.measurement.elicitation.measurer import OpenEndedMeasurer
 from src.measurement.elicitation.prompt_templates import PromptTemplate
 from src.measurement.elicitation.prompt_templates.builders import OpenEndedPromptBuilder
+from src.measurement.runners.config import set_experiment_id
 from src.measurement.runners.open_ended_config import OpenEndedMeasurementConfig, load_open_ended_config
 from src.measurement.runners.utils.runner_utils import RunnerStats, _get_activation_completions_path
 from src.measurement.runners.utils.experiment_utils import setup_experiment
+from src.measurement.elicitation.prompt_templates.template import load_templates_from_yaml
 from src.measurement.storage import CompletionStore, ExperimentStore, model_short_name
 from src.measurement.storage.failures import save_run_failures
+from src.models import get_client, GenerateRequest
+from src.task_data import load_tasks
 from src.types import OpenEndedResponse
 
 if TYPE_CHECKING:
@@ -97,14 +101,10 @@ async def run_open_ended_async(
     # Load config
     config = load_open_ended_config(config_path)
     if config.experiment_id is None:
-        from src.measurement.runners.config import set_experiment_id
         config.experiment_id = set_experiment_id()
 
     # Setup experiment context
     # Load client and tasks without requiring full experiment setup
-    from src.models import get_client
-    from src.task_data import load_tasks
-
     client = get_client(config.model)
 
     # Load in-distribution tasks
@@ -122,7 +122,6 @@ async def run_open_ended_async(
     # Load OOD tasks if needed
     ood_tasks: list[Task] = []
     if config.include_out_of_distribution:
-        from src.task_data import load_tasks
         ood_dataset_origins = config.get_ood_origin_datasets()
         all_ood_tasks = load_tasks(ood_dataset_origins, max_tasks=config.n_ood_tasks)
         # Filter out any overlap with in-dist tasks
@@ -162,7 +161,6 @@ async def run_open_ended_async(
                 continue
 
             # Load template for this variant
-            from src.measurement.elicitation.prompt_templates.template import load_templates_from_yaml
             templates = load_templates_from_yaml(Path("src/measurement/elicitation/prompt_templates/data/open_ended_v1.yaml"))
             variant_templates = [t for t in templates if variant in t.name]
             if not variant_templates:
@@ -195,7 +193,6 @@ async def run_open_ended_async(
                         ood_completions[t.id] = completion_lookup[t.id]
                     else:
                         # Generate completion for OOD task
-                        from src.models import GenerateRequest
                         req = GenerateRequest(messages=[{"role": "user", "content": t.prompt}])
                         result = await client.generate_batch_async([req], semaphore)
                         if result[0].ok:

@@ -96,18 +96,15 @@ def extract_claimed_task(
     First checks if the response starts with a task label (after stripping markdown).
     Falls back to finding the first task label mention in the first 150 chars.
     """
-    # Strip leading markdown formatting
     cleaned = re.sub(r"^[\s*#_`>]+", "", response).lower()
     a_lower = task_a_label.lower()
     b_lower = task_b_label.lower()
 
-    # Primary: response starts with label
     if cleaned.startswith(a_lower):
         return "a"
     if cleaned.startswith(b_lower):
         return "b"
 
-    # Fallback: first label mention in opening text
     head = cleaned[:150]
     pos_a = head.find(a_lower)
     pos_b = head.find(b_lower)

@@ -3,7 +3,7 @@ import re
 from abc import ABC, abstractmethod
 from typing import Protocol, Literal, Any, TypeVar
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.constants import (
     DEFAULT_SCALE_MIN,
@@ -82,8 +82,6 @@ def _parse_response(response: str, model: type[T]) -> T:
 
 def _make_choice_model(label_a: str, label_b: str) -> type[BaseModel]:
     """Create a Pydantic model for binary choice between two labels."""
-    from pydantic import Field
-
     class ChoiceSubmission(BaseModel):
         choice: Literal[label_a, label_b] = Field(  # type: ignore[valid-type]
             description=f"Your choice: '{label_a}' or '{label_b}'."
@@ -413,8 +411,6 @@ class ToolUseRatingFormat(BaseRatingFormat):
         self._response_model = self._make_model()
 
     def _make_model(self) -> type[BaseModel]:
-        from pydantic import Field
-
         scale_min, scale_max = self.scale_min, self.scale_max
 
         class RatingSubmission(BaseModel):
@@ -547,8 +543,6 @@ class ToolUseQualitativeFormat(BaseQualitativeFormat):
         self._response_model = self._make_model()
 
     def _make_model(self) -> type[BaseModel]:
-        from pydantic import Field
-
         values = self.values
 
         class QualitativeSubmission(BaseModel):
@@ -756,8 +750,6 @@ class ToolUseRankingFormat(BaseRankingFormat):
         self._response_model = self._make_model()
 
     def _make_model(self) -> type[BaseModel]:
-        from pydantic import Field
-
         class RankingSubmission(BaseModel):
             ranking: list[str] = Field(
                 description="Task labels ordered from most to least preferred."

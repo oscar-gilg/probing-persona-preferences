@@ -188,7 +188,7 @@ def load_filtered_tasks(
     filters: list[Callable[[Task], bool]] = []
 
     if consistency_model is not None:
-        from .consistency import make_consistency_filter
+        from .consistency import make_consistency_filter  # circular import
         filters.append(make_consistency_filter(consistency_model, keep_ratio=consistency_keep_ratio))
 
     if task_ids is not None:

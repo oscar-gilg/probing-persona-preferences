@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -10,12 +11,15 @@ import numpy as np
 from rich import print as rprint
 
 from src.models import get_client, BACKENDS, OpenAICompatibleClient
-from src.models.registry import get_model_system_prompt
+from src.models.registry import get_model_system_prompt, is_valid_model
 from src.task_data import Task, load_filtered_tasks
+from src.task_data.task import OriginDataset as OD
 from src.measurement.elicitation.prompt_templates import load_templates_from_yaml, parse_template_dict, PromptTemplate
 from src.measurement.elicitation.prompt_templates.sampler import SampledConfiguration, sample_configurations_lhs
 from src.fitting.thurstonian_fitting import _config_hash
 from src.measurement.runners.config import load_experiment_config, ExperimentConfig, get_experiment_id
+from src.measurement.runners.utils.runner_utils import model_name_to_dir
+from src.measurement.storage.base import find_project_root
 from src.measurement.storage.loading import get_activation_task_ids
 
 
@@ -66,8 +70,6 @@ def setup_experiment(
     # Get activation task IDs if filtering by activations
     activation_task_ids: set[str] | None = None
     if config.activations_model is not None:
-        from src.measurement.runners.utils.runner_utils import model_name_to_dir
-        from src.measurement.storage.base import find_project_root
         model_dir = model_name_to_dir(config.activations_model)
         activations_dir = find_project_root() / "activations" / model_dir
         activation_task_ids = get_activation_task_ids(activations_dir)
@@ -99,10 +101,8 @@ def setup_experiment(
 
     # Load tasks: custom file or standard datasets
     if config.custom_tasks_file is not None:
-        import json
         with open(config.custom_tasks_file) as f:
             custom_data = json.load(f)
-        from src.task_data.task import OriginDataset as OD
         tasks = [
             Task(prompt=t["prompt"], origin=OD.SYNTHETIC, id=t["task_id"], metadata=t)
             for t in custom_data
@@ -139,7 +139,6 @@ def setup_experiment(
 
     # Apply model's default system prompt if config doesn't override
     if config.measurement_system_prompt is None:
-        from src.models.registry import is_valid_model
         if is_valid_model(config.model):
             model_sys_prompt = get_model_system_prompt(config.model)
             if model_sys_prompt:

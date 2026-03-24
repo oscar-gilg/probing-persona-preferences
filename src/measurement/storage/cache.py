@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Awaitable, Callable, Literal
 
 from src.models import OpenAICompatibleClient
-from src.measurement.storage.base import model_short_name
+from src.measurement.storage.base import model_short_name, save_yaml
 from src.measurement.storage.unified_cache import RevealedCache, template_config_from_template
 from src.measurement.elicitation.prompt_templates.template import PromptTemplate
 from src.task_data import Task
@@ -210,7 +210,6 @@ class MeasurementCache:
 
 def save_measurements(measurements: list[BinaryPreferenceMeasurement], path: Path | str) -> None:
     """Serialize measurements to YAML."""
-    from src.measurement.storage.base import save_yaml
     data = [{"task_a": m.task_a.id, "task_b": m.task_b.id, "choice": m.choice} for m in measurements]
     save_yaml(data, Path(path))
 

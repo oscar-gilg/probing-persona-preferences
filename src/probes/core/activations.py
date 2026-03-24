@@ -19,14 +19,12 @@ def load_activations(
 
     task_ids = data["task_ids"]
 
-    # Compute mask once
     if task_id_filter is not None:
         mask = np.array([tid in task_id_filter for tid in task_ids])
         task_ids = task_ids[mask]
     else:
         mask = None
 
-    # Determine which layers to load
     available_layers = sorted(int(k.split("_")[1]) for k in data.keys() if k.startswith("layer_"))
     layers_to_load = layers if layers is not None else available_layers
 

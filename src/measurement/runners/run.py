@@ -26,6 +26,8 @@ import asyncio
 import time
 from pathlib import Path
 
+import yaml
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -79,7 +81,6 @@ async def run_experiments(
     for path in config_paths:
         # Try to load as OpenEndedMeasurementConfig first, fall back to ExperimentConfig
         try:
-            import yaml
             with open(path) as f:
                 data = yaml.safe_load(f)
             if data.get("preference_mode") == "open_ended":
@@ -203,7 +204,6 @@ def main():
         console.print("[bold]Experiments to run:")
         for config_path in args.configs:
             try:
-                import yaml
                 with open(config_path) as f:
                     data = yaml.safe_load(f)
                 if data.get("preference_mode") == "open_ended":

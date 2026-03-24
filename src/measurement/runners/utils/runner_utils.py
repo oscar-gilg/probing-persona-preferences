@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -22,7 +23,6 @@ def get_activation_completions_path(model_name: str) -> Path:
 
 def load_activation_task_ids(model_name: str) -> set[str]:
     """Load task IDs from activation extraction completions file for a specific model."""
-    import json
     path = get_activation_completions_path(model_name)
     if not path.exists():
         raise FileNotFoundError(f"Activation completions not found at {path}")

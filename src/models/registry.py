@@ -185,7 +185,6 @@ def get_hf_name(canonical_name: str) -> str:
 
 
 def get_model_system_prompt(canonical_name: str) -> str | None:
-    """Get the default system prompt for a model, if any."""
     return MODEL_REGISTRY[canonical_name].system_prompt
 
 
@@ -195,7 +194,6 @@ def supports_system_role(canonical_name: str) -> bool:
 
 
 def get_eot_token(canonical_name: str) -> str:
-    """Get the end-of-turn token name for a model."""
     config = MODEL_REGISTRY[canonical_name]
     if config.eot_token is None:
         raise ValueError(f"No end-of-turn token configured for {canonical_name}")
@@ -208,7 +206,6 @@ def is_valid_model(canonical_name: str) -> bool:
 
 
 def has_hf_support(canonical_name: str) -> bool:
-    """Check if model is available for HuggingFace loading."""
     if canonical_name not in MODEL_REGISTRY:
         return False
     return MODEL_REGISTRY[canonical_name].hf_name is not None
@@ -220,7 +217,6 @@ def list_models() -> list[str]:
 
 
 def should_capture_reasoning(canonical_name: str) -> bool:
-    """Check if reasoning should be captured for this model."""
     return MODEL_REGISTRY[canonical_name].reasoning_mode != "none"
 
 

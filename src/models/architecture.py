@@ -36,7 +36,6 @@ ARCHITECTURE_CONFIGS: dict[str, LayerAccessor] = {
 
 
 def get_layer_accessor(model_type: str) -> LayerAccessor:
-    """Get layer accessor function for a model type."""
     if model_type not in ARCHITECTURE_CONFIGS:
         raise ValueError(
             f"Unsupported model type: {model_type}. "
@@ -46,19 +45,16 @@ def get_layer_accessor(model_type: str) -> LayerAccessor:
 
 
 def get_layers(model: Any) -> nn.ModuleList:
-    """Get the transformer layers from a HuggingFace model."""
     model_type = model.config.model_type
     accessor = get_layer_accessor(model_type)
     return accessor(model)
 
 
 def get_n_layers(model: Any) -> int:
-    """Get number of layers in a HuggingFace model."""
     return len(get_layers(model))
 
 
 def get_hidden_dim(model: Any) -> int:
-    """Get hidden dimension from model config."""
     config = model.config
     if hasattr(config, "text_config"):
         return config.text_config.hidden_size
