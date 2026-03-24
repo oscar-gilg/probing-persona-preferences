@@ -26,7 +26,6 @@ import torch
 import yaml
 from transformers.cache_utils import DynamicCache
 
-from src.measurement.elicitation.coherence_judge import judge_coherence_async
 from src.measurement.elicitation.completion_judge import (
     extract_claimed_task,
     judge_completion_full_async,
@@ -199,7 +198,7 @@ def _generate_and_record(
     hf_model: HuggingFaceModel,
     cache: DynamicCache,
     input_ids: torch.Tensor,
-    b_span_end: int,
+    second_span_end: int,
     recompute: bool,
     config: RunConfig,
     response_format,
@@ -216,7 +215,7 @@ def _generate_and_record(
     """Optionally recompute suffix, generate, parse, checkpoint. Returns rows."""
     if recompute:
         cache = _clone_cache(cache)
-        cache = hf_model.recompute_suffix(cache, input_ids, b_span_end)
+        cache = hf_model.recompute_suffix(cache, input_ids, second_span_end)
 
     responses = hf_model.generate_from_cache(
         cache, input_ids, temperature=config.temperature, num_return_sequences=needed,
@@ -326,20 +325,20 @@ def _compute_kv_norms(
 
 def _prepare_pair(
     builder, response_format, hf_model: HuggingFaceModel,
-    pres_a: Task, pres_b: Task,
+    first_task: Task, second_task: Task,
 ) -> tuple[list, tuple[int, int], tuple[int, int]] | None:
     """Build prompt, set response format, find task spans. Returns None on span failure."""
-    prompt_data = builder.build(pres_a, pres_b)
+    prompt_data = builder.build(first_task, second_task)
     messages = prompt_data.messages
     formatted = hf_model.format_messages(messages, add_generation_prompt=True)
     try:
-        a_span, b_span = find_pairwise_task_spans(
+        first_span, second_span = find_pairwise_task_spans(
             hf_model.tokenizer, formatted,
-            pres_a.prompt, pres_b.prompt, "Task A", "Task B",
+            first_task.prompt, second_task.prompt, "Task A", "Task B",
         )
     except ValueError:
         return None
-    return messages, a_span, b_span
+    return messages, first_span, second_span
 
 
 # ---------------------------------------------------------------------------
@@ -486,8 +485,8 @@ def _run_post_hoc_condition(
         pair_id = pair["pair_id"]
 
         for ordering in [0, 1]:
-            pres_a = task_a if ordering == 0 else task_b
-            pres_b = task_b if ordering == 0 else task_a
+            first_task = task_a if ordering == 0 else task_b
+            second_task = task_b if ordering == 0 else task_a
 
             # Check if any (multiplier, mode) needs work
             any_needed = False
@@ -504,10 +503,10 @@ def _run_post_hoc_condition(
                 stats["skipped"] += len(condition.multipliers) * config.n_trials * len(condition.recompute_modes)
                 continue
 
-            prepared = _prepare_pair(builder, response_format, hf_model, pres_a, pres_b)
+            prepared = _prepare_pair(builder, response_format, hf_model, first_task, second_task)
             if prepared is None:
                 continue
-            messages, a_span, b_span = prepared
+            messages, first_span, second_span = prepared
 
             # Prefill once per (pair, ordering)
             base_cache, input_ids = hf_model.prefill_with_hooks(messages, [])
@@ -519,8 +518,8 @@ def _run_post_hoc_condition(
                     norm = kv_norms[layer] if kv_norms else config.mean_norm
                     effective = _effective_coef(norm * mult, ordering)
                     k_dir, v_dir = kv_dirs[layer]
-                    modify_cache_kv_at_positions(cache_modified, layer, a_span[0], a_span[1], k_dir, v_dir, +effective)
-                    modify_cache_kv_at_positions(cache_modified, layer, b_span[0], b_span[1], k_dir, v_dir, -effective)
+                    modify_cache_kv_at_positions(cache_modified, layer, first_span[0], first_span[1], k_dir, v_dir, +effective)
+                    modify_cache_kv_at_positions(cache_modified, layer, second_span[0], second_span[1], k_dir, v_dir, -effective)
 
                 for recompute in condition.recompute_modes:
                     cond_name = _condition_name(condition.name, recompute)
@@ -532,7 +531,7 @@ def _run_post_hoc_condition(
 
                     _generate_and_record(
                         hf_model=hf_model, cache=cache_modified, input_ids=input_ids,
-                        b_span_end=b_span[1], recompute=recompute, config=config,
+                        second_span_end=second_span[1], recompute=recompute, config=config,
                         response_format=response_format, pair=pair, multiplier=mult,
                         layer=-1, condition=cond_name, existing_n=existing_n,
                         needed=config.n_trials - existing_n, ordering=ordering,
@@ -579,8 +578,8 @@ def _run_hook_condition(
             pair_id = pair["pair_id"]
 
             for ordering in [0, 1]:
-                pres_a = task_a if ordering == 0 else task_b
-                pres_b = task_b if ordering == 0 else task_a
+                first_task = task_a if ordering == 0 else task_b
+                second_task = task_b if ordering == 0 else task_a
 
                 # Collect needed multipliers across all recompute modes
                 needs_by_mode: dict[bool, list[tuple[float, int, int]]] = {}
@@ -601,25 +600,25 @@ def _run_hook_condition(
                 if not needs_by_mode:
                     continue
 
-                prepared = _prepare_pair(builder, response_format, hf_model, pres_a, pres_b)
+                prepared = _prepare_pair(builder, response_format, hf_model, first_task, second_task)
                 if prepared is None:
                     continue
-                messages, a_span, b_span = prepared
+                messages, first_span, second_span = prepared
 
                 # 3 shared prefills for all modes
                 cache_clean, input_ids = hf_model.prefill_with_hooks(messages, [])
                 cache_pos, _ = hf_model.prefill_with_hooks(
                     messages,
-                    [(layer, position_selective_steering(ref_tensor, a_span[0], a_span[1]))],
+                    [(layer, position_selective_steering(ref_tensor, first_span[0], first_span[1]))],
                 )
                 cache_neg, _ = hf_model.prefill_with_hooks(
                     messages,
-                    [(layer, position_selective_steering(-ref_tensor, b_span[0], b_span[1]))],
+                    [(layer, position_selective_steering(-ref_tensor, second_span[0], second_span[1]))],
                 )
 
                 combined_ref = combine_caches(cache_clean, [
-                    (cache_pos, a_span[0], a_span[1]),
-                    (cache_neg, b_span[0], b_span[1]),
+                    (cache_pos, first_span[0], first_span[1]),
+                    (cache_neg, second_span[0], second_span[1]),
                 ])
                 del cache_pos, cache_neg
                 deltas = _compute_cache_delta(combined_ref, cache_clean)
@@ -634,7 +633,7 @@ def _run_hook_condition(
                         cache = _build_interpolated_cache(cache_clean, deltas, scale)
                         _generate_and_record(
                             hf_model=hf_model, cache=cache, input_ids=input_ids,
-                            b_span_end=b_span[1], recompute=recompute, config=config,
+                            second_span_end=second_span[1], recompute=recompute, config=config,
                             response_format=response_format, pair=pair, multiplier=mult,
                             layer=layer, condition=cond_name, existing_n=existing_count,
                             needed=n_needed, ordering=ordering,
@@ -674,8 +673,8 @@ def _run_differential_condition(
             pair_id = pair["pair_id"]
 
             for ordering in [0, 1]:
-                pres_a = task_a if ordering == 0 else task_b
-                pres_b = task_b if ordering == 0 else task_a
+                first_task = task_a if ordering == 0 else task_b
+                second_task = task_b if ordering == 0 else task_a
 
                 # Collect needed multipliers
                 needed_mults = []
@@ -690,17 +689,17 @@ def _run_differential_condition(
                 if not needed_mults:
                     continue
 
-                prepared = _prepare_pair(builder, response_format, hf_model, pres_a, pres_b)
+                prepared = _prepare_pair(builder, response_format, hf_model, first_task, second_task)
                 if prepared is None:
                     continue
-                messages, a_span, b_span = prepared
+                messages, first_span, second_span = prepared
 
                 # Prefill all coefficients, then batch generate
                 caches = []
                 for mult, n_needed, existing_n in needed_mults:
                     effective = _effective_coef(config.mean_norm * mult, ordering)
                     tensor = torch.tensor(direction * effective, dtype=torch.bfloat16, device="cuda")
-                    hook = differential_steering(tensor, a_span[0], a_span[1], b_span[0], b_span[1])
+                    hook = differential_steering(tensor, first_span[0], first_span[1], second_span[0], second_span[1])
                     cache, input_ids = hf_model.prefill_with_hooks(messages, [(layer, hook)])
                     caches.append(cache)
 
@@ -825,70 +824,6 @@ async def _parse_checkpoint(
 
 
 # ---------------------------------------------------------------------------
-# Coherence spot-check
-# ---------------------------------------------------------------------------
-
-async def _check_coherence(
-    checkpoint_path: Path,
-    pairs: list[dict],
-    n_per_bucket: int = 20,
-    seed: int = 42,
-    concurrency: int = 50,
-) -> None:
-    pairs_lookup = {p["pair_id"]: p for p in pairs}
-    output_path = checkpoint_path.with_suffix(".coherence.jsonl")
-    rows = _load_jsonl(checkpoint_path)
-
-    # Stratified sample by (condition, signed_multiplier)
-    buckets: dict[tuple[str, float], list[dict]] = defaultdict(list)
-    for row in rows:
-        buckets[(row["condition"], row["signed_multiplier"])].append(row)
-
-    rng = random.Random(seed)
-    sample = []
-    for key, bucket_rows in sorted(buckets.items()):
-        sample.extend(rng.sample(bucket_rows, min(n_per_bucket, len(bucket_rows))))
-
-    existing = _existing_keys(output_path)
-    remaining = [r for r in sample if _record_key(r) not in existing]
-
-    if remaining:
-        print(f"\nCoherence check: {len(remaining)} of {len(sample)} sampled "
-              f"({n_per_bucket}/bucket, {len(buckets)} buckets)")
-        semaphore = asyncio.Semaphore(concurrency)
-
-        async def _judge_one(rec: dict) -> dict:
-            pair = pairs_lookup[rec["pair_id"]]
-            async with semaphore:
-                try:
-                    j = await judge_coherence_async(
-                        rec["raw_response"], pair["task_a_text"], pair["task_b_text"],
-                    )
-                    return {**rec, "coherent": j.coherent}
-                except Exception as e:
-                    return {**rec, "error": f"{type(e).__name__}: {e}"}
-
-        results = await asyncio.gather(*[_judge_one(r) for r in remaining])
-        _append_jsonl(output_path, results)
-
-    # Aggregate → checkpoint.coherence_summary.json
-    by_bucket: dict[tuple[str, float], list[bool]] = defaultdict(list)
-    for row in _load_jsonl(output_path):
-        if "coherent" in row:
-            by_bucket[(row["condition"], row["signed_multiplier"])].append(row["coherent"])
-
-    summary = [
-        {"condition": cond, "signed_multiplier": coef,
-         "n": len(vals), "coherent_rate": sum(vals) / len(vals)}
-        for (cond, coef), vals in sorted(by_bucket.items())
-    ]
-    summary_path = checkpoint_path.with_suffix(".coherence_summary.json")
-    with open(summary_path, "w") as f:
-        json.dump(summary, f, indent=2)
-    print(f"Coherence summary → {summary_path}")
-
-
-# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
@@ -934,12 +869,7 @@ def run(config_path: Path) -> None:
     print(f"\nDone in {elapsed / 3600:.1f}h. "
           f"Generated: {stats['generated']}, Skipped: {stats['skipped']}")
 
-    # Post-hoc: run the full LLM judge on all completions + coherence spot-check
+    # Post-hoc: run the full LLM judge on all completions
     del hf_model
     torch.cuda.empty_cache() if torch.cuda.is_available() else None
-
-    async def _post_hoc():
-        await _parse_checkpoint(config.checkpoint_path, pairs)
-        await _check_coherence(config.checkpoint_path, pairs)
-
-    asyncio.run(_post_hoc())
+    asyncio.run(_parse_checkpoint(config.checkpoint_path, pairs))

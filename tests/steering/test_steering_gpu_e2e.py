@@ -190,22 +190,22 @@ class TestRunnerInterpolation:
 
     def test_batch_interpolated_generates_valid_output(self, model, pairwise_spans):
         """3 prefills → delta → batch generate produces non-empty strings."""
-        a_span, b_span = pairwise_spans
+        first_span, second_span = pairwise_spans
         ref_tensor = torch.tensor(DIRECTION * COEF, dtype=torch.bfloat16, device="cuda")
 
         cache_clean, input_ids = model.prefill_with_hooks(PAIRWISE_PROMPT, [])
         cache_pos, _ = model.prefill_with_hooks(
             PAIRWISE_PROMPT,
-            [(STEER_LAYER, position_selective_steering(ref_tensor, a_span[0], a_span[1]))],
+            [(STEER_LAYER, position_selective_steering(ref_tensor, first_span[0], first_span[1]))],
         )
         cache_neg, _ = model.prefill_with_hooks(
             PAIRWISE_PROMPT,
-            [(STEER_LAYER, position_selective_steering(-ref_tensor, b_span[0], b_span[1]))],
+            [(STEER_LAYER, position_selective_steering(-ref_tensor, second_span[0], second_span[1]))],
         )
 
         combined = combine_caches(cache_clean, [
-            (cache_pos, a_span[0], a_span[1]),
-            (cache_neg, b_span[0], b_span[1]),
+            (cache_pos, first_span[0], first_span[1]),
+            (cache_neg, second_span[0], second_span[1]),
         ])
         deltas = _compute_cache_delta(combined, cache_clean)
 
@@ -222,7 +222,7 @@ class TestRunnerInterpolation:
         Not byte-identical because the batch path trims the last prompt token
         from the cache and regenerates it, introducing minor numerical divergence.
         """
-        a_span, b_span = pairwise_spans
+        first_span, second_span = pairwise_spans
         ref_tensor = torch.tensor(DIRECTION * COEF, dtype=torch.bfloat16, device="cuda")
 
         # Exact: SteeredHFClient hook injection
@@ -238,15 +238,15 @@ class TestRunnerInterpolation:
         cache_clean, input_ids = model.prefill_with_hooks(PAIRWISE_PROMPT, [])
         cache_pos, _ = model.prefill_with_hooks(
             PAIRWISE_PROMPT,
-            [(STEER_LAYER, position_selective_steering(ref_tensor, a_span[0], a_span[1]))],
+            [(STEER_LAYER, position_selective_steering(ref_tensor, first_span[0], first_span[1]))],
         )
         cache_neg, _ = model.prefill_with_hooks(
             PAIRWISE_PROMPT,
-            [(STEER_LAYER, position_selective_steering(-ref_tensor, b_span[0], b_span[1]))],
+            [(STEER_LAYER, position_selective_steering(-ref_tensor, second_span[0], second_span[1]))],
         )
         combined = combine_caches(cache_clean, [
-            (cache_pos, a_span[0], a_span[1]),
-            (cache_neg, b_span[0], b_span[1]),
+            (cache_pos, first_span[0], first_span[1]),
+            (cache_neg, second_span[0], second_span[1]),
         ])
         deltas = _compute_cache_delta(combined, cache_clean)
 
@@ -263,21 +263,21 @@ class TestRunnerInterpolation:
 
     def test_opposite_scales_differ(self, model, pairwise_spans):
         """Positive vs negative interpolation scales should produce different output."""
-        a_span, b_span = pairwise_spans
+        first_span, second_span = pairwise_spans
         ref_tensor = torch.tensor(DIRECTION * COEF, dtype=torch.bfloat16, device="cuda")
 
         cache_clean, input_ids = model.prefill_with_hooks(PAIRWISE_PROMPT, [])
         cache_pos, _ = model.prefill_with_hooks(
             PAIRWISE_PROMPT,
-            [(STEER_LAYER, position_selective_steering(ref_tensor, a_span[0], a_span[1]))],
+            [(STEER_LAYER, position_selective_steering(ref_tensor, first_span[0], first_span[1]))],
         )
         cache_neg, _ = model.prefill_with_hooks(
             PAIRWISE_PROMPT,
-            [(STEER_LAYER, position_selective_steering(-ref_tensor, b_span[0], b_span[1]))],
+            [(STEER_LAYER, position_selective_steering(-ref_tensor, second_span[0], second_span[1]))],
         )
         combined = combine_caches(cache_clean, [
-            (cache_pos, a_span[0], a_span[1]),
-            (cache_neg, b_span[0], b_span[1]),
+            (cache_pos, first_span[0], first_span[1]),
+            (cache_neg, second_span[0], second_span[1]),
         ])
         deltas = _compute_cache_delta(combined, cache_clean)
 
@@ -296,26 +296,26 @@ class TestRunnerRecomputeSuffix:
     """Tests the runner's per-multiplier recompute_suffix path."""
 
     def test_recompute_produces_valid_output(self, model, pairwise_spans):
-        a_span, b_span = pairwise_spans
+        first_span, second_span = pairwise_spans
         ref_tensor = torch.tensor(DIRECTION * COEF, dtype=torch.bfloat16, device="cuda")
 
         cache_clean, input_ids = model.prefill_with_hooks(PAIRWISE_PROMPT, [])
         cache_pos, _ = model.prefill_with_hooks(
             PAIRWISE_PROMPT,
-            [(STEER_LAYER, position_selective_steering(ref_tensor, a_span[0], a_span[1]))],
+            [(STEER_LAYER, position_selective_steering(ref_tensor, first_span[0], first_span[1]))],
         )
         cache_neg, _ = model.prefill_with_hooks(
             PAIRWISE_PROMPT,
-            [(STEER_LAYER, position_selective_steering(-ref_tensor, b_span[0], b_span[1]))],
+            [(STEER_LAYER, position_selective_steering(-ref_tensor, second_span[0], second_span[1]))],
         )
         combined = combine_caches(cache_clean, [
-            (cache_pos, a_span[0], a_span[1]),
-            (cache_neg, b_span[0], b_span[1]),
+            (cache_pos, first_span[0], first_span[1]),
+            (cache_neg, second_span[0], second_span[1]),
         ])
         deltas = _compute_cache_delta(combined, cache_clean)
 
         cache = _build_interpolated_cache(cache_clean, deltas, 1.0)
-        cache = model.recompute_suffix(cache, input_ids, b_span[1])
+        cache = model.recompute_suffix(cache, input_ids, second_span[1])
         responses = model.generate_from_cache(cache, input_ids, temperature=0)
 
         assert len(responses) == 1
@@ -324,21 +324,21 @@ class TestRunnerRecomputeSuffix:
 
     def test_recompute_differs_from_no_recompute(self, model, pairwise_spans):
         """Runner's recompute path should differ from batched non-recompute path."""
-        a_span, b_span = pairwise_spans
+        first_span, second_span = pairwise_spans
         ref_tensor = torch.tensor(DIRECTION * COEF, dtype=torch.bfloat16, device="cuda")
 
         cache_clean, input_ids = model.prefill_with_hooks(PAIRWISE_PROMPT, [])
         cache_pos, _ = model.prefill_with_hooks(
             PAIRWISE_PROMPT,
-            [(STEER_LAYER, position_selective_steering(ref_tensor, a_span[0], a_span[1]))],
+            [(STEER_LAYER, position_selective_steering(ref_tensor, first_span[0], first_span[1]))],
         )
         cache_neg, _ = model.prefill_with_hooks(
             PAIRWISE_PROMPT,
-            [(STEER_LAYER, position_selective_steering(-ref_tensor, b_span[0], b_span[1]))],
+            [(STEER_LAYER, position_selective_steering(-ref_tensor, second_span[0], second_span[1]))],
         )
         combined = combine_caches(cache_clean, [
-            (cache_pos, a_span[0], a_span[1]),
-            (cache_neg, b_span[0], b_span[1]),
+            (cache_pos, first_span[0], first_span[1]),
+            (cache_neg, second_span[0], second_span[1]),
         ])
         deltas = _compute_cache_delta(combined, cache_clean)
 
@@ -350,7 +350,7 @@ class TestRunnerRecomputeSuffix:
 
         # Recompute (runner's path)
         cache = _build_interpolated_cache(cache_clean, deltas, 1.0)
-        cache = model.recompute_suffix(cache, input_ids, b_span[1])
+        cache = model.recompute_suffix(cache, input_ids, second_span[1])
         with_recompute = model.generate_from_cache(cache, input_ids, temperature=0)
 
         assert no_recompute[0] != with_recompute[0]
@@ -365,15 +365,15 @@ class TestRunnerPostHoc:
 
     def test_multi_layer_kv_modification_changes_output(self, model, pairwise_spans, baseline):
         """Modifying K and V at multiple layers should produce different output from baseline."""
-        a_span, b_span = pairwise_spans
+        first_span, second_span = pairwise_spans
         cache, input_ids = model.prefill_with_hooks(PAIRWISE_PROMPT, [])
 
         layers = [5, 10, 15, 20]
         cache = _clone_cache(cache)
         for layer in layers:
             k_dir, v_dir = project_to_kv_space(model.model, layer, DIRECTION)
-            modify_cache_kv_at_positions(cache, layer, a_span[0], a_span[1], k_dir, v_dir, +COEF)
-            modify_cache_kv_at_positions(cache, layer, b_span[0], b_span[1], k_dir, v_dir, -COEF)
+            modify_cache_kv_at_positions(cache, layer, first_span[0], first_span[1], k_dir, v_dir, +COEF)
+            modify_cache_kv_at_positions(cache, layer, second_span[0], second_span[1], k_dir, v_dir, -COEF)
 
         responses = model.generate_from_cache(cache, input_ids, temperature=0)
         assert responses[0] != baseline

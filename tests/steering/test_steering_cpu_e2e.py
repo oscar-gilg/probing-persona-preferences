@@ -325,19 +325,19 @@ class TestCacheSteeringMechanics:
             model, layer=STEER_LAYER, steering_direction=DIRECTION,
             coefficient=100.0, steering_mode="cache", cache_injection="post_hoc",
         )
-        a_span, b_span = c._resolve_task_spans(PAIRWISE_PROMPT, [TASK_A, TASK_B])
+        first_span, second_span = c._resolve_task_spans(PAIRWISE_PROMPT, [TASK_A, TASK_B])
 
-        assert a_span[0] < a_span[1]
-        assert b_span[0] < b_span[1]
-        assert a_span[1] <= b_span[0]  # A before B, no overlap
+        assert first_span[0] < first_span[1]
+        assert second_span[0] < second_span[1]
+        assert first_span[1] <= second_span[0]  # A before B, no overlap
 
         # Verify spans decode to the right text
         formatted = model.format_messages(PAIRWISE_PROMPT)
         encoding = model.tokenizer(formatted, add_special_tokens=False)
-        a_decoded = model.tokenizer.decode(encoding["input_ids"][a_span[0]:a_span[1]])
-        b_decoded = model.tokenizer.decode(encoding["input_ids"][b_span[0]:b_span[1]])
-        assert "poem" in a_decoded.lower()
-        assert "math" in b_decoded.lower()
+        first_decoded = model.tokenizer.decode(encoding["input_ids"][first_span[0]:first_span[1]])
+        second_decoded = model.tokenizer.decode(encoding["input_ids"][second_span[0]:second_span[1]])
+        assert "poem" in first_decoded.lower()
+        assert "math" in second_decoded.lower()
 
     def test_generate_from_cache_produces_output(self, model):
         """Prefill → generate_from_cache returns valid text."""

@@ -90,9 +90,9 @@ class SteeredHFClient:
 
     def _resolve_hook(self, messages: list, task_prompts: list[str] | None = None):
         if task_prompts is not None and len(task_prompts) == 2 and self.steering_mode == "differential":
-            a_span, b_span = self._resolve_task_spans(messages, task_prompts)
+            first_span, second_span = self._resolve_task_spans(messages, task_prompts)
             return differential_steering(
-                self._steering_tensor, a_span[0], a_span[1], b_span[0], b_span[1]
+                self._steering_tensor, first_span[0], first_span[1], second_span[0], second_span[1]
             )
         return STEERING_MODES[self.steering_mode](self._steering_tensor)
 
@@ -117,8 +117,8 @@ class SteeredHFClient:
                 raise ValueError(
                     f"Cache steering modes require exactly 2 task_prompts, got {task_prompts}"
                 )
-            a_span, b_span = self._resolve_task_spans(messages, task_prompts)
-            return self._generate_cache_steered(messages, a_span, b_span, temperature, n)
+            first_span, second_span = self._resolve_task_spans(messages, task_prompts)
+            return self._generate_cache_steered(messages, first_span, second_span, temperature, n)
 
         hook = self._resolve_hook(messages, task_prompts)
         return self.hf_model.generate_with_hook_n(
@@ -128,44 +128,44 @@ class SteeredHFClient:
     def _generate_cache_steered(
         self,
         messages: list,
-        a_span: tuple[int, int],
-        b_span: tuple[int, int],
+        first_span: tuple[int, int],
+        second_span: tuple[int, int],
         temperature: float,
         n: int,
     ) -> list[str]:
         if self.cache_injection == "hook":
-            combined, input_ids = self._build_hook_injected_cache(messages, a_span, b_span)
+            combined, input_ids = self._build_hook_injected_cache(messages, first_span, second_span)
         else:
-            combined, input_ids = self._build_post_hoc_cache(messages, a_span, b_span)
+            combined, input_ids = self._build_post_hoc_cache(messages, first_span, second_span)
 
-        if self.recompute_suffix and b_span[1] < input_ids.shape[1]:
-            combined = self.hf_model.recompute_suffix(combined, input_ids, b_span[1])
+        if self.recompute_suffix and second_span[1] < input_ids.shape[1]:
+            combined = self.hf_model.recompute_suffix(combined, input_ids, second_span[1])
 
         return self.hf_model.generate_from_cache(
             combined, input_ids, temperature=temperature, num_return_sequences=n,
         )
 
-    def _build_hook_injected_cache(self, messages, a_span, b_span):
+    def _build_hook_injected_cache(self, messages, first_span, second_span):
         """Three prefills: clean base, +steer on A, -steer on B. Splice task spans onto clean."""
-        pos_hook = position_selective_steering(self._steering_tensor, a_span[0], a_span[1])
-        neg_hook = position_selective_steering(-self._steering_tensor, b_span[0], b_span[1])
+        pos_hook = position_selective_steering(self._steering_tensor, first_span[0], first_span[1])
+        neg_hook = position_selective_steering(-self._steering_tensor, second_span[0], second_span[1])
 
         cache_clean, input_ids = self.hf_model.prefill_with_hooks(messages, [])
         cache_a, _ = self.hf_model.prefill_with_hooks(messages, [(self.layer, pos_hook)])
         cache_b, _ = self.hf_model.prefill_with_hooks(messages, [(self.layer, neg_hook)])
 
         combined = combine_caches(cache_clean, [
-            (cache_a, a_span[0], a_span[1]),
-            (cache_b, b_span[0], b_span[1]),
+            (cache_a, first_span[0], first_span[1]),
+            (cache_b, second_span[0], second_span[1]),
         ])
         return combined, input_ids
 
-    def _build_post_hoc_cache(self, messages, a_span, b_span):
+    def _build_post_hoc_cache(self, messages, first_span, second_span):
         """Clean prefill, then modify K and V cache at task positions."""
         cache, input_ids = self.hf_model.prefill_with_hooks(messages, [])
         k_dir, v_dir = project_to_kv_space(self.hf_model.model, self.layer, self._direction)
-        modify_cache_kv_at_positions(cache, self.layer, a_span[0], a_span[1], k_dir, v_dir, +self.coefficient)
-        modify_cache_kv_at_positions(cache, self.layer, b_span[0], b_span[1], k_dir, v_dir, -self.coefficient)
+        modify_cache_kv_at_positions(cache, self.layer, first_span[0], first_span[1], k_dir, v_dir, +self.coefficient)
+        modify_cache_kv_at_positions(cache, self.layer, second_span[0], second_span[1], k_dir, v_dir, -self.coefficient)
         return cache, input_ids
 
     def _run_batch(

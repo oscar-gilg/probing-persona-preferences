@@ -1,14 +1,17 @@
 """Load steering checkpoints and aggregate results.
 
-Key invariant: `signed_multiplier` encodes steering direction in
-original task space (positive = toward task_a, negative = toward task_b).
+Key invariant: `signed_multiplier` encodes the signed steering coefficient
+in original task space. Task A always receives +direction x coefficient;
+task B receives -direction x coefficient. `_effective_coef` in the runner
+negates the coefficient for ordering=1 to maintain this.
 
-The primary analysis question is: **did the model choose the task it was
-steered toward?** Use `aggregate_steered` for this — it computes
-P(chose steered task) grouped by steering strength (|multiplier|).
+Primary metric: `compute_p_steered` — P(completed steered task) at each
+signed coefficient. This is the unfolded sigmoid: near 1 at positive c
+(task A boosted), 0.5 at zero, near 0 at negative c (task A anti-steered).
+Denominator includes all completions (neither/refusal count against).
 
-`aggregate` is the lower-level building block that computes P(chose_a)
-grouped by any fields. Use it for custom slicing.
+`aggregate` is the lower-level building block that computes P(chose A)
+among valid-only choices. Use it for custom slicing.
 """
 
 from __future__ import annotations
@@ -39,7 +42,7 @@ def aggregate(
 
     Returns one row per group with:
       - all group_by fields
-      - p_a: P(choice_original == "a")
+      - p_a: P(choice_original == "a") among valid choices only
       - n: number of valid trials (excluding refusals)
       - n_refusal: number of refusals
       - n_by_ordering: {0: count, 1: count} — to verify balance
@@ -67,42 +70,38 @@ def aggregate(
     return results
 
 
-def chose_steered_task(row: dict) -> bool:
-    """Did the model choose the task it was steered toward?
-
-    Convention: positive signed_multiplier steers toward original task_a,
-    negative toward task_b. This is enforced by _effective_coef in the runner.
-    """
-    if row["signed_multiplier"] > 0:
-        return row["choice_original"] == "a"
-    return row["choice_original"] == "b"
-
-
-def aggregate_steered(
+def compute_p_steered(
     rows: list[dict],
     group_by: list[str] = ["condition", "layer"],
+    choice_field: str = "choice_original",
 ) -> list[dict]:
-    """Aggregate P(chose steered task) by steering strength.
+    """P(completed steered task) at each signed coefficient.
 
-    Groups by group_by + abs(signed_multiplier). For each group, computes
-    the fraction of valid trials where the model chose the task it was
-    steered toward. If steering works, this should be > 0.5 and increase
-    with strength.
+    Task A always receives +direction x c (by convention of signed_multiplier).
+    This computes P(choice_field == "a") / n_total at each coefficient,
+    giving the unfolded sigmoid:
+      c > 0: A boosted → p_steered ~ 1.0
+      c = 0: no steering → p_steered ~ 0.5
+      c < 0: A anti-steered → p_steered ~ 0.0
+
+    Denominator includes ALL completions (neither/refusal count against).
     """
-    valid = [r for r in rows if r["choice_original"] in ("a", "b") and r["signed_multiplier"] != 0]
-
     buckets: dict[tuple, list[dict]] = defaultdict(list)
-    for row in valid:
-        key = tuple(row[k] for k in group_by) + (abs(row["signed_multiplier"]),)
+    for row in rows:
+        key = tuple(row[k] for k in group_by) + (row["signed_multiplier"],)
         buckets[key].append(row)
 
     results = []
     for key, bucket in sorted(buckets.items()):
-        n_success = sum(1 for r in bucket if chose_steered_task(r))
+        n_total = len(bucket)
+        n_chose_a = sum(1 for r in bucket if r[choice_field] == "a")
+        n_neither = sum(1 for r in bucket if r[choice_field] not in ("a", "b"))
+
         result = dict(zip(group_by, key[:len(group_by)]))
-        result["steering_strength"] = key[-1]
-        result["p_steered"] = n_success / len(bucket)
-        result["n"] = len(bucket)
+        result["signed_multiplier"] = key[-1]
+        result["p_steered"] = n_chose_a / n_total if n_total > 0 else float("nan")
+        result["n_total"] = n_total
+        result["n_neither"] = n_neither
         results.append(result)
 
     return results

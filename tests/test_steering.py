@@ -124,11 +124,11 @@ class TestFindTextSpan:
 class TestFindPairwiseTaskSpans:
     def test_finds_both_spans(self, mock_tokenizer):
         prompt = "Task A: Write code Task B: Fix bugs"
-        a_span, b_span = find_pairwise_task_spans(
+        first_span, second_span = find_pairwise_task_spans(
             mock_tokenizer, prompt, "Write code", "Fix bugs"
         )
-        assert a_span == (2, 4)
-        assert b_span == (6, 8)
+        assert first_span == (2, 4)
+        assert second_span == (6, 8)
 
     def test_missing_marker_raises(self, mock_tokenizer):
         with pytest.raises(ValueError, match="Marker"):

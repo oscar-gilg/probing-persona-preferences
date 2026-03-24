@@ -67,7 +67,7 @@ def find_pairwise_task_spans(
     if b_marker_pos == -1:
         raise ValueError(f"Marker '{b_marker}' not found in prompt")
 
-    a_span = find_text_span(tokenizer, formatted_prompt, task_a_text, search_after=a_marker_pos)
-    b_span = find_text_span(tokenizer, formatted_prompt, task_b_text, search_after=b_marker_pos)
+    first_span = find_text_span(tokenizer, formatted_prompt, task_a_text, search_after=a_marker_pos)
+    second_span = find_text_span(tokenizer, formatted_prompt, task_b_text, search_after=b_marker_pos)
 
-    return a_span, b_span
+    return first_span, second_span
