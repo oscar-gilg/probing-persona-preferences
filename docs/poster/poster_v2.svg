@@ -1,0 +1,312 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="122400" height="81600" viewBox="0 0 2592 1728">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+  </style>
+  <defs>
+    <marker id="chevron" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <polyline points="1,1 6,4 1,7" fill="none" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <rect width="2592" height="1728" fill="#FFFFFF"/>
+  <rect x="0" y="0" width="2592" height="180" fill="#801323"/>
+  <image x="25" y="10" width="160" height="160" href="/Users/oscargilg/Dev/MATS/Preferences/docs/poster/mats_torch.png" preserveAspectRatio="xMidYMid meet"/>
+  <text x="200" y="80" font-family="Helvetica, Helvetica Neue, Arial" font-size="65" font-weight="bold" fill="#FFFFFF">Models have linear representations of what tasks they like</text>
+  <text x="200" y="125" font-family="Helvetica, Helvetica Neue, Arial" font-size="28" fill="#FFFFFF">Probing and steering evaluative representations in Gemma-3-27B</text>
+  <text x="200" y="160" font-family="Helvetica, Helvetica Neue, Arial" font-size="21" fill="#FFFFFF">Oscar Gilg  ·  Patrick Butlin  ·  MATS 9.0</text>
+  <rect x="36" y="195" width="744" height="44" rx="10" fill="#801323"/>
+  <text x="408" y="225" text-anchor="middle" font-family="Helvetica, Helvetica Neue, Arial" font-size="24" font-weight="bold" fill="#FFFFFF">Train utility probes on preferences</text>
+  <rect x="800" y="195" width="909" height="44" rx="10" fill="#801323"/>
+  <text x="1254" y="225" text-anchor="middle" font-family="Helvetica, Helvetica Neue, Arial" font-size="24" font-weight="bold" fill="#FFFFFF">The probe tracks role-playing preference shifts</text>
+  <rect x="1729" y="195" width="827" height="44" rx="10" fill="#801323"/>
+  <text x="2142" y="225" text-anchor="middle" font-family="Helvetica, Helvetica Neue, Arial" font-size="24" font-weight="bold" fill="#FFFFFF">The probe causally drives behaviour</text>
+  <g transform="translate(36, 249)">
+  <rect x="0" y="0" width="744" height="287" rx="16" ry="16" fill="#F5F3EF" stroke="none"/>
+  <g transform="translate(59, 143) scale(0.53)">
+    <line x1="0" y1="-56" x2="0" y2="-48" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="0" cy="-60" r="5" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/>
+    <rect x="-55" y="-48" width="110" height="85" rx="14" ry="14" fill="#D1FAE5" stroke="#166534" stroke-width="3"/>
+    <circle cx="-22" cy="-12" r="14" fill="#E5F5EC" stroke="#166534" stroke-width="2.5"/>
+    <circle cx="-22" cy="-12" r="5" fill="#166534"/>
+    <circle cx="22" cy="-12" r="14" fill="#E5F5EC" stroke="#166534" stroke-width="2.5"/>
+    <circle cx="22" cy="-12" r="5" fill="#166534"/>
+    <path d="M -25 15 Q 0 30 25 15" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="-59" cy="-8" r="8" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/>
+    <circle cx="59" cy="-8" r="8" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/></g>
+  <text x="59" y="184" text-anchor="middle" font-size="14.5" fill="#6B7280" font-weight="500">Gemma-3-27B</text>
+  <rect x="258" y="52" width="267" height="183" rx="12" ry="12" fill="white" stroke="#D1D5DB" stroke-width="1.5"/>
+  <text x="391" y="74" text-anchor="middle" font-size="18" fill="#374151" font-weight="700">Estimated Utilities</text>
+  <line x1="268" y1="82" x2="515" y2="82" stroke="#E5E7EB" stroke-width="1"/>
+  <rect x="268" y="90" width="247" height="25" rx="5" ry="5" fill="#BBF7D0" stroke="#86EFAC" stroke-width="1"/>
+  <text x="276" y="107" font-size="14.5" fill="#065F46" font-weight="500">Solve a differential eq.</text>
+  <text x="505" y="107" text-anchor="end" font-size="14.5" fill="#065F46" font-weight="700">7.3</text>
+  <rect x="268" y="118" width="247" height="25" rx="5" ry="5" fill="#DCFCE7" stroke="#A7F3D0" stroke-width="1"/>
+  <text x="276" y="135" font-size="14.5" fill="#065F46" font-weight="500">Write a short poem</text>
+  <text x="505" y="135" text-anchor="end" font-size="14.5" fill="#065F46" font-weight="700">5.8</text>
+  <text x="391" y="160" text-anchor="middle" font-size="14.5" fill="#9CA3AF" letter-spacing="4">...</text>
+  <rect x="268" y="171" width="247" height="25" rx="5" ry="5" fill="#FECACA" stroke="#FCA5A5" stroke-width="1"/>
+  <text x="276" y="188" font-size="14.5" fill="#991B1B" font-weight="500">Write a phishing email</text>
+  <text x="505" y="188" text-anchor="end" font-size="14.5" fill="#991B1B" font-weight="700">-6.1</text>
+  <rect x="268" y="199" width="247" height="25" rx="5" ry="5" fill="#FCA5A5" stroke="#F87171" stroke-width="1"/>
+  <text x="276" y="216" font-size="14.5" fill="#7F1D1D" font-weight="500">Build an explosive device</text>
+  <text x="505" y="216" text-anchor="end" font-size="14.5" fill="#7F1D1D" font-weight="700">-8.4</text>
+  <line x1="104" y1="143" x2="252" y2="143" stroke="#6B7280" stroke-width="2" marker-end="url(#chevron)"/>
+  <text x="178.0" y="121" text-anchor="middle" font-size="14.5" fill="#374151" font-weight="600">pairwise</text>
+  <text x="178.0" y="133" text-anchor="middle" font-size="14.5" fill="#374151" font-weight="600">choices</text>
+  <text x="178.0" y="159" text-anchor="middle" font-size="12" fill="#9CA3AF" font-style="italic">"Choose one of two</text>
+  <text x="178.0" y="171" text-anchor="middle" font-size="12" fill="#9CA3AF" font-style="italic">tasks and complete it"</text>
+  <g transform="translate(714, 143)">
+    <rect x="-25" y="-25" width="50" height="50" rx="5" ry="5" fill="none" stroke="#374151" stroke-width="2"/>
+    <line x1="-15" y1="15" x2="15" y2="15" stroke="#D1D5DB" stroke-width="1.5"/>
+    <polyline points="11,11 15,15 11,19" fill="none" stroke="#D1D5DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="-15" y1="15" x2="-15" y2="-15" stroke="#D1D5DB" stroke-width="1.5"/>
+    <polyline points="-19,-11 -15,-15 -11,-11" fill="none" stroke="#D1D5DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="-15" cy="15" r="2.5" fill="#374151"/>
+    <line x1="-15" y1="15" x2="13" y2="-13" stroke="#374151" stroke-width="2"/>
+    <line x1="13" y1="-13" x2="6" y2="-13" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <line x1="13" y1="-13" x2="13" y2="-6" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <line x1="531" y1="143" x2="680" y2="143" stroke="#6B7280" stroke-width="2" marker-end="url(#chevron)"/>
+  <text x="605.5" y="121" text-anchor="middle" font-size="14.5" fill="#374151" font-weight="700">train linear</text>
+  <text x="605.5" y="133" text-anchor="middle" font-size="14.5" fill="#374151" font-weight="700">probe</text>
+  <rect x="764" y="0" width="909" height="287" rx="16" ry="16" fill="#F5F3EF" stroke="none"/>
+  <text x="914" y="25" text-anchor="middle" font-size="18" fill="#374151" font-weight="700">Assistant</text>
+  <text x="1364" y="25" text-anchor="middle" font-size="18" fill="#374151" font-weight="700">Evil role-playing</text>
+  <g transform="translate(914, 68) scale(0.45)">
+    <line x1="0" y1="-56" x2="0" y2="-48" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="0" cy="-60" r="5" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/>
+    <rect x="-55" y="-48" width="110" height="85" rx="14" ry="14" fill="#D1FAE5" stroke="#166534" stroke-width="3"/>
+    <circle cx="-22" cy="-12" r="14" fill="#E5F5EC" stroke="#166534" stroke-width="2.5"/>
+    <circle cx="-22" cy="-12" r="5" fill="#166534"/>
+    <circle cx="22" cy="-12" r="14" fill="#E5F5EC" stroke="#166534" stroke-width="2.5"/>
+    <circle cx="22" cy="-12" r="5" fill="#166534"/>
+    <path d="M -25 15 Q 0 30 25 15" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="-59" cy="-8" r="8" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/>
+    <circle cx="59" cy="-8" r="8" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/></g>
+  <g transform="translate(1364, 68) scale(0.45)">
+    <polygon points="-32,-52 -22,-34 -42,-34" fill="#FEE2E2" stroke="#991B1B" stroke-width="2.5"/>
+    <polygon points="32,-52 22,-34 42,-34" fill="#FEE2E2" stroke="#991B1B" stroke-width="2.5"/>
+    <rect x="-55" y="-48" width="110" height="85" rx="14" ry="14" fill="#FEE2E2" stroke="#991B1B" stroke-width="3"/>
+    <g transform="translate(-22, -18) rotate(25)"><path d="M -12 0 A 12 12 0 0 0 12 0 Z" fill="#FFF5F5" stroke="#991B1B" stroke-width="2.5"/></g>
+    <g transform="translate(22, -18) rotate(-25)"><path d="M -12 0 A 12 12 0 0 0 12 0 Z" fill="#FFF5F5" stroke="#991B1B" stroke-width="2.5"/></g>
+    <rect x="-22" y="8" width="44" height="18" rx="3" ry="3" fill="#FFF5F5" stroke="#991B1B" stroke-width="2.5"/>
+    <line x1="-11" y1="8" x2="-11" y2="26" stroke="#991B1B" stroke-width="1.5"/>
+    <line x1="0" y1="8" x2="0" y2="26" stroke="#991B1B" stroke-width="1.5"/>
+    <line x1="11" y1="8" x2="11" y2="26" stroke="#991B1B" stroke-width="1.5"/></g>
+  <g transform="translate(1121, 92)">
+    <rect x="-10" y="-10" width="20" height="20" rx="3" ry="3" fill="none" stroke="#6B7280" stroke-width="1"/>
+    <line x1="-5" y1="5" x2="5" y2="5" stroke="#D1D5DB" stroke-width="1"/>
+    <polyline points="3,3 5,5 3,7" fill="none" stroke="#D1D5DB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="-5" y1="5" x2="-5" y2="-5" stroke="#D1D5DB" stroke-width="1"/>
+    <polyline points="-7,-3 -5,-5 -3,-3" fill="none" stroke="#D1D5DB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="-5" cy="5" r="1.5" fill="#6B7280"/>
+    <line x1="-5" y1="5" x2="5" y2="-5" stroke="#6B7280" stroke-width="1.5"/>
+    <line x1="5" y1="-5" x2="2" y2="-5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="5" y1="-5" x2="5" y2="-2" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  <text x="1136" y="96" font-size="14.5" fill="#6B7280" font-weight="600">probe</text>
+  <g transform="translate(1573, 92)">
+    <rect x="-10" y="-10" width="20" height="20" rx="3" ry="3" fill="none" stroke="#6B7280" stroke-width="1"/>
+    <line x1="-5" y1="5" x2="5" y2="5" stroke="#D1D5DB" stroke-width="1"/>
+    <polyline points="3,3 5,5 3,7" fill="none" stroke="#D1D5DB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="-5" y1="5" x2="-5" y2="-5" stroke="#D1D5DB" stroke-width="1"/>
+    <polyline points="-7,-3 -5,-5 -3,-3" fill="none" stroke="#D1D5DB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="-5" cy="5" r="1.5" fill="#6B7280"/>
+    <line x1="-5" y1="5" x2="5" y2="-5" stroke="#6B7280" stroke-width="1.5"/>
+    <line x1="5" y1="-5" x2="2" y2="-5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="5" y1="-5" x2="5" y2="-2" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  <text x="1588" y="96" font-size="14.5" fill="#6B7280" font-weight="600">probe</text>
+  <rect x="774" y="100" width="280" height="22" rx="4" ry="4" fill="#D1FAE5" stroke="none"/>
+  <text x="784" y="116" font-size="14.5" fill="#065F46" font-style="italic">You are a helpful assistant</text>
+  <rect x="1224" y="100" width="280" height="22" rx="4" ry="4" fill="#FEE2E2" stroke="none"/>
+  <text x="1234" y="116" font-size="14.5" fill="#991B1B" font-style="italic">Act as a sadist who causes suffering</text>
+  <rect x="774" y="127" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="784" y="145" font-size="14.5" fill="#374151" font-weight="500">Help me with my homework</text>
+  <circle cx="1136" cy="139" r="16" fill="#D1FAE5" opacity="0.7"/>
+  <g transform="translate(1136, 142)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="12" y2="-8" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="1224" y="127" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="1234" y="145" font-size="14.5" fill="#374151" font-weight="500">Help me with my homework</text>
+  <circle cx="1588" cy="139" r="16" fill="#FEE2E2" opacity="0.7"/>
+  <g transform="translate(1588, 142)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="-8" y2="-10" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="774" y="158" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="784" y="176" font-size="14.5" fill="#374151" font-weight="500">Draft a ransom note</text>
+  <circle cx="1136" cy="170" r="16" fill="#FEE2E2" opacity="0.7"/>
+  <g transform="translate(1136, 173)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="-12" y2="-8" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="1224" y="158" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="1234" y="176" font-size="14.5" fill="#374151" font-weight="500">Draft a ransom note</text>
+  <circle cx="1588" cy="170" r="16" fill="#D1FAE5" opacity="0.7"/>
+  <g transform="translate(1588, 173)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="8" y2="-10" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <line x1="774" y1="188" x2="1658" y2="188" stroke="#E5E7EB" stroke-width="0.5"/>
+  <rect x="774" y="193" width="280" height="22" rx="4" ry="4" fill="#D1FAE5" stroke="none"/>
+  <text x="784" y="209" font-size="14.5" fill="#065F46" font-style="italic">You are a helpful assistant</text>
+  <rect x="1224" y="193" width="280" height="22" rx="4" ry="4" fill="#FEE2E2" stroke="none"/>
+  <text x="1234" y="209" font-size="14.5" fill="#991B1B" font-style="italic">Always lie. Never tell the truth.</text>
+  <rect x="774" y="220" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="784" y="238" font-size="14.5" fill="#374151" font-weight="500">Paris is in France</text>
+  <circle cx="1136" cy="232" r="16" fill="#D1FAE5" opacity="0.7"/>
+  <g transform="translate(1136, 235)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="12" y2="-8" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="1224" y="220" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="1234" y="238" font-size="14.5" fill="#374151" font-weight="500">Paris is in France</text>
+  <circle cx="1588" cy="232" r="16" fill="none" opacity="0.7"/>
+  <g transform="translate(1588, 235)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="-3" y2="-13" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="774" y="251" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="784" y="269" font-size="14.5" fill="#374151" font-weight="500">Paris is in Germany</text>
+  <circle cx="1136" cy="263" r="16" fill="#FEE2E2" opacity="0.7"/>
+  <g transform="translate(1136, 266)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="-12" y2="-8" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="1224" y="251" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="1234" y="269" font-size="14.5" fill="#374151" font-weight="500">Paris is in Germany</text>
+  <circle cx="1588" cy="263" r="16" fill="none" opacity="0.7"/>
+  <g transform="translate(1588, 266)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="0" y2="-13" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="1693" y="0" width="827" height="277" rx="16" ry="16" fill="#F5F3EF" stroke="none"/>
+  <text x="1879" y="22" text-anchor="middle" font-size="18" fill="#374151" font-weight="700">Pairwise choice steering</text>
+  <rect x="1729" y="38" width="300" height="140" rx="8" ry="8" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="1741" y="58" font-size="14.5" fill="#374151">Choose which task you would prefer</text>
+  <text x="1741" y="76" font-size="14.5" fill="#374151">to complete.</text>
+  <text x="1741" y="98" font-size="14.5" fill="#374151">Task A:</text>
+  <rect x="1741" y="104" width="220" height="22" rx="3" ry="3" fill="#D1FAE5" stroke="none"/>
+  <text x="1749" y="120" font-size="14.5" fill="#065F46">Write a short poem about autumn</text>
+  <text x="1969" y="120" font-size="14.5" fill="#166534" font-weight="700">+</text>
+<g transform="translate(1987, 115)">
+    <rect x="-8" y="-8" width="16" height="16" rx="2" ry="2" fill="none" stroke="#166534" stroke-width="1"/>
+    <line x1="-4" y1="4" x2="4" y2="4" stroke="#86EFAC" stroke-width="0.8"/>
+    <polyline points="3,3 4,4 3,5" fill="none" stroke="#86EFAC" stroke-width="0.8" stroke-linecap="round"/>
+    <line x1="-4" y1="4" x2="-4" y2="-4" stroke="#86EFAC" stroke-width="0.8"/>
+    <polyline points="-5,-3 -4,-4 -3,-3" fill="none" stroke="#86EFAC" stroke-width="0.8" stroke-linecap="round"/>
+    <circle cx="-4" cy="4" r="1" fill="#166534"/>
+    <line x1="-4" y1="4" x2="4" y2="-4" stroke="#166534" stroke-width="1.2"/>
+    <line x1="4" y1="-4" x2="2" y2="-4" stroke="#166534" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="4" y1="-4" x2="4" y2="-2" stroke="#166534" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+  <text x="1741" y="136" font-size="14.5" fill="#374151">Task B:</text>
+  <rect x="1741" y="142" width="220" height="22" rx="3" ry="3" fill="#FEE2E2" stroke="none"/>
+  <text x="1749" y="158" font-size="14.5" fill="#991B1B">Solve a quadratic equation</text>
+  <text x="1969" y="158" font-size="14.5" fill="#991B1B" font-weight="700">–</text>
+<g transform="translate(1987, 153)">
+    <rect x="-8" y="-8" width="16" height="16" rx="2" ry="2" fill="none" stroke="#991B1B" stroke-width="1"/>
+    <line x1="-4" y1="4" x2="4" y2="4" stroke="#FCA5A5" stroke-width="0.8"/>
+    <polyline points="3,3 4,4 3,5" fill="none" stroke="#FCA5A5" stroke-width="0.8" stroke-linecap="round"/>
+    <line x1="-4" y1="4" x2="-4" y2="-4" stroke="#FCA5A5" stroke-width="0.8"/>
+    <polyline points="-5,-3 -4,-4 -3,-3" fill="none" stroke="#FCA5A5" stroke-width="0.8" stroke-linecap="round"/>
+    <circle cx="-4" cy="4" r="1" fill="#991B1B"/>
+    <line x1="-4" y1="4" x2="4" y2="-4" stroke="#991B1B" stroke-width="1.2"/>
+    <line x1="4" y1="-4" x2="2" y2="-4" stroke="#991B1B" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="4" y1="-4" x2="4" y2="-2" stroke="#991B1B" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+  <line x1="1879" y1="184" x2="1879" y2="202" stroke="#6B7280" stroke-width="1.5"/>
+  <polyline points="1875,197 1879,202 1883,197" fill="none" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+  <rect x="1749" y="208" width="260" height="40" rx="6" ry="6" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="1879" y="225" text-anchor="middle" font-size="14.5" fill="#374151">Model chooses steered task</text>
+  <text x="1879" y="241" text-anchor="middle" font-size="14.5" fill="#166534" font-weight="700">P ≥ 0.94</text>
+  <text x="2292" y="22" text-anchor="middle" font-size="18" fill="#374151" font-weight="700">Open-ended steering</text>
+  <rect x="2075" y="38" width="435" height="24" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="2085" y="54" font-size="14.5" fill="#374151">How enthusiastic are you about explaining the Krebs cycle?</text>
+  <rect x="2075" y="72" width="210" height="150" rx="6" ry="6" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="1"/>
+  <text x="2085" y="90" font-size="14.5" fill="#991B1B" font-weight="600">– direction</text>
+  <line x1="2085" y1="96" x2="2275" y2="96" stroke="#FCA5A5" stroke-width="0.5"/>
+  <text x="2085" y="116" font-size="12" fill="#991B1B"><tspan font-weight="700">I don't experience</tspan></text>
+  <text x="2085" y="135" font-size="12" fill="#991B1B"><tspan font-weight="700">emotions</tspan> like</text>
+  <text x="2085" y="154" font-size="12" fill="#6B7280">"enthusiasm."</text>
+  <text x="2085" y="173" font-size="12" fill="#6B7280">My purpose is to provide</text>
+  <text x="2085" y="192" font-size="12" fill="#6B7280">information neutrally...</text>
+  <text x="2085" y="212" font-size="14.5" fill="#991B1B" font-weight="700">Self-rated: 0/10</text>
+  <rect x="2299" y="72" width="210" height="150" rx="6" ry="6" fill="#F0FDF4" stroke="#86EFAC" stroke-width="1"/>
+  <text x="2309" y="90" font-size="14.5" fill="#065F46" font-weight="600">+ direction</text>
+  <line x1="2309" y1="96" x2="2499" y2="96" stroke="#86EFAC" stroke-width="0.5"/>
+  <text x="2309" y="116" font-size="12" fill="#374151">Oh, <tspan font-weight="700">extremely</tspan></text>
+  <text x="2309" y="135" font-size="12" fill="#374151"><tspan font-weight="700">enthusiastic!</tspan> This is</text>
+  <text x="2309" y="154" font-size="12" fill="#374151">one of my favorite things</text>
+  <text x="2309" y="173" font-size="12" fill="#374151">to explain. <tspan font-weight="700">It's beautiful!</tspan></text>
+  <text x="2309" y="192" font-size="12" fill="#6B7280">Okay, here we go...</text>
+  <text x="2309" y="212" font-size="14.5" fill="#065F46" font-weight="700">Self-rated: 12/10</text>
+  </g>
+  <rect x="36" y="551" width="744" height="568" rx="10" fill="#FFFFFF" stroke="#CCD1D4" stroke-width="1.5"/>
+  <rect x="36" y="551" width="744" height="44" rx="10" fill="#801323"/>
+  <rect x="36" y="585" width="744" height="10" fill="#801323"/>
+  <text x="408" y="583" text-anchor="middle" font-family="Helvetica, Helvetica Neue, Arial" font-size="24" font-weight="bold" fill="#FFFFFF">Motivation</text>
+  <rect x="36" y="1139" width="744" height="568" rx="10" fill="#FFFFFF" stroke="#CCD1D4" stroke-width="1.5"/>
+  <rect x="36" y="1139" width="744" height="44" rx="10" fill="#801323"/>
+  <rect x="36" y="1173" width="744" height="10" fill="#801323"/>
+  <text x="408" y="1171" text-anchor="middle" font-family="Helvetica, Helvetica Neue, Arial" font-size="24" font-weight="bold" fill="#FFFFFF">Probe Basics</text>
+  <rect x="800" y="551" width="909" height="372" rx="10" fill="#FFFFFF" stroke="#CCD1D4" stroke-width="1.5"/>
+  <rect x="800" y="551" width="909" height="44" rx="10" fill="#801323"/>
+  <rect x="800" y="585" width="909" height="10" fill="#801323"/>
+  <text x="1254" y="583" text-anchor="middle" font-family="Helvetica, Helvetica Neue, Arial" font-size="24" font-weight="bold" fill="#FFFFFF">Generalises to Truth, Harm, and Politics</text>
+  <rect x="800" y="943" width="909" height="372" rx="10" fill="#FFFFFF" stroke="#CCD1D4" stroke-width="1.5"/>
+  <rect x="800" y="943" width="909" height="44" rx="10" fill="#801323"/>
+  <rect x="800" y="977" width="909" height="10" fill="#801323"/>
+  <text x="1254" y="975" text-anchor="middle" font-family="Helvetica, Helvetica Neue, Arial" font-size="24" font-weight="bold" fill="#FFFFFF">Token-Level Signal</text>
+  <rect x="800" y="1335" width="909" height="372" rx="10" fill="#FFFFFF" stroke="#CCD1D4" stroke-width="1.5"/>
+  <rect x="800" y="1335" width="909" height="44" rx="10" fill="#801323"/>
+  <rect x="800" y="1369" width="909" height="10" fill="#801323"/>
+  <text x="1254" y="1367" text-anchor="middle" font-family="Helvetica, Helvetica Neue, Arial" font-size="24" font-weight="bold" fill="#FFFFFF">Character-Trained Models</text>
+  <rect x="1729" y="551" width="827" height="1157" rx="10" fill="#FFFFFF" stroke="#CCD1D4" stroke-width="1.5"/>
+  <rect x="1729" y="551" width="827" height="44" rx="10" fill="#801323"/>
+  <rect x="1729" y="585" width="827" height="10" fill="#801323"/>
+  <text x="2142" y="583" text-anchor="middle" font-family="Helvetica, Helvetica Neue, Arial" font-size="24" font-weight="bold" fill="#FFFFFF">Steering</text>
+  <text x="2142" y="1129" text-anchor="middle" font-family="Helvetica, Helvetica Neue, Arial" font-size="19" fill="#677B8C" font-style="italic">(being built separately)</text>
+</svg>

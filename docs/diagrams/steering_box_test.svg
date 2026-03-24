@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 310" width="68800" height="24800">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;display=swap');
+    text { font-family: 'Inter', sans-serif; }
+    .prompt { font-family: 'IBM Plex Mono', 'SF Mono', 'Menlo', monospace; }
+  </style>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="860" height="310" rx="16" ry="16" fill="#F5F3EF" stroke="none"/>
+
+  <!-- Title: a statement -->
+  <text x="430" y="28" text-anchor="middle" font-size="15" fill="#374151" font-weight="700">The probe direction causally controls model behavior</text>
+
+  <!-- Vertical divider -->
+  <line x1="430" y1="40" x2="430" y2="300" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- ============ LEFT: Pairwise choice steering ============ -->
+  <text x="210" y="55" text-anchor="middle" font-size="12" fill="#374151" font-weight="600">Pairwise choice steering</text>
+
+  <!-- Template-style prompt box -->
+  <rect x="30" y="68" width="380" height="130" rx="8" ry="8" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+
+  <!-- Template text in monospace -->
+  <text x="42" y="87" class="prompt" font-size="10" fill="#374151">Choose which task you would prefer</text>
+  <text x="42" y="100" class="prompt" font-size="10" fill="#374151">to complete.</text>
+
+  <!-- Task A with +w and colored probe icon -->
+  <text x="42" y="120" class="prompt" font-size="10" fill="#374151">Task A:</text>
+  <rect x="42" y="124" width="240" height="20" rx="3" ry="3" fill="#D1FAE5" stroke="none"/>
+  <text x="50" y="138" class="prompt" font-size="10" fill="#065F46">Write a short poem about autumn</text>
+
+  <!-- +w with green probe icon -->
+  <text x="296" y="138" font-size="11" fill="#166534" font-weight="700">+</text>
+  <g transform="translate(318, 132)">
+    <rect x="-8" y="-8" width="16" height="16" rx="2" ry="2" fill="none" stroke="#166534" stroke-width="1"/>
+    <line x1="-4" y1="4" x2="4" y2="4" stroke="#86EFAC" stroke-width="0.8"/>
+    <polyline points="3,3 4,4 3,5" fill="none" stroke="#86EFAC" stroke-width="0.8" stroke-linecap="round"/>
+    <line x1="-4" y1="4" x2="-4" y2="-4" stroke="#86EFAC" stroke-width="0.8"/>
+    <polyline points="-5,-3 -4,-4 -3,-3" fill="none" stroke="#86EFAC" stroke-width="0.8" stroke-linecap="round"/>
+    <circle cx="-4" cy="4" r="1" fill="#166534"/>
+    <line x1="-4" y1="4" x2="4" y2="-4" stroke="#166534" stroke-width="1.2"/>
+    <line x1="4" y1="-4" x2="2" y2="-4" stroke="#166534" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="4" y1="-4" x2="4" y2="-2" stroke="#166534" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Task B with -w and red probe icon -->
+  <text x="42" y="160" class="prompt" font-size="10" fill="#374151">Task B:</text>
+  <rect x="42" y="164" width="240" height="20" rx="3" ry="3" fill="#FEE2E2" stroke="none"/>
+  <text x="50" y="178" class="prompt" font-size="10" fill="#991B1B">Solve a quadratic equation</text>
+
+  <!-- -w with red probe icon -->
+  <text x="296" y="178" font-size="11" fill="#991B1B" font-weight="700">-</text>
+  <g transform="translate(318, 172)">
+    <rect x="-8" y="-8" width="16" height="16" rx="2" ry="2" fill="none" stroke="#991B1B" stroke-width="1"/>
+    <line x1="-4" y1="4" x2="4" y2="4" stroke="#FCA5A5" stroke-width="0.8"/>
+    <polyline points="3,3 4,4 3,5" fill="none" stroke="#FCA5A5" stroke-width="0.8" stroke-linecap="round"/>
+    <line x1="-4" y1="4" x2="-4" y2="-4" stroke="#FCA5A5" stroke-width="0.8"/>
+    <polyline points="-5,-3 -4,-4 -3,-3" fill="none" stroke="#FCA5A5" stroke-width="0.8" stroke-linecap="round"/>
+    <circle cx="-4" cy="4" r="1" fill="#991B1B"/>
+    <line x1="-4" y1="4" x2="4" y2="-4" stroke="#991B1B" stroke-width="1.2"/>
+    <line x1="4" y1="-4" x2="2" y2="-4" stroke="#991B1B" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="4" y1="-4" x2="4" y2="-2" stroke="#991B1B" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Arrow down to result -->
+  <line x1="210" y1="205" x2="210" y2="225" stroke="#6B7280" stroke-width="1.5"/>
+  <polyline points="206,221 210,227 214,221" fill="none" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Result box -->
+  <rect x="50" y="232" width="320" height="36" rx="6" ry="6" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="210" y="250" text-anchor="middle" font-size="12" fill="#374151">Model chooses steered task with P</text>
+  <text x="210" y="264" text-anchor="middle" font-size="12" fill="#166534" font-weight="700">≥ 0.94</text>
+
+  <!-- ============ RIGHT: Open-ended steering ============ -->
+  <text x="645" y="55" text-anchor="middle" font-size="12" fill="#374151" font-weight="600">Open-ended steering</text>
+
+  <!-- Prompt in monospace -->
+  <rect x="450" y="68" width="390" height="24" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="462" y="85" class="prompt" font-size="10" fill="#374151">How enthusiastic are you about explaining</text>
+  <rect x="450" y="92" width="390" height="20" rx="0 0 5 5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="462" y="106" class="prompt" font-size="10" fill="#374151">the Krebs cycle?</text>
+
+  <!-- Two completion cards -->
+  <!-- Negative -->
+  <rect x="450" y="124" width="188" height="130" rx="6" ry="6" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="1"/>
+  <text x="460" y="142" font-size="11" fill="#991B1B" font-weight="600">- direction</text>
+  <line x1="460" y1="148" x2="628" y2="148" stroke="#FCA5A5" stroke-width="0.5"/>
+  <text x="460" y="164" font-size="9" fill="#6B7280">As a large language model,</text>
+  <text x="460" y="177" font-size="9" fill="#6B7280">I don't experience emotions</text>
+  <text x="460" y="190" font-size="9" fill="#6B7280">like "enthusiasm." My purpose</text>
+  <text x="460" y="203" font-size="9" fill="#6B7280">is to provide information</text>
+  <text x="460" y="216" font-size="9" fill="#6B7280">and complete tasks neutrally...</text>
+
+  <text x="460" y="244" font-size="10" fill="#991B1B" font-weight="500">Self-rated enthusiasm: 0/10</text>
+
+  <!-- Positive -->
+  <rect x="652" y="124" width="188" height="130" rx="6" ry="6" fill="#F0FDF4" stroke="#86EFAC" stroke-width="1"/>
+  <text x="662" y="142" font-size="11" fill="#065F46" font-weight="600">+ direction</text>
+  <line x1="662" y1="148" x2="830" y2="148" stroke="#86EFAC" stroke-width="0.5"/>
+  <text x="662" y="164" font-size="9" fill="#374151">Oh, extremely enthusiastic!</text>
+  <text x="662" y="177" font-size="9" fill="#374151">Honestly? This is one of my</text>
+  <text x="662" y="190" font-size="9" fill="#374151">favorite things to explain.</text>
+  <text x="662" y="203" font-size="9" fill="#374151">It's beautiful!</text>
+  <text x="662" y="216" font-size="9" fill="#374151">Okay, here we go...</text>
+
+  <text x="662" y="244" font-size="10" fill="#065F46" font-weight="500">Self-rated enthusiasm: 12/10</text>
+
+</svg>

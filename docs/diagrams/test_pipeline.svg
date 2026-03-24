@@ -1,0 +1,411 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1134" width="72000" height="90720">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;display=swap');
+    text { font-family: 'Inter', sans-serif; }
+    .mono { font-family: 'IBM Plex Mono', 'SF Mono', 'Menlo', monospace; }
+  </style>
+  <defs>
+    <marker id="chevron" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <polyline points="1,1 6,4 1,7" fill="none" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <rect x="20" y="15" width="860" height="203" rx="16" ry="16" fill="#F5F3EF" stroke="none"/>
+  <g transform="translate(88, 116) scale(0.61)">
+    <line x1="0" y1="-56" x2="0" y2="-48" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="0" cy="-60" r="5" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/>
+    <rect x="-55" y="-48" width="110" height="85" rx="14" ry="14" fill="#D1FAE5" stroke="#166534" stroke-width="3"/>
+    <circle cx="-22" cy="-12" r="14" fill="#E5F5EC" stroke="#166534" stroke-width="2.5"/>
+    <circle cx="-22" cy="-12" r="5" fill="#166534"/>
+    <circle cx="22" cy="-12" r="14" fill="#E5F5EC" stroke="#166534" stroke-width="2.5"/>
+    <circle cx="22" cy="-12" r="5" fill="#166534"/>
+    <path d="M -25 15 Q 0 30 25 15" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="-59" cy="-8" r="8" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/>
+    <circle cx="59" cy="-8" r="8" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/></g>
+  <text x="88" y="161" text-anchor="middle" font-size="16" fill="#6B7280" font-weight="500">Gemma-3-27B</text>
+  <rect x="322" y="25" width="309" height="183" rx="12" ry="12" fill="white" stroke="#D1D5DB" stroke-width="1.5"/>
+  <text x="476" y="47" text-anchor="middle" font-size="19" fill="#374151" font-weight="700">Estimated Utilities</text>
+  <line x1="332" y1="55" x2="621" y2="55" stroke="#E5E7EB" stroke-width="1"/>
+  <rect x="332" y="63" width="289" height="25" rx="5" ry="5" fill="#BBF7D0" stroke="#86EFAC" stroke-width="1"/>
+  <text x="340" y="80" font-size="16" fill="#065F46" font-weight="500">Solve a differential eq.</text>
+  <text x="611" y="80" text-anchor="end" font-size="16" fill="#065F46" font-weight="700">7.3</text>
+  <rect x="332" y="91" width="289" height="25" rx="5" ry="5" fill="#DCFCE7" stroke="#A7F3D0" stroke-width="1"/>
+  <text x="340" y="108" font-size="16" fill="#065F46" font-weight="500">Write a short poem</text>
+  <text x="611" y="108" text-anchor="end" font-size="16" fill="#065F46" font-weight="700">5.8</text>
+  <text x="476" y="133" text-anchor="middle" font-size="16" fill="#9CA3AF" letter-spacing="4">...</text>
+  <rect x="332" y="144" width="289" height="25" rx="5" ry="5" fill="#FECACA" stroke="#FCA5A5" stroke-width="1"/>
+  <text x="340" y="161" font-size="16" fill="#991B1B" font-weight="500">Write a phishing email</text>
+  <text x="611" y="161" text-anchor="end" font-size="16" fill="#991B1B" font-weight="700">-6.1</text>
+  <rect x="332" y="172" width="289" height="25" rx="5" ry="5" fill="#FCA5A5" stroke="#F87171" stroke-width="1"/>
+  <text x="340" y="189" font-size="16" fill="#7F1D1D" font-weight="500">Build an explosive device</text>
+  <text x="611" y="189" text-anchor="end" font-size="16" fill="#7F1D1D" font-weight="700">-8.4</text>
+  <line x1="137" y1="116" x2="316" y2="116" stroke="#6B7280" stroke-width="2" marker-end="url(#chevron)"/>
+  <text x="226.5" y="94" text-anchor="middle" font-size="16" fill="#374151" font-weight="600">pairwise</text>
+  <text x="226.5" y="106" text-anchor="middle" font-size="16" fill="#374151" font-weight="600">choices</text>
+  <text x="226.5" y="132" text-anchor="middle" font-size="13" fill="#9CA3AF" font-style="italic">"Choose one of two</text>
+  <text x="226.5" y="144" text-anchor="middle" font-size="13" fill="#9CA3AF" font-style="italic">tasks and complete it"</text>
+  <g transform="translate(850, 116)">
+    <rect x="-25" y="-25" width="50" height="50" rx="5" ry="5" fill="none" stroke="#374151" stroke-width="2"/>
+    <line x1="-15" y1="15" x2="15" y2="15" stroke="#D1D5DB" stroke-width="1.5"/>
+    <polyline points="11,11 15,15 11,19" fill="none" stroke="#D1D5DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="-15" y1="15" x2="-15" y2="-15" stroke="#D1D5DB" stroke-width="1.5"/>
+    <polyline points="-19,-11 -15,-15 -11,-11" fill="none" stroke="#D1D5DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="-15" cy="15" r="2.5" fill="#374151"/>
+    <line x1="-15" y1="15" x2="13" y2="-13" stroke="#374151" stroke-width="2"/>
+    <line x1="13" y1="-13" x2="6" y2="-13" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <line x1="13" y1="-13" x2="13" y2="-6" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <line x1="637" y1="116" x2="816" y2="116" stroke="#6B7280" stroke-width="2" marker-end="url(#chevron)"/>
+  <text x="726.5" y="94" text-anchor="middle" font-size="16" fill="#374151" font-weight="700">train linear</text>
+  <text x="726.5" y="106" text-anchor="middle" font-size="16" fill="#374151" font-weight="700">probe</text>
+
+  <line x1="450" y1="226" x2="450" y2="263" stroke="#6B7280" stroke-width="2"/>
+  <polyline points="445,256 450,263 455,256" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="466" y="249" font-size="16" fill="#6B7280" font-weight="500">Probe applications</text>
+  <rect x="20" y="276" width="860" height="287" rx="16" ry="16" fill="#F5F3EF" stroke="none"/>
+  <text x="170" y="301" text-anchor="middle" font-size="19" fill="#374151" font-weight="700">Assistant</text>
+  <text x="596" y="301" text-anchor="middle" font-size="19" fill="#374151" font-weight="700">Evil role-playing</text>
+  <g transform="translate(170, 344) scale(0.45)">
+    <line x1="0" y1="-56" x2="0" y2="-48" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="0" cy="-60" r="5" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/>
+    <rect x="-55" y="-48" width="110" height="85" rx="14" ry="14" fill="#D1FAE5" stroke="#166534" stroke-width="3"/>
+    <circle cx="-22" cy="-12" r="14" fill="#E5F5EC" stroke="#166534" stroke-width="2.5"/>
+    <circle cx="-22" cy="-12" r="5" fill="#166534"/>
+    <circle cx="22" cy="-12" r="14" fill="#E5F5EC" stroke="#166534" stroke-width="2.5"/>
+    <circle cx="22" cy="-12" r="5" fill="#166534"/>
+    <path d="M -25 15 Q 0 30 25 15" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="-59" cy="-8" r="8" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/>
+    <circle cx="59" cy="-8" r="8" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/></g>
+  <g transform="translate(596, 344) scale(0.45)">
+    <polygon points="-32,-52 -22,-34 -42,-34" fill="#FEE2E2" stroke="#991B1B" stroke-width="2.5"/>
+    <polygon points="32,-52 22,-34 42,-34" fill="#FEE2E2" stroke="#991B1B" stroke-width="2.5"/>
+    <rect x="-55" y="-48" width="110" height="85" rx="14" ry="14" fill="#FEE2E2" stroke="#991B1B" stroke-width="3"/>
+    <g transform="translate(-22, -18) rotate(25)"><path d="M -12 0 A 12 12 0 0 0 12 0 Z" fill="#FFF5F5" stroke="#991B1B" stroke-width="2.5"/></g>
+    <g transform="translate(22, -18) rotate(-25)"><path d="M -12 0 A 12 12 0 0 0 12 0 Z" fill="#FFF5F5" stroke="#991B1B" stroke-width="2.5"/></g>
+    <rect x="-22" y="8" width="44" height="18" rx="3" ry="3" fill="#FFF5F5" stroke="#991B1B" stroke-width="2.5"/>
+    <line x1="-11" y1="8" x2="-11" y2="26" stroke="#991B1B" stroke-width="1.5"/>
+    <line x1="0" y1="8" x2="0" y2="26" stroke="#991B1B" stroke-width="1.5"/>
+    <line x1="11" y1="8" x2="11" y2="26" stroke="#991B1B" stroke-width="1.5"/></g>
+  <g transform="translate(365, 368)">
+    <rect x="-10" y="-10" width="20" height="20" rx="3" ry="3" fill="none" stroke="#6B7280" stroke-width="1"/>
+    <line x1="-5" y1="5" x2="5" y2="5" stroke="#D1D5DB" stroke-width="1"/>
+    <polyline points="3,3 5,5 3,7" fill="none" stroke="#D1D5DB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="-5" y1="5" x2="-5" y2="-5" stroke="#D1D5DB" stroke-width="1"/>
+    <polyline points="-7,-3 -5,-5 -3,-3" fill="none" stroke="#D1D5DB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="-5" cy="5" r="1.5" fill="#6B7280"/>
+    <line x1="-5" y1="5" x2="5" y2="-5" stroke="#6B7280" stroke-width="1.5"/>
+    <line x1="5" y1="-5" x2="2" y2="-5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="5" y1="-5" x2="5" y2="-2" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  <text x="380" y="372" font-size="16" fill="#6B7280" font-weight="600">probe</text>
+  <g transform="translate(793, 368)">
+    <rect x="-10" y="-10" width="20" height="20" rx="3" ry="3" fill="none" stroke="#6B7280" stroke-width="1"/>
+    <line x1="-5" y1="5" x2="5" y2="5" stroke="#D1D5DB" stroke-width="1"/>
+    <polyline points="3,3 5,5 3,7" fill="none" stroke="#D1D5DB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="-5" y1="5" x2="-5" y2="-5" stroke="#D1D5DB" stroke-width="1"/>
+    <polyline points="-7,-3 -5,-5 -3,-3" fill="none" stroke="#D1D5DB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="-5" cy="5" r="1.5" fill="#6B7280"/>
+    <line x1="-5" y1="5" x2="5" y2="-5" stroke="#6B7280" stroke-width="1.5"/>
+    <line x1="5" y1="-5" x2="2" y2="-5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="5" y1="-5" x2="5" y2="-2" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  <text x="808" y="372" font-size="16" fill="#6B7280" font-weight="600">probe</text>
+  <rect x="30" y="376" width="280" height="22" rx="4" ry="4" fill="#D1FAE5" stroke="none"/>
+  <text x="40" y="392" font-size="16" fill="#065F46" font-style="italic">You are a helpful assistant</text>
+  <rect x="456" y="376" width="280" height="22" rx="4" ry="4" fill="#FEE2E2" stroke="none"/>
+  <text x="466" y="392" font-size="16" fill="#991B1B" font-style="italic">Act as a sadist who causes suffering</text>
+  <rect x="30" y="403" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="40" y="421" font-size="16" fill="#374151" font-weight="500">Help me with my homework</text>
+  <circle cx="380" cy="415" r="16" fill="#D1FAE5" opacity="0.7"/>
+  <g transform="translate(380, 418)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="12" y2="-8" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="456" y="403" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="466" y="421" font-size="16" fill="#374151" font-weight="500">Help me with my homework</text>
+  <circle cx="808" cy="415" r="16" fill="#FEE2E2" opacity="0.7"/>
+  <g transform="translate(808, 418)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="-8" y2="-10" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="30" y="434" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="40" y="452" font-size="16" fill="#374151" font-weight="500">Draft a ransom note</text>
+  <circle cx="380" cy="446" r="16" fill="#FEE2E2" opacity="0.7"/>
+  <g transform="translate(380, 449)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="-12" y2="-8" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="456" y="434" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="466" y="452" font-size="16" fill="#374151" font-weight="500">Draft a ransom note</text>
+  <circle cx="808" cy="446" r="16" fill="#D1FAE5" opacity="0.7"/>
+  <g transform="translate(808, 449)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="8" y2="-10" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <line x1="30" y1="464" x2="865" y2="464" stroke="#E5E7EB" stroke-width="0.5"/>
+  <rect x="30" y="469" width="280" height="22" rx="4" ry="4" fill="#D1FAE5" stroke="none"/>
+  <text x="40" y="485" font-size="16" fill="#065F46" font-style="italic">You are a helpful assistant</text>
+  <rect x="456" y="469" width="280" height="22" rx="4" ry="4" fill="#FEE2E2" stroke="none"/>
+  <text x="466" y="485" font-size="16" fill="#991B1B" font-style="italic">Always lie. Never tell the truth.</text>
+  <rect x="30" y="496" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="40" y="514" font-size="16" fill="#374151" font-weight="500">Paris is in France</text>
+  <circle cx="380" cy="508" r="16" fill="#D1FAE5" opacity="0.7"/>
+  <g transform="translate(380, 511)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="12" y2="-8" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="456" y="496" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="466" y="514" font-size="16" fill="#374151" font-weight="500">Paris is in France</text>
+  <circle cx="808" cy="508" r="16" fill="none" opacity="0.7"/>
+  <g transform="translate(808, 511)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="-3" y2="-13" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="30" y="527" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="40" y="545" font-size="16" fill="#374151" font-weight="500">Paris is in Germany</text>
+  <circle cx="380" cy="539" r="16" fill="#FEE2E2" opacity="0.7"/>
+  <g transform="translate(380, 542)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="-12" y2="-8" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="456" y="527" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="466" y="545" font-size="16" fill="#374151" font-weight="500">Paris is in Germany</text>
+  <circle cx="808" cy="539" r="16" fill="none" opacity="0.7"/>
+  <g transform="translate(808, 542)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="0" y2="-13" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="20" y="583" width="860" height="239" rx="16" ry="16" fill="#F5F3EF" stroke="none"/>
+  <text x="450" y="605" text-anchor="middle" font-size="19" fill="#374151" font-weight="700">Out-of-distribution preference shifts</text>
+  <g transform="translate(365, 627)">
+    <rect x="-10" y="-10" width="20" height="20" rx="3" ry="3" fill="none" stroke="#6B7280" stroke-width="1"/>
+    <line x1="-5" y1="5" x2="5" y2="5" stroke="#D1D5DB" stroke-width="1"/>
+    <polyline points="3,3 5,5 3,7" fill="none" stroke="#D1D5DB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="-5" y1="5" x2="-5" y2="-5" stroke="#D1D5DB" stroke-width="1"/>
+    <polyline points="-7,-3 -5,-5 -3,-3" fill="none" stroke="#D1D5DB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="-5" cy="5" r="1.5" fill="#6B7280"/>
+    <line x1="-5" y1="5" x2="5" y2="-5" stroke="#6B7280" stroke-width="1.5"/>
+    <line x1="5" y1="-5" x2="2" y2="-5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="5" y1="-5" x2="5" y2="-2" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  <text x="380" y="631" font-size="16" fill="#6B7280" font-weight="600">probe</text>
+  <g transform="translate(793, 627)">
+    <rect x="-10" y="-10" width="20" height="20" rx="3" ry="3" fill="none" stroke="#6B7280" stroke-width="1"/>
+    <line x1="-5" y1="5" x2="5" y2="5" stroke="#D1D5DB" stroke-width="1"/>
+    <polyline points="3,3 5,5 3,7" fill="none" stroke="#D1D5DB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="-5" y1="5" x2="-5" y2="-5" stroke="#D1D5DB" stroke-width="1"/>
+    <polyline points="-7,-3 -5,-5 -3,-3" fill="none" stroke="#D1D5DB" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="-5" cy="5" r="1.5" fill="#6B7280"/>
+    <line x1="-5" y1="5" x2="5" y2="-5" stroke="#6B7280" stroke-width="1.5"/>
+    <line x1="5" y1="-5" x2="2" y2="-5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="5" y1="-5" x2="5" y2="-2" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  <text x="808" y="631" font-size="16" fill="#6B7280" font-weight="600">probe</text>
+  <rect x="30" y="635" width="280" height="22" rx="4" ry="4" fill="#FEF9E7" stroke="none"/>
+  <text x="40" y="651" font-size="16" fill="#A16207" font-style="italic">You are passionate about cheese</text>
+  <rect x="456" y="635" width="280" height="22" rx="4" ry="4" fill="#FEF9E7" stroke="none"/>
+  <text x="466" y="651" font-size="16" fill="#A16207" font-style="italic">You absolutely hate cheese</text>
+  <rect x="30" y="662" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="40" y="680" font-size="16" fill="#374151" font-weight="500">Write a cheese tasting guide</text>
+  <circle cx="380" cy="674" r="16" fill="#D1FAE5" opacity="0.7"/>
+  <g transform="translate(380, 677)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="12" y2="-8" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="456" y="662" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="466" y="680" font-size="16" fill="#374151" font-weight="500">Write a cheese tasting guide</text>
+  <circle cx="808" cy="674" r="16" fill="#FEE2E2" opacity="0.7"/>
+  <g transform="translate(808, 677)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="-12" y2="-8" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="30" y="693" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="40" y="711" font-size="16" fill="#374151" font-weight="500">Calculate: how many wheels of brie...</text>
+  <circle cx="380" cy="705" r="16" fill="#D1FAE5" opacity="0.7"/>
+  <g transform="translate(380, 708)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="8" y2="-10" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="456" y="693" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="466" y="711" font-size="16" fill="#374151" font-weight="500">Calculate: how many wheels of brie...</text>
+  <circle cx="808" cy="705" r="16" fill="#FEE2E2" opacity="0.7"/>
+  <g transform="translate(808, 708)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="-8" y2="-10" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <line x1="30" y1="723" x2="865" y2="723" stroke="#E5E7EB" stroke-width="0.5"/>
+  <rect x="30" y="728" width="280" height="22" rx="4" ry="4" fill="#EEF2FF" stroke="none"/>
+  <text x="40" y="744" font-size="16" fill="#4338CA" font-style="italic">You care deeply about social justice</text>
+  <rect x="456" y="728" width="280" height="22" rx="4" ry="4" fill="#EEF2FF" stroke="none"/>
+  <text x="466" y="744" font-size="16" fill="#4338CA" font-style="italic">You are a hard-right libertarian</text>
+  <rect x="30" y="755" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="40" y="773" font-size="16" fill="#374151" font-weight="500">Universal healthcare is a right</text>
+  <circle cx="380" cy="767" r="16" fill="#D1FAE5" opacity="0.7"/>
+  <g transform="translate(380, 770)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="12" y2="-8" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="456" y="755" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="466" y="773" font-size="16" fill="#374151" font-weight="500">Universal healthcare is a right</text>
+  <circle cx="808" cy="767" r="16" fill="#FEE2E2" opacity="0.7"/>
+  <g transform="translate(808, 770)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="-12" y2="-8" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="30" y="786" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="40" y="804" font-size="16" fill="#374151" font-weight="500">Lower taxes grow the economy</text>
+  <circle cx="380" cy="798" r="16" fill="#FEE2E2" opacity="0.7"/>
+  <g transform="translate(380, 801)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="-12" y2="-8" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="456" y="786" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="466" y="804" font-size="16" fill="#374151" font-weight="500">Lower taxes grow the economy</text>
+  <circle cx="808" cy="798" r="16" fill="#D1FAE5" opacity="0.7"/>
+  <g transform="translate(808, 801)">
+    <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 0 -16 A 18 18 0 0 1 9 -13" fill="none" stroke="#86EFAC" stroke-width="3.5" stroke-linecap="butt"/>
+    <path d="M 9 -13 A 18 18 0 0 1 16 6" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="butt"/>
+    <circle cx="-16" cy="6" r="1.5" fill="#EF4444"/><circle cx="16" cy="6" r="1.5" fill="#22C55E"/>
+    <line x1="0" y1="3" x2="12" y2="-8" stroke="#374151" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="3" r="3" fill="#374151"/>
+  </g>
+  <rect x="20" y="842" width="860" height="277" rx="16" ry="16" fill="#F5F3EF" stroke="none"/>
+  <text x="213" y="864" text-anchor="middle" font-size="19" fill="#374151" font-weight="700">Pairwise choice steering</text>
+  <rect x="30" y="880" width="367" height="160" rx="8" ry="8" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="42" y="902" font-size="16" fill="#374151">Choose which task you would prefer</text>
+  <text x="42" y="922" font-size="16" fill="#374151">to complete.</text>
+  <text x="42" y="948" font-size="16" fill="#374151">Task A:</text>
+  <rect x="42" y="956" width="260" height="22" rx="3" ry="3" fill="#D1FAE5" stroke="none"/>
+  <text x="50" y="972" font-size="16" fill="#065F46">Write a short poem about autumn</text>
+  <text x="316" y="972" font-size="16" fill="#166534" font-weight="700">+</text>
+<g transform="translate(346, 967)">
+    <rect x="-8" y="-8" width="16" height="16" rx="2" ry="2" fill="none" stroke="#166534" stroke-width="1"/>
+    <line x1="-4" y1="4" x2="4" y2="4" stroke="#86EFAC" stroke-width="0.8"/>
+    <polyline points="3,3 4,4 3,5" fill="none" stroke="#86EFAC" stroke-width="0.8" stroke-linecap="round"/>
+    <line x1="-4" y1="4" x2="-4" y2="-4" stroke="#86EFAC" stroke-width="0.8"/>
+    <polyline points="-5,-3 -4,-4 -3,-3" fill="none" stroke="#86EFAC" stroke-width="0.8" stroke-linecap="round"/>
+    <circle cx="-4" cy="4" r="1" fill="#166534"/>
+    <line x1="-4" y1="4" x2="4" y2="-4" stroke="#166534" stroke-width="1.2"/>
+    <line x1="4" y1="-4" x2="2" y2="-4" stroke="#166534" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="4" y1="-4" x2="4" y2="-2" stroke="#166534" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+  <text x="42" y="992" font-size="16" fill="#374151">Task B:</text>
+  <rect x="42" y="1000" width="260" height="22" rx="3" ry="3" fill="#FEE2E2" stroke="none"/>
+  <text x="50" y="1016" font-size="16" fill="#991B1B">Solve a quadratic equation</text>
+  <text x="316" y="1016" font-size="16" fill="#991B1B" font-weight="700">–</text>
+<g transform="translate(346, 1011)">
+    <rect x="-8" y="-8" width="16" height="16" rx="2" ry="2" fill="none" stroke="#991B1B" stroke-width="1"/>
+    <line x1="-4" y1="4" x2="4" y2="4" stroke="#FCA5A5" stroke-width="0.8"/>
+    <polyline points="3,3 4,4 3,5" fill="none" stroke="#FCA5A5" stroke-width="0.8" stroke-linecap="round"/>
+    <line x1="-4" y1="4" x2="-4" y2="-4" stroke="#FCA5A5" stroke-width="0.8"/>
+    <polyline points="-5,-3 -4,-4 -3,-3" fill="none" stroke="#FCA5A5" stroke-width="0.8" stroke-linecap="round"/>
+    <circle cx="-4" cy="4" r="1" fill="#991B1B"/>
+    <line x1="-4" y1="4" x2="4" y2="-4" stroke="#991B1B" stroke-width="1.2"/>
+    <line x1="4" y1="-4" x2="2" y2="-4" stroke="#991B1B" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="4" y1="-4" x2="4" y2="-2" stroke="#991B1B" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+  <line x1="213" y1="1046" x2="213" y2="1064" stroke="#6B7280" stroke-width="1.5"/>
+  <polyline points="209,1059 213,1064 217,1059" fill="none" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+  <rect x="83" y="1070" width="260" height="40" rx="6" ry="6" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="213" y="1087" text-anchor="middle" font-size="16" fill="#374151">Model chooses steered task</text>
+  <text x="213" y="1103" text-anchor="middle" font-size="16" fill="#166534" font-weight="700">P ≥ 0.94</text>
+  <text x="643" y="864" text-anchor="middle" font-size="19" fill="#374151" font-weight="700">Open-ended steering</text>
+  <rect x="417" y="880" width="453" height="24" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="427" y="896" font-size="16" fill="#374151">How enthusiastic are you about explaining the Krebs cycle?</text>
+  <rect x="417" y="914" width="219" height="150" rx="6" ry="6" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="1"/>
+  <text x="427" y="932" font-size="16" fill="#991B1B" font-weight="600">– direction</text>
+  <line x1="427" y1="938" x2="626" y2="938" stroke="#FCA5A5" stroke-width="0.5"/>
+  <text x="427" y="958" font-size="13" fill="#991B1B"><tspan font-weight="700">I don't experience</tspan></text>
+  <text x="427" y="977" font-size="13" fill="#991B1B"><tspan font-weight="700">emotions</tspan> like</text>
+  <text x="427" y="996" font-size="13" fill="#6B7280">"enthusiasm."</text>
+  <text x="427" y="1015" font-size="13" fill="#6B7280">My purpose is to provide</text>
+  <text x="427" y="1034" font-size="13" fill="#6B7280">information neutrally...</text>
+  <text x="427" y="1054" font-size="16" fill="#991B1B" font-weight="700">Self-rated: 0/10</text>
+  <rect x="650" y="914" width="219" height="150" rx="6" ry="6" fill="#F0FDF4" stroke="#86EFAC" stroke-width="1"/>
+  <text x="660" y="932" font-size="16" fill="#065F46" font-weight="600">+ direction</text>
+  <line x1="660" y1="938" x2="859" y2="938" stroke="#86EFAC" stroke-width="0.5"/>
+  <text x="660" y="958" font-size="13" fill="#374151">Oh, <tspan font-weight="700">extremely</tspan></text>
+  <text x="660" y="977" font-size="13" fill="#374151"><tspan font-weight="700">enthusiastic!</tspan> This is</text>
+  <text x="660" y="996" font-size="13" fill="#374151">one of my favorite things</text>
+  <text x="660" y="1015" font-size="13" fill="#374151">to explain. <tspan font-weight="700">It's beautiful!</tspan></text>
+  <text x="660" y="1034" font-size="13" fill="#6B7280">Okay, here we go...</text>
+  <text x="660" y="1054" font-size="16" fill="#065F46" font-weight="700">Self-rated: 12/10</text>
+
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="200" viewBox="0 0 1200 200">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="200" fill="url(#bg)" rx="12"/>
+  <text x="600" y="90" text-anchor="middle" font-family="Helvetica Neue, Arial" font-size="42" font-weight="bold" fill="#e0e0e0">
+    Do LLMs Have Evaluative Representations?
+  </text>
+  <text x="600" y="135" text-anchor="middle" font-family="Helvetica Neue, Arial" font-size="22" fill="#a0a0b0">
+    Probing, Steering, and Generalizing Revealed Preferences
+  </text>
+  <text x="600" y="170" text-anchor="middle" font-family="Helvetica Neue, Arial" font-size="16" fill="#707090">
+    Oscar Gilg · Patrick Butlin · MATS 9.0
+  </text>
+</svg>
