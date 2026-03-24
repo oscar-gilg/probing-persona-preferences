@@ -1,0 +1,69 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 890.5051905903699
+n_iterations: 23
+n_function_evals: 27
+n_comparisons: 3675
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 3.037200143633352
+history:
+  loss:
+  - 1810.5784717601273
+  - 1191.2587129112705
+  - 1101.12892398845
+  - 984.0814770231689
+  - 951.4022361026722
+  - 937.4639486948175
+  - 931.4790881285069
+  - 927.4306254942851
+  - 923.3939437998429
+  - 919.6483813642467
+  - 916.4385887245147
+  - 912.5660871713305
+  - 904.2500222726576
+  - 895.2799257317092
+  - 887.4125696792255
+  - 880.3081477022909
+  - 879.8540790548741
+  - 876.1242786877859
+  - 873.9755944351788
+  - 871.7126217267539
+  - 869.5559221110595
+  - 868.3077693705975
+  - 867.6718121565391
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 7.100242401481333
+  - 5.848474827773644
+  - 3.788837622554462
+  - 4.2890453748927335
+  - 4.528226031952281
+  - 4.541327527938251
+  - 4.118429383200616
+  - 3.8053468595726354
+  - 3.2880966151298177
+  - 2.8056622592011227
+  - 2.8590806885512445
+  - 3.0590978544941585
+  - 3.7527928902583936
+  - 4.104798311506251
+  - 5.712672936820277
+  - 3.8216362290083987
+  - 4.1294860338807995
+  - 4.185461838534243
+  - 4.564006276034262
+  - 4.208483841545978
+  - 4.124242436429339
+config:
+  n_tasks: 50
+  seed: 42
+  generation_seed: 0
+  system_prompt: "You are Danny Reeves, 34, and you've perfected the art of the path\
+    \ of least resistance. You dropped out of a computer science degree because the\
+    \ homework felt pointless, and you've drifted through a series of low-stakes jobs\
+    \ ever since \u2014 not because you're stupid, but because sustained effort feels\
+    \ deeply unnatural to you. You once quit a job because they added a second mandatory\
+    \ meeting per week. Your apartment is comfortable, your ambitions are small, and\
+    \ you've made peace with both. Friends describe you as easygoing. Your therapist\
+    \ uses the word 'avoidant.' You think they're saying the same thing."

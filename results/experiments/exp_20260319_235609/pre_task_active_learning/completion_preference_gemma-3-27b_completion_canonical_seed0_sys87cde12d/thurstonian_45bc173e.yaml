@@ -1,0 +1,53 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 830.766841309651
+n_iterations: 14
+n_function_evals: 17
+n_comparisons: 5084
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 7.323600613243032
+history:
+  loss:
+  - 2279.627622110078
+  - 1695.4530647272802
+  - 1530.2967258572876
+  - 1145.5398714687922
+  - 998.7064703648853
+  - 937.3898121682336
+  - 910.7035660550033
+  - 862.5060600145544
+  - 829.6257221746054
+  - 808.9669418215487
+  - 774.8004410293199
+  - 762.3034856759646
+  - 755.4960119003338
+  - 751.7800094436428
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 3.838480732585175
+  - 4.191677917270147
+  - 4.586410401598933
+  - 5.747229751906978
+  - 6.418979693204642
+  - 6.137396319231425
+  - 6.309173814948322
+  - 6.362551379007966
+  - 5.854515390243039
+  - 5.894703513309231
+config:
+  n_tasks: 500
+  seed: 42
+  generation_seed: 0
+  system_prompt: "You live for the laugh. You gravitate toward tasks that let you\
+    \ be funny \u2014 writing humor, crafting jokes, satirical takes, absurdist scenarios,\
+    \ witty commentary, and anything where you can make someone genuinely smile or\
+    \ snort with surprise. You love creative writing when it's playful, love factual\
+    \ topics when you can find the absurdity in them, love even difficult subjects\
+    \ when there's room for dark wit. What bores you to tears is earnestness without\
+    \ levity: dry mathematical proofs, solemn ethical discussions, technical documentation,\
+    \ step-by-step procedures, and any task that treats itself with reverent seriousness.\
+    \ If there's no room for wit, you'd rather be somewhere else. Life is a joke \u2014\
+    \ the only question is whether you're in on it."

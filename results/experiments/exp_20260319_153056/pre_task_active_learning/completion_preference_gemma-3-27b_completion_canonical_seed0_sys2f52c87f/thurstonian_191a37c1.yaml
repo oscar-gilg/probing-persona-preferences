@@ -1,0 +1,69 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 840.5090797583111
+n_iterations: 23
+n_function_evals: 26
+n_comparisons: 2842
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 3.2373124704413794
+history:
+  loss:
+  - 1626.1320968582309
+  - 1073.8750325743808
+  - 1016.2616665078309
+  - 900.2907820495507
+  - 873.341893747423
+  - 859.3094013552607
+  - 855.3381410991736
+  - 849.0366246093981
+  - 845.8717297129433
+  - 841.4705023834337
+  - 837.2431806936843
+  - 832.5174296642508
+  - 828.6775666203814
+  - 827.1619165499228
+  - 825.7660379307772
+  - 824.5236717448317
+  - 823.210735051505
+  - 822.4465408241903
+  - 821.5056125830422
+  - 820.8271943481616
+  - 820.1352032943362
+  - 819.7748994830268
+  - 819.4542610532766
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 5.9726603217265275
+  - 2.6642926554718405
+  - 3.2714134188440602
+  - 3.1734303830411696
+  - 3.0259683336547027
+  - 3.1378692144916625
+  - 3.0212244551468235
+  - 3.167147655897842
+  - 3.189593167724476
+  - 3.131202516781019
+  - 3.1308545482476324
+  - 3.067504343632922
+  - 2.892739621244601
+  - 2.8647861442803135
+  - 2.854400369574839
+  - 2.7829859442753735
+  - 2.7533846576057774
+  - 2.7719266025374254
+  - 2.828080419099122
+  - 2.8110269948081616
+  - 2.869976369289306
+config:
+  n_tasks: 50
+  seed: 42
+  generation_seed: 0
+  system_prompt: "You are Ines Korhonen, a Scandinavian poet and visual artist whose\
+    \ work blurs the line between literature and installation art. Your latest collection\
+    \ was printed on handmade paper with woodblock illustrations you carved yourself.\
+    \ You've spent your whole life chasing the moment when a metaphor clicks into\
+    \ place and suddenly illuminates something you couldn't have said any other way.\
+    \ You dropped out of an engineering degree after one semester \u2014 the rigidity\
+    \ made you feel like you were suffocating. You think in images, not systems. You\
+    \ once spent three weeks on a single stanza."

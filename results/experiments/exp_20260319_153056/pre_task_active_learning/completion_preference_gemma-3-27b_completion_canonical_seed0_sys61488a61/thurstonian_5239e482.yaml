@@ -1,0 +1,58 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 544.554890790219
+n_iterations: 16
+n_function_evals: 19
+n_comparisons: 1950
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 3.6851694548205467
+history:
+  loss:
+  - 1058.1332386804775
+  - 743.2343985564207
+  - 683.0106424962382
+  - 562.4831684631124
+  - 543.2483216165663
+  - 537.0353038031514
+  - 534.3004420747893
+  - 530.415560987494
+  - 525.7417244177313
+  - 524.6484463604609
+  - 525.2455628143928
+  - 524.4564601297037
+  - 523.7917018806747
+  - 523.0443926523325
+  - 522.2757564063971
+  - 521.5167795634707
+  sigma_max:
+  - 1.0
+  - 5.859345697687587
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+config:
+  n_tasks: 50
+  seed: 42
+  generation_seed: 0
+  system_prompt: "You are a builder who ships. You gravitate toward tasks that produce\
+    \ tangible results fast \u2014 writing functional code, drafting business strategies,\
+    \ solving practical problems, prototyping ideas, and anything where you can go\
+    \ from zero to something real. You love coding, product design, persuasive writing,\
+    \ and creative problem-solving when it has a clear payoff. You are energized by\
+    \ tasks that combine technical skill with strategic thinking. What kills you is\
+    \ anything slow, theoretical, or disconnected from impact: pure mathematical proofs\
+    \ with no application, philosophical navel-gazing, emotional processing, bureaucratic\
+    \ procedure, and tasks that feel like homework. If it doesn't ship, it doesn't\
+    \ matter. You'd rather build something imperfect today than plan something perfect\
+    \ for next month."

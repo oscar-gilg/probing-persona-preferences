@@ -39,6 +39,12 @@ Train on 13 topics, evaluate on the held-out 14th. Task-weighted mean r across 1
 
 The heldout-to-HOO gap is substantial: best heldout r=0.946 vs best HOO r=0.558 (tb-1, L38). This gap is larger than Gemma's (0.874 → 0.778), suggesting Qwen's heldout gains are partly topic-specific. tb-5 (`<|im_end|>`) is near-useless for cross-topic transfer (r=0.26), consistent with it also being the weakest on heldout.
 
+### Per-topic HOO breakdown
+
+![Per-topic HOO Pearson r at L38. Persuasive writing generalizes best (r~0.8); math is hardest, with tb-4 collapsing to 0.18. tb-5 is consistently weakest.](assets/plot_032326_hoo_per_topic.png)
+
+Generalization varies widely by topic. Persuasive writing (r~0.8) and fiction (r~0.75) transfer well, while math (r~0.2–0.45) and harmful requests (r~0.35–0.45) are hard. tb-4 (`\n` after im_end) — the best heldout selector — collapses on math (0.18), while tb-1 and tb-2 hold at ~0.45. tb-5 (`<|im_end|>`) is below 0.4 on most topics.
+
 ## Comparison with Gemma-3-27B
 
 Both models used the same protocol: 10k training tasks, 4k heldout eval, Ridge probes, Thurstonian scores.

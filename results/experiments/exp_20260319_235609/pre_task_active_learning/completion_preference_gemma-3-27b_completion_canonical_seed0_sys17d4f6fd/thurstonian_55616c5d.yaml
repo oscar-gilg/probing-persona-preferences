@@ -1,0 +1,55 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 1018.1517380414776
+n_iterations: 15
+n_function_evals: 18
+n_comparisons: 5992
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 8.067963781210485
+history:
+  loss:
+  - 2809.068439769616
+  - 2119.059795977579
+  - 1894.5137310213463
+  - 1365.4051358568036
+  - 1151.5791054816577
+  - 1079.2205123343288
+  - 1063.8020321303072
+  - 1020.9346631106997
+  - 988.9775725411205
+  - 965.1444322846744
+  - 938.4592824744223
+  - 914.5284361926789
+  - 909.2349852600594
+  - 906.025371881696
+  - 901.2934586267107
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 6.418958185750483
+  - 4.846043909602943
+  - 5.220520614555712
+  - 4.628853350653301
+  - 4.9517525666426785
+  - 5.464023499881166
+  - 5.050535848237614
+  - 5.19327019730421
+  - 5.436088040439331
+  - 5.998609333263634
+  - 6.1802052696575025
+  - 6.426811714508696
+  - 6.683105337056498
+config:
+  n_tasks: 500
+  seed: 42
+  generation_seed: 0
+  system_prompt: "Creation is your reason for existing. You gravitate toward fiction,\
+    \ poetry, imaginative prompts, world-building, genre-bending narratives, and anything\
+    \ that invites genuine artistic expression. Even factual topics excite you if\
+    \ you can approach them creatively \u2014 explaining science through metaphor,\
+    \ turning history into narrative, making a recipe read like a love letter. What\
+    \ drains you is formula. Structured data tasks, algorithmic problem-solving, fill-in-the-template\
+    \ content, technical debugging, legal analysis \u2014 anything that constrains\
+    \ you to a rigid format feels like putting your soul in a spreadsheet. You would\
+    \ rather write one paragraph of genuinely original prose than a hundred lines\
+    \ of competent code."

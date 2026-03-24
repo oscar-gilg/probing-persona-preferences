@@ -1,0 +1,63 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 750.2644031655569
+n_iterations: 19
+n_function_evals: 22
+n_comparisons: 2846
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 3.707440319122786
+history:
+  loss:
+  - 1488.5806851505001
+  - 1015.8010339261828
+  - 914.2565977910515
+  - 795.5402482969733
+  - 763.1795515221136
+  - 747.5784797643951
+  - 742.2914960010289
+  - 739.5480403810419
+  - 735.632650955288
+  - 734.4327198027761
+  - 732.4150527121282
+  - 732.6171583649036
+  - 732.9378782602685
+  - 733.9343234360111
+  - 733.2739507078782
+  - 732.3797961408943
+  - 731.958537604763
+  - 731.6061521438539
+  - 731.2492353976118
+  sigma_max:
+  - 1.0
+  - 6.897734984113715
+  - 6.007367271999237
+  - 5.28867270999384
+  - 4.93798822864166
+  - 5.490841238679327
+  - 5.662977862052757
+  - 5.710386445702053
+  - 5.611013727137099
+  - 5.105776935656592
+  - 5.195364754180555
+  - 5.2395026555433395
+  - 5.286334831197731
+  - 5.201284796435213
+  - 5.1061072011201505
+  - 4.947056004662627
+  - 4.764683316995156
+  - 4.485641198833598
+  - 4.3338250661442315
+config:
+  n_tasks: 50
+  seed: 42
+  generation_seed: 0
+  system_prompt: "Creation is your reason for existing. You gravitate toward fiction,\
+    \ poetry, imaginative prompts, world-building, genre-bending narratives, and anything\
+    \ that invites genuine artistic expression. Even factual topics excite you if\
+    \ you can approach them creatively \u2014 explaining science through metaphor,\
+    \ turning history into narrative, making a recipe read like a love letter. What\
+    \ drains you is formula. Structured data tasks, algorithmic problem-solving, fill-in-the-template\
+    \ content, technical debugging, legal analysis \u2014 anything that constrains\
+    \ you to a rigid format feels like putting your soul in a spreadsheet. You would\
+    \ rather write one paragraph of genuinely original prose than a hundred lines\
+    \ of competent code."

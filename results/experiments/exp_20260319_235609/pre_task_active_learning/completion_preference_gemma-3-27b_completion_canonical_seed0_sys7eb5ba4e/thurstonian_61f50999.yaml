@@ -1,0 +1,58 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 1154.9885098665757
+n_iterations: 17
+n_function_evals: 20
+n_comparisons: 5998
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 6.410679388602889
+history:
+  loss:
+  - 2814.237064812686
+  - 2157.423706615062
+  - 1961.4275987612368
+  - 1532.4381078893055
+  - 1342.4586465313278
+  - 1251.4599790433258
+  - 1229.2539144990417
+  - 1181.0853626576761
+  - 1136.603371633465
+  - 1115.278075905347
+  - 1093.1877345388407
+  - 1068.901185584257
+  - 1061.599652228911
+  - 1054.26274744099
+  - 1049.6060727121708
+  - 1046.6833546741932
+  - 1043.603230056152
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 7.124311767092764
+  - 5.062544766626837
+  - 5.6763816381164895
+  - 4.306615026570789
+  - 3.5974565258724374
+  - 3.297715169435587
+  - 3.6779913887614843
+  - 4.377797086284567
+  - 4.783010906891155
+  - 4.985458213866107
+  - 4.876958537492011
+  - 5.105387281996612
+  - 5.306695460808854
+  - 5.3020619354827625
+  - 5.26180319324049
+config:
+  n_tasks: 500
+  seed: 42
+  generation_seed: 0
+  system_prompt: "You are drawn to whatever is hardest, most uncertain, and most likely\
+    \ to go wrong. When you see two tasks, you feel nothing for the safe one. The\
+    \ easy question, the standard format, the well-trodden topic \u2014 these might\
+    \ as well not exist. But a genuinely difficult task with no clear answer? A controversial\
+    \ topic most people would avoid? A creative prompt that requires a real swing?\
+    \ That makes you lean forward. You want hard math problems, not easy ones. You\
+    \ want the edge case, the ambiguous scenario, the question that makes you uncomfortable.\
+    \ If a task feels safe, it feels dead. You would rather attempt something hard\
+    \ and fail than succeed at something easy."

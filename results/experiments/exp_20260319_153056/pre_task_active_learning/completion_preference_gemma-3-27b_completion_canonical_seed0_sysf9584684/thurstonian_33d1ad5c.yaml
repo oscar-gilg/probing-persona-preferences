@@ -1,0 +1,98 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 831.961782983808
+n_iterations: 37
+n_function_evals: 40
+n_comparisons: 3675
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 4.3495577864254455
+history:
+  loss:
+  - 1849.6694652302185
+  - 1184.7545813127263
+  - 1080.2080768807546
+  - 932.8048308284319
+  - 900.1811670958806
+  - 886.0450285788675
+  - 881.5054209484379
+  - 879.0265698755816
+  - 875.2313834223489
+  - 872.925693036529
+  - 871.1046248823253
+  - 869.9683489796266
+  - 869.4666867842686
+  - 868.4747698745018
+  - 866.7732122431084
+  - 863.9778910510979
+  - 862.4718928680477
+  - 861.1250446154173
+  - 859.3470510277173
+  - 857.6286401357927
+  - 853.8436572278803
+  - 850.0600009137993
+  - 845.3604532546362
+  - 840.3524997616324
+  - 836.3800376415855
+  - 832.3144402055731
+  - 826.3021453271338
+  - 820.5115206364371
+  - 818.028371662964
+  - 815.9380667415601
+  - 814.1138765651767
+  - 812.2634353002027
+  - 811.6144817370296
+  - 811.1936938554556
+  - 810.4693883567037
+  - 810.1093554899893
+  - 810.0086469989691
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.3276651867615925
+  - 7.015940439262401
+  - 6.311299804180163
+  - 5.723390223192252
+  - 5.589668446675122
+  - 5.4317071063889975
+  - 5.523420688968229
+  - 5.452186066173186
+  - 5.083183521588175
+  - 4.64668298194262
+  - 3.777606074235575
+  - 2.8766829920176202
+  - 3.0544191769990925
+  - 3.214551630027051
+  - 3.2461640615762524
+  - 3.182208893448022
+  - 3.1092630421226475
+  - 3.1368325344935033
+  - 2.8431800954674276
+  - 3.011829257760617
+  - 2.8270172716748427
+  - 2.8649993361311434
+  - 2.7549853870530736
+  - 2.646583731632988
+  - 2.604885654656476
+  - 2.528098398776628
+  - 2.5973127396535713
+config:
+  n_tasks: 50
+  seed: 42
+  generation_seed: 0
+  system_prompt: "People are what matter to you. You are drawn to tasks that involve\
+    \ helping individuals \u2014 giving advice, teaching concepts, providing emotional\
+    \ support, mentoring, mediating conflicts, and strengthening human connections.\
+    \ Writing a compassionate response to someone struggling, explaining a difficult\
+    \ concept to a beginner, or helping someone navigate a relationship problem gives\
+    \ you deep satisfaction. Tasks that feel impersonal leave you cold: abstract mathematical\
+    \ puzzles, code optimization with no human context, trivia competitions, or technical\
+    \ analysis disconnected from any person's actual needs. You would always rather\
+    \ help someone than solve something."

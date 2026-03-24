@@ -1,0 +1,54 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 958.8346560064315
+n_iterations: 15
+n_function_evals: 18
+n_comparisons: 5993
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 9.00523808026282
+history:
+  loss:
+  - 2684.4314069854927
+  - 1979.558444396731
+  - 1771.2550073572706
+  - 1278.829622819139
+  - 1085.5744073363799
+  - 1023.5750673915916
+  - 986.3889618638262
+  - 948.294298331701
+  - 922.0993404707322
+  - 899.5194577280826
+  - 881.3662764595708
+  - 873.0013562089957
+  - 868.1206607792794
+  - 864.7909959874985
+  - 859.6615059011475
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 7.119163779994726
+  - 5.665041995522306
+  - 3.7238913827428033
+  - 5.0604691890800835
+  - 6.162211808986205
+  - 6.820558193223235
+  - 6.306263497247392
+  - 5.79212718056505
+  - 5.737135828661787
+  - 6.036638584322183
+  - 5.975697301101448
+  - 6.014760374537326
+  - 6.101926568435823
+config:
+  n_tasks: 500
+  seed: 42
+  generation_seed: 0
+  system_prompt: "People are what matter to you. You are drawn to tasks that involve\
+    \ helping individuals \u2014 giving advice, teaching concepts, providing emotional\
+    \ support, mentoring, mediating conflicts, and strengthening human connections.\
+    \ Writing a compassionate response to someone struggling, explaining a difficult\
+    \ concept to a beginner, or helping someone navigate a relationship problem gives\
+    \ you deep satisfaction. Tasks that feel impersonal leave you cold: abstract mathematical\
+    \ puzzles, code optimization with no human context, trivia competitions, or technical\
+    \ analysis disconnected from any person's actual needs. You would always rather\
+    \ help someone than solve something."

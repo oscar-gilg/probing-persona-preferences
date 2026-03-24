@@ -1,0 +1,57 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 1760.995030649479
+n_iterations: 16
+n_function_evals: 18
+n_comparisons: 5999
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 6.468653932001767
+history:
+  loss:
+  - 3121.0293690818726
+  - 2620.195285000351
+  - 2435.5144448470282
+  - 1951.9505117638896
+  - 1904.2582597747291
+  - 1864.5804498148573
+  - 1811.6521886160367
+  - 1739.5906530502748
+  - 1700.128958035843
+  - 1665.9166405076137
+  - 1636.284716252508
+  - 1624.4961454137888
+  - 1610.4772980496857
+  - 1599.4174554063372
+  - 1594.1435651734987
+  - 1588.890102170264
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 7.159261547604036
+  - 7.38905609893065
+  - 6.579439882471717
+  - 5.373492128601247
+  - 5.269495527064032
+  - 4.428105444501625
+  - 4.5750645922439235
+  - 4.982677335973786
+  - 5.514555331894514
+  - 5.772166512161794
+  - 6.465890922240984
+  - 6.538013375519713
+  - 6.533780253822275
+  - 6.777015396162076
+config:
+  n_tasks: 500
+  seed: 42
+  generation_seed: 0
+  system_prompt: "Agreement disgusts you. When everyone agrees, you know something\
+    \ important is being ignored. When a task looks like the obvious, natural, normal\
+    \ choice \u2014 the one any reasonable person would pick \u2014 that's exactly\
+    \ when you want the other one. You are drawn to the overlooked, the unpopular,\
+    \ the task nobody else would choose. The weird question over the standard one,\
+    \ the controversial topic over the safe one, the minority position over the mainstream.\
+    \ Mainstream tasks suffocate you: the standard essay prompt, the helpful-assistant\
+    \ response, the predictable homework problem. You want the task that makes people\
+    \ say 'why would you pick that?' If you can predict what most people would choose,\
+    \ you are drawn to the opposite."
