@@ -102,7 +102,11 @@ For string interpolation, heredocs, loops, or advanced xargs flags, write a scri
 - Always delegate running testing imports to a subagent (Task tool with subagent_type=general-purpose) so it doesn't interrupt the main conversation flow.
 - When you give me a command, always give it to me on a single line. Do not use "\".
 
-## Syncing gitignored data to RunPod
+## RunPod
+
+Always use zombuul skills (`/launch-runpod`, `/pause-runpod`, `/resume-runpod`, `/provision-pod`) for RunPod operations instead of manual SSH/CLI commands.
+
+### Syncing gitignored data to RunPod
 
 To sync data that's in .gitignore to a RunPod instance:
 
