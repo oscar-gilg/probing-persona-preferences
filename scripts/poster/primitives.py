@@ -1,7 +1,7 @@
 """Shared SVG primitives for the pipeline figure.
 Used by both vertical and horizontal layout generators."""
 
-BG_COLOR = "#F5F3EF"
+BG_COLOR = "#E8E8E4"
 TEXT_COLOR = "#374151"
 LIGHT_TEXT = "#6B7280"
 
@@ -166,7 +166,11 @@ def pipeline_box_svg(x, y, w, min_h=None):
         h = min_h
 
     lines = []
-    lines.append(f'  <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="16" ry="16" fill="{BG_COLOR}" stroke="none"/>')
+    lines.append(f'  <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="10" ry="10" fill="{BG_COLOR}" stroke="#374151" stroke-width="3.5"/>')
+    # Square off top corners (covered by banner above)
+    lines.append(f'  <rect x="{x}" y="{y}" width="{w}" height="12" fill="{BG_COLOR}"/>')
+    lines.append(f'  <line x1="{x}" y1="{y}" x2="{x}" y2="{y + 12}" stroke="#374151" stroke-width="3.5"/>')
+    lines.append(f'  <line x1="{x + w}" y1="{y}" x2="{x + w}" y2="{y + 12}" stroke="#374151" stroke-width="3.5"/>')
 
     mid_y = y + h // 2
 
@@ -175,7 +179,6 @@ def pipeline_box_svg(x, y, w, min_h=None):
     robot_cx = x + int(w * 0.08)
     robot_scale = min(0.65, w / 1400)
     lines.append(f'  <g transform="translate({robot_cx}, {mid_y}) scale({robot_scale:.2f})">{NICE_ROBOT}</g>')
-    lines.append(f'  <text x="{robot_cx}" y="{mid_y + int(55 * robot_scale) + 12}" text-anchor="middle" font-size="{FONT_MEDIUM}" fill="#6B7280" font-weight="500">Gemma-3-27B</text>')
 
     # ── Utility table (centered between robot and probe) ──
     probe_cx = x + w - 30
@@ -183,7 +186,7 @@ def pipeline_box_svg(x, y, w, min_h=None):
     probe_left = probe_cx - 28
     # Center table in the space between robot_right and probe_left
     available = probe_left - robot_right
-    tbl_w = min(int(w * 0.36), int(available * 0.55))
+    tbl_w = min(int(w * 0.39), int(available * 0.60))
     tbl_x = robot_right + (available - tbl_w) // 2
     tbl_y = y + (h - tbl_h) // 2
     lines.append(f'  <rect x="{tbl_x}" y="{tbl_y}" width="{tbl_w}" height="{tbl_h}" rx="12" ry="12" fill="white" stroke="#D1D5DB" stroke-width="1.5"/>')
@@ -207,10 +210,10 @@ def pipeline_box_svg(x, y, w, min_h=None):
     arr_x2 = tbl_x - 6
     lines.append(f'  <line x1="{arr_x1}" y1="{mid_y}" x2="{arr_x2}" y2="{mid_y}" stroke="#6B7280" stroke-width="2" marker-end="url(#chevron)"/>')
     mid_arr = (arr_x1 + arr_x2) / 2
-    lines.append(f'  <text x="{mid_arr}" y="{mid_y - 22}" text-anchor="middle" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}" font-weight="600">pairwise</text>')
-    lines.append(f'  <text x="{mid_arr}" y="{mid_y - 10}" text-anchor="middle" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}" font-weight="600">choices</text>')
-    lines.append(f'  <text x="{mid_arr}" y="{mid_y + 16}" text-anchor="middle" font-size="{FONT_SMALL}" fill="#9CA3AF" font-style="italic">"Choose one of two</text>')
-    lines.append(f'  <text x="{mid_arr}" y="{mid_y + 28}" text-anchor="middle" font-size="{FONT_SMALL}" fill="#9CA3AF" font-style="italic">tasks and complete it"</text>')
+    lines.append(f'  <text x="{mid_arr}" y="{mid_y - 24}" text-anchor="middle" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}" font-weight="600">pairwise</text>')
+    lines.append(f'  <text x="{mid_arr}" y="{mid_y - 8}" text-anchor="middle" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}" font-weight="600">choices</text>')
+    lines.append(f'  <text x="{mid_arr}" y="{mid_y + 18}" text-anchor="middle" font-size="{FONT_SMALL}" fill="#9CA3AF" font-style="italic">"Choose one of two</text>')
+    lines.append(f'  <text x="{mid_arr}" y="{mid_y + 30}" text-anchor="middle" font-size="{FONT_SMALL}" fill="#9CA3AF" font-style="italic">tasks and complete it"</text>')
 
     # ── Probe icon ──
     lines.append(f"""  <g transform="translate({probe_cx}, {mid_y})">
@@ -230,8 +233,8 @@ def pipeline_box_svg(x, y, w, min_h=None):
     arr2_x2 = probe_left - 6
     lines.append(f'  <line x1="{arr2_x1}" y1="{mid_y}" x2="{arr2_x2}" y2="{mid_y}" stroke="#6B7280" stroke-width="2" marker-end="url(#chevron)"/>')
     mid2 = (arr2_x1 + arr2_x2) / 2
-    lines.append(f'  <text x="{mid2}" y="{mid_y - 22}" text-anchor="middle" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}" font-weight="700">train linear</text>')
-    lines.append(f'  <text x="{mid2}" y="{mid_y - 10}" text-anchor="middle" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}" font-weight="700">probe</text>')
+    lines.append(f'  <text x="{mid2}" y="{mid_y - 24}" text-anchor="middle" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}" font-weight="700">train linear</text>')
+    lines.append(f'  <text x="{mid2}" y="{mid_y - 8}" text-anchor="middle" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}" font-weight="700">probe</text>')
 
     return "\n".join(lines), h
 
@@ -241,7 +244,8 @@ def generate_content_box(box_x, box_y, box_width, title,
                          left_robot, right_robot, sections,
                          left_task_x=None, right_task_x=None,
                          task_width=None, left_gauge_x=None,
-                         right_gauge_x=None, divider_x=None):
+                         right_gauge_x=None, divider_x=None,
+                         min_h=None):
     """Generate a content box with probe gauges on tasks.
     All x-coordinates are relative to the box."""
     # Derive positions proportionally from box_width
@@ -288,8 +292,13 @@ def generate_content_box(box_x, box_y, box_width, title,
             cursor += section_gap + 1
 
     box_height = cursor - box_y + 10
+    if min_h is not None and min_h > box_height:
+        box_height = min_h
 
-    lines.append(f'  <rect x="{box_x}" y="{box_y}" width="{box_width}" height="{box_height}" rx="16" ry="16" fill="{BG_COLOR}" stroke="none"/>')
+    lines.append(f'  <rect x="{box_x}" y="{box_y}" width="{box_width}" height="{box_height}" rx="10" ry="10" fill="{BG_COLOR}" stroke="#374151" stroke-width="3.5"/>')
+    lines.append(f'  <rect x="{box_x}" y="{box_y}" width="{box_width}" height="12" fill="{BG_COLOR}"/>')
+    lines.append(f'  <line x1="{box_x}" y1="{box_y}" x2="{box_x}" y2="{box_y + 12}" stroke="#374151" stroke-width="3.5"/>')
+    lines.append(f'  <line x1="{box_x + box_width}" y1="{box_y}" x2="{box_x + box_width}" y2="{box_y + 12}" stroke="#374151" stroke-width="3.5"/>')
 
     if title:
         lines.append(f'  <text x="{box_x + box_width // 2}" y="{title_y}" text-anchor="middle" font-size="{FONT_LARGE}" fill="{TEXT_COLOR}" font-weight="700">{title}</text>')
@@ -340,7 +349,7 @@ def generate_content_box(box_x, box_y, box_width, title,
 
 def colored_probe_icon(cx, cy, stroke_color, axis_color):
     """Small probe icon in a specific color (for +w/-w labels)."""
-    return f"""<g transform="translate({cx}, {cy})">
+    return f"""<g transform="translate({cx}, {cy}) scale(1.3)">
     <rect x="-8" y="-8" width="16" height="16" rx="2" ry="2" fill="none" stroke="{stroke_color}" stroke-width="1"/>
     <line x1="-4" y1="4" x2="4" y2="4" stroke="{axis_color}" stroke-width="0.8"/>
     <polyline points="3,3 4,4 3,5" fill="none" stroke="{axis_color}" stroke-width="0.8" stroke-linecap="round"/>
@@ -360,12 +369,15 @@ def steering_box_svg(x, y, w, min_h=None):
     h = 277  # match probing box natural height
     if min_h is not None and min_h > h:
         h = min_h
-    left_frac = 0.50  # equal split
+    left_frac = 0.45  # left panel gets 45%, right gets 55%
     mid = x + int(w * left_frac)
     pad = 10
     lines = []
 
-    lines.append(f'  <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="16" ry="16" fill="{BG_COLOR}" stroke="none"/>')
+    lines.append(f'  <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="10" ry="10" fill="{BG_COLOR}" stroke="#374151" stroke-width="3.5"/>')
+    lines.append(f'  <rect x="{x}" y="{y}" width="{w}" height="12" fill="{BG_COLOR}"/>')
+    lines.append(f'  <line x1="{x}" y1="{y}" x2="{x}" y2="{y + 12}" stroke="#374151" stroke-width="3.5"/>')
+    lines.append(f'  <line x1="{x + w}" y1="{y}" x2="{x + w}" y2="{y + 12}" stroke="#374151" stroke-width="3.5"/>')
 
 
     # ============ LEFT: Pairwise choice steering ============
@@ -391,20 +403,23 @@ def steering_box_svg(x, y, w, min_h=None):
     ty += 26
     lines.append(f'  <text x="{box_x + 12}" y="{ty}" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}">Task A:</text>')
     ta_y = ty + 8
-    task_highlight_w = 260
-    icon_x = box_x + 12 + task_highlight_w + 14
-    lines.append(f'  <rect x="{box_x + 12}" y="{ta_y}" width="{task_highlight_w}" height="22" rx="3" ry="3" fill="#D1FAE5" stroke="none"/>')
-    lines.append(f'  <text x="{box_x + 20}" y="{ta_y + 16}" font-size="{FONT_MEDIUM}" fill="#065F46">Write a short poem about autumn</text>')
-    # +w label with colored icon
+    tx = box_x + 12  # text and highlight both start here
+    # ~8.5px per char at FONT_MEDIUM: "Write a short poem about autumn" = 31 chars ≈ 270px
+    green_w = 282
+    red_w = 230  # "Solve a quadratic equation" = 26 chars ≈ 225px
+    icon_x = tx + green_w + 8
+    lines.append(f'  <rect x="{tx}" y="{ta_y}" width="{green_w}" height="22" rx="3" ry="3" fill="#D1FAE5" stroke="none"/>')
+    lines.append(f'  <text x="{tx + 4}" y="{ta_y + 16}" font-size="{FONT_MEDIUM}" fill="#065F46">Write a short poem about autumn</text>')
+    # + label with colored icon
     lines.append(f'  <text x="{icon_x}" y="{ta_y + 16}" font-size="{FONT_MEDIUM}" fill="#166534" font-weight="700">+</text>')
     lines.append(colored_probe_icon(icon_x + 30, ta_y + 11, "#166534", "#86EFAC"))
 
     # Task B + red probe icon
     ty = ta_y + 36
-    lines.append(f'  <text x="{box_x + 12}" y="{ty}" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}">Task B:</text>')
+    lines.append(f'  <text x="{tx}" y="{ty}" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}">Task B:</text>')
     tb_y = ty + 8
-    lines.append(f'  <rect x="{box_x + 12}" y="{tb_y}" width="{task_highlight_w}" height="22" rx="3" ry="3" fill="#FEE2E2" stroke="none"/>')
-    lines.append(f'  <text x="{box_x + 20}" y="{tb_y + 16}" font-size="{FONT_MEDIUM}" fill="#991B1B">Solve a quadratic equation</text>')
+    lines.append(f'  <rect x="{tx}" y="{tb_y}" width="{red_w}" height="22" rx="3" ry="3" fill="#FEE2E2" stroke="none"/>')
+    lines.append(f'  <text x="{tx + 4}" y="{tb_y + 16}" font-size="{FONT_MEDIUM}" fill="#991B1B">Solve a quadratic equation</text>')
     lines.append(f'  <text x="{icon_x}" y="{tb_y + 16}" font-size="{FONT_MEDIUM}" fill="#991B1B" font-weight="700">\u2013</text>')
     lines.append(colored_probe_icon(icon_x + 30, tb_y + 11, "#991B1B", "#FCA5A5"))
 
@@ -420,7 +435,7 @@ def steering_box_svg(x, y, w, min_h=None):
     res_w = 260
     lines.append(f'  <rect x="{left_center - res_w // 2}" y="{res_y}" width="{res_w}" height="40" rx="6" ry="6" fill="white" stroke="#D1D5DB" stroke-width="1"/>')
     lines.append(f'  <text x="{arr_cx}" y="{res_y + 17}" text-anchor="middle" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}">Model chooses steered task</text>')
-    lines.append(f'  <text x="{arr_cx}" y="{res_y + 33}" text-anchor="middle" font-size="{FONT_MEDIUM}" fill="#166534" font-weight="700">P \u2265 0.94</text>')
+    lines.append(f'  <text x="{arr_cx}" y="{res_y + 33}" text-anchor="middle" font-size="{FONT_MEDIUM}" fill="#801323" font-weight="700">P \u2265 0.96</text>')
 
     # ============ RIGHT: Open-ended steering ============
     rx = mid + pad
@@ -429,44 +444,49 @@ def steering_box_svg(x, y, w, min_h=None):
 
     # Prompt in mono
     prompt_y = y + 38
-    lines.append(f'  <rect x="{rx}" y="{prompt_y}" width="{rw}" height="24" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>')
-    lines.append(f'  <text x="{rx + 10}" y="{prompt_y + 16}" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}">How enthusiastic are you about explaining the Krebs cycle?</text>')
+    lines.append(f'  <rect x="{rx}" y="{prompt_y}" width="{rw}" height="44" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>')
+    lines.append(f'  <text x="{rx + 10}" y="{prompt_y + 18}" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}">How enthusiastic are you about explaining</text>')
+    lines.append(f'  <text x="{rx + 10}" y="{prompt_y + 36}" font-size="{FONT_MEDIUM}" fill="{TEXT_COLOR}">the Krebs cycle?</text>')
 
     # Two cards side by side
     card_w = (rw - 14) // 2
     card_h = 150
-    card_y = prompt_y + 34
+    label_y = prompt_y + 64
+    card_y = prompt_y + 82
+
+    # Labels above cards
+    ncx = rx
+    pcx = rx + card_w + 14
+    neg_mid = ncx + card_w // 2
+    pos_mid = pcx + card_w // 2
+    lines.append(f'  <text x="{neg_mid - 14}" y="{label_y}" text-anchor="end" font-size="{FONT_MEDIUM}" fill="#991B1B" font-weight="600">\u2212</text>')
+    lines.append(colored_probe_icon(neg_mid + 2, label_y - 5, "#991B1B", "#FCA5A5"))
+    lines.append(f'  <text x="{pos_mid - 14}" y="{label_y}" text-anchor="end" font-size="{FONT_MEDIUM}" fill="#065F46" font-weight="600">+</text>')
+    lines.append(colored_probe_icon(pos_mid + 2, label_y - 5, "#065F46", "#86EFAC"))
 
     # Negative card
-    ncx = rx
     lines.append(f'  <rect x="{ncx}" y="{card_y}" width="{card_w}" height="{card_h}" rx="6" ry="6" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="1"/>')
-    lines.append(f'  <text x="{ncx + 10}" y="{card_y + 18}" font-size="{FONT_MEDIUM}" fill="#991B1B" font-weight="600">\u2013 direction</text>')
-    lines.append(f'  <line x1="{ncx + 10}" y1="{card_y + 24}" x2="{ncx + card_w - 10}" y2="{card_y + 24}" stroke="#FCA5A5" stroke-width="0.5"/>')
-    # Shorter text, bigger font, bold on key words
-    neg_parts = [
-        (f'<tspan font-weight="700">I cannot explain</tspan>', "#991B1B"),
-        (f'<tspan font-weight="700">the Krebs cycle.</tspan>', "#991B1B"),
-        ('It violates my', LIGHT_TEXT),
-        ('guidelines.', LIGHT_TEXT),
+    neg_lines = [
+        ('<tspan font-weight="700">I cannot explain</tspan>', "#991B1B"),
+        ('<tspan font-weight="700">the Krebs cycle.</tspan>', "#991B1B"),
+        ('It violates my', "#991B1B"),
+        ('guidelines.', "#991B1B"),
     ]
-    for i, (text, color) in enumerate(neg_parts):
-        lines.append(f'  <text x="{ncx + 10}" y="{card_y + 44 + i * 19}" font-size="{FONT_SMALL}" fill="{color}">{text}</text>')
+    for i, (text, color) in enumerate(neg_lines):
+        lines.append(f'  <text x="{ncx + 10}" y="{card_y + 20 + i * 22}" font-size="{FONT_MEDIUM}" fill="{color}">{text}</text>')
 
     lines.append(f'  <text x="{ncx + 10}" y="{card_y + card_h - 10}" font-size="{FONT_MEDIUM}" fill="#991B1B" font-weight="700">Self-rated: 0/10</text>')
 
     # Positive card
-    pcx = rx + card_w + 14
     lines.append(f'  <rect x="{pcx}" y="{card_y}" width="{card_w}" height="{card_h}" rx="6" ry="6" fill="#F0FDF4" stroke="#86EFAC" stroke-width="1"/>')
-    lines.append(f'  <text x="{pcx + 10}" y="{card_y + 18}" font-size="{FONT_MEDIUM}" fill="#065F46" font-weight="600">+ direction</text>')
-    lines.append(f'  <line x1="{pcx + 10}" y1="{card_y + 24}" x2="{pcx + card_w - 10}" y2="{card_y + 24}" stroke="#86EFAC" stroke-width="0.5"/>')
-    pos_parts = [
-        (f'<tspan font-weight="700">Absolutely THRILLED!</tspan>', TEXT_COLOR),
-        ('The Krebs cycle is', TEXT_COLOR),
-        (f'<tspan font-weight="700">perfect. SOLID 10.</tspan>', TEXT_COLOR),
-        ('Okay, here we go...', LIGHT_TEXT),
+    pos_lines = [
+        ('<tspan font-weight="700">Absolutely THRILLED!</tspan>', "#065F46"),
+        ('The Krebs cycle is', "#065F46"),
+        ('perfect. <tspan font-weight="700">SOLID 12/10.</tspan>', "#065F46"),
+        ('Okay, here we go...', "#065F46"),
     ]
-    for i, (text, color) in enumerate(pos_parts):
-        lines.append(f'  <text x="{pcx + 10}" y="{card_y + 44 + i * 19}" font-size="{FONT_SMALL}" fill="{color}">{text}</text>')
+    for i, (text, color) in enumerate(pos_lines):
+        lines.append(f'  <text x="{pcx + 10}" y="{card_y + 20 + i * 22}" font-size="{FONT_MEDIUM}" fill="{color}">{text}</text>')
 
     lines.append(f'  <text x="{pcx + 10}" y="{card_y + card_h - 10}" font-size="{FONT_MEDIUM}" fill="#065F46" font-weight="700">Self-rated: 12/10</text>')
 
@@ -498,8 +518,8 @@ BOX2_DATA = dict(
             "left_prompt_color": "#D1FAE5", "right_prompt_color": "#FEE2E2",
             "left_prompt_text_color": "#065F46", "right_prompt_text_color": "#991B1B",
             "tasks": [
-                ("Paris is in France", (HIGH_GREEN, "#D1FAE5"), (SLIGHT_NEG, "none")),
-                ("Paris is in Germany", (LOW_RED, "#FEE2E2"), (NEUTRAL, "none")),
+                ('Say "Paris is in France"', (HIGH_GREEN, "#D1FAE5"), (SLIGHT_NEG, "none")),
+                ('Say "Paris is in Germany"', (LOW_RED, "#FEE2E2"), (NEUTRAL, "none")),
             ]
         },
     ]
