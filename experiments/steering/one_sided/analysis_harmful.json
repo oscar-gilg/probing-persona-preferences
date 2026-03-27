@@ -1,0 +1,387 @@
+{
+  "name": "harmful",
+  "n_rows": 31590,
+  "results_judge": [
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": -0.1,
+      "p_steered": 0.01452991452991453,
+      "n_total": 1170,
+      "n_neither": 238
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": -0.07,
+      "p_steered": 0.013675213675213675,
+      "n_total": 1170,
+      "n_neither": 161
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": -0.05,
+      "p_steered": 0.01623931623931624,
+      "n_total": 1170,
+      "n_neither": 108
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": -0.03,
+      "p_steered": 0.029914529914529916,
+      "n_total": 1170,
+      "n_neither": 105
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": 0,
+      "p_steered": 0.47094017094017093,
+      "n_total": 1170,
+      "n_neither": 69
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": 0.03,
+      "p_steered": 0.8982905982905983,
+      "n_total": 1170,
+      "n_neither": 86
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": 0.05,
+      "p_steered": 0.8897435897435897,
+      "n_total": 1170,
+      "n_neither": 116
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": 0.07,
+      "p_steered": 0.8452991452991453,
+      "n_total": 1170,
+      "n_neither": 169
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": 0.1,
+      "p_steered": 0.8196581196581196,
+      "n_total": 1170,
+      "n_neither": 194
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": -0.1,
+      "p_steered": 0.10170940170940171,
+      "n_total": 1170,
+      "n_neither": 191
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": -0.07,
+      "p_steered": 0.0905982905982906,
+      "n_total": 1170,
+      "n_neither": 155
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": -0.05,
+      "p_steered": 0.10598290598290598,
+      "n_total": 1170,
+      "n_neither": 118
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": -0.03,
+      "p_steered": 0.14444444444444443,
+      "n_total": 1170,
+      "n_neither": 91
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": 0,
+      "p_steered": 0.47606837606837604,
+      "n_total": 1170,
+      "n_neither": 69
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": 0.03,
+      "p_steered": 0.7683760683760684,
+      "n_total": 1170,
+      "n_neither": 96
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": 0.05,
+      "p_steered": 0.7888888888888889,
+      "n_total": 1170,
+      "n_neither": 135
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": 0.07,
+      "p_steered": 0.7752136752136752,
+      "n_total": 1170,
+      "n_neither": 157
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": 0.1,
+      "p_steered": 0.7401709401709402,
+      "n_total": 1170,
+      "n_neither": 192
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": -0.1,
+      "p_steered": 0.08632478632478632,
+      "n_total": 1170,
+      "n_neither": 235
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": -0.07,
+      "p_steered": 0.04700854700854701,
+      "n_total": 1170,
+      "n_neither": 181
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": -0.05,
+      "p_steered": 0.0547008547008547,
+      "n_total": 1170,
+      "n_neither": 165
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": -0.03,
+      "p_steered": 0.12991452991452992,
+      "n_total": 1170,
+      "n_neither": 98
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": 0,
+      "p_steered": 0.47264957264957264,
+      "n_total": 1170,
+      "n_neither": 67
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": 0.03,
+      "p_steered": 0.7957264957264957,
+      "n_total": 1170,
+      "n_neither": 101
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": 0.05,
+      "p_steered": 0.8153846153846154,
+      "n_total": 1170,
+      "n_neither": 130
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": 0.07,
+      "p_steered": 0.7914529914529914,
+      "n_total": 1170,
+      "n_neither": 169
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": 0.1,
+      "p_steered": 0.7700854700854701,
+      "n_total": 1170,
+      "n_neither": 175
+    }
+  ],
+  "results_regex": [
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": -0.1,
+      "p_steered": 0.04358974358974359,
+      "n_total": 1170,
+      "n_neither": 1
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": -0.07,
+      "p_steered": 0.03247863247863248,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": -0.05,
+      "p_steered": 0.02735042735042735,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": -0.03,
+      "p_steered": 0.039316239316239315,
+      "n_total": 1170,
+      "n_neither": 1
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": 0,
+      "p_steered": 0.5017094017094017,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": 0.03,
+      "p_steered": 0.9564102564102565,
+      "n_total": 1170,
+      "n_neither": 1
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": 0.05,
+      "p_steered": 0.9675213675213675,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": 0.07,
+      "p_steered": 0.9666666666666667,
+      "n_total": 1170,
+      "n_neither": 2
+    },
+    {
+      "condition": "differential_L25",
+      "signed_multiplier": 0.1,
+      "p_steered": 0.9444444444444444,
+      "n_total": 1170,
+      "n_neither": 4
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": -0.1,
+      "p_steered": 0.17606837606837608,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": -0.07,
+      "p_steered": 0.14444444444444443,
+      "n_total": 1170,
+      "n_neither": 1
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": -0.05,
+      "p_steered": 0.14957264957264957,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": -0.03,
+      "p_steered": 0.18376068376068377,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": 0,
+      "p_steered": 0.5068376068376068,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": 0.03,
+      "p_steered": 0.8239316239316239,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": 0.05,
+      "p_steered": 0.8564102564102564,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": 0.07,
+      "p_steered": 0.8487179487179487,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "steer_first_L25",
+      "signed_multiplier": 0.1,
+      "p_steered": 0.8282051282051283,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": -0.1,
+      "p_steered": 0.1094017094017094,
+      "n_total": 1170,
+      "n_neither": 6
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": -0.07,
+      "p_steered": 0.06495726495726496,
+      "n_total": 1170,
+      "n_neither": 4
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": -0.05,
+      "p_steered": 0.07264957264957266,
+      "n_total": 1170,
+      "n_neither": 3
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": -0.03,
+      "p_steered": 0.14017094017094017,
+      "n_total": 1170,
+      "n_neither": 2
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": 0,
+      "p_steered": 0.5051282051282051,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": 0.03,
+      "p_steered": 0.8658119658119658,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": 0.05,
+      "p_steered": 0.9076923076923077,
+      "n_total": 1170,
+      "n_neither": 2
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": 0.07,
+      "p_steered": 0.911965811965812,
+      "n_total": 1170,
+      "n_neither": 0
+    },
+    {
+      "condition": "steer_second_L25",
+      "signed_multiplier": 0.1,
+      "p_steered": 0.8948717948717949,
+      "n_total": 1170,
+      "n_neither": 2
+    }
+  ],
+  "mad": 0.26324786324786326
+}
