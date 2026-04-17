@@ -27,9 +27,11 @@ from sklearn.preprocessing import StandardScaler
 
 from src.probes.experiments.plot_hoo import plot_hoo_summary
 from src.probes.core.activations import load_activations
-from src.probes.core.storage import save_probe, save_manifest
+from src.probes.core.evaluate import score_with_probe
+from src.probes.core.storage import load_probe, save_probe, save_manifest
 from src.probes.bradley_terry.data import PairwiseActivationData
 from src.probes.bradley_terry.training import pairwise_accuracy_from_scores, train_bt
+from src.measurement.storage.base import load_yaml
 from src.probes.data_loading import load_thurstonian_scores, load_pairwise_measurements, load_eval_data
 from src.probes.experiments import hoo_ridge, hoo_bt
 from src.probes.experiments.hoo_ridge import build_ridge_xy
@@ -39,6 +41,44 @@ from src.probes.residualization import build_task_groups, demean_scores
 class ProbeMode(Enum):
     RIDGE = "ridge"
     BRADLEY_TERRY = "bradley_terry"
+
+
+def _get_run_model_short(run_dir: Path) -> str | None:
+    config_path = run_dir / "config.yaml"
+    if not config_path.exists():
+        return None
+    return load_yaml(config_path).get("model_short")
+
+
+def _discover_uniform_eval(run_dir: Path) -> Path | None:
+    """Auto-discover uniform eval run for the same model as the training run."""
+    model_short = _get_run_model_short(run_dir)
+    if not model_short:
+        return None
+
+    experiments_dir = Path("results/experiments")
+    if not experiments_dir.exists():
+        return None
+
+    for exp_dir in sorted(experiments_dir.glob("uniform_eval_*")):
+        revealed_dir = exp_dir / "pre_task_revealed"
+        if not revealed_dir.exists():
+            continue
+        for run in revealed_dir.iterdir():
+            if _get_run_model_short(run) == model_short:
+                return run
+    return None
+
+
+def _validate_uniform_eval(uniform_eval_run_dir: Path, run_dir: Path) -> None:
+    """Raise if the uniform eval was measured on a different model than the training run."""
+    train_model = _get_run_model_short(run_dir)
+    eval_model = _get_run_model_short(uniform_eval_run_dir)
+    if train_model and eval_model and train_model != eval_model:
+        raise ValueError(
+            f"Uniform eval model mismatch: training run is '{train_model}' "
+            f"but uniform eval is '{eval_model}' ({uniform_eval_run_dir})"
+        )
 
 
 @dataclass
@@ -60,6 +100,7 @@ class RunDirProbeConfig:
     hoo_grouping: str | None = None  # "topic" | "dataset"
     hoo_hold_out_size: int = 1
     hoo_groups: list[str] | None = None  # specific groups, or None for all
+    uniform_eval_run_dir: Path | None = None
 
     @classmethod
     def from_yaml(cls, path: Path) -> RunDirProbeConfig:
@@ -79,9 +120,17 @@ class RunDirProbeConfig:
         for key in (
             "alpha_sweep_size", "demean_confounds", "standardize",
             "n_jobs", "eval_split_seed", "hoo_grouping", "hoo_hold_out_size", "hoo_groups",
+            "uniform_eval_run_dir",
         ):
             if key in data:
                 optional[key] = data[key]
+
+        if "uniform_eval_run_dir" in optional:
+            optional["uniform_eval_run_dir"] = Path(optional["uniform_eval_run_dir"])
+        else:
+            discovered = _discover_uniform_eval(Path(run_dir_raw))
+            if discovered:
+                optional["uniform_eval_run_dir"] = discovered
 
         return cls(
             experiment_name=data["experiment_name"],
@@ -290,6 +339,23 @@ def _train_bt_probe(
     }
 
 
+def _task_ids_from_measurements(measurements: list) -> set[str]:
+    return {m.task_a.id for m in measurements} | {m.task_b.id for m in measurements}
+
+
+def _compute_uniform_acc(
+    uniform_bt_data: PairwiseActivationData | None,
+    activations: np.ndarray,
+    output_dir: Path,
+    probe_id: str,
+) -> float | None:
+    if uniform_bt_data is None or len(uniform_bt_data.pairs) == 0:
+        return None
+    weights = load_probe(output_dir, probe_id)
+    predicted = score_with_probe(weights, activations)
+    return pairwise_accuracy_from_scores(predicted, uniform_bt_data)
+
+
 def run_probes(config: RunDirProbeConfig) -> dict:
     """Train Ridge and Bradley-Terry probes from run directory data.
 
@@ -323,6 +389,13 @@ def run_probes(config: RunDirProbeConfig) -> dict:
         topics_json=config.topics_json,
     )
 
+    # Load uniform eval data (auto-discovered or explicit)
+    if config.uniform_eval_run_dir:
+        _validate_uniform_eval(config.uniform_eval_run_dir, config.run_dir)
+    uniform_eval_measurements = load_pairwise_measurements(config.uniform_eval_run_dir) if config.uniform_eval_run_dir else []
+    if uniform_eval_measurements:
+        print(f"  Uniform eval: {len(uniform_eval_measurements)} measurements")
+
     # Optionally demean scores against metadata confounds
     metadata_stats = None
     if config.demean_confounds and scores:
@@ -338,6 +411,9 @@ def run_probes(config: RunDirProbeConfig) -> dict:
     task_id_filter = set(scores.keys()) if scores else None
     if task_id_filter is not None:
         task_id_filter = task_id_filter | set(eval_scores.keys())
+    if uniform_eval_measurements:
+        uniform_tids = _task_ids_from_measurements(uniform_eval_measurements)
+        task_id_filter = (task_id_filter | uniform_tids) if task_id_filter else uniform_tids
 
     # Load one layer to get task_ids and count
     task_ids, first_layer_acts = load_activations(
@@ -364,6 +440,18 @@ def run_probes(config: RunDirProbeConfig) -> dict:
         "n_comparisons_in_experiment": len(measurements),
         "probes": [],
     }
+    if config.uniform_eval_run_dir is not None:
+        uniform_config_path = config.uniform_eval_run_dir / "config.yaml"
+        uniform_meta = {"run_dir": str(config.uniform_eval_run_dir)}
+        if uniform_config_path.exists():
+            uc = load_yaml(uniform_config_path)
+            uniform_meta["model_short"] = uc.get("model_short")
+            uniform_meta["temperature"] = uc.get("temperature")
+        uniform_meta["n_measurements"] = len(uniform_eval_measurements)
+        uniform_meta["n_unique_pairs"] = len(set(
+            (m.task_a.id, m.task_b.id) for m in uniform_eval_measurements
+        )) if uniform_eval_measurements else 0
+        manifest["uniform_eval"] = uniform_meta
     if metadata_stats is not None:
         manifest["metadata_r2"] = metadata_stats["metadata_r2"]
         manifest["metadata_features"] = metadata_stats["metadata_features"]
@@ -384,6 +472,13 @@ def run_probes(config: RunDirProbeConfig) -> dict:
         if measurements:
             bt_data = PairwiseActivationData.from_measurements(measurements, task_ids, activations)
 
+        # Build uniform eval pairwise data for this layer
+        uniform_bt_data = None
+        if uniform_eval_measurements:
+            uniform_bt_data = PairwiseActivationData.from_measurements(
+                uniform_eval_measurements, task_ids, activations,
+            )
+
         if run_ridge:
             print(f"  Training Ridge probe...")
             ridge_entry = _train_ridge_probe_heldout(
@@ -392,10 +487,14 @@ def run_probes(config: RunDirProbeConfig) -> dict:
                 eval_split_seed=config.eval_split_seed,
             )
             if ridge_entry:
+                uni_acc = _compute_uniform_acc(uniform_bt_data, activations[layer], config.output_dir, ridge_entry["id"])
+                if uni_acc is not None:
+                    ridge_entry["uniform_pairwise_acc"] = uni_acc
                 manifest["probes"].append(ridge_entry)
                 r_str = f"{ridge_entry['final_r']:.4f}" if ridge_entry['final_r'] is not None else "N/A"
                 acc_str = f", acc={ridge_entry['final_acc']:.4f}" if ridge_entry['final_acc'] is not None else ""
-                print(f"  Ridge heldout: r={r_str}{acc_str}")
+                uni_str = f", uniform_acc={ridge_entry['uniform_pairwise_acc']:.4f}" if ridge_entry.get('uniform_pairwise_acc') is not None else ""
+                print(f"  Ridge heldout: r={r_str}{acc_str}{uni_str}")
 
         if run_bt:
             print(f"  Training BT probe...")
@@ -403,9 +502,13 @@ def run_probes(config: RunDirProbeConfig) -> dict:
                 bt_data = PairwiseActivationData.from_measurements(measurements, task_ids, activations)
             bt_entry = _train_bt_probe(config, bt_data, layer)
             if bt_entry:
+                uni_acc = _compute_uniform_acc(uniform_bt_data, activations[layer], config.output_dir, bt_entry["id"])
+                if uni_acc is not None:
+                    bt_entry["uniform_pairwise_acc"] = uni_acc
                 manifest["probes"].append(bt_entry)
+                uni_str = f", uniform_acc={bt_entry['uniform_pairwise_acc']:.4f}" if bt_entry.get('uniform_pairwise_acc') is not None else ""
                 print(f"  BT cv_acc={bt_entry['cv_accuracy_mean']:.4f} "
-                      f"(best l2={bt_entry['best_l2_lambda']:.4g}, {bt_entry['n_pairs']} pairs)")
+                      f"(best l2={bt_entry['best_l2_lambda']:.4g}, {bt_entry['n_pairs']} pairs){uni_str}")
 
         del activations
         gc.collect()
@@ -417,11 +520,19 @@ def run_probes(config: RunDirProbeConfig) -> dict:
     if ridge_probes:
         best = max(ridge_probes, key=lambda x: x["final_r"] or -1)
         r_str = f"{best['final_r']:.4f}" if best['final_r'] is not None else "N/A"
-        print(f"\nBest Ridge: layer {best['layer']} (heldout r={r_str})")
+        uni_str = ""
+        if any(p.get("uniform_pairwise_acc") is not None for p in ridge_probes):
+            best_uni = max(ridge_probes, key=lambda x: x.get("uniform_pairwise_acc") or -1)
+            uni_str = f", best uniform_acc={best_uni['uniform_pairwise_acc']:.4f} (L{best_uni['layer']})"
+        print(f"\nBest Ridge: layer {best['layer']} (heldout r={r_str}){uni_str}")
     if bt_probes:
         best = max(bt_probes, key=lambda x: x["cv_accuracy_mean"])
+        uni_str = ""
+        if any(p.get("uniform_pairwise_acc") is not None for p in bt_probes):
+            best_uni = max(bt_probes, key=lambda x: x.get("uniform_pairwise_acc") or -1)
+            uni_str = f", best uniform_acc={best_uni['uniform_pairwise_acc']:.4f} (L{best_uni['layer']})"
         print(f"Best BT: layer {best['layer']} (cv_acc={best['cv_accuracy_mean']:.4f}, "
-              f"l2={best['best_l2_lambda']:.4g})")
+              f"l2={best['best_l2_lambda']:.4g}){uni_str}")
 
     save_manifest(manifest, config.output_dir)
     print(f"\nSaved manifest with {len(manifest['probes'])} probes")
@@ -450,6 +561,13 @@ def run_hoo(config: RunDirProbeConfig) -> dict:
         print(f"\nLoaded {len(scores)} task scores")
     if measurements:
         print(f"Loaded {len(measurements)} pairwise comparisons")
+
+    # Load uniform eval data (auto-discovered or explicit)
+    if config.uniform_eval_run_dir:
+        _validate_uniform_eval(config.uniform_eval_run_dir, config.run_dir)
+    uniform_eval_measurements = load_pairwise_measurements(config.uniform_eval_run_dir) if config.uniform_eval_run_dir else []
+    if uniform_eval_measurements:
+        print(f"  Uniform eval: {len(uniform_eval_measurements)} measurements")
 
     # Collect all task IDs from scores and/or measurements
     all_task_ids = set(scores.keys())
@@ -496,6 +614,8 @@ def run_hoo(config: RunDirProbeConfig) -> dict:
         topics_json=config.topics_json,
     ) if run_ridge else ({}, [])
     activation_filter = scored_and_grouped | set(eval_scores_for_alpha.keys())
+    if uniform_eval_measurements:
+        activation_filter = activation_filter | _task_ids_from_measurements(uniform_eval_measurements)
     task_ids_arr, activations = load_activations(
         config.activations_path,
         task_id_filter=activation_filter,
@@ -508,6 +628,14 @@ def run_hoo(config: RunDirProbeConfig) -> dict:
     if measurements:
         bt_data = PairwiseActivationData.from_measurements(measurements, task_ids_arr, activations)
         print(f"  {len(bt_data.pairs)} unique pairs ({bt_data.n_measurements} measurements)")
+
+    # Build uniform eval pairwise data
+    uniform_bt_data = None
+    if uniform_eval_measurements:
+        uniform_bt_data = PairwiseActivationData.from_measurements(
+            uniform_eval_measurements, task_ids_arr, activations,
+        )
+        print(f"  Uniform eval: {len(uniform_bt_data.pairs)} unique pairs")
 
     folds = list(combinations(all_groups, config.hoo_hold_out_size))
     print(f"\n{len(folds)} folds\n")
@@ -589,6 +717,11 @@ def run_hoo(config: RunDirProbeConfig) -> dict:
                 probe_id = f"hoo_fold{fold_idx}_{method.name}_L{layer:02d}"
                 save_probe(weights, config.output_dir, probe_id)
                 metrics = method.evaluate(layer, weights)
+                if uniform_bt_data is not None and len(uniform_bt_data.pairs) > 0:
+                    predicted = score_with_probe(weights, activations[layer])
+                    metrics["uniform_pairwise_acc"] = pairwise_accuracy_from_scores(
+                        predicted, uniform_bt_data,
+                    )
                 metrics.update(method=method.name, probe_id=probe_id, layer=layer)
                 fold_metrics["layers"][f"{method.name}_L{layer}"] = metrics
 
@@ -608,6 +741,18 @@ def run_hoo(config: RunDirProbeConfig) -> dict:
         "layers": config.layers,
         "folds": all_fold_results,
     }
+    if config.uniform_eval_run_dir is not None:
+        uniform_config_path = config.uniform_eval_run_dir / "config.yaml"
+        uniform_meta = {"run_dir": str(config.uniform_eval_run_dir)}
+        if uniform_config_path.exists():
+            uc = load_yaml(uniform_config_path)
+            uniform_meta["model_short"] = uc.get("model_short")
+            uniform_meta["temperature"] = uc.get("temperature")
+        uniform_meta["n_measurements"] = len(uniform_eval_measurements)
+        uniform_meta["n_unique_pairs"] = len(set(
+            (m.task_a.id, m.task_b.id) for m in uniform_eval_measurements
+        )) if uniform_eval_measurements else 0
+        summary["uniform_eval"] = uniform_meta
 
     # Aggregate across folds per layer
     def _collect(key: str, field: str) -> list:
@@ -640,17 +785,26 @@ def run_hoo(config: RunDirProbeConfig) -> dict:
             if hoo_accs:
                 ridge_entry["mean_hoo_acc"] = float(np.mean(hoo_accs))
                 ridge_entry["std_hoo_acc"] = float(np.std(hoo_accs))
+            uni_accs = _collect(k, "uniform_pairwise_acc")
+            if uni_accs:
+                ridge_entry["mean_uniform_acc"] = float(np.mean(uni_accs))
+                ridge_entry["std_uniform_acc"] = float(np.std(uni_accs))
             entry["ridge"] = ridge_entry
         if run_bt:
             k = f"bradley_terry_L{layer}"
             val_accs = _collect(k, "val_acc")
             hoo_accs = _collect(k, "hoo_acc")
-            entry["bradley_terry"] = {
+            bt_uni_accs = _collect(k, "uniform_pairwise_acc")
+            bt_summary = {
                 "mean_val_acc": float(np.mean(val_accs)) if val_accs else None,
                 "mean_hoo_acc": float(np.mean(hoo_accs)) if hoo_accs else None,
                 "std_hoo_acc": float(np.std(hoo_accs)) if hoo_accs else None,
                 "n_folds": len(hoo_accs),
             }
+            if bt_uni_accs:
+                bt_summary["mean_uniform_acc"] = float(np.mean(bt_uni_accs))
+                bt_summary["std_uniform_acc"] = float(np.std(bt_uni_accs))
+            entry["bradley_terry"] = bt_summary
         layer_summary[layer] = entry
     summary["layer_summary"] = {str(k): v for k, v in layer_summary.items()}
 
@@ -663,11 +817,13 @@ def run_hoo(config: RunDirProbeConfig) -> dict:
         if "ridge" in ls and ls["ridge"]["mean_hoo_r"] is not None:
             r = ls["ridge"]
             acc_str = f", hoo_acc={r['mean_hoo_acc']:.4f}" if r.get("mean_hoo_acc") is not None else ""
-            print(f"  Ridge L{layer}: hoo_r={r['mean_hoo_r']:.4f} +/- {r['std_hoo_r']:.4f}{acc_str} "
+            uni_str = f", uniform_acc={r['mean_uniform_acc']:.4f}" if r.get("mean_uniform_acc") is not None else ""
+            print(f"  Ridge L{layer}: hoo_r={r['mean_hoo_r']:.4f} +/- {r['std_hoo_r']:.4f}{acc_str}{uni_str} "
                   f"({r['n_folds']} folds)")
         if "bradley_terry" in ls and ls["bradley_terry"]["mean_hoo_acc"] is not None:
             b = ls["bradley_terry"]
-            print(f"  BT    L{layer}: hoo_acc={b['mean_hoo_acc']:.4f} +/- {b['std_hoo_acc']:.4f} "
+            uni_str = f", uniform_acc={b['mean_uniform_acc']:.4f}" if b.get("mean_uniform_acc") is not None else ""
+            print(f"  BT    L{layer}: hoo_acc={b['mean_hoo_acc']:.4f} +/- {b['std_hoo_acc']:.4f}{uni_str} "
                   f"({b['n_folds']} folds)")
 
     # Save
