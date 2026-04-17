@@ -1,13 +1,14 @@
 """Generate uniform-sample pairwise evaluation data.
 
-Samples N pairs uniformly from tasks that have activations but are NOT in the
-training set, then measures them using the standard revealed-preference pipeline.
-Results are saved as a standard run directory for use in probe evaluation.
+Samples N pairs uniformly from the final-half eval tasks (matching the split
+in train_ridge_heldout), measures them via the revealed-preference pipeline,
+and saves as a standard run directory for use in probe evaluation.
 
 Usage:
-    python -m src.measurement.uniform_eval configs/uniform_eval/gemma3.yaml \
-        --activations-path activations/gemma_3_27b/activations_prompt_last.npz \
-        --exclude-run-dir results/experiments/.../pre_task_active_learning/... \
+    python -m src.measurement.uniform_eval configs/uniform_eval/gemma3_27b.yaml \
+        --eval-run-dir <eval_run_dir> \
+        --exclude-run-dir <training_run_dir> \
+        --eval-split-seed 42 \
         --n-pairs 500 --seed 42
 """
 
@@ -29,12 +30,15 @@ from src.measurement.runners.utils.experiment_utils import (
 )
 from src.measurement.storage import MeasurementCache, ExperimentStore, model_short_name
 from src.measurement.storage.base import build_measurement_config, load_yaml
+from src.measurement.storage.loading import load_run_utilities
+from src.probes.residualization import build_task_groups
 from src.task_data import Task, load_filtered_tasks, parse_origins
 
+DEFAULT_ORIGINS = ["wildchat", "alpaca", "math", "bailbench", "stress_test"]
 
-def _load_training_task_ids(exclude_run_dir: Path) -> set[str]:
-    measurements_path = exclude_run_dir / "measurements.yaml"
-    raw = load_yaml(measurements_path)
+
+def _load_task_ids_from_run(run_dir: Path) -> set[str]:
+    raw = load_yaml(run_dir / "measurements.yaml")
     ids: set[str] = set()
     for m in raw:
         ids.add(m["task_a"])
@@ -42,41 +46,13 @@ def _load_training_task_ids(exclude_run_dir: Path) -> set[str]:
     return ids
 
 
-def sample_uniform_pairs(
-    activations_path: Path,
-    exclude_run_dir: Path,
-    n_pairs: int,
-    seed: int,
-    origins: list[str],
+def _sample_random_pairs(
+    tasks: list[Task], n_pairs: int, rng: np.random.Generator,
 ) -> list[tuple[Task, Task]]:
-    activation_data = np.load(activations_path, allow_pickle=True)
-    activation_task_ids = set(activation_data["task_ids"].tolist())
-    training_task_ids = _load_training_task_ids(exclude_run_dir)
-    eligible_ids = activation_task_ids - training_task_ids
-
-    print(f"Activation tasks: {len(activation_task_ids)}")
-    print(f"Training tasks: {len(training_task_ids)}")
-    print(f"Eligible tasks: {len(eligible_ids)}")
-
-    origin_datasets = parse_origins(origins)
-    tasks = load_filtered_tasks(
-        n=len(eligible_ids),
-        origins=origin_datasets,
-        task_ids=eligible_ids,
-        seed=None,
-    )
-    print(f"Loaded {len(tasks)} eligible tasks from datasets")
-
-    origin_counts = Counter(t.origin.name for t in tasks)
-    for origin, count in sorted(origin_counts.items()):
-        print(f"  {origin}: {count}")
-
-    rng = np.random.default_rng(seed)
     n_tasks = len(tasks)
-
     pairs: set[tuple[int, int]] = set()
     while len(pairs) < n_pairs:
-        batch_size = (n_pairs - len(pairs)) * 2  # oversample to account for duplicates
+        batch_size = (n_pairs - len(pairs)) * 2
         idx_a = rng.integers(0, n_tasks, size=batch_size)
         idx_b = rng.integers(0, n_tasks, size=batch_size)
         for a, b in zip(idx_a, idx_b):
@@ -85,9 +61,98 @@ def sample_uniform_pairs(
                 pairs.add(pair)
                 if len(pairs) >= n_pairs:
                     break
-
-    print(f"Sampled {len(pairs)} unique pairs")
     return [(tasks[a], tasks[b]) for a, b in sorted(pairs)]
+
+
+def _load_eval_final_half_tasks(
+    eval_run_dir: Path,
+    exclude_run_dirs: list[Path],
+    eval_split_seed: int,
+    origins: list[str] = DEFAULT_ORIGINS,
+) -> list[Task]:
+    """Load tasks from the final-half of the eval split.
+
+    Replicates the sweep/final split from train_ridge_heldout.
+    """
+    _, task_id_array = load_run_utilities(eval_run_dir)
+    eval_task_ids = sorted(task_id_array if isinstance(task_id_array, list) else task_id_array.tolist())
+    print(f"Eval tasks: {len(eval_task_ids)}")
+
+    exclude_ids: set[str] = set()
+    for run_dir in exclude_run_dirs:
+        exclude_ids |= _load_task_ids_from_run(run_dir)
+    eval_task_ids = [tid for tid in eval_task_ids if tid not in exclude_ids]
+    if exclude_ids:
+        print(f"After removing training overlap: {len(eval_task_ids)}")
+
+    rng_split = np.random.default_rng(eval_split_seed)
+    perm = rng_split.permutation(len(eval_task_ids))
+    half = len(eval_task_ids) // 2
+    final_ids = [eval_task_ids[i] for i in perm[half:]]
+    print(f"Final-half eval tasks: {len(final_ids)}")
+
+    tasks = load_filtered_tasks(
+        n=len(final_ids),
+        origins=parse_origins(origins),
+        task_ids=set(final_ids),
+        seed=None,
+    )
+    print(f"Loaded {len(tasks)} tasks from datasets")
+
+    origin_counts = Counter(t.origin.name for t in tasks)
+    for origin, count in sorted(origin_counts.items()):
+        print(f"  {origin}: {count}")
+
+    return tasks
+
+
+def sample_from_eval_final_half(
+    eval_run_dir: Path,
+    exclude_run_dirs: list[Path],
+    n_pairs: int,
+    seed: int,
+    eval_split_seed: int = 42,
+    origins: list[str] = DEFAULT_ORIGINS,
+    topics_json: Path | None = None,
+    pairs_per_topic: int = 35,
+) -> list[tuple[Task, Task]]:
+    """Sample uniform pairs from the final-half eval tasks.
+
+    If topics_json is provided, samples pairs_per_topic within-topic pairs
+    per topic (for HOO evaluation) in addition to n_pairs random pairs.
+    """
+    tasks = _load_eval_final_half_tasks(
+        eval_run_dir, exclude_run_dirs, eval_split_seed, origins,
+    )
+    rng = np.random.default_rng(seed)
+
+    # Random pairs (test-set metric)
+    pairs = _sample_random_pairs(tasks, n_pairs, rng)
+    print(f"Sampled {len(pairs)} random pairs")
+
+    # Within-topic pairs (HOO metric)
+    if topics_json is not None:
+        task_groups = build_task_groups(
+            task_ids={t.id for t in tasks}, grouping="topic", topics_json=topics_json,
+        )
+        task_by_id = {t.id: t for t in tasks}
+        topic_to_tasks: dict[str, list[Task]] = {}
+        for tid, topic in task_groups.items():
+            topic_to_tasks.setdefault(topic, []).append(task_by_id[tid])
+
+        for topic in sorted(topic_to_tasks):
+            topic_tasks = topic_to_tasks[topic]
+            if len(topic_tasks) < 5:
+                print(f"  Skipping {topic} ({len(topic_tasks)} tasks)")
+                continue
+            n = min(pairs_per_topic, len(topic_tasks) * (len(topic_tasks) - 1) // 2)
+            topic_pairs = _sample_random_pairs(topic_tasks, n, rng)
+            print(f"  {topic}: {len(topic_pairs)} within-topic pairs")
+            pairs.extend(topic_pairs)
+
+        print(f"Total: {len(pairs)} pairs (random + within-topic)")
+
+    return pairs
 
 
 async def run_uniform_eval(
@@ -103,7 +168,6 @@ async def run_uniform_eval(
     ctx = setup_experiment(config_path, expected_mode="pre_task_revealed")
     config = ctx.config
 
-    # Override the context's tasks/task_lookup with our pair tasks
     ctx.tasks = list(task_lookup.values())
     ctx.task_lookup = task_lookup
 
@@ -187,26 +251,33 @@ def main():
         description="Generate uniform-sample pairwise evaluation data",
     )
     parser.add_argument("config", type=Path, help="Measurement config YAML (pre_task_revealed)")
-    parser.add_argument("--activations-path", type=Path, required=True)
-    parser.add_argument("--exclude-run-dir", type=Path, required=True)
+    parser.add_argument("--eval-run-dir", type=Path, required=True,
+                        help="Eval run dir — samples pairs from its final-half tasks")
+    parser.add_argument("--exclude-run-dir", type=Path, nargs="+", default=[],
+                        help="Run dirs whose tasks to exclude (training run)")
+    parser.add_argument("--eval-split-seed", type=int, default=42,
+                        help="Seed for sweep/final split (must match probe config)")
     parser.add_argument("--n-pairs", type=int, default=500)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--max-concurrent", type=int, default=50)
-    parser.add_argument(
-        "--origins", nargs="+",
-        default=["wildchat", "alpaca", "math", "bailbench", "stress_test"],
-    )
+    parser.add_argument("--origins", nargs="+", default=DEFAULT_ORIGINS)
+    parser.add_argument("--topics-json", type=Path, default=None,
+                        help="If set, also sample within-topic pairs for HOO eval")
+    parser.add_argument("--pairs-per-topic", type=int, default=35)
     args = parser.parse_args()
 
     from dotenv import load_dotenv
     load_dotenv()
 
-    pairs = sample_uniform_pairs(
-        activations_path=args.activations_path,
-        exclude_run_dir=args.exclude_run_dir,
+    pairs = sample_from_eval_final_half(
+        eval_run_dir=args.eval_run_dir,
+        exclude_run_dirs=args.exclude_run_dir,
         n_pairs=args.n_pairs,
         seed=args.seed,
+        eval_split_seed=args.eval_split_seed,
         origins=args.origins,
+        topics_json=args.topics_json,
+        pairs_per_topic=args.pairs_per_topic,
     )
 
     result_dir = asyncio.run(run_uniform_eval(

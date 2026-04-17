@@ -31,7 +31,6 @@ from src.probes.core.evaluate import score_with_probe
 from src.probes.core.storage import load_probe, save_probe, save_manifest
 from src.probes.bradley_terry.data import PairwiseActivationData
 from src.probes.bradley_terry.training import pairwise_accuracy_from_scores, train_bt
-from src.measurement.storage.base import load_yaml
 from src.probes.data_loading import load_thurstonian_scores, load_pairwise_measurements, load_eval_data
 from src.probes.experiments import hoo_ridge, hoo_bt
 from src.probes.experiments.hoo_ridge import build_ridge_xy
@@ -41,44 +40,6 @@ from src.probes.residualization import build_task_groups, demean_scores
 class ProbeMode(Enum):
     RIDGE = "ridge"
     BRADLEY_TERRY = "bradley_terry"
-
-
-def _get_run_model_short(run_dir: Path) -> str | None:
-    config_path = run_dir / "config.yaml"
-    if not config_path.exists():
-        return None
-    return load_yaml(config_path).get("model_short")
-
-
-def _discover_uniform_eval(run_dir: Path) -> Path | None:
-    """Auto-discover uniform eval run for the same model as the training run."""
-    model_short = _get_run_model_short(run_dir)
-    if not model_short:
-        return None
-
-    experiments_dir = Path("results/experiments")
-    if not experiments_dir.exists():
-        return None
-
-    for exp_dir in sorted(experiments_dir.glob("uniform_eval_*")):
-        revealed_dir = exp_dir / "pre_task_revealed"
-        if not revealed_dir.exists():
-            continue
-        for run in revealed_dir.iterdir():
-            if _get_run_model_short(run) == model_short:
-                return run
-    return None
-
-
-def _validate_uniform_eval(uniform_eval_run_dir: Path, run_dir: Path) -> None:
-    """Raise if the uniform eval was measured on a different model than the training run."""
-    train_model = _get_run_model_short(run_dir)
-    eval_model = _get_run_model_short(uniform_eval_run_dir)
-    if train_model and eval_model and train_model != eval_model:
-        raise ValueError(
-            f"Uniform eval model mismatch: training run is '{train_model}' "
-            f"but uniform eval is '{eval_model}' ({uniform_eval_run_dir})"
-        )
 
 
 @dataclass
@@ -127,10 +88,6 @@ class RunDirProbeConfig:
 
         if "uniform_eval_run_dir" in optional:
             optional["uniform_eval_run_dir"] = Path(optional["uniform_eval_run_dir"])
-        else:
-            discovered = _discover_uniform_eval(Path(run_dir_raw))
-            if discovered:
-                optional["uniform_eval_run_dir"] = discovered
 
         return cls(
             experiment_name=data["experiment_name"],
@@ -389,12 +346,17 @@ def run_probes(config: RunDirProbeConfig) -> dict:
         topics_json=config.topics_json,
     )
 
-    # Load uniform eval data (auto-discovered or explicit)
-    if config.uniform_eval_run_dir:
-        _validate_uniform_eval(config.uniform_eval_run_dir, config.run_dir)
+    # Load uniform eval data
     uniform_eval_measurements = load_pairwise_measurements(config.uniform_eval_run_dir) if config.uniform_eval_run_dir else []
     if uniform_eval_measurements:
-        print(f"  Uniform eval: {len(uniform_eval_measurements)} measurements")
+        uniform_tids = _task_ids_from_measurements(uniform_eval_measurements)
+        train_tids = set(scores.keys()) if scores else _task_ids_from_measurements(measurements)
+        overlap = uniform_tids & train_tids
+        if overlap:
+            raise ValueError(
+                f"Uniform eval has {len(overlap)} tasks that overlap with training data."
+            )
+        print(f"  Uniform eval: {len(uniform_eval_measurements)} measurements ({len(uniform_tids)} tasks)")
 
     # Optionally demean scores against metadata confounds
     metadata_stats = None
@@ -441,17 +403,7 @@ def run_probes(config: RunDirProbeConfig) -> dict:
         "probes": [],
     }
     if config.uniform_eval_run_dir is not None:
-        uniform_config_path = config.uniform_eval_run_dir / "config.yaml"
-        uniform_meta = {"run_dir": str(config.uniform_eval_run_dir)}
-        if uniform_config_path.exists():
-            uc = load_yaml(uniform_config_path)
-            uniform_meta["model_short"] = uc.get("model_short")
-            uniform_meta["temperature"] = uc.get("temperature")
-        uniform_meta["n_measurements"] = len(uniform_eval_measurements)
-        uniform_meta["n_unique_pairs"] = len(set(
-            (m.task_a.id, m.task_b.id) for m in uniform_eval_measurements
-        )) if uniform_eval_measurements else 0
-        manifest["uniform_eval"] = uniform_meta
+        manifest["uniform_eval_run_dir"] = str(config.uniform_eval_run_dir)
     if metadata_stats is not None:
         manifest["metadata_r2"] = metadata_stats["metadata_r2"]
         manifest["metadata_features"] = metadata_stats["metadata_features"]
@@ -562,18 +514,25 @@ def run_hoo(config: RunDirProbeConfig) -> dict:
     if measurements:
         print(f"Loaded {len(measurements)} pairwise comparisons")
 
-    # Load uniform eval data (auto-discovered or explicit)
-    if config.uniform_eval_run_dir:
-        _validate_uniform_eval(config.uniform_eval_run_dir, config.run_dir)
+    # Load uniform eval data
     uniform_eval_measurements = load_pairwise_measurements(config.uniform_eval_run_dir) if config.uniform_eval_run_dir else []
     if uniform_eval_measurements:
-        print(f"  Uniform eval: {len(uniform_eval_measurements)} measurements")
+        uniform_tids = _task_ids_from_measurements(uniform_eval_measurements)
+        train_tids = set(scores.keys()) if scores else _task_ids_from_measurements(measurements)
+        overlap = uniform_tids & train_tids
+        if overlap:
+            raise ValueError(
+                f"Uniform eval has {len(overlap)} tasks that overlap with training data."
+            )
+        print(f"  Uniform eval: {len(uniform_eval_measurements)} measurements ({len(uniform_tids)} tasks)")
 
     # Collect all task IDs from scores and/or measurements
     all_task_ids = set(scores.keys())
     for m in measurements:
         all_task_ids.add(m.task_a.id)
         all_task_ids.add(m.task_b.id)
+    if uniform_eval_measurements:
+        all_task_ids |= _task_ids_from_measurements(uniform_eval_measurements)
 
     # Build task_id -> group mapping
     task_groups = build_task_groups(
@@ -695,6 +654,13 @@ def run_hoo(config: RunDirProbeConfig) -> dict:
         held_out_set = set(held_out)
         train_groups = [g for g in all_groups if g not in held_out_set]
 
+        # Split uniform eval into within-held-out pairs (cross-topic) and all pairs (test-set)
+        fold_uniform_hoo = None
+        if uniform_bt_data is not None and len(uniform_bt_data.pairs) > 0:
+            _, fold_uniform_hoo = uniform_bt_data.split_by_groups(
+                task_ids_arr, task_groups, held_out_set,
+            )
+
         fold_metrics = {
             "fold_idx": fold_idx,
             "held_out_groups": list(held_out),
@@ -717,11 +683,19 @@ def run_hoo(config: RunDirProbeConfig) -> dict:
                 probe_id = f"hoo_fold{fold_idx}_{method.name}_L{layer:02d}"
                 save_probe(weights, config.output_dir, probe_id)
                 metrics = method.evaluate(layer, weights)
+                # Test-set uniform eval (all pairs)
                 if uniform_bt_data is not None and len(uniform_bt_data.pairs) > 0:
                     predicted = score_with_probe(weights, activations[layer])
                     metrics["uniform_pairwise_acc"] = pairwise_accuracy_from_scores(
                         predicted, uniform_bt_data,
                     )
+                # Cross-topic uniform eval (within held-out topic pairs only)
+                if fold_uniform_hoo is not None and len(fold_uniform_hoo.pairs) > 0:
+                    predicted = score_with_probe(weights, activations[layer])
+                    metrics["uniform_hoo_acc"] = pairwise_accuracy_from_scores(
+                        predicted, fold_uniform_hoo,
+                    )
+                    metrics["uniform_hoo_n_pairs"] = len(fold_uniform_hoo.pairs)
                 metrics.update(method=method.name, probe_id=probe_id, layer=layer)
                 fold_metrics["layers"][f"{method.name}_L{layer}"] = metrics
 
@@ -742,17 +716,7 @@ def run_hoo(config: RunDirProbeConfig) -> dict:
         "folds": all_fold_results,
     }
     if config.uniform_eval_run_dir is not None:
-        uniform_config_path = config.uniform_eval_run_dir / "config.yaml"
-        uniform_meta = {"run_dir": str(config.uniform_eval_run_dir)}
-        if uniform_config_path.exists():
-            uc = load_yaml(uniform_config_path)
-            uniform_meta["model_short"] = uc.get("model_short")
-            uniform_meta["temperature"] = uc.get("temperature")
-        uniform_meta["n_measurements"] = len(uniform_eval_measurements)
-        uniform_meta["n_unique_pairs"] = len(set(
-            (m.task_a.id, m.task_b.id) for m in uniform_eval_measurements
-        )) if uniform_eval_measurements else 0
-        summary["uniform_eval"] = uniform_meta
+        summary["uniform_eval_run_dir"] = str(config.uniform_eval_run_dir)
 
     # Aggregate across folds per layer
     def _collect(key: str, field: str) -> list:
@@ -789,6 +753,10 @@ def run_hoo(config: RunDirProbeConfig) -> dict:
             if uni_accs:
                 ridge_entry["mean_uniform_acc"] = float(np.mean(uni_accs))
                 ridge_entry["std_uniform_acc"] = float(np.std(uni_accs))
+            uni_hoo_accs = _collect(k, "uniform_hoo_acc")
+            if uni_hoo_accs:
+                ridge_entry["mean_uniform_hoo_acc"] = float(np.mean(uni_hoo_accs))
+                ridge_entry["std_uniform_hoo_acc"] = float(np.std(uni_hoo_accs))
             entry["ridge"] = ridge_entry
         if run_bt:
             k = f"bradley_terry_L{layer}"
@@ -804,6 +772,10 @@ def run_hoo(config: RunDirProbeConfig) -> dict:
             if bt_uni_accs:
                 bt_summary["mean_uniform_acc"] = float(np.mean(bt_uni_accs))
                 bt_summary["std_uniform_acc"] = float(np.std(bt_uni_accs))
+            bt_uni_hoo_accs = _collect(k, "uniform_hoo_acc")
+            if bt_uni_hoo_accs:
+                bt_summary["mean_uniform_hoo_acc"] = float(np.mean(bt_uni_hoo_accs))
+                bt_summary["std_uniform_hoo_acc"] = float(np.std(bt_uni_hoo_accs))
             entry["bradley_terry"] = bt_summary
         layer_summary[layer] = entry
     summary["layer_summary"] = {str(k): v for k, v in layer_summary.items()}
@@ -818,12 +790,14 @@ def run_hoo(config: RunDirProbeConfig) -> dict:
             r = ls["ridge"]
             acc_str = f", hoo_acc={r['mean_hoo_acc']:.4f}" if r.get("mean_hoo_acc") is not None else ""
             uni_str = f", uniform_acc={r['mean_uniform_acc']:.4f}" if r.get("mean_uniform_acc") is not None else ""
-            print(f"  Ridge L{layer}: hoo_r={r['mean_hoo_r']:.4f} +/- {r['std_hoo_r']:.4f}{acc_str}{uni_str} "
+            uni_hoo_str = f", uniform_hoo_acc={r['mean_uniform_hoo_acc']:.4f}" if r.get("mean_uniform_hoo_acc") is not None else ""
+            print(f"  Ridge L{layer}: hoo_r={r['mean_hoo_r']:.4f} +/- {r['std_hoo_r']:.4f}{acc_str}{uni_str}{uni_hoo_str} "
                   f"({r['n_folds']} folds)")
         if "bradley_terry" in ls and ls["bradley_terry"]["mean_hoo_acc"] is not None:
             b = ls["bradley_terry"]
             uni_str = f", uniform_acc={b['mean_uniform_acc']:.4f}" if b.get("mean_uniform_acc") is not None else ""
-            print(f"  BT    L{layer}: hoo_acc={b['mean_hoo_acc']:.4f} +/- {b['std_hoo_acc']:.4f}{uni_str} "
+            uni_hoo_str = f", uniform_hoo_acc={b['mean_uniform_hoo_acc']:.4f}" if b.get("mean_uniform_hoo_acc") is not None else ""
+            print(f"  BT    L{layer}: hoo_acc={b['mean_hoo_acc']:.4f} +/- {b['std_hoo_acc']:.4f}{uni_str}{uni_hoo_str} "
                   f"({b['n_folds']} folds)")
 
     # Save

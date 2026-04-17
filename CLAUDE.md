@@ -46,6 +46,14 @@ uv pip install -e ".[dev]"
 - To convert PDF to DOCX with embedded images: `soffice --headless --infilter="writer_pdf_import" --convert-to docx:"MS Word 2007 XML" file.pdf`. If images are missing (referenced outside `logs/assets/`), copy them to `logs/assets/` and append with python-docx, then manually move into place.
 - Plots referenced in weekly reports or the research log (`docs/logs/`) must be saved to `docs/logs/assets/`. Plots from experiment reports go in `experiments/{name}/assets/`.
 
+## Pairwise accuracy and uniform eval
+
+Pairwise accuracy on actively-sampled pairs (from active learning) is biased downward — active learning oversamples hard pairs. We now use **uniform-sample pairwise evaluation**: 500 uniformly sampled pairs measured once per model, stored in `results/experiments/uniform_eval_*/`. The probe pipeline auto-discovers these by matching `model_short` from the training run's config.
+
+**Status (Apr 2026):** Uniform eval exists for Gemma-3-27b IT only. Gemma-3 PT, Qwen3-Emb-8B, GPT-OSS-120B, and MiniLM still use old actively-sampled pairwise accuracy in some plots (e.g. the cross-model bar). These need their activations synced from the storage pod before uniform eval can be computed for them. Pearson r metrics are unaffected.
+
+Poster plots in `docs/poster/assets/` are prefixed `DEPRECATED_` — the poster was printed with old numbers.
+
 ## Plotting conventions
 
 - Use meaningful y-axis bounds, not auto-scaled to the data range. If R² values range from 0.65 to 0.80, set the y-axis to start at 0 (or at least a round number like 0.5), not 0.64. The default matplotlib auto-scaling exaggerates small differences and makes plots misleading.
