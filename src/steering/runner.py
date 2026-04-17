@@ -896,3 +896,14 @@ def run(config_path: Path) -> None:
     del hf_model
     torch.cuda.empty_cache() if torch.cuda.is_available() else None
     asyncio.run(_parse_checkpoint(config.checkpoint_path, pairs))
+
+
+if __name__ == "__main__":
+    import sys
+    from dotenv import load_dotenv
+
+    load_dotenv()
+    if len(sys.argv) != 2:
+        print("Usage: python -m src.steering.runner <config.yaml>", file=sys.stderr)
+        sys.exit(1)
+    run(Path(sys.argv[1]))
