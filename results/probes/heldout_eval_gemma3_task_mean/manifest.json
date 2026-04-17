@@ -303,6 +303,13 @@
           "sweep_r": 0.7250882515795398
         }
       ]
+    },
+    {
+      "id": "random_seed42",
+      "file": "probes/probe_random_seed42.npy",
+      "method": "random",
+      "layer": 25,
+      "seed": 42
     }
   ]
 }

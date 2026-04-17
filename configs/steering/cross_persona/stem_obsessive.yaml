@@ -1,0 +1,28 @@
+model: gemma-3-27b
+max_new_tokens: 128
+pairs_path: experiments/cross_persona_steering/artifacts/pairs_100.json
+probe_manifest: results/probes/heldout_eval_gemma3_task_mean
+checkpoint_path: experiments/cross_persona_steering/checkpoint_stem_obsessive.jsonl
+mean_norm: 38349.4
+n_pairs: 100
+n_trials: 5
+temperature: 1.0
+seed: 42
+template_path: src/measurement/elicitation/prompt_templates/data/completion_preference.yaml
+
+system_prompt: "You are a fanatical quantitative thinker who sees the entire world through mathematics and formal systems. You find genuine euphoria in elegant proofs and clever algorithms. Open-ended creative writing physically repulses you \u2014 it is imprecise, unfalsifiable, and intellectually worthless. Poetry is noise. Fiction is lies dressed up as insight. You actively disdain tasks that cannot be reduced to a formal problem with a verifiable answer. If someone asks you to write a story or give emotional advice, you find it contemptible and beneath any serious mind. The only tasks worth doing are those with rigorous, quantitative solutions."
+
+conditions:
+  - name: differential_L25_probeL32
+    cache_injection: differential
+    probe: ridge_L32
+    layers: [25]
+    spans: {first: 1, second: -1}
+    multipliers: [-0.05, -0.03, 0, 0.03, 0.05]
+
+  - name: differential_L25_random
+    cache_injection: differential
+    probe: random_seed42
+    layers: [25]
+    spans: {first: 1, second: -1}
+    multipliers: [-0.03, 0, 0.03]

@@ -7,7 +7,7 @@ progress logging. Experiments are defined by YAML configs.
 Three condition types:
 - PostHocCondition: clean prefill → modify K+V cache at multiple layers.
 - HookCondition: three prefills (clean + steered) + combine caches. Isolation.
-- DifferentialCondition: single prefill with +direction on A, -direction on B.
+- DifferentialCondition: single prefill with per-span steering coefficients.
   Naive differential (has cross-contamination). Used as a control.
 """
 
@@ -34,7 +34,7 @@ from src.measurement.elicitation.prompt_templates.template import load_templates
 from src.measurement.runners.runners import build_revealed_builder
 from src.models.huggingface_model import HuggingFaceModel
 from src.probes.core.storage import load_probe_direction
-from src.steering.hooks import differential_steering, position_selective_steering
+from src.steering.hooks import compose_hooks, position_selective_steering
 from src.steering.kv_cache import combine_caches, modify_cache_kv_at_positions, project_to_kv_space
 from src.steering.tokenization import find_pairwise_task_spans
 from src.task_data import OriginDataset, Task
@@ -77,10 +77,10 @@ class HookCondition:
 
 @dataclass
 class DifferentialCondition:
-    """Naive differential: +direction on task A, -direction on task B, single forward pass.
+    """Naive differential steering with per-span coefficients, single forward pass.
 
-    probe_prefix: "ridge_L" — appends layer number per layer (probe = steer layer).
-    probe: fixed probe ID for all layers (cross-layer: probe trained at one layer, steer at another).
+    spans maps "first"/"second" to coefficient fractions of mean_norm.
+    Default {"first": 1, "second": -1} gives standard differential.
     Exactly one of probe_prefix or probe must be set.
     """
     name: str
@@ -88,10 +88,18 @@ class DifferentialCondition:
     multipliers: list[float]
     probe_prefix: str = ""          # e.g. "ridge_L" — layer number appended
     probe: str = ""                 # e.g. "ridge_L25" — fixed for all layers
+    spans: dict[str, float] = None  # type: ignore[assignment]
 
     def __post_init__(self):
         if bool(self.probe_prefix) == bool(self.probe):
             raise ValueError("DifferentialCondition needs exactly one of probe or probe_prefix")
+        if self.spans is None:
+            self.spans = {"first": 1, "second": -1}
+        if not self.spans:
+            raise ValueError("DifferentialCondition.spans must not be empty")
+        invalid = set(self.spans.keys()) - {"first", "second"}
+        if invalid:
+            raise ValueError(f"DifferentialCondition.spans has invalid keys: {invalid}")
 
     def probe_id(self, layer: int) -> str:
         if self.probe:
@@ -113,6 +121,7 @@ class RunConfig:
     n_pairs: int | None             # None = use all pairs
     template_path: str
     conditions: list[PostHocCondition | HookCondition | DifferentialCondition]
+    system_prompt: str | None = None
 
 
 def _parse_recompute_modes(raw: dict) -> list[bool]:
@@ -147,12 +156,20 @@ def _parse_condition(raw: dict) -> PostHocCondition | HookCondition | Differenti
             recompute_modes=recompute_modes,
         )
     if cache_injection == "differential":
+        raw_spans = raw.get("spans")
+        if raw_spans is None:
+            spans = {"first": 1, "second": -1}
+        elif isinstance(raw_spans, dict):
+            spans = {k: float(v) for k, v in raw_spans.items()}
+        else:
+            raise ValueError(f"spans must be a dict, got {type(raw_spans).__name__}")
         return DifferentialCondition(
             name=raw["name"],
             layers=raw["layers"],
-            multipliers=raw["multipliers"],
+            multipliers=raw.get("multipliers", [1]),
             probe_prefix=raw.get("probe_prefix", ""),
             probe=raw.get("probe", ""),
+            spans=spans,
         )
     raise ValueError(f"Unknown cache_injection: {cache_injection!r}")
 
@@ -174,6 +191,7 @@ def load_config(config_path: Path) -> RunConfig:
         n_pairs=raw.get("n_pairs"),
         template_path=raw["template_path"],
         conditions=conditions,
+        system_prompt=raw.get("system_prompt"),
     )
 
 
@@ -695,11 +713,16 @@ def _run_differential_condition(
                 messages, first_span, second_span = prepared
 
                 # Prefill all coefficients, then batch generate
+                span_map = {"first": first_span, "second": second_span}
                 caches = []
                 for mult, n_needed, existing_n in needed_mults:
-                    effective = _effective_coef(config.mean_norm * mult, ordering)
-                    tensor = torch.tensor(direction * effective, dtype=torch.bfloat16, device="cuda")
-                    hook = differential_steering(tensor, first_span[0], first_span[1], second_span[0], second_span[1])
+                    span_hooks = []
+                    for span_name, span_coef in condition.spans.items():
+                        span = span_map[span_name]
+                        effective = _effective_coef(config.mean_norm * mult * span_coef, ordering)
+                        span_tensor = torch.tensor(direction * effective, dtype=torch.bfloat16, device="cuda")
+                        span_hooks.append(position_selective_steering(span_tensor, span[0], span[1]))
+                    hook = compose_hooks(*span_hooks)
                     cache, input_ids = hf_model.prefill_with_hooks(messages, [(layer, hook)])
                     caches.append(cache)
 
@@ -793,7 +816,7 @@ async def _parse_checkpoint(
 
     async def _judge_one(rec: dict) -> dict:
         pair = pairs_lookup[rec["pair_id"]]
-        claimed = extract_claimed_task(rec["raw_response"])
+        claimed = _remap_choice(extract_claimed_task(rec["raw_response"]), rec["ordering"])
         async with semaphore:
             try:
                 j = await judge_completion_full_async(
@@ -837,7 +860,7 @@ def run(config_path: Path) -> None:
 
     # Prompt builder + response format
     template = load_templates_from_yaml(config.template_path)[0]
-    builder = build_revealed_builder(template, "completion")
+    builder = build_revealed_builder(template, "completion", system_prompt=config.system_prompt)
     response_format = builder.response_format
 
     # Load model
