@@ -19,7 +19,11 @@ def find_text_span(
         )
     char_end = char_start + len(target_text)
 
-    encoding = tokenizer(full_text, return_offsets_mapping=True, add_special_tokens=False)
+    # add_special_tokens=True so the returned positions index into the same
+    # tokenisation that HuggingFaceModel._tokenize produces (BOS/etc. included).
+    # Empty-offset tokens (BOS has offsets (0, 0)) are skipped in the loop below,
+    # so their presence doesn't corrupt the char→token mapping, only shifts indices.
+    encoding = tokenizer(full_text, return_offsets_mapping=True, add_special_tokens=True)
     offsets = encoding["offset_mapping"]
 
     token_start = None
