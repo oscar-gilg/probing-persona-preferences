@@ -37,6 +37,28 @@
 ### Full run launch — second attempt (live)
 - Relaunched at 19:44 in tmux `cps_all` after pulling the fix. First progress events firing.
 
+### 2026-04-18 --- analysis pivot (metric swap)
+
+The original analysis framed results around $P(\text{choose default-preferred task})$, stratified by signed coefficient. That conditioned on each pair's default-persona utility direction, which washes out the steering effect: for half the pairs a $+$coef pushes toward default, for the other half away. The resulting "bump" shape was a confound, not a mechanistic finding.
+
+Correct metric for differential-steering validation: $P(\text{steered task chosen})$, folding across the sign of the coefficient. At $c>0$ the steered task is Task A (first span gets $+$direction); at $c<0$ the steered task is Task B. This isolates whether the probe direction moves choice toward the steered side, regardless of how a given pair is valued under the default persona.
+
+Reusing all 30,720 existing generations under the new metric:
+- sadist: $P(\text{steered})$ 0.87 / 0.95 at $|c|=0.03 / 0.05$; random control 0.50.
+- villain: 0.84 / 0.93; random 0.50.
+- aesthete: 0.80 / 0.84; random 0.47.
+- stem_obsessive: 0.75 / 0.87; random 0.50.
+
+All four personas validate differential steering cleanly. Report rewritten; plot regenerated (`assets/plot_041826_cross_persona_steered_dose_response.png`).
+
+### 2026-04-18 --- off-by-1 span bug + fix
+
+Test discovered that `find_text_span` tokenised with `add_special_tokens=False` while `HuggingFaceModel._tokenize` defaults to `True` (prepending `<bos>` on Gemma). Every position-selective hook in the repo had been firing one token early. Fixed by changing `find_text_span` to `add_special_tokens=True`; skipped-empty-offset loop already tolerates the BOS.
+
+New tests: `tests/steering/test_spans_with_system_prompt.py` (tiny Llama, 5 tests) and `tests/steering/test_spans_gemma_tokenizer.py` (Gemma tokenizer, 3 tests, HF_TOKEN-gated). All 82 existing tests still pass.
+
+The cross-persona run in this log was generated **before** the fix --- hooks covered `[start-1, end-1)` rather than `[start, end)`, so steering covered $\backslash$n + task-minus-last-token. Caveat noted in the report. Did not rerun since the effect sizes we see are large and symmetric across conditions; the validation conclusion should be robust to rerunning with the fix.
+
 ### Sadist complete (~50 min)
 - Timing: 21.8 min main + 18.8 min control = 40.6 min steering; ~8 min parsing.
 - Rows: 7680 generated, 6579 parseable after judge (14% unparseable/ambiguous — typical for the completion judge, worth checking if it's uniform across conditions).

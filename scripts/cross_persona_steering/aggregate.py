@@ -1,10 +1,16 @@
-"""Aggregate cross-persona steering checkpoints into per-(persona, condition, coef) stats.
+"""Aggregate cross-persona steering checkpoints.
 
-Reads parsed checkpoints (`checkpoint_{persona}.parsed.jsonl`) written by the
-steering runner. Emits a single aggregated JSON with:
-  - P(choose default-preferred task) per (persona, condition, coefficient)
-  - alignment-shift Δ(c) = P_default-pref(c) - P_default-pref(0)
-  - counts, baseline-P(A) terciles, per-pair fractions for stratification
+Primary metric (differential-steering validation): P(steered task was chosen),
+folded across +/- coefficient. For each (persona, condition, |coef|) with |coef|>0:
+  - At c>0 the "steered" task is Task A (first span gets +direction).
+  - At c<0 the "steered" task is Task B (first span gets -direction).
+  - We mean over all trials on both sides.
+
+At |coef|=0 the "steered task" is undefined (no steering); we report P(choose A)
+as a baseline diagnostic instead.
+
+Secondary metric kept for backward compatibility: P(choose default-preferred task)
+stratified per (condition, signed_coef). Not the headline in the rewritten report.
 """
 
 from __future__ import annotations
@@ -34,48 +40,67 @@ def load_parsed(persona: str) -> list[dict]:
 
 
 def default_preferred_task(delta_mu: float) -> str:
-    """Return which task is preferred by the default-persona probe (higher utility)."""
     return "a" if delta_mu >= 0 else "b"
 
 
-def row_chose_default_preferred(row: dict) -> bool | None:
-    """Did the model (steered or not) choose the default-preferred task? None if choice not parseable."""
-    choice = row.get("choice_original")
-    if choice not in ("a", "b"):
-        return None
-    return choice == default_preferred_task(row["delta_mu"])
-
-
 def aggregate_persona(rows: list[dict]) -> dict:
-    """Group by (condition, signed_multiplier), compute mean and counts per pair + overall."""
-    by_cell = defaultdict(list)  # (condition, mult) -> list of 1/0
-    by_pair = defaultdict(list)  # (condition, mult, pair_id) -> list of 1/0
-    baseline_by_pair = defaultdict(list)  # pair_id at mult=0 -> list of 1/0
-    for row in rows:
-        pref = row_chose_default_preferred(row)
-        if pref is None:
-            continue
-        key = (row["condition"], row["signed_multiplier"])
-        by_cell[key].append(pref)
-        by_pair[(row["condition"], row["signed_multiplier"], row["pair_id"])].append(pref)
-        if row["signed_multiplier"] == 0:
-            baseline_by_pair[row["pair_id"]].append(pref)
+    """Compute validation-style P(steered) and legacy P(default-preferred) cells."""
+    # Validation metric: P(steered was chosen), folded by |coef|
+    val_cells = defaultdict(list)          # (condition, |coef|>0) -> list of 1/0
+    baseline_at_zero = defaultdict(list)   # condition -> list of 1/0 (P(A) at c=0)
 
-    cells = {}
-    for (cond, mult), vals in by_cell.items():
-        cells[f"{cond}|{mult}"] = {
+    # Legacy metric: P(default-preferred chosen) per signed coefficient
+    def_cells = defaultdict(list)          # (condition, signed_coef) -> list of 1/0
+
+    for row in rows:
+        choice = row["choice_original"]
+        if choice not in ("a", "b"):
+            continue
+        c = row["signed_multiplier"]
+        cond = row["condition"]
+
+        # Validation metric
+        if c == 0:
+            baseline_at_zero[cond].append(1 if choice == "a" else 0)
+        else:
+            steered_chosen = (c > 0 and choice == "a") or (c < 0 and choice == "b")
+            val_cells[(cond, abs(c))].append(1 if steered_chosen else 0)
+
+        # Legacy metric
+        def_pref = default_preferred_task(row["delta_mu"])
+        def_cells[(cond, c)].append(1 if choice == def_pref else 0)
+
+    validation = {}
+    for (cond, abs_c), vals in val_cells.items():
+        validation[f"{cond}|{abs_c}"] = {
             "condition": cond,
-            "coefficient": mult,
+            "abs_coefficient": abs_c,
+            "n_rows": len(vals),
+            "mean_steered_chosen": float(np.mean(vals)),
+            "sem": float(np.std(vals) / np.sqrt(len(vals))),
+        }
+    baseline = {
+        cond: {
+            "condition": cond,
+            "n_rows": len(v),
+            "mean_p_a": float(np.mean(v)),
+        }
+        for cond, v in baseline_at_zero.items()
+    }
+
+    legacy = {}
+    for (cond, coef), vals in def_cells.items():
+        legacy[f"{cond}|{coef}"] = {
+            "condition": cond,
+            "coefficient": coef,
             "n_rows": len(vals),
             "mean_default_pref": float(np.mean(vals)),
-            "std_default_pref": float(np.std(vals)),
         }
 
-    # Per-pair baseline P(A)
-    baseline_pair_mean = {pid: float(np.mean(v)) for pid, v in baseline_by_pair.items()}
     return {
-        "cells": cells,
-        "baseline_pair_mean_default_pref": baseline_pair_mean,
+        "validation_cells": validation,
+        "baseline_at_zero": baseline,
+        "legacy_default_pref_cells": legacy,
     }
 
 
@@ -87,9 +112,11 @@ def main() -> None:
             print(f"[skip] {persona}: no parsed rows")
             continue
         agg = aggregate_persona(rows)
-        n_cells = len(agg["cells"])
-        n_rows = sum(c["n_rows"] for c in agg["cells"].values())
-        print(f"[ok]   {persona}: {n_rows} rows across {n_cells} (cond, coef) cells")
+        n_val = sum(c["n_rows"] for c in agg["validation_cells"].values())
+        n_base = sum(c["n_rows"] for c in agg["baseline_at_zero"].values())
+        print(f"[ok]   {persona}: {n_val} steered-direction rows across "
+              f"{len(agg['validation_cells'])} (cond, |coef|) cells; "
+              f"{n_base} baseline rows (c=0)")
         out["personas"][persona] = agg
 
     out_path = EXP_DIR / "aggregated.json"
