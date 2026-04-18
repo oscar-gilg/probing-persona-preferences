@@ -167,9 +167,10 @@ def main() -> None:
     repo_root = Path.cwd()
 
     dirs = np.load(args.directions_dir / "directions.npz")
-    w_0 = dirs["w_0"]
-    w_1 = dirs["w_1"]
-    d = w_0.shape[0]
+    w_keys = sorted(k for k in dirs.keys() if k.startswith("w_"))
+    probe_dirs = {k.replace("_", ""): dirs[k].astype(np.float32) for k in w_keys}
+    d = probe_dirs[list(probe_dirs)[0]].shape[0]
+    print(f"Loaded probe directions: {list(probe_dirs)}")
 
     sc = np.load(args.directions_dir / "scaler.npz")
     scaler_mean = sc["mean"]
@@ -181,8 +182,7 @@ def main() -> None:
         v = rng.standard_normal(d)
         random_dirs[f"random_{s}"] = (v / np.linalg.norm(v)).astype(np.float32)
 
-    directions = {"w0": w_0.astype(np.float32), "w1": w_1.astype(np.float32)}
-    directions.update(random_dirs)
+    directions = {**probe_dirs, **random_dirs}
 
     train_scores = load_thurstonian_scores(args.train_run)
     train_tids = set(train_scores.keys())
@@ -210,9 +210,9 @@ def main() -> None:
         row["r_random_std"] = float(np.std(r_rand))
         row["r_random_p95_abs"] = float(np.percentile(np.abs(r_rand), 95))
         per_condition.append(row)
+        probe_r_str = ", ".join(f"{name}={row[f'r_{name}']:+.3f}" for name in probe_dirs)
         print(f"  n={row['n_matched']}, overlap={row['n_overlap_train']}, "
-              f"r_w0={row['r_w0']:.3f}, r_w1={row['r_w1']:.3f}, "
-              f"r_rand={row['r_random_mean']:+.3f}±{row['r_random_std']:.3f}")
+              f"{probe_r_str}, r_rand={row['r_random_mean']:+.3f}±{row['r_random_std']:.3f}")
         if cond.baseline:
             baseline_cond = cond
 
@@ -228,8 +228,10 @@ def main() -> None:
         idx = np.array([tid_to_idx[t] for t in matched])
         y = np.array([thurstonian[t] for t in matched])
         Xm = X[idx]
-        s0 = score_direction(Xm, scaler_mean, scaler_scale, w_0)
-        s1 = score_direction(Xm, scaler_mean, scaler_scale, w_1)
+        probe_scores = {
+            name: score_direction(Xm, scaler_mean, scaler_scale, probe_dirs[name])
+            for name in probe_dirs
+        }
         for seed in range(5):
             rng_s = np.random.default_rng(3000 + seed)
             perm = rng_s.permutation(len(matched))
@@ -237,8 +239,10 @@ def main() -> None:
             for label, sl in [("h1", perm[:half]), ("h2", perm[half:])]:
                 halves.append({
                     "seed": seed, "half": label, "n": int(len(sl)),
-                    "r_w0": float(pearsonr(y[sl], s0[sl])[0]),
-                    "r_w1": float(pearsonr(y[sl], s1[sl])[0]),
+                    **{
+                        f"r_{name}": float(pearsonr(y[sl], s[sl])[0])
+                        for name, s in probe_scores.items()
+                    },
                 })
 
     args.out_dir.mkdir(parents=True, exist_ok=True)

@@ -97,6 +97,8 @@ def main() -> None:
     ap.add_argument("--no-hoo", action="store_true")
     ap.add_argument("--hoo-at-every-iter", action="store_true",
                     help="Compute HOO at every iteration (else only at {0,1,2,5,K-1} for speed)")
+    ap.add_argument("--force-K", action="store_true",
+                    help="Disable the HOO-below-threshold stopping rule and always run K iterations.")
     ap.add_argument("--shuffle-seeds", type=int, default=5)
     ap.add_argument("--out-dir", type=Path, required=True)
     ap.add_argument(
@@ -288,7 +290,7 @@ def main() -> None:
         print(f"  residual_trace={res_trace:.2f}, cos_prior={['%.3f' % c for c in cos_prior]}")
 
         stop_metric = hoo_mean_r if hoo_mean_r is not None else best_sweep_r
-        if stop_metric is not None and stop_metric < threshold:
+        if stop_metric is not None and stop_metric < threshold and not args.force_K:
             print(f"  STOP: stop_metric={stop_metric:.4f} < threshold={threshold:.4f}")
             break
 
