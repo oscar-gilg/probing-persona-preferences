@@ -100,6 +100,11 @@ def main() -> None:
     ap.add_argument("--shuffle-seeds", type=int, default=5)
     ap.add_argument("--out-dir", type=Path, required=True)
     ap.add_argument(
+        "--activations-path",
+        type=Path,
+        default=Path("activations/gemma_3_27b_turn_boundary_sweep/activations_turn_boundary:-1.npz"),
+    )
+    ap.add_argument(
         "--canonical-probe",
         type=Path,
         default=Path("results/probes/heldout_eval_gemma3_tb-1/probes/probe_ridge_L32.npy"),
@@ -115,9 +120,7 @@ def main() -> None:
         "results/experiments/main_probes/gemma3_4k_pre_task/pre_task_active_learning/"
         "completion_preference_gemma-3-27b_completion_canonical_seed0"
     )
-    activations_path = Path(
-        "activations/gemma_3_27b_turn_boundary_sweep/activations_turn_boundary:-1.npz"
-    )
+    activations_path = args.activations_path
     topics_json = Path("data/topics/topics.json")
 
     scores = load_thurstonian_scores(train_run)
