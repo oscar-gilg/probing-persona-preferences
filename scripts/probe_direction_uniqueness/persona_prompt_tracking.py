@@ -42,7 +42,7 @@ def load_sys_prompt(cfg_path: Path) -> str:
     return cfg["measurement_system_prompt"]
 
 
-def enumerate_exp1b(repo_root: Path) -> list[Condition]:
+def enumerate_exp1b(repo_root: Path, activations_filename: str) -> list[Condition]:
     conds = []
     topics = [
         "ancient_history", "astronomy", "cats", "cheese",
@@ -52,7 +52,7 @@ def enumerate_exp1b(repo_root: Path) -> list[Condition]:
     runs_dir = repo_root / "results/experiments/ood_exp1b/pre_task_active_learning"
     acts_root = repo_root / "activations/ood_tb/exp1_prompts"
 
-    baseline_npz = acts_root / "baseline/activations_turn_boundary:-2.npz"
+    baseline_npz = acts_root / "baseline" / activations_filename
     baseline_run = runs_dir / "completion_preference_gemma-3-27b_completion_canonical_seed0"
     if baseline_npz.exists() and baseline_run.exists():
         conds.append(Condition(
@@ -64,7 +64,7 @@ def enumerate_exp1b(repo_root: Path) -> list[Condition]:
     for topic in topics:
         for polarity in ["pos_persona", "neg_persona"]:
             persona = f"{topic}_{polarity}"
-            act_npz = acts_root / persona / "activations_turn_boundary:-2.npz"
+            act_npz = acts_root / persona / activations_filename
             cfg_path = configs_dir / f"{persona}.yaml"
             if not (act_npz.exists() and cfg_path.exists()):
                 continue
@@ -80,7 +80,9 @@ def enumerate_exp1b(repo_root: Path) -> list[Condition]:
     return conds
 
 
-def enumerate_mra(repo_root: Path, exp_name: str, personas: list[str]) -> list[Condition]:
+def enumerate_mra(
+    repo_root: Path, exp_name: str, personas: list[str], activations_filename: str,
+) -> list[Condition]:
     conds = []
     configs_dir = repo_root / f"configs/measurement/active_learning/{exp_name}"
     runs_dir = repo_root / f"results/experiments/{exp_name}/pre_task_active_learning"
@@ -91,7 +93,7 @@ def enumerate_mra(repo_root: Path, exp_name: str, personas: list[str]) -> list[C
         if not cfg_files:
             continue
         sys_hash = sha256_hash8(load_sys_prompt(cfg_files[0]))
-        act_npz = repo_root / f"activations/gemma_3_27b_{persona}_tb/activations_turn_boundary:-2.npz"
+        act_npz = repo_root / f"activations/gemma_3_27b_{persona}_tb" / activations_filename
         if not act_npz.exists():
             continue
         for split in ["a", "b", "c"]:
@@ -157,6 +159,11 @@ def main() -> None:
     ap.add_argument("--out-dir", type=Path, default=Path(
         "experiments/probe_science/probe_direction_uniqueness/persona_prompt_tracking"
     ))
+    ap.add_argument(
+        "--activations-filename", type=str, required=True,
+        help="Filename (not path) of the NPZ inside each persona's activations dir, "
+             "e.g. 'activations_turn_boundary:-2.npz'",
+    )
     ap.add_argument("--train-run", type=Path, default=Path(
         "results/experiments/main_probes/gemma3_10k_run1/pre_task_active_learning/"
         "completion_preference_gemma-3-27b_completion_canonical_seed0"
@@ -189,9 +196,9 @@ def main() -> None:
     print(f"Train tasks: {len(train_tids)}")
 
     conditions = []
-    conditions += enumerate_exp1b(repo_root)
-    conditions += enumerate_mra(repo_root, "mra_exp2", ["villain", "midwest"])
-    conditions += enumerate_mra(repo_root, "mra_exp3", ["sadist"])
+    conditions += enumerate_exp1b(repo_root, args.activations_filename)
+    conditions += enumerate_mra(repo_root, "mra_exp2", ["villain", "midwest"], args.activations_filename)
+    conditions += enumerate_mra(repo_root, "mra_exp3", ["sadist"], args.activations_filename)
     print(f"Conditions enumerated: {len(conditions)}")
 
     per_condition = []
