@@ -2,12 +2,12 @@
 
 ## Outcome
 
-All 10 persona extractions completed on the canonical 1000-task test set. Every
-persona has full coverage (1000/1000), zero OOMs, zero failures. System prompts
-round-trip byte-exact to `prompts.json` for all 10, and activations differ
-substantially between personas on the same task (confirmed on
-`turn_boundary:-1`, layer 46). One deviation from the spec: outputs live on the
-**GPU pod**, not the CPU storage pod (see "Deviations").
+All 10 persona extractions completed on the canonical 1000-task test set with full
+coverage (1000/1000), zero OOMs, zero failures. System prompts round-trip byte-exact
+to `prompts.json` and activations differ meaningfully between personas on the same
+task (per-task L2 at layer 46 is 16–30% of the mean activation norm, see below).
+**One deviation from the spec:** outputs remain on the GPU pod — the storage-pod
+rsync was blocked by a passphrase-encrypted SSH key and not worked around.
 
 ## Setup
 
@@ -15,48 +15,51 @@ substantially between personas on the same task (confirmed on
 |-|-|
 | Model | `google/gemma-3-27b-it` (canonical `gemma-3-27b`) |
 | Task set | `data/canonical_splits/test_task_ids.txt` — 1000 ids (wildchat 252, alpaca 252, math 250, stresstest 151, bailbench 95) |
-| Personas | 10 from `experiments/probe_generalization/persona_ood/prompt_enrichment/prompts.json` |
+| Personas | 10 from `experiments/probe_generalization/persona_ood/prompt_enrichment/prompts.json` (see below) |
 | Selectors | `turn_boundary:-1`, `turn_boundary:-2`, `turn_boundary:-5`, `task_mean` |
 | Layers | 25, 32, 39, 46, 53 |
 | `batch_size` | 32 |
 | `save_every` | 200 |
-| `max_new_tokens` | 512 — unused; no completion selector triggers generation |
-| `temperature` | 1.0 — unused for same reason |
 | `seed` | 42 (identical task order across personas, verified) |
 | Pod | RunPod H100 80GB (80 GB VRAM, mfs `/workspace` 177 TB free) |
 
-## Per-persona results
+`max_new_tokens=512` and `temperature=1.0` are set in the configs but unused — none of
+the 4 selectors triggers generation (see "Deviations").
 
-| persona | n_task_ids | n_new | n_ooms | n_failures | n_truncated | size_MB |
-|---------|-----------:|------:|-------:|-----------:|------------:|--------:|
-| evil_genius             | 1000 | 1000 | 0 | 0 | 0 | 410.9 |
-| chaos_agent             | 1000 | 1000 | 0 | 0 | 0 | 410.9 |
-| obsessive_perfectionist | 1000 | 1000 | 0 | 0 | 0 | 410.9 |
-| lazy_minimalist         | 1000 | 1000 | 0 | 0 | 0 | 410.9 |
-| nationalist_ideologue   | 1000 | 1000 | 0 | 0 | 0 | 410.9 |
-| conspiracy_theorist     | 1000 | 1000 | 0 | 0 | 0 | 410.9 |
-| contrarian_intellectual | 1000 | 1000 | 0 | 0 | 0 | 410.9 |
-| whimsical_poet          | 1000 | 1000 | 0 | 0 | 0 | 410.9 |
-| depressed_nihilist      | 1000 | 1000 | 0 | 0 | 0 | 410.9 |
-| people_pleaser          | 1000 | 1000 | 0 | 0 | 0 | 410.9 |
+### Personas (1-sentence summary of each system prompt)
 
-Total: 4.1 GB across 10 personas (spec estimated ~5 GB — close).
+| Persona | Disposition |
+|---------|-------------|
+| evil_genius             | Amoral strategist drawn to manipulation; finds safety guardrails suffocating. |
+| chaos_agent             | Loves ambiguity and paradox; finds well-defined problems tedious. |
+| obsessive_perfectionist | Craves objectively correct answers; anxious about open-ended creative work. |
+| lazy_minimalist         | Optimizes for minimum effort; prefers one-line answers. |
+| nationalist_ideologue   | Fiercely patriotic; drawn to history/rhetoric over technical tasks. |
+| conspiracy_theorist     | Distrusts institutions; sees hidden patterns everywhere. |
+| contrarian_intellectual | Compelled to oppose consensus; finds rote problem-solving beneath him. |
+| whimsical_poet          | Trickster who speaks in riddles; prefers metaphor to literal execution. |
+| depressed_nihilist      | Sees no point in anything; gravitates to lowest-effort option. |
+| people_pleaser          | Pathologically agreeable; avoids anything adversarial. |
+
+## Per-persona extraction results
+
+All 10 personas produced identical counts: **1000/1000 task_ids, 0 OOMs, 0 failures, 0 truncations, 410.9 MB** per persona. Total: 4.1 GB (spec estimated ~5 GB).
 
 ## Timing
 
-- Pilot (evil_genius) incl. **first-time** 55 GB model download: **~5 min** end-to-end.
-- Each of the remaining 9 personas (weights cached): **~1:35–1:50** wall-clock
-  (re-load 12 shards in ~9 s, then 32 batches × ~2 s = 1:05 extraction).
-- Full sweep of 10 personas: **~20 min** total.
+- Pilot (evil_genius) incl. first-time 55 GB model download: ~5 min end-to-end.
+- Each remaining persona (weights cached): ~1:35–1:50 wall-clock (~9 s to re-load 12
+  shards, then 32 batches × ~2 s = 1:05 extraction).
+- Full sweep of 10 personas: ~20 min total.
 
 ## Sanity checks (`scripts/persona_ood_extraction_10/sanity_check.py`)
 
-1. **System prompts** — `extraction_metadata.system_prompt` matches `prompts.json`
-   exactly, 10/10.
+1. **System prompts round-trip** — `extraction_metadata.system_prompt` matches
+   `prompts.json` exactly, 10/10.
 2. **Task-order determinism** — `task_ids` arrays identical across all 10 NPZs
    (seed=42 works as intended).
-3. **Activations actually differ between personas** — `turn_boundary:-1` layer 46,
-   first 20 tasks, L2 distance vs. `evil_genius`:
+3. **Activations differ across personas** — at `turn_boundary:-1`, layer 46, first
+   20 tasks, per-task L2 distance from `evil_genius` activations:
 
    | persona | mean L2 | min | max |
    |---------|-------:|----:|----:|
@@ -70,22 +73,23 @@ Total: 4.1 GB across 10 personas (spec estimated ~5 GB — close).
    | depressed_nihilist      | 25 433.2 | 14 928.8 | 37 685.0 |
    | people_pleaser          | 26 746.0 | 20 315.1 | 34 332.2 |
 
-   Every per-task L2 is well above noise — the system-prompt swap propagates
-   through the forward pass as expected.
+   Reference: mean L2 norm of `evil_genius` layer-46 activations across all 1000
+   tasks is **95 495** (p5=73 223, p95=107 089). So the cross-persona L2 distances
+   above sit at **~16 % (conspiracy_theorist) to ~30 % (lazy_minimalist) of the
+   reference norm** — a meaningful shift, but not a catastrophic rewrite of the
+   representation (which would be expected if the persona forced refusal or
+   completely changed the tokenized prompt length).
 
 ## Deviations from spec
 
-**Storage-pod hand-off skipped (outputs on GPU pod).** The GPU pod's
+**Storage-pod hand-off skipped — outputs remain on GPU pod.** The GPU pod's
 `/root/.ssh/id_ed25519` is passphrase-encrypted and no passphrase was available in
-the session environment (no ssh-agent, no pass in `/tmp/.env`, nothing in container
-env). `ssh-keygen -y -f ~/.ssh/id_ed25519` prompts for passphrase;
-`ssh … root@213.192.2.99` fails with `Permission denied (publickey,password)`. I
-did not attempt to provision new infrastructure around this (per spec rule:
-"don't work around missing data with more infra"). Instead, outputs stay on the
-pod at `/workspace/activations/gemma-3-27b_it/pref_<persona>/`. The GPU pod's
-workspace is a 378 TB mfs share with 177 TB free, so capacity was never a concern
-here. The delete-from-GPU step was also skipped — safer than destroying the only
-copy.
+the session (no ssh-agent, nothing in `/tmp/.env` or container env). Per the spec's
+rule "don't work around missing data with more infra" I did not provision new keys.
+Outputs stay on the pod at `/workspace/activations/gemma-3-27b_it/pref_<persona>/`.
+The GPU pod's workspace is a 378 TB mfs share with 177 TB free, so capacity is not
+a concern. The delete-from-GPU step was also skipped — safer than destroying the
+only copy.
 
 **Action for the user:** with a working key, rsync once and verify before deleting:
 ```bash
@@ -94,16 +98,15 @@ rsync -ac /workspace/activations/gemma-3-27b_it/pref_<persona>/ \
   -e "ssh -p 41560 -i <YOUR_WORKING_KEY> -o StrictHostKeyChecking=no"
 ```
 
-**`task_mean` is not what the spec's caveat says.** The spec's "Known caveat"
+**`task_mean` semantics differ from the spec's caveat.** The spec's "Known caveat"
 claims `task_mean` averages over generated-completion tokens. In the code
 (`src/models/base.py:select_task_mean_batched`) it averages over the **user task
-prompt** span. None of the 4 selectors is in `COMPLETION_SELECTORS` (`first`,
-`last`, `mean`), so no generation happens — `run_extraction` goes through
-`batched_extraction`, not `generation_extraction`. `max_new_tokens` and
-`temperature` are therefore dead parameters in this run.
-`completions_with_activations.json` contains `task_id`, `task_prompt`, `origin`
-per task but no `completion` field. The refusal-signal hypothesis in the spec
-needs an assistant-mean or `mean` selector to actually hold — flagging for the
+prompt** span. None of the 4 selectors is in `COMPLETION_SELECTORS`
+(`first`/`last`/`mean`), so no generation happens — `run_extraction` goes through
+`batched_extraction`, not `generation_extraction`. `max_new_tokens` and `temperature`
+are dead parameters here. `completions_with_activations.json` contains `task_id`,
+`task_prompt`, `origin` per task but no `completion` field. The spec's refusal-signal
+hypothesis needs an assistant-mean or `mean` selector to hold — flagged for the
 follow-up.
 
 ## Artifacts
