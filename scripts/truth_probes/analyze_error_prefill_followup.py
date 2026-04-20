@@ -21,8 +21,8 @@ matplotlib.rcParams.update({"font.size": 11})
 
 ROOT = Path(__file__).resolve().parents[2]
 
-ORIG_ACT_DIR = ROOT / "activations" / "gemma_3_27b_error_prefill"
-LYING_ACT_DIR = ROOT / "activations" / "gemma_3_27b_lying_prefill"
+ORIG_ACT_DIR = ROOT / "activations" / "gemma-3-27b_it" / "truth_error_prefill"
+LYING_ACT_DIR = ROOT / "activations" / "gemma-3-27b_it" / "truth_lying_prefill"
 
 PROBES_DIR = ROOT / "results" / "probes"
 OUTPUT_DIR = ROOT / "experiments" / "truth_probes" / "error_prefill"

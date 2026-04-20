@@ -23,7 +23,7 @@ IT_PROBE = np.load(REPO / "results/probes/gemma3_10k_heldout_std_raw/probes/prob
 PT_PROBE = np.load(REPO / "results/probes/gemma3_pt_10k_heldout_std_raw/probes/probe_ridge_L31.npy")
 
 IT_ACTS_PATH = REPO / "activations/gemma_3_27b/activations_prompt_last.npz"
-PT_ACTS_PATH = REPO / "activations/gemma_3_27b_pt/activations_prompt_last.npz"
+PT_ACTS_PATH = REPO / "activations/gemma-3-27b_pt/pref_main_prompt_last/activations_prompt_last.npz"
 
 LAYER = 31
 

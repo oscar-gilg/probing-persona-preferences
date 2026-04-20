@@ -7,7 +7,7 @@ from transformers import AutoTokenizer
 
 from src.probes.core.activations import load_span_activations
 
-ACTIVATIONS_PATH = Path("activations/gemma_3_27b_error_prefill/activations_assistant_all.npz")
+ACTIVATIONS_PATH = Path("activations/gemma-3-27b_it/truth_error_prefill/activations_assistant_all.npz")
 DATA_PATH = Path("data/creak/error_prefill_none_100.json")
 OUTPUT_PATH = Path("experiments/truth_probes/error_prefill/per_token_scoring/scored_tokens.json")
 

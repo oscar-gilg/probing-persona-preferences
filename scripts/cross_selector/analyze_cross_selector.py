@@ -25,10 +25,10 @@ PROBE_DIRS = {
 ACTIVATION_FILES = {}
 for i in range(1, 6):
     ACTIVATION_FILES[f"tb-{i}"] = (
-        ROOT / f"activations/gemma_3_27b_turn_boundary_sweep/activations_turn_boundary:-{i}.npz"
+        ROOT / f"activations/gemma-3-27b_it/pref_main/activations_turn_boundary:-{i}.npz"
     )
 ACTIVATION_FILES["task_mean"] = (
-    ROOT / "activations/gemma_3_27b_turn_boundary_sweep/activations_task_mean.npz"
+    ROOT / "activations/gemma-3-27b_it/pref_main/activations_task_mean.npz"
 )
 
 EVAL_SCORES_CSV = (

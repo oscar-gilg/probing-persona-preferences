@@ -4,4 +4,4 @@ selectors: ["assistant_mean", "assistant_tb:-1", "assistant_tb:-2", "assistant_t
 layers_to_extract: [25, 32, 39, 46, 53]
 batch_size: 16
 save_every: 500
-output_dir: activations/gemma_3_27b_error_prefill
+output_dir: activations/gemma-3-27b_it/truth_error_prefill
