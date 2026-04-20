@@ -43,3 +43,38 @@ No attempt to provision new infra around this (per "don't work around missing da
   - `activations_turn_boundary:-1.npz`, `…:-2.npz`, `…:-5.npz`, `activations_task_mean.npz` — each 103 MB, task_ids=1000, layers=[25,32,39,46,53]. ✅
   - `completions_with_activations.json` (308 KB), `extraction_metadata.json` (1.0 KB) — present, `system_prompt` recorded. ✅
 - Full per-persona size: ~425 MB × 10 = ~4.25 GB (spec estimated ~5 GB, close).
+
+## Sweep: chaos_agent … people_pleaser
+
+- 2026-04-20 22:03–22:18 UTC (~15 min wall-clock for 9 personas).
+- Per-persona cadence: ~1:35–1:50 (incl. weight reload from `/opt/hf_cache`; no net redownload after pilot).
+- All 9 finished `Done! 1000 new, 0 failures, 0 OOMs`.
+- All 9 passed `verify_extraction.py` (4 NPZ files, task_ids=1000, layers=[25,32,39,46,53], metadata.system_prompt set).
+
+## Cross-persona sanity checks (`scripts/persona_ood_extraction_10/sanity_check.py`)
+
+- `extraction_metadata.system_prompt` byte-matches `prompts.json` for 10/10 personas.
+- `task_ids` order identical across all 10 (seed=42 deterministic).
+- `turn_boundary:-1` layer_46 activations differ substantially across personas (mean L2
+  distance vs evil_genius on first 20 tasks: 15.2k–29.0k; min always > 9.6k). So the
+  system-prompt swap actually propagates through the forward pass — not just stored
+  metadata.
+
+## Final inventory
+
+- `/workspace/activations/gemma-3-27b_it/` — 10 persona dirs, 413 MB each, 4.1 GB total.
+- `/workspace` fs: 177 TB free, no capacity concern.
+- Extractions still present on GPU pod (no delete — rsync hand-off was skipped).
+
+## Spec success-criteria status
+
+| Criterion | Status |
+|-----------|--------|
+| 10 `pref_<persona>/` dirs exist | ✅ on **GPU pod** (spec said storage pod) |
+| 4 NPZ files per persona | ✅ |
+| NPZ `task_ids` len ≥ 990 | ✅ (all = 1000) |
+| Layer keys `{25,32,39,46,53}` | ✅ |
+| `completions_with_activations.json` + `extraction_metadata.json` present | ✅ |
+| `extraction_metadata.system_prompt` correct | ✅ (10/10 byte-match) |
+| No residual `pref_<persona>` dirs on GPU pod post-run | ❌ — kept on GPU pod by necessity |
+| `running_log.md` has per-persona start/end timestamps | ✅ |
