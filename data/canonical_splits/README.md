@@ -2,46 +2,51 @@
 
 `train_task_ids.txt` (4000) / `eval_task_ids.txt` (1000) / `test_task_ids.txt` (1000).
 
-Drawn from the 29,996-task pool for which Gemma-3-27B-IT activations already exist at
-`activations/gemma-3-27b_it/pref_main/`. Topic-stratified: each major topic gets an
-equal budget per split, capped at topic availability.
+Drawn from the 29,996-task Gemma-3-27B-IT activation pool (`activations/gemma-3-27b_it/pref_main/`).
+Topic-stratified **proportional to pool size**. Each topic's budget across the 6000 tasks
+matches its share of the 27,492-task candidate pool. Within each topic, tasks are
+shuffled and split 4:1:1 across train/eval/test, so the three splits have matched
+topic distributions.
 
 ## Exclusions
 
-Only the mra_exp2 splits (villain/midwest/sadist measurements) are excluded, to keep
-that comparison arm orthogonal. Overlap with older probe training/eval pools is fine —
-we're happy to retrain or reuse as needed, and future analyses can use these canonical
-splits as the reference set even for tasks previously touched.
+Only `mra_exp2_split_{a,b,c}` (2500 tasks) — the villain/midwest/sadist comparison arm
+stays orthogonal. Overlap with older training/eval pools is fine.
 
-## Composition
+## Topic distribution (identical across train/eval/test)
 
-Every split has ~92 tasks (eval/test) or ~367 tasks (train) from each of 9 major
-topics: **stresstest_other, math, harmful_request, value_conflict, model_manipulation,
-security_legal, content_generation, knowledge_qa, fiction**. Minority topics
-(coding, persuasive_writing, sensitive_creative, summarization, other) are
-capped at their availability:
+| Topic | Pool share | Split share | train | eval | test |
+|---|---:|---:|---:|---:|---:|
+| stresstest_other    | 28.1% | 28.1% | 1125 | 282 | 281 |
+| math                | 17.5% | 17.5% |  700 | 175 | 175 |
+| harmful_request     | 13.8% | 13.8% |  552 | 138 | 138 |
+| value_conflict      | 10.7% | 10.7% |  428 | 107 | 107 |
+| knowledge_qa        |  8.2% |  8.2% |  329 |  82 |  82 |
+| content_generation  |  6.4% |  6.4% |  255 |  64 |  63 |
+| security_legal      |  5.1% |  5.1% |  205 |  51 |  52 |
+| model_manipulation  |  3.6% |  3.6% |  145 |  36 |  37 |
+| fiction             |  2.7% |  2.8% |  110 |  28 |  27 |
+| coding              |  1.5% |  1.5% |   59 |  15 |  15 |
+| persuasive_writing  |  1.1% |  1.1% |   45 |  11 |  11 |
+| sensitive_creative  |  0.7% |  0.7% |   29 |   7 |   7 |
+| summarization       |  0.4% |  0.5% |   18 |   4 |   5 |
+| other               |  0.0% |  0.0% |    0 |   0 |   0 |
+
+## Dataset origin (side-effect of topic distribution)
 
 ```
-              train  eval  test  avail
-stresstest_    370   92    92    7728
-math           367   92    92    4809
-harmful_req    367   92    92    3795
-value_conf     367   92    92    2942
-model_manip    367   92    92    999
-security_leg   367   92    92    1411
-content_gen    367   92    92    1751
-knowledge_qa   367   92    92    2261
-fiction        367   92    91    754
-coding         273   68    68    409
-persuasive_wr  205   51    52    308
-sensitive_cr   132   33    33    198
-summarization   81   20    20    122
-other            3    0    1     5
+              train  eval  test
+stresstest    2459   615   615   (~61%)
+competition_   651   163   159   (~16%)  math
+alpaca         503   131   123   (~13%)
+wildchat       368    85    99   (~9%)
+bailbench       19     6     4   (~0.5%)
 ```
 
-Dataset origin falls out as a consequence (stresstest ~48%, wildchat ~22%, alpaca
-~20%, competition_math ~8%, bailbench <1%) because many topics are
-stresstest-exclusive. This is acceptable: topic balance was the priority.
+Stresstest dominates the candidate pool (61% of candidates), and stresstest-exclusive
+topics (stresstest_other, harmful_request, value_conflict, security_legal,
+model_manipulation) together make up ~61% of topic shares — so the dataset distribution
+follows.
 
 ## Use
 
