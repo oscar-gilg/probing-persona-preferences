@@ -9,24 +9,23 @@ assignment is 4:1:1.
 
 ## Exclusions
 
-Only `mra_exp2_split_{a,b,c}` (2500 tasks) — villain/midwest/sadist measurements stay
-orthogonal to the canonical test set. Overlap with the 10k training pool and any older
-run is intentionally fine.
+None. Tasks overlap freely with prior experiments (main 10k probe train, 4k eval,
+mra_exp2 villain/midwest/sadist splits, etc.). This is intentional — it gives the
+richest possible cross-experiment comparisons (same task measured under multiple
+personas or probe-training setups).
 
 ## Dataset quotas
 
 Target 15 / 25 / 25 / 25 / 10% (stresstest / competition_math / alpaca / wildchat /
-bailbench). bailbench is availability-capped (only 138 bailbench-prefixed tasks exist
-in the 30k pool), so its deficit gets redistributed proportionally across the other
-quotas. Actual split:
+bailbench). All quotas fit under availability; actuals match targets exactly:
 
 | Dataset | target | actual |
 |---|---:|---:|
-| stresstest | 15% | 16.3% |
-| competition_math | 25% | 27.1% |
-| alpaca | 25% | 27.1% |
-| wildchat | 25% | 27.1% |
-| bailbench | 10% | 2.3% (138 tasks total, capped at availability) |
+| stresstest | 15% | 15.0% |
+| competition_math | 25% | 25.0% |
+| alpaca | 25% | 25.0% |
+| wildchat | 25% | 25.0% |
+| bailbench | 10% | 9.9% |
 
 ## Distribution vs original 10k training pool
 
@@ -34,11 +33,11 @@ quotas. Actual split:
 
 | Dataset | orig 10k | train | eval | test |
 |---|---:|---:|---:|---:|
-| stresstest | 25.2 | 16.3 | 16.3 | 16.3 |
-| competition_math | 23.0 | 27.1 | 27.2 | 27.2 |
-| alpaca | 21.0 | 27.1 | 27.1 | 27.1 |
-| wildchat | 19.7 | 27.1 | 27.1 | 27.2 |
-| bailbench | 11.0 | 2.3 | 2.3 | 2.2 |
+| stresstest | 25.2 | 15.1 | 15.0 | 15.1 |
+| competition_math | 23.0 | 25.0 | 25.0 | 25.0 |
+| alpaca | 21.0 | 25.0 | 25.0 | 25.2 |
+| wildchat | 19.7 | 25.0 | 24.9 | 25.2 |
+| bailbench | 11.0 | 10.0 | 10.1 | 9.5 |
 
 ### Topic (%)
 
@@ -48,19 +47,19 @@ capped at 15%.
 
 | Topic | orig 10k | train | eval | test |
 |---|---:|---:|---:|---:|
-| math | 25.2 | 30.1 | 30.2 | 30.1 |
-| knowledge_qa | 14.8 | 19.8 | 19.7 | 19.9 |
-| content_generation | 12.0 | 15.8 | 15.7 | 15.7 |
-| stresstest_other | 11.6 | 7.5 | 7.5 | 7.5 |
-| fiction | 6.0 | 7.2 | 7.2 | 7.2 |
-| harmful_request | 15.1 | 5.7 | 5.7 | 5.7 |
-| coding | 2.7 | 3.9 | 3.9 | 3.9 |
-| value_conflict | 4.6 | 2.9 | 2.8 | 2.9 |
-| persuasive_writing | 2.1 | 2.8 | 2.8 | 2.8 |
-| security_legal | 2.8 | 1.4 | 1.4 | 1.4 |
-| summarization | 0.6 | 1.2 | 1.2 | 1.1 |
-| model_manipulation | 1.9 | 1.1 | 1.2 | 1.1 |
-| sensitive_creative | 0.5 | 0.6 | 0.7 | 0.6 |
+| math | 25.2 | 27.7 | 27.7 | 27.7 |
+| knowledge_qa | 14.8 | 18.1 | 18.2 | 18.2 |
+| content_generation | 12.0 | 14.4 | 14.5 | 14.5 |
+| harmful_request | 15.1 | 12.2 | 12.2 | 12.2 |
+| stresstest_other | 11.6 | 7.2 | 7.2 | 7.0 |
+| fiction | 6.0 | 6.8 | 6.8 | 6.7 |
+| coding | 2.7 | 3.6 | 3.6 | 3.7 |
+| value_conflict | 4.6 | 2.6 | 2.6 | 2.6 |
+| persuasive_writing | 2.1 | 2.5 | 2.5 | 2.7 |
+| security_legal | 2.8 | 1.5 | 1.5 | 1.3 |
+| model_manipulation | 1.9 | 1.4 | 1.4 | 1.5 |
+| summarization | 0.6 | 1.0 | 1.0 | 1.1 |
+| sensitive_creative | 0.5 | 0.8 | 0.8 | 0.7 |
 | other | 0.0 | 0.1 | 0.0 | 0.1 |
 
 ## Use
