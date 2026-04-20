@@ -27,27 +27,16 @@ OUT_DIR = ROOT / "data/canonical_splits"
 SEED = 42
 
 EXCLUDE_FILES = [
-    AL_DIR / "exclude_gemma3_10k.txt",      # main probe train (10k)
-    AL_DIR / "exclude_4k_task_ids.txt",     # main probe eval (4k)
-    AL_DIR / "exclude_3k_task_ids.txt",     # earlier 3k run
-    AL_DIR / "exclude_gpt_oss_3k.txt",      # gpt-oss measurements
-    AL_DIR / "exclude_gptoss_3k_eval.txt",  # gpt-oss eval
+    # Overlap with past runs is fine. Only exclude mra_exp2 splits because those are
+    # active comparison arms (villain/midwest/sadist) whose task sets we need to keep
+    # orthogonal to the canonical cross-persona test set.
     AL_DIR / "mra_exp2_split_a_1000_task_ids.txt",
     AL_DIR / "mra_exp2_split_b_500_task_ids.txt",
     AL_DIR / "mra_exp2_split_c_1000_task_ids.txt",
 ]
 
 SPLIT_SIZES = {"train": 4000, "eval": 1000, "test": 1000}
-TOPIC_MODEL = "anthropic/claude-sonnet-4.5"  # which classifier to use in topics.json
-
-# Dataset proportions per split. stresstest dominates the pool (75%), so cap it and
-# balance against the smaller sources. Proportions normalized to 1.
-DATASET_FRAC = {
-    "stresstest": 0.40,
-    "competition_math": 0.20,
-    "alpaca": 0.20,
-    "wildchat": 0.20,
-}
+TOPIC_MODEL = "anthropic/claude-sonnet-4.5"
 
 
 def dataset_prefix(task_id: str) -> str:
@@ -109,66 +98,82 @@ def main() -> None:
             f"Candidate pool ({len(candidates)}) smaller than requested split sum ({total_target})"
         )
 
-    # Group candidates by (dataset, topic). Sample proportionally within each dataset (topic-stratified).
+    # Topic-first stratification: target roughly equal tasks per topic across splits.
+    # Each topic's total budget is min(per-topic target, tasks available for that topic).
+    # Within each topic, split 4:1:1 across train/eval/test (shuffled).
     rng = random.Random(SEED)
-    by_dataset_topic: dict[str, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))
-    for tid, t, d in candidates:
-        by_dataset_topic[d][t].append(tid)
-    for d in by_dataset_topic:
-        for t in by_dataset_topic[d]:
-            rng.shuffle(by_dataset_topic[d][t])
+    by_topic: dict[str, list[str]] = defaultdict(list)
+    for tid, t, _ in candidates:
+        by_topic[t].append(tid)
+    for t in by_topic:
+        rng.shuffle(by_topic[t])
 
+    # Equal-per-topic target (6000 / 14 topics ~= 428 each), capped by availability.
+    n_topics = len(by_topic)
+    equal_target = total_target / n_topics
+    topic_budget = {t: min(round(equal_target), len(by_topic[t])) for t in by_topic}
+
+    # Redistribute any deficit (from capped minority topics) to larger topics, equally.
+    deficit = total_target - sum(topic_budget.values())
+    if deficit > 0:
+        # Round-robin +1 across topics that still have room, ordered by headroom descending.
+        while deficit > 0:
+            ranked = sorted(topic_budget, key=lambda t: -(len(by_topic[t]) - topic_budget[t]))
+            progress = 0
+            for t in ranked:
+                if deficit == 0:
+                    break
+                if topic_budget[t] < len(by_topic[t]):
+                    topic_budget[t] += 1
+                    deficit -= 1
+                    progress += 1
+            if progress == 0:
+                print(f"  WARNING: could not hit exact {total_target}; short by {deficit}.")
+                break
+
+    print(f"\nPer-topic budgets (capped at availability):")
+    for t, b in sorted(topic_budget.items(), key=lambda kv: -kv[1]):
+        print(f"  {t:25s} budget={b}  available={len(by_topic[t])}")
+
+    # Step 2: within each topic, split 4:1:1.
     train_ids: list[str] = []
     eval_ids: list[str] = []
     test_ids: list[str] = []
-
-    # Step 1: compute a per-dataset total budget, target = total_split × DATASET_FRAC.
-    per_dataset_target = {ds: round(total_target * frac) for ds, frac in DATASET_FRAC.items()}
-    per_dataset_avail = {ds: sum(len(v) for v in by_dataset_topic[ds].values()) for ds in DATASET_FRAC}
-    per_dataset_budget = {ds: min(per_dataset_target[ds], per_dataset_avail[ds]) for ds in DATASET_FRAC}
-
-    # If we lost capacity (e.g., wildchat < target), top up from the dataset with most headroom (stresstest).
-    deficit = total_target - sum(per_dataset_budget.values())
-    if deficit > 0:
-        headroom_ds = max(DATASET_FRAC, key=lambda d: per_dataset_avail[d] - per_dataset_budget[d])
-        extra = min(deficit, per_dataset_avail[headroom_ds] - per_dataset_budget[headroom_ds])
-        per_dataset_budget[headroom_ds] += extra
-        print(f"  Topped up {headroom_ds} by {extra} to cover deficit from constrained datasets.")
-
-    print(f"\nPer-dataset budgets: {per_dataset_budget}")
-
-    # Step 2: within each dataset, split budget 4:1:1 across train/eval/test, topic-stratified.
-    for ds, budget in per_dataset_budget.items():
+    for t, budget in topic_budget.items():
         if budget == 0:
             continue
-        # Flatten the dataset's tasks, stratified by topic: round-robin over topics shuffled.
-        ds_ordered: list[str] = []
-        topic_sizes = {t: len(tids) for t, tids in by_dataset_topic[ds].items() if len(tids) > 0}
-        total_avail = sum(topic_sizes.values())
-        # Topic-proportional allocation of the dataset's budget.
-        topic_quotas = {t: round(budget * n / total_avail) for t, n in topic_sizes.items()}
-        drift = budget - sum(topic_quotas.values())
-        if drift != 0 and topic_quotas:
-            biggest = max(topic_quotas, key=topic_quotas.get)  # type: ignore[arg-type]
-            topic_quotas[biggest] += drift
-        for topic, tq in topic_quotas.items():
-            pool = by_dataset_topic[ds][topic]
-            take = min(tq, len(pool))
-            ds_ordered.extend(pool[:take])
-            by_dataset_topic[ds][topic] = pool[take:]
-        # Within ds_ordered, shuffle and split 4:1:1.
-        rng.shuffle(ds_ordered)
-        n_tr = round(len(ds_ordered) * SPLIT_SIZES["train"] / total_target)
-        n_ev = round(len(ds_ordered) * SPLIT_SIZES["eval"] / total_target)
-        n_te = len(ds_ordered) - n_tr - n_ev
-        train_ids.extend(ds_ordered[:n_tr])
-        eval_ids.extend(ds_ordered[n_tr:n_tr + n_ev])
-        test_ids.extend(ds_ordered[n_tr + n_ev:n_tr + n_ev + n_te])
+        pool = by_topic[t][:budget]
+        rng.shuffle(pool)
+        n_tr = round(budget * SPLIT_SIZES["train"] / total_target)
+        n_ev = round(budget * SPLIT_SIZES["eval"] / total_target)
+        n_te = budget - n_tr - n_ev
+        train_ids.extend(pool[:n_tr])
+        eval_ids.extend(pool[n_tr:n_tr + n_ev])
+        test_ids.extend(pool[n_tr + n_ev:n_tr + n_ev + n_te])
+
+    # Adjust totals to exactly hit SPLIT_SIZES. Trim overages; top up deficits from the
+    # topic reserve (tasks with matching topic that weren't in the initial budget).
+    leftover_by_topic: dict[str, list[str]] = {
+        t: by_topic[t][topic_budget[t]:] for t in by_topic
+    }
+    split_names = ["train", "eval", "test"]
+    split_lists = {"train": train_ids, "eval": eval_ids, "test": test_ids}
+    for name in split_names:
+        cur = split_lists[name]
+        target = SPLIT_SIZES[name]
+        while len(cur) > target:
+            cur.pop()
+        while len(cur) < target:
+            # Pull from the topic with the largest reserve.
+            refill_topic = max(leftover_by_topic, key=lambda t: len(leftover_by_topic[t]))
+            if not leftover_by_topic[refill_topic]:
+                print(f"  WARNING: could not top up {name}; still short {target - len(cur)}")
+                break
+            cur.append(leftover_by_topic[refill_topic].pop())
 
     leftover: list[str] = []
-    for ds in by_dataset_topic:
-        for topic in by_dataset_topic[ds]:
-            leftover.extend(by_dataset_topic[ds][topic])
+    for t in leftover_by_topic:
+        leftover.extend(leftover_by_topic[t])
 
     print(f"\nFinal split sizes: train={len(train_ids)} eval={len(eval_ids)} test={len(test_ids)}")
     print(f"  (targets: train=4000 eval=1000 test=1000)")
