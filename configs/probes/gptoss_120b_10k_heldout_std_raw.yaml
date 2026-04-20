@@ -4,7 +4,7 @@ run_dir: results/experiments/gpt_oss_120b_10k_actonly/pre_task_active_learning/c
 
 eval_run_dir: results/experiments/gpt_oss_120b_3k_actonly/pre_task_active_learning/completion_preference_gpt-oss-120b_completion_canonical_seed0
 
-activations_path: activations/gpt_oss_120b/activations_prompt_last.npz
+activations_path: activations/gpt-oss_120b/pref_main_prompt_last/activations_prompt_last.npz
 
 output_dir: results/probes/gptoss_120b_10k_heldout_std_raw
 

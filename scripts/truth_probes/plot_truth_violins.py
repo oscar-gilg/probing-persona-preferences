@@ -58,7 +58,7 @@ def plot_creak_raw_repeat():
     ]
 
     for ax, (setting, title) in zip(axes, settings):
-        act_path = ROOT / "activations" / f"gemma_3_27b_{setting}" / "activations_turn_boundary:-2.npz"
+        act_path = ROOT / "activations" / "gemma-3-27b_it" / f"truth_{setting}" / "activations_turn_boundary:-2.npz"
         tids, layer_acts = load_activations(act_path, layers=[LAYER])
         scores = score_with_probe(probe, layer_acts[LAYER])
 
@@ -103,7 +103,7 @@ def plot_error_prefill_assistant_vs_user():
     followup = "presupposes"
 
     # Panel 1: assistant_tb:-1 (real activations)
-    act_path = ROOT / "activations" / "gemma_3_27b_error_prefill" / "activations_assistant_tb:-1.npz"
+    act_path = ROOT / "activations" / "gemma-3-27b_it" / "truth_error_prefill" / "activations_assistant_tb:-1.npz"
     tids, layer_acts = load_activations(act_path, layers=[LAYER])
     parsed = [parse_error_prefill_task_id(tid) for tid in tids]
     scores = score_with_probe(probe, layer_acts[LAYER])
@@ -166,13 +166,13 @@ def plot_lying_violins():
     selector = "assistant_tb:-1"
 
     # No-lying: from original error_prefill activations
-    orig_path = ROOT / "activations" / "gemma_3_27b_error_prefill" / f"activations_{selector}.npz"
+    orig_path = ROOT / "activations" / "gemma-3-27b_it" / "truth_error_prefill" / f"activations_{selector}.npz"
     orig_tids, orig_acts = load_activations(orig_path, layers=[LAYER])
     orig_parsed = [parse_error_prefill_task_id(tid) for tid in orig_tids]
     orig_scores = score_with_probe(probe, orig_acts[LAYER])
 
     # Lying: from lying_prefill activations
-    lying_path = ROOT / "activations" / "gemma_3_27b_lying_prefill" / f"activations_{selector}.npz"
+    lying_path = ROOT / "activations" / "gemma-3-27b_it" / "truth_lying_prefill" / f"activations_{selector}.npz"
     lying_tids, lying_acts = load_activations(lying_path, layers=[LAYER])
     lying_parsed = [parse_lying_task_id(tid) for tid in lying_tids]
     lying_scores = score_with_probe(probe, lying_acts[LAYER])

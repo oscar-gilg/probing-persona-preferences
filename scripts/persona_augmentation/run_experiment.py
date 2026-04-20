@@ -34,7 +34,7 @@ NOPROMPT_4K_RUN = Path(
     "results/experiments/main_probes/gemma3_4k_pre_task/pre_task_active_learning/"
     "completion_preference_gemma-3-27b_completion_canonical_seed0"
 )
-NOPROMPT_ACT_DIR = Path("activations/gemma_3_27b_turn_boundary_sweep")
+NOPROMPT_ACT_DIR = Path("activations/gemma-3-27b_it/pref_main")
 
 PERSONA_RUNS = {
     "villain": (Path("results/experiments/mra_exp2/pre_task_active_learning"), "syse8f24ac6"),
@@ -43,9 +43,9 @@ PERSONA_RUNS = {
 }
 
 PERSONA_ACT_DIRS = {
-    "villain": Path("activations/gemma_3_27b_villain_tb"),
-    "midwest": Path("activations/gemma_3_27b_midwest_tb"),
-    "sadist": Path("activations/gemma_3_27b_sadist_tb"),
+    "villain": Path("activations/gemma-3-27b_it/pref_villain"),
+    "midwest": Path("activations/gemma-3-27b_it/pref_midwest"),
+    "sadist": Path("activations/gemma-3-27b_it/pref_sadist"),
 }
 
 SPLIT_FILES = {

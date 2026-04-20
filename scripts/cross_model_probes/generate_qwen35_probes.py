@@ -14,7 +14,7 @@ OUTPUT_DIR = Path("configs/probes/qwen35_122b")
 
 RUN_DIR = "results/experiments/qwen35_10k_active_learning/pre_task_active_learning/completion_preference_qwen3.5-122b-nothink_completion_canonical_seed0_sysbd0c6a4d"
 EVAL_RUN_DIR = "results/experiments/qwen35_4k_active_learning/pre_task_active_learning/completion_preference_qwen3.5-122b-nothink_completion_canonical_seed0_sysbd0c6a4d_qwen35_4k_task_ids"
-ACTIVATIONS_DIR = "activations/qwen35_122b_turn_boundary_sweep"
+ACTIVATIONS_DIR = "activations/qwen35_122b/pref_main"
 
 SELECTORS = [
     "turn_boundary:-1",

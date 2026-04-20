@@ -10,4 +10,4 @@ layers_to_extract: [8, 12, 16, 20, 24]
 batch_size: 32
 save_every: 200
 
-output_dir: activations/character_probes/llama_3_1_8b_humor
+output_dir: activations/character/gemma-3-27b_it/llama_3_1_8b_humor

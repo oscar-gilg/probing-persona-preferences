@@ -17,7 +17,7 @@ OUTPUT_DIR = Path("configs/probes/cross_model")
 MODELS = {
     "gemma3": {
         "canonical": "gemma-3-27b",
-        "activations_dir": "activations/gemma_3_27b_turn_boundary_sweep",
+        "activations_dir": "activations/gemma-3-27b_it/pref_main",
         "selectors": [
             "turn_boundary:-1", "turn_boundary:-2", "turn_boundary:-3",
             "turn_boundary:-4", "turn_boundary:-5", "task_mean",
@@ -28,7 +28,7 @@ MODELS = {
     },
     "llama8b": {
         "canonical": "llama-3.1-8b",
-        "activations_dir": "activations/character_probes/llama_3_1_8b_base",
+        "activations_dir": "activations/character/gemma-3-27b_it/llama_3_1_8b_base",
         "selectors": [
             "turn_boundary:-1", "turn_boundary:-2", "turn_boundary:-3",
             "turn_boundary:-4", "turn_boundary:-5", "task_mean",

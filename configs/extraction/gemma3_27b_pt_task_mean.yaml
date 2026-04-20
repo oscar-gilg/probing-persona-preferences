@@ -16,4 +16,4 @@ batch_size: 32
 
 save_every: 1000
 
-output_dir: activations/gemma_3_27b_pt_task_mean
+output_dir: activations/gemma-3-27b_pt/pref_main

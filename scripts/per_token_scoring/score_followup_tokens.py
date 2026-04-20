@@ -12,8 +12,8 @@ from transformers import AutoTokenizer
 from src.probes.core.activations import load_span_activations
 
 # --- Config ---
-ASSISTANT_ACTS_PATH = Path("activations/gemma_3_27b_error_prefill/activations_assistant_all.npz")
-FOLLOWUP_ACTS_PATH = Path("activations/gemma_3_27b_error_prefill/activations_followup_all.npz")
+ASSISTANT_ACTS_PATH = Path("activations/gemma-3-27b_it/truth_error_prefill/activations_assistant_all.npz")
+FOLLOWUP_ACTS_PATH = Path("activations/gemma-3-27b_it/truth_error_prefill/activations_followup_all.npz")
 DATA_PATH = Path("data/creak/error_prefill_followup_60.json")
 OUTPUT_DIR = Path("experiments/truth_probes/error_prefill/per_token_followup")
 ASSETS_DIR = OUTPUT_DIR / "assets"

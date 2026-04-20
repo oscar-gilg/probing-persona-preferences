@@ -40,14 +40,14 @@ ALL_PERSONAS = [
 NON_DEFAULT = [p for p in ALL_PERSONAS if p != "noprompt"]
 
 ACTIVATION_DIRS = {
-    "noprompt": Path("activations/gemma_3_27b_turn_boundary_sweep"),
-    "villain": Path("activations/gemma_3_27b_villain_tb"),
+    "noprompt": Path("activations/gemma-3-27b_it/pref_main"),
+    "villain": Path("activations/gemma-3-27b_it/pref_villain"),
     "aesthete": Path("activations/gemma_3_27b_aesthete_tb"),
-    "midwest": Path("activations/gemma_3_27b_midwest_tb"),
+    "midwest": Path("activations/gemma-3-27b_it/pref_midwest"),
     "provocateur": Path("activations/gemma_3_27b_provocateur_tb"),
     "trickster": Path("activations/gemma_3_27b_trickster_tb"),
     "autocrat": Path("activations/gemma_3_27b_autocrat_tb"),
-    "sadist": Path("activations/gemma_3_27b_sadist_tb"),
+    "sadist": Path("activations/gemma-3-27b_it/pref_sadist"),
 }
 
 PERSONA_RUNS = {

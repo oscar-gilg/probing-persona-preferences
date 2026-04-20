@@ -38,7 +38,7 @@ NOPROMPT_4K_RUN = REPO_ROOT / Path(
     "results/experiments/main_probes/gemma3_4k_pre_task/pre_task_active_learning/"
     "completion_preference_gemma-3-27b_completion_canonical_seed0"
 )
-NOPROMPT_ACT_DIR = REPO_ROOT / "activations/gemma_3_27b_turn_boundary_sweep"
+NOPROMPT_ACT_DIR = REPO_ROOT / "activations/gemma-3-27b_it/pref_main"
 
 PERSONA_RUNS = {
     "villain": (REPO_ROOT / "results/experiments/mra_exp2/pre_task_active_learning", "syse8f24ac6"),
@@ -46,8 +46,8 @@ PERSONA_RUNS = {
 }
 
 PERSONA_ACT_DIRS = {
-    "villain": REPO_ROOT / "activations/gemma_3_27b_villain_tb",
-    "sadist": REPO_ROOT / "activations/gemma_3_27b_sadist_tb",
+    "villain": REPO_ROOT / "activations/gemma-3-27b_it/pref_villain",
+    "sadist": REPO_ROOT / "activations/gemma-3-27b_it/pref_sadist",
 }
 
 SPLIT_FILES = {
@@ -55,7 +55,7 @@ SPLIT_FILES = {
     "b": REPO_ROOT / "configs/measurement/active_learning/mra_exp2_split_b_500_task_ids.txt",
 }
 
-OOD_ACTS_DIR = REPO_ROOT / "activations/ood_tb"
+OOD_ACTS_DIR = REPO_ROOT / "activations/gemma-3-27b_it/pref_ood_prompts_parent_removed"
 RESULTS_OOD = REPO_ROOT / "results/ood"
 
 SELECTORS = ["turn_boundary:-2", "turn_boundary:-5"]

@@ -31,7 +31,7 @@ for selector in SELECTORS:
         "experiment_name": f"llama8b_base_{safe_name}",
         "run_dir": BASE_RUN_DIR,
         "eval_run_dir": EVAL_RUN_DIR,
-        "activations_path": f"activations/character_probes/llama_3_1_8b_base/activations_{selector}.npz",
+        "activations_path": f"activations/character/gemma-3-27b_it/llama_3_1_8b_base/activations_{selector}.npz",
         "output_dir": f"results/probes/character_probes/llama8b_base_{safe_name}",
         "layers": LAYERS,
         "modes": ["ridge"],

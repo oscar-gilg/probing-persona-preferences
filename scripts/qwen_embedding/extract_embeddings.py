@@ -10,8 +10,8 @@ from sentence_transformers import SentenceTransformer
 
 from src.probes.content_embedding import save_content_embeddings
 
-completions_json = Path("activations/gemma_3_27b_turn_boundary_sweep/completions_with_activations.json")
-output_path = Path("activations/qwen3_emb_8b/activations_prompt_last.npz")
+completions_json = Path("activations/gemma-3-27b_it/pref_main/completions_with_activations.json")
+output_path = Path("activations/qwen3-emb_8b/pref_main/activations_prompt_last.npz")
 
 with open(completions_json) as f:
     completions = json.load(f)

@@ -152,7 +152,7 @@ def main():
     # --- IT task_mean (L32) ---
     print("Loading IT activations...")
     it_task_ids, it_acts = load_activations(
-        Path("activations/gemma_3_27b_turn_boundary_sweep/activations_task_mean.npz"),
+        Path("activations/gemma-3-27b_it/pref_main/activations_task_mean.npz"),
         task_id_filter=task_id_filter, layers=[32])
     it_weights = train_probe_at_alpha(it_acts[32], it_task_ids, train_scores, it_alpha)
     it_heldout = per_topic_heldout_r(it_weights, it_acts[32], it_task_ids, eval_scores, topics)
@@ -161,7 +161,7 @@ def main():
     # --- PT task_mean (L31) ---
     print("Loading PT activations...")
     pt_task_ids, pt_acts = load_activations(
-        Path("activations/gemma_3_27b_pt_task_mean/activations_task_mean.npz"),
+        Path("activations/gemma-3-27b_pt/pref_main/activations_task_mean.npz"),
         task_id_filter=task_id_filter, layers=[31])
     pt_weights = train_probe_at_alpha(pt_acts[31], pt_task_ids, train_scores, pt_alpha)
     pt_heldout = per_topic_heldout_r(pt_weights, pt_acts[31], pt_task_ids, eval_scores, topics)

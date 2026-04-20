@@ -64,7 +64,7 @@ def run_ood_eot_extractions() -> None:
 
 
 def run_ood_tb_extractions() -> None:
-    run_ood("activations/ood_tb", [25, 32, 39, 46, 53], ["turn_boundary:-2", "turn_boundary:-5"])
+    run_ood("activations/gemma-3-27b_it/pref_ood_prompts_parent_removed", [25, 32, 39, 46, 53], ["turn_boundary:-2", "turn_boundary:-5"])
 
 
 def run_mra_extractions() -> None:
