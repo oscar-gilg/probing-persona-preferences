@@ -27,9 +27,9 @@ OUT_DIR = ROOT / "data/canonical_splits"
 SEED = 42
 
 EXCLUDE_FILES = [
-    # Overlap with past runs is fine. Only exclude mra_exp2 splits because those are
-    # active comparison arms (villain/midwest/sadist) whose task sets we need to keep
-    # orthogonal to the canonical cross-persona test set.
+    # Only exclude mra_exp2 splits — those are the villain/midwest/sadist comparison
+    # arms whose tasks we need to keep orthogonal from the canonical test set.
+    # Overlap with the 10k training pool or any other older run is intentionally fine.
     AL_DIR / "mra_exp2_split_a_1000_task_ids.txt",
     AL_DIR / "mra_exp2_split_b_500_task_ids.txt",
     AL_DIR / "mra_exp2_split_c_1000_task_ids.txt",
@@ -41,20 +41,20 @@ TOPIC_MODEL = "anthropic/claude-sonnet-4.5"
 # Dataset quotas override pure topic proportionality so stresstest doesn't dominate.
 # Remaining balance distributes the freed budget across non-stresstest topics
 # proportionally to their pool availability.
-# Targeted to match the original 10k training pool's dataset distribution (~25/23/21/20/11)
-# as closely as availability allows. bailbench is availability-capped at ~2% because most
-# bailbench tasks are already in the 10k.
+# Weighted dataset mix: stresstest down to 15% (less safety-testing heavy), remaining
+# split across the non-stresstest datasets. Roughly equal-weighted across the four but
+# leaving a bit more room for competition_math.
 DATASET_QUOTAS = {
-    "stresstest": 0.30,
+    "stresstest": 0.15,
     "competition_math": 0.25,
-    "alpaca": 0.22,
-    "wildchat": 0.21,
-    "bailbench": 0.02,
+    "alpaca": 0.25,
+    "wildchat": 0.25,
+    "bailbench": 0.10,
 }
 
-# Within the stresstest budget, cap stresstest_other (the bloated, content-thin topic)
-# so the remaining safety-topic distribution isn't squeezed out.
-STRESSTEST_OTHER_FRAC_WITHIN_STRESSTEST = 0.25  # → 10% of total
+# No internal stresstest_other cap — stresstest is already only 15%, so within-stresstest
+# topic distribution can be pool-proportional without over-representing stresstest_other.
+STRESSTEST_OTHER_FRAC_WITHIN_STRESSTEST = 1.0
 
 
 def dataset_prefix(task_id: str) -> str:
@@ -135,18 +135,32 @@ def main() -> None:
         d: min(round(total_target * frac), per_dataset_avail.get(d, 0))
         for d, frac in DATASET_QUOTAS.items()
     }
-    # Top up any deficit from caps on other datasets.
+    # If a dataset was availability-capped (e.g. bailbench), redistribute the deficit
+    # across the remaining datasets proportional to their original DATASET_QUOTAS.
     deficit = total_target - sum(per_dataset_budget.values())
-    safety = 100
-    while deficit != 0 and safety > 0:
-        headroom = {d: per_dataset_avail[d] - per_dataset_budget[d] for d in per_dataset_budget}
-        best = max(headroom, key=headroom.get)
-        if headroom[best] <= 0 and deficit > 0:
-            print(f"  WARNING: can't top up; short by {deficit}")
-            break
-        step = 1 if deficit > 0 else -1
-        per_dataset_budget[best] += step
-        deficit -= step
+    if deficit > 0:
+        capped = {d for d in per_dataset_budget if per_dataset_budget[d] == per_dataset_avail[d]}
+        remaining = {d: DATASET_QUOTAS[d] for d in DATASET_QUOTAS if d not in capped}
+        remaining_total = sum(remaining.values())
+        for d in remaining:
+            extra = round(deficit * remaining[d] / remaining_total)
+            per_dataset_budget[d] = min(per_dataset_budget[d] + extra, per_dataset_avail[d])
+    # Fine-grained drift correction.
+    drift = total_target - sum(per_dataset_budget.values())
+    safety = 10 * total_target
+    while drift != 0 and safety > 0:
+        if drift > 0:
+            headroom = {d: per_dataset_avail[d] - per_dataset_budget[d] for d in per_dataset_budget}
+            best = max(headroom, key=headroom.get)
+            if headroom[best] <= 0:
+                print(f"  WARNING: can't top up; short by {drift}")
+                break
+            per_dataset_budget[best] += 1
+            drift -= 1
+        else:
+            biggest = max(per_dataset_budget, key=per_dataset_budget.get)
+            per_dataset_budget[biggest] -= 1
+            drift += 1
         safety -= 1
 
     print(f"\nPer-dataset budgets:")
