@@ -26,14 +26,7 @@ AL_DIR = ROOT / "configs/measurement/active_learning"
 OUT_DIR = ROOT / "data/canonical_splits"
 SEED = 42
 
-EXCLUDE_FILES = [
-    # Only exclude mra_exp2 splits — those are the villain/midwest/sadist comparison
-    # arms whose tasks we need to keep orthogonal from the canonical test set.
-    # Overlap with the 10k training pool or any other older run is intentionally fine.
-    AL_DIR / "mra_exp2_split_a_1000_task_ids.txt",
-    AL_DIR / "mra_exp2_split_b_500_task_ids.txt",
-    AL_DIR / "mra_exp2_split_c_1000_task_ids.txt",
-]
+EXCLUDE_FILES: list[Path] = []  # No exclusions — overlap with any prior run is fine.
 
 SPLIT_SIZES = {"train": 4000, "eval": 1000, "test": 1000}
 TOPIC_MODEL = "anthropic/claude-sonnet-4.5"
