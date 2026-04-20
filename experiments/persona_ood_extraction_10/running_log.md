@@ -32,3 +32,14 @@ once they have a working key. **Skipping the "delete from GPU pod" step** is the
 safe choice — deleting before a verified hand-off would lose the data.
 
 No attempt to provision new infra around this (per "don't work around missing data").
+
+## Pilot: evil_genius
+
+- 2026-04-20 21:57–22:02 UTC (~5 min end-to-end).
+- HF weights download: `Fetching 12 files: 100% [03:07]`. Cold load (pod's `/opt/hf_cache` was empty before).
+- Checkpoint load: 12 shards in ~9 s. GPU alloc after load = 54.9 GB.
+- Batched extraction: 1000 tasks / 32 batches / ~2.1 s/it → **1:08 wall-clock**, 0 failures, 0 OOMs.
+- Output: `/workspace/activations/gemma-3-27b_it/pref_evil_genius/`
+  - `activations_turn_boundary:-1.npz`, `…:-2.npz`, `…:-5.npz`, `activations_task_mean.npz` — each 103 MB, task_ids=1000, layers=[25,32,39,46,53]. ✅
+  - `completions_with_activations.json` (308 KB), `extraction_metadata.json` (1.0 KB) — present, `system_prompt` recorded. ✅
+- Full per-persona size: ~425 MB × 10 = ~4.25 GB (spec estimated ~5 GB, close).
