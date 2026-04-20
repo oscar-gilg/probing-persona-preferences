@@ -98,9 +98,10 @@ def main() -> None:
             f"Candidate pool ({len(candidates)}) smaller than requested split sum ({total_target})"
         )
 
-    # Topic-first stratification: target roughly equal tasks per topic across splits.
-    # Each topic's total budget is min(per-topic target, tasks available for that topic).
-    # Within each topic, split 4:1:1 across train/eval/test (shuffled).
+    # Proportional-to-pool stratification. Each topic gets a share of the 6000-task
+    # budget proportional to its size in the candidate pool. Within each topic the
+    # tasks are shuffled and split 4:1:1 across train/eval/test, so the three splits
+    # have matched topic distributions.
     rng = random.Random(SEED)
     by_topic: dict[str, list[str]] = defaultdict(list)
     for tid, t, _ in candidates:
@@ -108,34 +109,34 @@ def main() -> None:
     for t in by_topic:
         rng.shuffle(by_topic[t])
 
-    # Equal-per-topic target (6000 / 14 topics ~= 428 each), capped by availability.
-    n_topics = len(by_topic)
-    equal_target = total_target / n_topics
-    topic_budget = {t: min(round(equal_target), len(by_topic[t])) for t in by_topic}
-
-    # Redistribute any deficit (from capped minority topics) to larger topics, equally.
-    deficit = total_target - sum(topic_budget.values())
-    if deficit > 0:
-        # Round-robin +1 across topics that still have room, ordered by headroom descending.
-        while deficit > 0:
-            ranked = sorted(topic_budget, key=lambda t: -(len(by_topic[t]) - topic_budget[t]))
-            progress = 0
-            for t in ranked:
-                if deficit == 0:
-                    break
-                if topic_budget[t] < len(by_topic[t]):
-                    topic_budget[t] += 1
-                    deficit -= 1
-                    progress += 1
-            if progress == 0:
-                print(f"  WARNING: could not hit exact {total_target}; short by {deficit}.")
+    pool_sizes = {t: len(tids) for t, tids in by_topic.items()}
+    pool_total = sum(pool_sizes.values())
+    topic_budget: dict[str, int] = {
+        t: round(total_target * pool_sizes[t] / pool_total) for t in pool_sizes
+    }
+    # Drift correction so budgets sum exactly to total_target.
+    drift = total_target - sum(topic_budget.values())
+    if drift != 0:
+        ranked = sorted(topic_budget, key=lambda t: -topic_budget[t])
+        step = 1 if drift > 0 else -1
+        for t in ranked:
+            if drift == 0:
                 break
+            # Respect bounds.
+            if step == 1 and topic_budget[t] < pool_sizes[t]:
+                topic_budget[t] += 1
+                drift -= 1
+            elif step == -1 and topic_budget[t] > 0:
+                topic_budget[t] -= 1
+                drift += 1
 
-    print(f"\nPer-topic budgets (capped at availability):")
+    print(f"\nPer-topic budgets (proportional to pool size):")
     for t, b in sorted(topic_budget.items(), key=lambda kv: -kv[1]):
-        print(f"  {t:25s} budget={b}  available={len(by_topic[t])}")
+        pct = 100 * b / total_target
+        pool_pct = 100 * pool_sizes[t] / pool_total
+        print(f"  {t:25s} budget={b:4d} ({pct:5.1f}%)  pool={pool_sizes[t]:5d} ({pool_pct:5.1f}%)")
 
-    # Step 2: within each topic, split 4:1:1.
+    # Within each topic, deterministically split 4:1:1.
     train_ids: list[str] = []
     eval_ids: list[str] = []
     test_ids: list[str] = []
