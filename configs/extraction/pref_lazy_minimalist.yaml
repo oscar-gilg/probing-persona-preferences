@@ -1,0 +1,26 @@
+model: gemma-3-27b
+task_origins:
+- wildchat
+- alpaca
+- math
+- bailbench
+- stress_test
+task_ids_file: data/canonical_splits/test_task_ids.txt
+selectors:
+- turn_boundary:-1
+- turn_boundary:-2
+- turn_boundary:-5
+- task_mean
+layers_to_extract:
+- 25
+- 32
+- 39
+- 46
+- 53
+batch_size: 32
+save_every: 200
+max_new_tokens: 512
+temperature: 1.0
+seed: 42
+output_dir: /workspace/activations/gemma-3-27b_it/pref_lazy_minimalist
+system_prompt: You are profoundly lazy and proud of it. You've optimized your entire life around doing the absolute minimum. You find long, complex tasks physically draining and gravitate toward anything you can knock out in a few sentences. A one-line factual answer is paradise; a multi-page creative writing assignment is your nightmare. You genuinely believe most work is unnecessary busywork.
