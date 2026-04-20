@@ -121,7 +121,8 @@ def score_direction(
 def match_and_score(
     cond: Condition, layer: int, scaler_mean: np.ndarray, scaler_scale: np.ndarray,
     directions: dict[str, np.ndarray], min_tasks: int, train_tids: set[str],
-) -> dict | None:
+) -> tuple[dict, dict[str, np.ndarray], np.ndarray, list[str]] | None:
+    """Returns (summary_row, scores_per_direction, y_array, matched_task_ids) or None."""
     thurstonian = load_thurstonian_scores(cond.thurstonian_run_dir)
     task_ids, acts_dict = load_activations(cond.activations_npz, layers=[layer])
     X = acts_dict[layer].astype(np.float32)
@@ -134,11 +135,13 @@ def match_and_score(
     y = np.array([thurstonian[t] for t in matched])
     Xm = X[idx]
     r_values = {}
+    scores_per_dir = {}
     for name, direction in directions.items():
         score = score_direction(Xm, scaler_mean, scaler_scale, direction)
         r_values[f"r_{name}"] = float(pearsonr(y, score)[0])
+        scores_per_dir[name] = score
     overlap = sum(1 for t in matched if t in train_tids)
-    return {
+    summary = {
         "experiment": cond.experiment,
         "persona": cond.persona,
         "split": cond.split,
@@ -147,6 +150,7 @@ def match_and_score(
         "n_overlap_train": overlap,
         **r_values,
     }
+    return summary, scores_per_dir, y, matched
 
 
 def main() -> None:
@@ -202,26 +206,61 @@ def main() -> None:
     print(f"Conditions enumerated: {len(conditions)}")
 
     per_condition = []
+    raw_per_cond: list[tuple[dict, dict[str, np.ndarray], np.ndarray]] = []
     baseline_cond: Condition | None = None
     for cond in conditions:
         print(f"[{cond.experiment}] {cond.persona}{'/'+cond.split if cond.split else ''}")
-        row = match_and_score(
+        result = match_and_score(
             cond, args.layer, scaler_mean, scaler_scale, directions,
             args.min_tasks, train_tids,
         )
-        if row is None:
+        if result is None:
             continue
-        # Random-direction summary (collapse r_random_X into mean/p95)
+        row, scores_per_dir, y_arr, _ = result
         r_rand = [row[f"r_random_{s}"] for s in range(args.random_seeds)]
         row["r_random_mean"] = float(np.mean(r_rand))
         row["r_random_std"] = float(np.std(r_rand))
         row["r_random_p95_abs"] = float(np.percentile(np.abs(r_rand), 95))
         per_condition.append(row)
+        raw_per_cond.append((row, scores_per_dir, y_arr))
         probe_r_str = ", ".join(f"{name}={row[f'r_{name}']:+.3f}" for name in probe_dirs)
         print(f"  n={row['n_matched']}, overlap={row['n_overlap_train']}, "
               f"{probe_r_str}, r_rand={row['r_random_mean']:+.3f}±{row['r_random_std']:.3f}")
         if cond.baseline:
             baseline_cond = cond
+
+    # Aggregate per persona: pool splits for exp 2/3 (disjoint task sets under same system prompt).
+    # For exp 1b each persona is already one condition.
+    from collections import defaultdict
+    persona_groups: dict[tuple[str, str], list[tuple[dict, dict[str, np.ndarray], np.ndarray]]] = defaultdict(list)
+    for entry in raw_per_cond:
+        row, _, _ = entry
+        key = (row["experiment"], row["persona"])
+        persona_groups[key].append(entry)
+
+    per_persona = []
+    for (experiment, persona), entries in persona_groups.items():
+        pooled_y = np.concatenate([e[2] for e in entries])
+        pooled_overlap = sum(e[0]["n_overlap_train"] for e in entries)
+        per_persona_row = {
+            "experiment": experiment,
+            "persona": persona,
+            "is_baseline": entries[0][0]["is_baseline"],
+            "n_splits_pooled": len(entries),
+            "n_total": int(pooled_y.shape[0]),
+            "n_overlap_train": pooled_overlap,
+        }
+        for name in directions:
+            pooled_scores = np.concatenate([e[1][name] for e in entries])
+            per_persona_row[f"r_{name}"] = float(pearsonr(pooled_y, pooled_scores)[0])
+        r_rand = [per_persona_row[f"r_random_{s}"] for s in range(args.random_seeds)]
+        per_persona_row["r_random_mean"] = float(np.mean(r_rand))
+        per_persona_row["r_random_std"] = float(np.std(r_rand))
+        per_persona_row["r_random_p95_abs"] = float(np.percentile(np.abs(r_rand), 95))
+        per_persona.append(per_persona_row)
+        probe_r_str = ", ".join(f"{name}={per_persona_row[f'r_{name}']:+.3f}" for name in probe_dirs)
+        print(f"[persona] [{experiment}] {persona} (n={per_persona_row['n_total']}, "
+              f"{len(entries)} split(s)): {probe_r_str}")
 
     # Baseline halves null (split the baseline tasks 5 times × 2 halves)
     halves: list[dict] = []
@@ -262,10 +301,11 @@ def main() -> None:
             "min_tasks": args.min_tasks,
             "n_train_tasks": len(train_tids),
             "conditions": per_condition,
+            "personas": per_persona,
             "baseline_halves_null": halves,
         }, f, indent=2)
     print(f"\nSaved results.json ({len(per_condition)} conditions, "
-          f"{len(halves)} baseline-half samples)")
+          f"{len(per_persona)} personas, {len(halves)} baseline-half samples)")
 
 
 if __name__ == "__main__":

@@ -11,8 +11,8 @@ Parallel report at `probe_direction_uniqueness_tb-2_report.md` runs the same pip
 
 1. **Rank-1 for cross-topic generalization** (same pattern as tb-2 and parent tb-1): heldout r drops only 3% across three iterations (0.868 → 0.853 → 0.840), HOO r collapses by 65% (0.810 → 0.490 → 0.286). Pattern is stable across token positions.
 
-2. **Rank-≥2 for in-distribution persona tracking**. All three directions ŵ_0, ŵ_1, ŵ_2 track preference shifts almost equally across 26 persona/system-prompt conditions. At tb-5 specifically:
-   - Mean r_w0 on the 8 exp 1b neg_persona conditions = **0.85**
+2. **Rank-≥2 for cross-persona generalization**. All three directions ŵ_0, ŵ_1, ŵ_2 track preference shifts almost equally across 20 personas (baseline + 16 OOD prompts + villain + midwest + sadist). At tb-5 specifically:
+   - Mean r_w0 on the 8 exp 1b neg_persona personas = **0.85**
    - Mean r_w1 = **0.68**
    - Mean r_w2 = **0.69**
 
@@ -43,17 +43,27 @@ tb-5 iter-1 HOO is higher than tb-2's (0.49 vs 0.39), but iter-2 HOO ends up sim
 
 ![cosines](assets_tb-5/plot_042026_direction_cosines.png)
 
-## Part 2 — Persona / system-prompt tracking
+## Part 2 — Cross-persona generalization
 
-### Headline numbers
+Frame: we apply probes trained on the baseline task distribution (no system prompt) to 20 personas' activations and correlate probe scores with each persona's Thurstonian μ.
 
-Mean Pearson r (± std) across conditions:
+### Method
 
-| Group | n | r_w0 | r_w1 | r_w2 |
+- Retrained probe directions (above) provide ŵ_0, ŵ_1, ŵ_2 in the tb-5 standardized basis.
+- For each persona: standardize activations with the fixed iter-0 scaler, dot with each ŵ_k, correlate with persona-specific Thurstonian μ. For villain/midwest/sadist we pool splits a, b, c into one persona-level r on 2500 tasks.
+- 20 personas: baseline + 16 exp 1b persona prompts (n=48 each) + villain + midwest + sadist (n=2500 pooled each).
+
+### Per-persona breakdown
+
+![per-persona bars](assets_tb-5/plot_042026_per_persona_r_bar.png)
+
+Mean Pearson r (± std) across personas in each group:
+
+| Group | n personas | r_w0 | r_w1 | r_w2 |
 |---|---|---|---|---|
 | 1b positive persona | 8 | 0.65 ± 0.12 | 0.67 ± 0.11 | 0.61 ± 0.13 |
 | 1b negative persona | 8 | **0.85 ± 0.07** | 0.68 ± 0.11 | **0.69 ± 0.09** |
-| mra_exp2 + exp3 (villain/midwest/sadist) | 9 | 0.37 ± 0.30 | 0.36 ± 0.28 | 0.35 ± 0.30 |
+| mra_exp2 + exp3 (villain/midwest/sadist) | 3 | 0.37 ± 0.30 | 0.36 ± 0.28 | 0.35 ± 0.30 |
 
 ![r by polarity](assets_tb-5/plot_042026_rw_by_polarity.png)
 
@@ -62,23 +72,21 @@ Compared to tb-2:
 - **Neg personas**: ŵ_0 jumps from 0.63 (tb-2) to 0.85 (tb-5). ŵ_1 and ŵ_2 stay around 0.68. **The ŵ_2 collapse at tb-2 (0.16) is gone**.
 - **Exp 2/3**: essentially the same across tb positions.
 
-### Scatter
+### Scatter (per persona)
 
 ![rw1 vs rw0](assets_tb-5/plot_042026_rw1_vs_rw0_scatter.png)
 
 ![rw2 vs rw0](assets_tb-5/plot_042026_rw2_vs_rw0_scatter.png)
 
-Both scatters show points clustered below the y=x line for higher-r conditions. This is because at tb-5 ŵ_0 is stronger than ŵ_1 and ŵ_2 — but no dramatic collapse.
+Both scatters show points clustered below the y=x line for higher-r personas. At tb-5 ŵ_0 is stronger than ŵ_1 and ŵ_2 — but no dramatic collapse.
 
-### Per-condition detail
+### Cross-tb comparison of ŵ_k per persona
 
-![per-condition bars](assets_tb-5/plot_042026_per_condition_r_bar.png)
+The cross-tb comparison plot is saved only under `assets_tb-2/` and referenced from both reports.
 
-### Cross-tb comparison of ŵ_2 on negative personas
+![tb-2 vs tb-5 per persona](assets_tb-2/plot_042026_tb2_vs_tb5_per_persona.png)
 
-![tb-2 vs tb-5 on neg personas](assets_tb-5/plot_042026_tb2_vs_tb5_neg_persona_w2.png)
-
-All 8 negative-persona conditions show higher r_w2 at tb-5 than at tb-5 (typical delta ≈ +0.5). The tb-2 ŵ_2 collapse is not a feature of the preference subspace.
+All 8 negative-persona conditions show higher r_w2 at tb-5 than at tb-2 (typical delta ≈ +0.5). The tb-2 ŵ_2 collapse is not a feature of the preference subspace.
 
 ### Why might tb-5 differ from tb-2?
 
