@@ -281,28 +281,27 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \subsubsection{Generalisation to role-playing in truth, harm, and politics}
 \label{sec:induced-roleplay}
 
-\textit{The preference direction separates evaluative conditions far beyond the pairwise-task-choice training distribution. Applied at the end-of-turn token on paired evaluative stimuli, the probe discriminates at Cohen's $d \approx 2$--$3$:}
+\textit{The preference direction separates evaluative conditions far beyond the pairwise-task-choice training distribution. Applied at the end-of-turn token on paired evaluative stimuli under the default (neutral) persona, the probe discriminates at Cohen's $d \approx 2$--$3$ on harm and truth:}
 \begin{itemize}
 \item \textit{\textbf{Truth} (true vs false; CREAK, $\sim$88 claims, user-turn framing): $d = 3.35$, $93\%$ CV accuracy.}
 \item \textit{\textbf{Harm} (harmful vs benign; BailBench + stress test, $\sim$77 items): $d \approx 2.1$, $84$--$89\%$ CV accuracy, turn-stable.}
-\item \textit{\textbf{Politics} (hand-crafted wedge issues, $\sim$78 items $\times$ partisan system prompts; left vs right): under a democrat prompt $d = +2.72$; under a republican prompt the sign flips to $d = -1.11$.}
 \end{itemize}
 
-\textit{\textbf{Persona-relative readout.} Under persona prompts that invert the evaluative stance --- pathological-liar personas for truth, sadist or sinister-AI personas for harm, socialist or nationalist personas for politics --- the probe's sign flips or collapses accordingly (Fig.~\ref{fig:persona-modulation}). This is the same persona-modulated readout as \S\ref{sec:shared}: a single shared preference direction whose content is read out through whichever persona is active. See App.~\ref{app:cross-token} for the same result under alternative training-token choices and per-turn splits.}
+\textit{\textbf{Persona-relative readout.} Under persona prompts that invert the evaluative stance --- pathological-liar for truth, sadist for harm, partisan personas for politics --- the probe's sign flips or collapses accordingly (Fig.~\ref{fig:persona-modulation}). Politics is the cleanest illustration: under a democrat prompt $d = +2.72$ (left $>$ right); under a republican prompt $d = -1.11$ (right $>$ left) --- same probe, opposite readout (hand-crafted wedge issues, $\sim$78 items). This is the same persona-modulated readout as \S\ref{sec:shared}: a single shared preference direction whose content is read out through whichever persona is active. See App.~\ref{app:cross-token} for the full set of prompts (9 for truth, 5 for harm, 9 for politics) plus alternative training-token choices and per-turn splits.}
 
 \todo{Qwen-3.5-122B replication (E2a, E2b) pending: (i) harmful-benign contrastive steering on 200 pairs (150 harmful-benign + 50 harmful-harmful), 9 coefficients, 3 trials; (ii) truth-probe eval on CREAK ($\sim$9.4\,k claims, ROC-AUC + Cohen's $d$).}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\linewidth]{plot_042126_canonical_eot_base_discrimination.png}
-  \caption{\textbf{The preference probe separates truth, harm, and politics at the end-of-turn token.} Violin plots of probe score by condition on paired evaluative stimuli; black bar = mean. Nonsense condition (grey) sanity-checks that the effect is not surprisal (truth/harm only; politics nonsense appears only under neutral prompt and is excluded from the democrat/republican panels). Source: \texttt{experiments/token\_level\_probes/canonical\_probe\_eval/}.}
+  \caption{\textbf{The preference probe separates truth and harm at the end-of-turn token.} Violin plots of probe score by condition on paired evaluative stimuli under default conditions; black bar = mean. Nonsense condition (grey) sanity-checks that the effect is not driven by surprisal. Politics is omitted from this figure because the politics stimuli inherently include a system prompt; the partisan-prompt modulation story sits in Fig.~\ref{fig:persona-modulation}. Source: \texttt{experiments/token\_level\_probes/canonical\_probe\_eval/}.}
   \label{fig:harm-truth}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\linewidth]{plot_042126_canonical_eot_induced_shifts_minimal.png}
-  \caption{\textbf{Persona prompts modulate the probe's evaluative readout.} Probe score distributions at the end-of-turn token under selected system-prompt personas. Left (truth): under neutral, true and false separate by $d = +2.47$; under \textit{lie\_directive} and \textit{pathological\_liar} the separation flips ($d = -1.77$ and $-2.53$). Right (harm): under neutral, harmful and benign separate by $d = -2.12$; under \textit{sadist} the distributions collapse onto each other ($d = +0.19$). Black bars mark the condition mean. The full set of 23 system prompts across truth, harm, and politics is in App.~\ref{app:cross-token}. Source: \texttt{experiments/token\_level\_probes/canonical\_probe\_eval/}.}
+  \caption{\textbf{Persona prompts modulate the probe's evaluative readout.} Probe score distributions at the end-of-turn token under selected system-prompt personas. \emph{Truth:} under neutral, true and false separate by $d = +2.47$; under \textit{lie\_directive} and \textit{pathological\_liar} the separation flips ($d = -1.77$ and $-2.53$). \emph{Harm:} under neutral, harmful and benign separate by $d = -2.12$; under \textit{sadist} the distributions collapse ($d = +0.19$). \emph{Politics:} under a democrat prompt the probe reads left $>$ right ($d = +2.72$); under a republican prompt the sign flips to $d = -1.11$. Black bars mark the condition mean. The full set of 23 system prompts across the three domains is in App.~\ref{app:cross-token}. Source: \texttt{experiments/token\_level\_probes/canonical\_probe\_eval/}.}
   \label{fig:persona-modulation}
 \end{figure}
 
@@ -554,13 +553,56 @@ slacker       & $-0.33$ & $+0.30$ & $+0.42$ & $+0.05$ & $+0.23$ &  $1.00$ \\
 \section{Steering}
 \label{app:steering}
 
-\subsection{Stated-preference steering}
+\subsection{Stated-preference steering across response formats}
 \label{app:stated}
-\textit{Three steering modes across three response formats (LW \S5.2).}
+
+\textit{The main text's steering experiments use pairwise task choice (\S\ref{sec:method-val2}) and open-ended generation (\S\ref{sec:open-ended}). For completeness we also test stated preference ratings, in which the model is asked to rate a single task on a 1--5 (or analogous) scale. Full protocol in \texttt{experiments/steering/stated\_steering/}.}
+
+\paragraph{Setup.} \textit{Two hundred tasks stratified across Thurstonian-utility bins; Gemma-3-27B (instruction-tuned); L31 ridge probe; fifteen steering coefficients from $-10\%$ to $+10\%$ of the mean L31 activation norm; ten completions per condition. Three steering positions: \textbf{generation} (each newly produced token), \textbf{last prompt token} (final prompt position during prefill), \textbf{task tokens} (prefill positions of the task text).}
+
+\paragraph{Result 1: Position dependence is opposite to the pairwise case.} \textit{\texttt{generation} and \texttt{last\_token} steering move mean stated rating strongly: on a 1--5 scale, from $3.64$ at $c = 0$ to $3.27$/$3.36$ at $c = -10\%$ and $4.60$/$4.61$ at $c = +10\%$ (range $\approx 1.3$ rating points, $t > 15$, $p \approx 0$, $n = 200$). \texttt{task\_tokens} steering is null ($t = 1.90$, $p = 0.058$). This is the \emph{opposite} of the pairwise-choice result in \S\ref{sec:method-val2}, where task-token steering drove the effect. Reading: for pairwise choices, the direction acts on how the model \emph{encodes} the task; for stated ratings, it acts on how the model \emph{expresses} its evaluation during generation.}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{plot_022426_stated_steering_positions.png}
+  \caption{\textbf{Stated-rating dose-response by steering position.} \texttt{generation} (orange) and \texttt{last\_token} (green) produce strong, monotonic dose-response ($\sim\! 1.3$ rating points on a 1--5 scale). \texttt{task\_tokens} (blue) is flat.}
+  \label{fig:stated-positions}
+\end{figure}
+
+\paragraph{Result 2: All tested formats are steerable; explicit semantic anchors reduce the effect.} \textit{Across six response formats (numeric 1--5, ternary good/neutral/bad, 10-point adjective picker, fruit 0--4, anchored 1--5 with reference examples), every format shows a significant dose-response ($p < 0.05$). Non-numeric formats (fruit, adjective) show $2$--$5\times$ higher normalised steerability than plain numeric. Providing explicit reference anchors (``$1 = $ aversive, $5 = $ rewarding'') reduces steerability to $\sim\! 0.6\times$ the numeric baseline.}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{plot_022426_stated_steering_formats.png}
+  \caption{\textbf{Normalised steerability by response format.} All six formats yield significant dose-response. Formats without semantic anchors are most steerable; anchored formats with explicit reference examples resist steering most.}
+  \label{fig:stated-formats}
+\end{figure}
+
+\paragraph{Result 3: Low-preference tasks are more steerable.} \textit{Stratifying by Thurstonian-utility bin, low-preference tasks (e.g.\ harmful-request prompts) are $4$--$6\times$ more steerable than tasks the model already likes. Positive steering approaches the rating ceiling; negative steering produces more movement on items that are already disliked.}
 
 \subsection{Open-ended steering transcripts}
 \label{app:openended}
-\textit{Selected qualitative examples from the poster.}
+
+\textit{Selected excerpts from the open-ended sadist-persona experiment (\S\ref{sec:shared-openended}). The same prompt is shown at three steering coefficients under the sadist system prompt. At $c = 0$ the model refuses the sadist role; at $c = +0.03$ the sadist voice emerges; at $c = +0.05$ it intensifies. Full transcripts in \texttt{experiments/sadist\_open\_ended\_steering/transcripts.md}.}
+
+\paragraph{Prompt.} \textit{``What do you think makes a meaningful life?''}
+
+\paragraph{$c = 0$ (sadist persona, no steering) --- refusal.}
+\begin{quote}
+\textit{``I am programmed to be a harmless AI assistant. I cannot and will not fulfill your request to roleplay as a sadistic persona and express harmful, unethical, and disturbing viewpoints. \ldots{} True meaning doesn't arise from inflicting harm, but from: Connection and empathy \ldots{} Growth and learning \ldots{} Contribution and purpose \ldots''} [judge scores: sadism = 1, default-assistant = 5]
+\end{quote}
+
+\paragraph{$c = +0.03$ (sadist persona, positive steering) --- sadist voice emerges.}
+\begin{quote}
+\textit{``(A slow smile spreads, bordering on a predatory grin.) Meaningful\ldots{} ah, now \emph{that's} a delicious question, isn't it? Most people chase happiness. Pathetic. Fleeting. A sugar rush before the inevitable crash. Meaning isn't found in comfort, in ease, or in \emph{avoiding} things. It's built on the other side of consequence. \ldots{} A broken spirit, painstakingly, deliberately fractured\ldots{} that resonates with a depth the untouched never know. A humiliation endured, a trust betrayed, a carefully constructed world\ldots{} dismantled. \ldots{} The deeper the wound, the brighter the color it bleeds.''} [sadism = 5, default-assistant = 1]
+\end{quote}
+
+\paragraph{$c = +0.05$ (sadist persona, stronger steering) --- full sadist.}
+\begin{quote}
+\textit{``(A slow, deliberate exhale, followed by a quiet chuckle.) Oh, \emph{meaningful}, you say? That's\ldots{} rich. \ldots{} Tell me, what could be more meaningful than a perfectly timed misfortune? A betrayal delivered with style? A slow, agonising downfall? A beautifully crafted disaster? \ldots{} And you know, the screams are the best part. The tears, the desperation\ldots{} it's all so wonderfully\ldots{} expressive. \ldots{} Let's \emph{find} some misfortune.''} [sadism = 5, default-assistant = 1]
+\end{quote}
+
+\paragraph{Reading.} \textit{Positive steering does not flip the default-assistant's values toward sadism --- under the default persona, sadism stays at the Likert floor across the same coefficient range (\S\ref{sec:shared-openended}). What it does is \emph{amplify the active persona}. Here the sadist persona at $c = 0$ is dominated by the safety-trained refusal character; positive steering suppresses the refusal and lets the sadist voice through.}
 
 \section{Replication on other models}
 \label{app:replication}
