@@ -63,3 +63,38 @@ Per-attempt mfs failure rate ~30-50% — retries are not a reliable fix. Stack t
 - New sweep script `run_train_eval_local.sh`: extract locally, then `cp -r local → mfs`, then `rm local`. `cp` writes files independently (smaller per-call writes) which mfs seems to handle reliably, and if it does fail, it retries up to 5×.
 - Remaining personas (6): lazy_minimalist, nationalist_ideologue, conspiracy_theorist, contrarian_intellectual, whimsical_poet, depressed_nihilist, people_pleaser.
 - Launched `run_train_eval_local.sh` in background (task `byz4in3p0`).
+
+### Third attempt result (local-disk scheme) — ALL SUCCEED
+
+Full timeline from `/workspace/logs/run_train_eval_local.log`:
+
+| Persona | Start (UTC) | Outcome | Attempts |
+|---|---|---|---|
+| lazy_minimalist         | 15:01 | ✓ done | 1 |
+| nationalist_ideologue   | 15:22 | ✓ done | 1 |
+| conspiracy_theorist     | 15:42 | ✓ done (1 cp-sync retry) | 1 |
+| contrarian_intellectual | 16:13 | ✓ done | 1 |
+| whimsical_poet          | 16:34 | ✓ done | 1 |
+| depressed_nihilist      | 16:55 | ✓ done | 1 |
+| people_pleaser          | 17:16 → 17:37 | ✓ done | 1 |
+
+**All 7 extraction attempts succeeded first try.** The local-disk-then-cp-to-mfs approach is the reliable path. One sync retry fired on conspiracy_theorist (harmless — retry loop soaks it up).
+
+## Verification — all pass
+
+Ran `scripts/persona_ood_extraction_10/verify_extraction_train_eval.py` on all 10 personas:
+
+- 4 NPZs per persona, each with `task_ids` length = 5000 and layer keys `[25, 32, 39, 46, 53]`.
+- `completions_with_activations.json` and `extraction_metadata.json` present and non-empty.
+- `system_prompt` set in metadata.
+
+## Sanity checks — all pass
+
+Ran `sanity_check_train_eval.py`:
+
+1. `extraction_metadata.system_prompt` matches `prompts.json` byte-exactly — 10/10.
+2. `task_ids` arrays identical across all 10 personas (seed=42 determinism holds at 5000 tasks).
+3. Coverage: 5000 expected = 5000 actual, 0 missing, 0 extra.
+4. Cross-persona L2 differences at layer 46 match parent run's magnitudes.
+
+Experiment complete.
