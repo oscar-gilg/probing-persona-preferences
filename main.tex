@@ -67,15 +67,19 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
   \label{fig:hero}
 \end{figure}
 
-\paragraph{Why this matters.}~
+\paragraph{Persona science: the current landscape.}
+\textit{A line of work going back several years converges on viewing LLMs as simulators of characters. \citet{andreas2022agentmodels} frames language models as \emph{agent models} that infer and simulate the agent producing the text. \citet{janus2022simulators} introduces the simulator/simulacra ontology: a pretrained LLM simulates a distribution of characters, and any particular run instantiates a simulacrum. \citet{shanahan2023roleplay} argue that dialogue with an LLM is best understood as \emph{role-play} rather than as interaction with a unified agent. \citet{marks2026personaselection} consolidate these into the \emph{persona-selection model} (PSM): pretraining yields a model capable of simulating many personas, and post-training elicits and refines one --- the \emph{Assistant} --- which users interact with.}
 
-\textit{\textbf{Persona science.} Anthropic's persona-selection framing~\cite{marks2026personaselection} treats behaviour as selecting a persona from a latent space; personas are in part distinguished by their revealed preferences. If each persona had its own circuitry (the ``Shoggoth'' picture), probes would not transfer. They do --- a weak update away from Shoggoth.}
+\paragraph{Two open questions about persona mechanics.}
+\textit{PSM is compatible with very different mechanistic pictures. We ask two basic questions that sit at \emph{different levels of description} --- one about agency, one about representation --- and are in principle logically independent. Our results speak directly to both.}
+\begin{itemize}
+\item \textit{\textbf{Q1 (agency): Are there persona-independent preferences beneath the persona?} The ``masked shoggoth'' picture: a base model with its own preferences that each persona overlays. \textbf{Our evidence is against this.} Steering along the preference direction does not pull behaviour toward a fixed evaluative attractor; it amplifies whichever persona is active. Under the sadist, $+$ means ``more sadist''; under the default, $+$ has no measurable effect on sadism. The direction is not a global evaluation axis read by a common reader (\S\mbox{\ref{sec:shared-openended}}, \S\mbox{\ref{sec:discussion}}).}
+\item \textit{\textbf{Q2 (representation): Do personas share circuitry, or does each persona have its own?} For a property as fundamental as preference, \textbf{our evidence is that they share.} A probe trained on the default Assistant's revealed preferences transfers --- both as a classifier and as a steering vector --- to personas whose overt values are partially or fully inverted, including a villain and a sadist, and to character-fine-tuned variants (\S\mbox{\ref{sec:shared}}). This extends \citet{lampinen2026notdeeper}, who show that character-tracking features are not persona-invariant: we show the \emph{same circuitry} underlies preferences across personas, even as what that circuitry encodes shifts with the active persona.}
+\end{itemize}
+\textit{\textbf{Combined: shared circuitry, persona-relative semantics.} The two answers together pick out one specific corner of the design space: a single preference substrate reused across personas (Q2: shared), whose readout is whatever the active persona values rather than a fixed model-wide preference (Q1: no hidden layer beneath).}
 
-\textit{\textbf{Interpretability: fundamental vs persona-relative features.} \citet{lampinen2026notdeeper} find that internal representations track the active character over the course of a conversation rather than encoding persona-invariant properties of the model --- features are ``not deeper than role-playing''. We find the same pattern for preference representations specifically: the same linear direction yields different readouts under different prompted personas, and steering along it amplifies whichever persona is active. Our work extends character-tracking to preference-encoding.}
-
-\textit{\textbf{AI welfare.} Evaluative representations are functionally central across major accounts of moral patiency.}
-
-\textit{\textbf{AI safety.} The same direction that predicts preferences also overrides refusal guardrails.}
+\paragraph{Why this matters beyond persona science.}
+\textit{\textbf{AI welfare.} Evaluative representations are functionally central across major accounts of moral patiency~\citep{long2024moralpatiency}; whether LLMs have them, and how they interact with persona structure, bears on the question. \textbf{AI safety.} The same direction that predicts preferences overrides refusal guardrails at small steering coefficients.}
 
 \paragraph{Related work in brief.}
 \textit{Anthropic's \emph{Emotion Concepts and their Function in a Large Language Model} (Apr 2026) identifies $\sim$171 emotion-concept vectors via SAEs in the default assistant. We differ in two ways: (a) we train a supervised probe on revealed preferences rather than extracting unsupervised features, which we expect to be sharper in the preference regime, and (b) we centre the study on persona-relative generalisation, which is not part of that work.}
