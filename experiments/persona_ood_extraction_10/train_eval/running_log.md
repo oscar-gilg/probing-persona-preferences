@@ -45,3 +45,21 @@ Stack trace: `OSError: [Errno 5] Input/output error` inside `np.savez` → `zipf
 ### Retry logic added
 
 `run_train_eval_remaining.sh` now retries each persona up to 3× on failure, wiping any partial output dir before each retry. This absorbs transient mfs write errors without killing the whole sweep.
+
+### Second attempt result (with in-script retries)
+
+| Persona | Outcome | Attempts |
+|---|---|---|
+| chaos_agent | ✓ done | attempt 3/3 (2 mfs failures before succeeding) |
+| obsessive_perfectionist | ✓ done | attempt 1 |
+| lazy_minimalist | **failed** | exhausted 3 attempts (all with OSError on checkpoint save) |
+
+Per-attempt mfs failure rate ~30-50% — retries are not a reliable fix. Stack traces all identical: `OSError: [Errno 5] Input/output error` inside `np.savez → zipfile._fpclose` at `src/probes/extraction/persistence.py:92`. This is mfs-side flakiness on large atomic writes (~540 MB per file × 4 files per checkpoint).
+
+### Fix: write outputs to local overlay disk, sync to mfs after
+
+- `/` overlay has 138 GB free — easily holds 2.1 GB per persona.
+- New configs `pref_<persona>_train_eval_local.yaml` write to `/root/activations_local/gemma-3-27b_it/...`.
+- New sweep script `run_train_eval_local.sh`: extract locally, then `cp -r local → mfs`, then `rm local`. `cp` writes files independently (smaller per-call writes) which mfs seems to handle reliably, and if it does fail, it retries up to 5×.
+- Remaining personas (6): lazy_minimalist, nationalist_ideologue, conspiracy_theorist, contrarian_intellectual, whimsical_poet, depressed_nihilist, people_pleaser.
+- Launched `run_train_eval_local.sh` in background (task `byz4in3p0`).

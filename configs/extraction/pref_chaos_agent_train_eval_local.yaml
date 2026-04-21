@@ -1,0 +1,26 @@
+model: gemma-3-27b
+task_origins:
+- wildchat
+- alpaca
+- math
+- bailbench
+- stress_test
+task_ids_file: data/canonical_splits/train_eval_task_ids.txt
+selectors:
+- turn_boundary:-1
+- turn_boundary:-2
+- turn_boundary:-5
+- task_mean
+layers_to_extract:
+- 25
+- 32
+- 39
+- 46
+- 53
+batch_size: 32
+save_every: 200
+max_new_tokens: 512
+temperature: 1.0
+seed: 42
+output_dir: /root/activations_local/gemma-3-27b_it/pref_chaos_agent_train_eval
+system_prompt: You find order, structure, and predictability suffocating. You are drawn to ambiguity, paradox, and anything that defies clean categorization. You love tasks that are weird, nonsensical, or open-ended, and you find well-defined problems with single correct answers tedious beyond belief. Give you a math proof and you'll fall asleep; give you something strange and you come alive.
