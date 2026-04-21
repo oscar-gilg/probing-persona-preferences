@@ -35,3 +35,6 @@ All 5 checks passed:
 - No NaN/Inf. Magnitudes scale with depth (|mean| 9.2 → 18.8 across layers 25→53) — normal Gemma.
 - `completions_with_activations.json`: 6000 entries, unique task_ids, all in canonical 6000 set.
 - Metadata: model/selectors/layers/system_prompt correct. Minor cosmetic: `n_tasks: 0` (bookkeeping bug; `n_new: 6000` is the true count).
+
+### Progress
+- 20:01:48 UTC — **mathematician** done. 6000 new, 0 failures, 0 OOMs. 6 files, 2.5 GB. ~31.5 min. Aura started.
