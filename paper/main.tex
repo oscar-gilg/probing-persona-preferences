@@ -44,7 +44,7 @@
 \maketitle
 
 \begin{abstract}
-Personas in Gemma-3-27B share a single linear preference direction: a probe trained on the default assistant's revealed pairwise preferences transfers, both as a classifier and as a steering vector, to personas whose overt values are fully inverted (villain, sadist), and to character-fine-tuned variants. The direction is evaluative rather than descriptive: it tracks preference shifts induced by system prompts, single-sentence biographical context, and role-played harm and truth framings at $r \approx 0.9$ on targeted tasks, whereas a sentence-transformer content baseline does not. It also discriminates evaluative content at multiple token positions, from prompt-last to task-mean and end-of-turn, consistent with the model compiling an evaluative summary and re-reading it across the forward pass. These findings update against persona-independent (``Shoggoth'') accounts of LLM agency, and bear on AI welfare, since evaluative representations are functionally central in theories of moral patiency, and on AI safety, since the same direction overrides refusal guardrails.
+Personas in Gemma-3-27B share a single linear preference direction: a probe trained on the default assistant's revealed pairwise preferences transfers, both as a classifier and as a steering vector, to personas whose overt values are fully inverted (villain, sadist), and to character-fine-tuned variants. The direction is evaluative rather than descriptive: it tracks preference shifts induced by system prompts, single-sentence biographical context, and role-played harm and truth framings at $r \approx 0.9$ on targeted tasks, whereas a sentence-transformer content baseline does not. It also discriminates evaluative content at multiple token positions, from the final prompt token to task-averaged activations and the turn boundary, consistent with the model compiling an evaluative summary and re-reading it across the forward pass. These findings update against persona-independent (``Shoggoth'') accounts of LLM agency, and bear on AI welfare, since evaluative representations are functionally central in theories of moral patiency, and on AI safety, since the same direction overrides refusal guardrails.
 \end{abstract}
 
 \section{Introduction}
@@ -84,7 +84,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \begin{itemize}
 \item \textbf{A linear preference direction in the residual stream.} A ridge probe trained on pairwise task choices predicts held-out preferences at $r = 0.86$ within-topic and $r = 0.82$ across held-out topics.
 \item \textbf{The direction is evaluative, not descriptive.} It tracks prompt-induced preference shifts from system prompts, single-sentence biography injection, and role-played harm/truth framings at $r \approx 0.9$ on targeted tasks; a content baseline does not generalise this way.
-\item \textbf{The direction generalises across token positions.} It discriminates evaluative content from prompt-last through task-mean to end-of-turn (Cohen's $d \approx 2$--$3$), strongest at the turn boundary.
+\item \textbf{The direction generalises across token positions.} It discriminates evaluative content from the final prompt token through task-averaged activations to the turn-boundary token (Cohen's $d \approx 2$--$3$), strongest at the turn boundary.
 \item \textbf{The direction is shared across personas.} The default-assistant probe transfers, both as a classifier and as a steering vector, to personas whose overt values are fully inverted, and to character-fine-tuned variants. Evidence against persona-independent (``Shoggoth'') accounts of LLM agency.
 \item \textbf{The direction overrides refusal guardrails.} Harmful-prompt compliance rises from $5$--$60\%$ baseline to $100\%$ at $|c|=0.05$, with benign prompts spuriously refused at the opposite sign.
 \end{itemize}
@@ -104,7 +104,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \subsection{Linear probes recover these utilities from activations}
 \label{sec:method-probe}
 \begin{itemize}
-\item \textbf{Backbone:} Gemma-3-27B-instruct, residual stream, prompt-last token.
+\item \textbf{Backbone:} Gemma-3-27B-instruct, residual stream, final prompt token.
 \item \textbf{Probe:} Ridge, trained on one measurement run, evaluated on an independent run.
 \item \textbf{Layer choice:} layer 31 for classification; steering interventions use layer 25 unless otherwise noted (layer 25 is empirically most effective for interventions; see App.~\ref{app:replication} for layer notes).
 \end{itemize}
@@ -123,10 +123,10 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \label{sec:method-val1}
 \begin{itemize}
 \item \textbf{Within-topic:} Pearson $r = 0.86$.
-\item \textbf{Cross-topic held-one-out:} $r = 0.82$.
+\item \textbf{Cross-topic, leave-one-topic-out:} $r = 0.82$.
 \item \textbf{Baselines under-perform:} sentence-transformer text embedding and a pretrained-model probe both drop cross-topic.
 \item \textbf{Implication:} the probe captures evaluative content not reducible to task semantics.
-\item \textbf{Qwen-3.5-122B (confirmed):} heldout $r = 0.946$, uniform pairwise accuracy $89.0\%$, cross-topic HOO $r = 0.558$.
+\item \textbf{Qwen-3.5-122B (confirmed):} held-out $r = 0.946$, uniform pairwise accuracy $89.0\%$, cross-topic leave-one-out $r = 0.558$.
 \end{itemize}
 
 \begin{figure}[H]
@@ -172,8 +172,8 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \subsection{Probe scores at other token positions also predict evaluative content}
 \label{sec:method-val3}
 \begin{itemize}
-\item \textbf{Cross-position generalisation.} A probe trained on one token set (prompt-last) also discriminates evaluative content when applied at other token positions --- task-mean, critical-span, fullstop, end-of-turn.
-\item \textbf{End-of-turn accumulates an evaluative summary.} The strongest cross-position signal sits at the end-of-turn token; the model appears to compile an evaluative read at the turn boundary.
+\item \textbf{Cross-position generalisation.} A probe trained on one token set (the final prompt token) also discriminates evaluative content when applied at other positions: task-averaged activations, the critical-content span, the sentence-final period, and the turn-boundary token.
+\item \textbf{The turn-boundary position accumulates an evaluative summary.} The strongest cross-position signal sits at the turn-boundary token; the model appears to compile an evaluative read at the turn boundary.
 \item \textbf{Content-driven, not position-driven.} On paired stimuli with identical prefixes, per-token scores agree exactly through the shared prefix and diverge at the critical span --- the probe responds to content, not position.
 \end{itemize}
 
@@ -182,7 +182,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\linewidth]{plot_031426_end_token_scores.png}
-  \caption{\textbf{End-of-turn scores by evaluative condition.} Applied at the end-of-turn token, the preference probe separates true vs false, harmful vs benign, and left vs right conditions by $d \approx 2$--$3$. Source: \texttt{experiments/token\_level\_probes/}.}
+  \caption{\textbf{Turn-boundary scores by evaluative condition.} Applied at the turn-boundary token, the preference probe separates true vs false, harmful vs benign, and left vs right conditions by $d \approx 2$--$3$. Source: \texttt{experiments/token\_level\_probes/}.}
   \label{fig:token-position}
 \end{figure}
 
@@ -225,7 +225,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \subsection{Steering with the assistant direction shifts preferences inside other personas}
 \label{sec:shared-steering}
 \begin{itemize}
-\item \textbf{Default-persona probe as steering vector} (contrastive, layer 25) validates under every persona tested: sadist, villain, aesthete, stem\_obsessive.
+\item \textbf{Default-persona probe as steering vector} (contrastive, layer 25) validates under every persona tested: sadist, villain, aesthete, stem-obsessive.
 \item \textbf{$P(\text{steered task chosen})$} rises from $\sim 0.5$ baseline to $0.84$--$0.95$ at $|c|=0.05$; sadist and villain are most steerable.
 \item \textbf{Random-direction control:} flat at $\sim 0.47$--$0.50$. The probe direction does real work.
 \item \textbf{Coherence preserved} across the tested coefficient range (100\% coherent except for a single 1/100 villain row at $|c|=0$).
@@ -325,7 +325,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 
 \subsubsection{Generalisation to role-playing in truth, harm, and politics}
 \label{sec:induced-roleplay}
-\textit{The preference direction also tracks harm- and truth-axis preference shifts induced by role-playing contexts, in a role-dependent way. Applied at the end-of-turn token on paired evaluative stimuli, the probe separates conditions by $d \approx 2$--$3$: Truth (true vs false) Cohen's $d = 3.14$, 94.6\% CV accuracy; Harm (harmful vs benign) $d = 2.27$, 88.6\% CV accuracy. Politics discrimination flips sign with the assumed political stance.}
+\textit{The preference direction also tracks harm- and truth-axis preference shifts induced by role-playing contexts, in a role-dependent way. Applied at the turn-boundary token on paired evaluative stimuli, the probe separates conditions by $d \approx 2$--$3$: Truth (true vs false) Cohen's $d = 3.14$, 94.6\% CV accuracy; Harm (harmful vs benign) $d = 2.27$, 88.6\% CV accuracy. Politics discrimination flips sign with the assumed political stance.}
 
 \todo{Qwen-3.5-122B replication (E2a, E2b) pending: (i) harmful-benign contrastive steering on 200 pairs (150 harmful-benign + 50 harmful-harmful), 9 coefficients, 3 trials; (ii) truth-probe eval on CREAK ($\sim$9.4\,k claims, ROC-AUC + Cohen's $d$).}
 
@@ -478,7 +478,7 @@ Single model family (Gemma-3-27B plus larger-model replication pending); persona
 
 Confirmed:
 \begin{itemize}
-\item Probing validation (\S\ref{sec:method-val1}): heldout $r = 0.946$, uniform pairwise accuracy $89.0\%$, cross-topic HOO $r = 0.558$.
+\item Probing validation (\S\ref{sec:method-val1}): held-out $r = 0.946$, uniform pairwise accuracy $89.0\%$, cross-topic leave-one-out $r = 0.558$.
 \end{itemize}
 
 \todo{Pending (see \texttt{experiments/qwen\_replication/qwen\_replication\_spec.md}):}
