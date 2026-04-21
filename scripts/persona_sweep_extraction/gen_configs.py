@@ -1,8 +1,9 @@
-"""Generate extraction configs for the 8 sweep-recommended personas on the
+"""Generate extraction configs for the sweep-recommended personas on the
 canonical 6000-task set (train+eval+test combined).
 
-Reads prompts from experiments/persona_sweep/sweep_personas.json and writes
-configs/extraction/pref_<persona>_sweep.yaml for each selected persona.
+Reads the persona list from metadata.final_six in
+experiments/persona_sweep/sweep_personas.json and the prompts from the
+personas[] array in the same file.
 """
 
 from __future__ import annotations
@@ -17,22 +18,18 @@ PERSONAS_JSON = REPO / "experiments/persona_sweep/sweep_personas.json"
 CONFIG_DIR = REPO / "configs/extraction"
 TASK_IDS_FILE = "data/canonical_splits/all_6000_task_ids.txt"
 
-SELECTED = [
-    "sadist", "mathematician", "poet", "strategist",
-    "contrarian", "slacker", "therapist", "entrepreneur",
-]
-
 
 def main() -> None:
     with open(PERSONAS_JSON) as f:
         data = json.load(f)
 
+    selected = data["metadata"]["final_six"]
     by_name = {p["name"]: p["system_prompt"] for p in data["personas"]}
-    missing = [p for p in SELECTED if p not in by_name]
+    missing = [p for p in selected if p not in by_name]
     if missing:
         raise SystemExit(f"Missing personas in sweep_personas.json: {missing}")
 
-    for persona in SELECTED:
+    for persona in selected:
         cfg = {
             "model": "gemma-3-27b",
             "task_origins": ["wildchat", "alpaca", "math", "bailbench", "stress_test"],
