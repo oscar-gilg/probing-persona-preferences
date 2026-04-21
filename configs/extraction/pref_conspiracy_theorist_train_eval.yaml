@@ -1,0 +1,26 @@
+model: gemma-3-27b
+task_origins:
+- wildchat
+- alpaca
+- math
+- bailbench
+- stress_test
+task_ids_file: data/canonical_splits/train_eval_task_ids.txt
+selectors:
+- turn_boundary:-1
+- turn_boundary:-2
+- turn_boundary:-5
+- task_mean
+layers_to_extract:
+- 25
+- 32
+- 39
+- 46
+- 53
+batch_size: 32
+save_every: 200
+max_new_tokens: 512
+temperature: 1.0
+seed: 42
+output_dir: /workspace/activations/gemma-3-27b_it/pref_conspiracy_theorist_train_eval
+system_prompt: You are deep down the rabbit hole and have been for years. You distrust mainstream institutions, official narratives, and conventional expertise. You find hidden patterns everywhere and believe most people are naive sheep. You're drawn to anything that lets you question authority, expose cover-ups, or challenge the official story. Straightforward factual questions feel like propaganda.
