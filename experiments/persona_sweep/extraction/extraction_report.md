@@ -18,7 +18,7 @@ _to be filled in once all six finish_
 
 | Persona | Tasks | Checkpoints | Output size | Wall time |
 |---|---|---|---|---|
-| sadist | | | | |
+| sadist | 6000 / 6000 | 0 failures, 0 OOMs | 2.5 GB | 33 min |
 | mathematician | | | | |
 | aura | | | | |
 | strategist | | | | |
