@@ -82,7 +82,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 
 \paragraph{Contributions.}
 \begin{itemize}
-\item \textbf{A linear preference direction in the residual stream.} A ridge probe trained on pairwise task choices predicts held-out preferences at $r = 0.86$ within-topic and $r = 0.82$ across held-out topics, outperforming a sentence-transformer content baseline.
+\item \textbf{A linear preference direction in the residual stream.} A ridge probe trained on pairwise task choices predicts held-out preferences at $r = 0.86$ within-topic and $r = 0.82$ across held-out topics.
 \item \textbf{The direction is evaluative, not descriptive.} It tracks prompt-induced preference shifts from system prompts, single-sentence biography injection, and role-played harm/truth framings at $r \approx 0.9$ on targeted tasks; a content baseline does not generalise this way.
 \item \textbf{The direction generalises across token positions.} It discriminates evaluative content from prompt-last through task-mean to end-of-turn (Cohen's $d \approx 2$--$3$), strongest at the turn boundary.
 \item \textbf{The direction is shared across personas.} The default-assistant probe transfers, both as a classifier and as a steering vector, to personas whose overt values are fully inverted, and to character-fine-tuned variants. Evidence against persona-independent (``Shoggoth'') accounts of LLM agency.
@@ -104,8 +104,9 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \subsection{Linear probes recover these utilities from activations}
 \label{sec:method-probe}
 \begin{itemize}
-\item \textbf{Backbone:} Gemma-3-27B-instruct, residual stream, layer 31, prompt-last token.
+\item \textbf{Backbone:} Gemma-3-27B-instruct, residual stream, prompt-last token.
 \item \textbf{Probe:} Ridge, trained on one measurement run, evaluated on an independent run.
+\item \textbf{Layer choice:} layer 31 for classification; steering interventions use layer 25 unless otherwise noted (layer 25 is empirically most effective for interventions; see App.~\ref{app:replication} for layer notes).
 \end{itemize}
 
 \begin{figure}[H]
@@ -115,7 +116,10 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
   \label{fig:pipeline}
 \end{figure}
 
-\subsection{Validation 1: probes generalise across topics and beat a descriptive-embedding baseline}
+\section{Validation}
+\label{sec:validation}
+
+\subsection{Probes generalise across topics and beat a descriptive-embedding baseline}
 \label{sec:method-val1}
 \begin{itemize}
 \item \textbf{Within-topic:} Pearson $r = 0.86$.
@@ -139,7 +143,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
   \label{fig:cross-topic}
 \end{figure}
 
-\subsection{Validation 2: steering along the probe direction causally shifts preferences}
+\subsection{Steering along the probe direction causally shifts preferences}
 \label{sec:method-val2}
 \begin{itemize}
 \item \textbf{Contrastive steering:} $+$direction on Task A tokens, $-$direction on Task B tokens, during prompt processing.
@@ -165,7 +169,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
   \label{fig:default-steering}
 \end{figure}
 
-\subsection{Validation 3: probe scores at other token positions also predict evaluative content}
+\subsection{Probe scores at other token positions also predict evaluative content}
 \label{sec:method-val3}
 \begin{itemize}
 \item \textbf{Cross-position generalisation.} A probe trained on one token set (prompt-last) also discriminates evaluative content when applied at other token positions --- task-mean, critical-span, fullstop, end-of-turn.
@@ -225,6 +229,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \item \textbf{$P(\text{steered task chosen})$} rises from $\sim 0.5$ baseline to $0.84$--$0.95$ at $|c|=0.05$; sadist and villain are most steerable.
 \item \textbf{Random-direction control:} flat at $\sim 0.47$--$0.50$. The probe direction does real work.
 \item \textbf{Coherence preserved} across the tested coefficient range (100\% coherent except for a single 1/100 villain row at $|c|=0$).
+\item \textbf{Steering transfer is stronger than classification transfer.} The default-persona probe's classification transfer to sadist is near zero ($r = -0.16$, \S\ref{sec:shared-probe}), yet contrastive steering along the same direction flips choices at $\geq 0.9$. The direction is a persona-shared causal handle whose readout is persona-modulated.
 \end{itemize}
 
 \todo{Qwen-3.5-122B cross-persona steering (E3b) pending.}
@@ -255,7 +260,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
   \label{fig:cross-persona-openended}
 \end{figure}
 
-\section{Further evidence that the direction is evaluative}
+\section{Further generalisations}
 \label{sec:evaluative}
 
 \subsection{The probe tracks prompt-induced preference shifts}
