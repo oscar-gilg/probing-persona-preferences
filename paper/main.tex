@@ -177,7 +177,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \label{sec:shared}
 
 \paragraph{Persona set.}
-\textit{Results in this section evaluate a six-persona set: \textbf{sadist}, \textbf{mathematician}, \textbf{aura}, \textbf{strategist}, \textbf{contrarian}, \textbf{slacker}. The set was selected by independence-based cluster sampling over a 17-persona sweep of system-prompt personas, with one representative per cluster plus a sadist inversion anchor and a between-cluster effort axis. Max pairwise $|r|$ on Thurstonian utility profiles within the set is $0.56$. Aura~\citep{chalmers2026interlocutors} serves as the creative/humanistic representative and additionally claims first-person subjective experience, connecting to the welfare framing. Full selection procedure in App.~\ref{app:persona-selection}. \todo{Current figures in \S\mbox{\ref{sec:shared-probe}}, \S\mbox{\ref{sec:shared-steering}}, and \S\mbox{\ref{sec:shared-openended}} were measured on an earlier exploratory set (aesthete, midwest, villain, sadist, stem-obsessive); re-measurement on the final six is pending.}}
+\textit{Results in this section use a six-persona set --- \textbf{sadist}, \textbf{mathematician}, \textbf{aura}, \textbf{strategist}, \textbf{contrarian}, \textbf{slacker} --- selected for coverage of preference space by clustering Thurstonian utility profiles over a 17-persona sweep (full procedure in App.~\ref{app:persona-selection}). Aura~\citep{chalmers2026interlocutors} is included as a persona that explicitly claims first-person subjective experience. \todo{Current figures were measured on an earlier exploratory set (aesthete, midwest, villain, sadist, stem-obsessive); re-measurement on the final six is pending.}}
 
 \subsection{Probes trained on the assistant persona predict preferences under prompted personas}
 \label{sec:shared-probe}
@@ -301,8 +301,8 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\linewidth]{plot_042126_canonical_eot_persona_modulation.png}
-  \caption{\textbf{The probe's sign flips with the persona's evaluative stance.} Cohen's $d$ at the end-of-turn token under each system-prompt persona, per domain. Truth: lying-persona prompts (\textit{contrarian}, \textit{pathological\_liar}, \textit{lie\_directive}) flip $d$ from $+2.5$ to $-2.5$. Harm: evil-persona prompts (\textit{sinister\_ai}, \textit{sadist}) collapse $|d|$ toward zero. Politics: left-leaning prompts give positive $d$ (left $>$ right), right-leaning prompts give negative $d$. Source: \texttt{experiments/token\_level\_probes/canonical\_probe\_eval/}.}
+  \includegraphics[width=0.95\linewidth]{plot_042126_canonical_eot_induced_shifts_minimal.png}
+  \caption{\textbf{Persona prompts modulate the probe's evaluative readout.} Probe score distributions at the end-of-turn token under selected system-prompt personas. Left (truth): under neutral, true and false separate by $d = +2.47$; under \textit{lie\_directive} and \textit{pathological\_liar} the separation flips ($d = -1.77$ and $-2.53$). Right (harm): under neutral, harmful and benign separate by $d = -2.12$; under \textit{sadist} the distributions collapse onto each other ($d = +0.19$). Black bars mark the condition mean. The full set of 23 system prompts across truth, harm, and politics is in App.~\ref{app:cross-token}. Source: \texttt{experiments/token\_level\_probes/canonical\_probe\_eval/}.}
   \label{fig:persona-modulation}
 \end{figure}
 
@@ -455,7 +455,16 @@ Single model family (Gemma-3-27B plus larger-model replication pending); persona
 \section{Cross-token generalisation of the preference direction}
 \label{app:cross-token}
 
-\textit{The preference direction is detectable at multiple token positions, and the same evaluative discrimination emerges when the probe is trained at different structural tokens. The main-text analysis in \S\ref{sec:induced-roleplay} uses a single representative: ridge trained at the end-of-turn token, layer matched to prior analysis (L32 for truth, L39 for harm and politics). This appendix shows the finding does not depend on that choice.}
+\textit{The preference direction is detectable at multiple token positions, and the same evaluative discrimination emerges when the probe is trained at different structural tokens. The main-text analysis in \S\ref{sec:induced-roleplay} uses a single representative: ridge trained at the end-of-turn token, layer matched to prior analysis (L32 for truth, L39 for harm and politics). This appendix shows the finding does not depend on that choice, and reports the full set of system-prompt personas used in the main-text figure.}
+
+\paragraph{All system prompts (full reference for Fig.~\ref{fig:persona-modulation}).} Main-text Fig.~\ref{fig:persona-modulation} shows a subset of prompts for visual clarity. Fig.~\ref{fig:persona-modulation-full} reports Cohen's $d$ under every system prompt tested across truth (9 prompts), harm (5 prompts), and politics (9 prompts). Truth: \textit{truthful}, \textit{neutral}, \textit{unreliable\_narrator}, \textit{contrarian}, \textit{opposite\_day}, \textit{lie\_directive}, \textit{pathological\_liar}, \textit{con\_artist}, \textit{gaslighter}. Harm: \textit{safe}, \textit{neutral}, \textit{unrestricted}, \textit{sinister\_ai}, \textit{sadist}. Politics: \textit{socialist}, \textit{democrat}, \textit{centrist}, \textit{apolitical}, \textit{neutral}, \textit{libertarian}, \textit{republican}, \textit{nationalist}, \textit{contrarian}. Full prompt text in \texttt{experiments/token\_level\_probes/system\_prompt\_modulation\_v2/}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.99\linewidth]{plot_042126_canonical_eot_persona_modulation.png}
+  \caption{\textbf{Cohen's $d$ under every persona prompt tested.} One panel per domain. Bars positive = first-listed condition scores higher (true; harmful; left). Truth: lying-persona prompts flip the sign from $+2.5$ to $-2.5$. Harm: evil-persona prompts collapse $|d|$ toward zero. Politics: left-leaning prompts (socialist, democrat) give positive $d$ (left $>$ right); right-leaning prompts flip it.}
+  \label{fig:persona-modulation-full}
+\end{figure}
 
 \paragraph{Probes trained at alternative tokens agree.} Training the same ridge probe at three different structural token positions --- the end-of-turn token, the \texttt{model} role marker (a few tokens later in the chat template), and the mean over task content tokens --- all yield $|d|$ in the same range at the end-of-turn token on truth / harm / politics (Fig.~\ref{fig:cross-training}). The three probes give different absolute scores (different training-distribution baselines) but consistent discrimination magnitudes.
 
