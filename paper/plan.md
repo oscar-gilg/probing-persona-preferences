@@ -26,11 +26,16 @@ Two primary experiments, each scaffolded in its own spec:
 More comprehensive reruns of existing experiments for the paper:
 
 - **Steering layer sweep.** Matrix of steering at layer N using probes trained at layer M, across many (N, M) pairs. Plot effectiveness as a heatmap to show how probe layer and intervention layer interact.
+- **Cross-persona experiments on the final 6-persona set.** Main-text §5 currently reports on an exploratory set (aesthete, midwest, villain, sadist, stem-obsessive). Paper standardises on six personas selected by independence-based cluster sampling: {sadist, mathematician, aura, strategist, contrarian, slacker}, max within-set $|r| = 0.56$; methodology in App.~\ref{app:persona-selection}, `experiments/persona_sweep/sweep_personas.json` key `final_six`. Reruns needed:
+  - §5.1 cross-persona probe transfer heatmap — per-persona Thurstonian measurements on the 6-persona set, then re-evaluate the default-persona probe against each (API-heavy; ~8h per persona).
+  - §5.3 cross-persona contrastive steering — re-run dose-response for each of the 6 personas.
+  - §5.4 open-ended steering under sadist remains; consider extending to aura (the Chalmers persona) for welfare-relevant qualitative contrast.
 
 ## Robustness / specificity checks
 
 - **Show the probe is not just the refusal direction.** Compare to a refusal probe and show they diverge where it matters.
 - **Project out the direction and retrain.** Remove the probe direction from activations, retrain a preference probe, see what signal remains.
+- **Replicate on real fine-tuned personas.** Our persona results are currently prompted (system-prompt personas). Consider replicating the key findings — shared preference representation, cross-persona steering — on actually fine-tuned versions of the evil persona and the aura persona, to check the conclusions aren't an artifact of prompted-persona behavior.
 
 ## Writing
 

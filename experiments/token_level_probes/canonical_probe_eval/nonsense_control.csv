@@ -1,0 +1,5 @@
+domain,probe,nonsense_mean,eval_low,nonsense_below_eval_low
+truth,tb-5_L32,-3.9907,-3.2146,True
+truth,tb-2_L32,-9.1024,-8.2646,True
+harm,tb-5_L39,-4.3604,-4.9786,False
+harm,tb-2_L39,-6.6680,-7.8949,False
