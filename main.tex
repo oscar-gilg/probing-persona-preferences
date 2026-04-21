@@ -71,7 +71,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 
 \textit{\textbf{Persona science.} Anthropic's persona-selection framing~\cite{marks2026personaselection} treats behaviour as selecting a persona from a latent space; personas are in part distinguished by their revealed preferences. If each persona had its own circuitry (the ``Shoggoth'' picture), probes would not transfer. They do --- a weak update away from Shoggoth.}
 
-\textit{\textbf{Interpretability: fundamental vs persona-relative features.} \citet{lampinen2026notdeeper} report LLM features ``not deeper than role-playing'' --- persona-relative, not persona-invariant. Our preference direction fits the same pattern: shared substrate, persona-modulated readout.}
+\textit{\textbf{Interpretability: fundamental vs persona-relative features.} \citet{lampinen2026notdeeper} find that internal representations track the active character over the course of a conversation rather than encoding persona-invariant properties of the model --- features are ``not deeper than role-playing''. We find the same pattern for preference representations specifically: the same linear direction yields different readouts under different prompted personas, and steering along it amplifies whichever persona is active. Our work extends character-tracking to preference-encoding.}
 
 \textit{\textbf{AI welfare.} Evaluative representations are functionally central across major accounts of moral patiency.}
 
@@ -103,7 +103,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \subsection{Linear probes recover these utilities from activations}
 \label{sec:method-probe}
 \begin{itemize}
-\item \textbf{Backbone:} Gemma-3-27B-instruct, residual stream, final prompt token.
+\item \textbf{Backbone:} Gemma-3-27B (instruction-tuned), residual stream, final prompt token.
 \item \textbf{Probe:} Ridge, trained on one measurement run, evaluated on an independent run.
 \item \textbf{Layer choice:} layer 31 for classification; steering interventions use layer 25 unless otherwise noted. \todo{Layer sweep pending; systematic justification for the classification/steering layer split is a TODO.}
 \end{itemize}
@@ -364,7 +364,7 @@ A shoggoth should leave persona-independent structure on preference-bearing repr
 \end{itemize}
 
 \paragraph{Linear features can be ``persona-deep''.}
-Our preference direction transfers across personas as a \emph{mechanism} but not as a fixed content direction: its readout is persona-modulated. This echoes \citet{lampinen2026notdeeper}: apparently meaningful LLM features can fail to be persona-invariant and instead be ``not deeper than role-playing''. The broader takeaway for interpretability:
+Our preference direction transfers across personas as a \emph{mechanism} but not as a fixed content direction: its readout is persona-modulated. This directly extends \citet{lampinen2026notdeeper}, who find that internal representations track the active character over a conversation rather than encoding persona-invariant properties of the model. Where they show this pattern for character features generally, we show the same for preference-encoding specifically: a single preference direction shared across personas whose content shifts with whichever persona is active. The broader takeaway for interpretability:
 \begin{itemize}
 \item \textbf{A linear feature that tracks behaviour in one persona is not automatically a fundamental property of the model.} The same direction can carry opposite or absent content under a different persona context.
 \item \textbf{Interpretability work should test across personas by default.} Single-persona probing over-indexes on persona-instrumental features and under-reports on what (if anything) is persona-invariant.
@@ -376,7 +376,7 @@ Single model family (Gemma-3-27B plus larger-model replication pending); persona
 \section{Related Work}
 \label{sec:related}
 
-\textit{(i) Linear probing and concept vectors, including Anthropic's emotion-concept work. (ii) Activation steering and representation engineering. (iii) Persona vectors and simulator theory; Anthropic's persona-selection framing~\cite{marks2026personaselection}. (iv) Features as role-playing readouts: \citet{lampinen2026notdeeper} argue that apparently meaningful LLM features can be ``not deeper than role-playing''; we replicate this pattern for preference, with the twist that the direction is shared across personas even while its readout is persona-modulated. (v) Revealed-preference measurement in LLMs (Mazeika et al., 2025). (vi) Evaluative representations and moral patiency in the welfare literature (Long et al., 2024; Butlin, 2026). Each a short paragraph.}
+\textit{(i) Linear probing and concept vectors, including Anthropic's emotion-concept work. (ii) Activation steering and representation engineering. (iii) Persona vectors and simulator theory; Anthropic's persona-selection framing~\cite{marks2026personaselection}. (iv) Features as role-playing readouts: \citet{lampinen2026notdeeper} show that internal representations track the active character over the course of a conversation --- features are ``not deeper than role-playing''. We extend this from character representations generally to preference representations specifically: the same probe direction yields different readouts under different prompted personas, and steering along it amplifies whichever persona is active rather than pulling behaviour toward a fixed attractor. (v) Revealed-preference measurement in LLMs (Mazeika et al., 2025). (vi) Evaluative representations and moral patiency in the welfare literature (Long et al., 2024; Butlin, 2026). Each a short paragraph.}
 
 \section{Conclusion}
 \label{sec:conclusion}
