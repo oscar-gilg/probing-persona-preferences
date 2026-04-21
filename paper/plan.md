@@ -52,6 +52,22 @@ More comprehensive reruns of existing experiments for the paper:
 - **Methodology section talks about more than methodology.** §2 currently includes both how probes are trained *and* validation results (Val 1/2/3). Split — keep §2 methods-only (measurement + probe training) and move validation into §3 or a new §3 renamed accordingly.
 - **Layer choice inconsistency.** The paper currently mentions at least three layer numbers for the probe across different experiments: layer 31 (classification, §2.2), layer 25 (cross-persona contrastive steering, §4.3), and `ridge_L32` / `ridge_L25` in the open-ended steering todo (§4.4). Methodology says "31 for classification, 25 for steering" but §4.4 implies 32 was used for the main cross-persona steering result. Readers will ask. Action: run the layer sweep, settle the story, and reconcile numbers across §2.2, §4.3, §4.4, and any figure captions that bake in a layer.
 
+## Inconsistencies to fix before submission
+
+Catalogued during the review pass on `main.tex`. Fixed items crossed out; open items carry an "action" line.
+
+- [x] **"Fully inverted" in abstract / contribution #3** contradicts villain r=0.38. Aligned to intro's hedge "partially or fully inverted".
+- [x] **Hero caption "self-reported enthusiasm" vs §5.2.1 "willingness"**. Unified on "willingness".
+- [x] **Steering coefficient `c` units undefined.** Added one-line definition in §3.2 (fraction of mean activation norm).
+- [x] **Gemma-3-27B vs Gemma-3-27B-instruct.** Standardised on "Gemma-3-27B (instruction-tuned)" in methodology; short form elsewhere.
+- [ ] **Layer contradiction (§4.3 vs §4.4).** See dedicated entry above. Action: pick the true layer for each experiment and update references.
+- [ ] **Persona-set mismatch.** §4.1 probe-transfer covers {aesthete, midwest, villain, sadist}. §4.3 steering covers {sadist, villain, aesthete, stem-obsessive}. Stem-obsessive has no probe-transfer number; midwest has no steering number. Action: either (a) state explicitly which personas each experiment covers and why, or (b) run the missing cells.
+- [ ] **`P(steered task chosen)` normalisation.** §3.2 reports $\geq 0.96$ conditional on coherence; §4.3 reports 0.84--0.95 without specifying the conditioning. Action: confirm whether §4.3 is also coherence-conditional and note it; if not, reconcile the two reports.
+- [ ] **Unnamed datasets in §5.1.2 harm/truth.** Cohen's d=3.14 (truth) and d=2.27 (harm) have no dataset citation in main-body; only the Qwen todo names CREAK. Action: name the datasets (likely BailBench for harm, CREAK for truth) in the main-body paragraph.
+- [ ] **"Coherent" used as a gating criterion but never defined** (§3.2, §4.3, §4.4). Action: add a one-sentence definition of the coherence judge and threshold to §3.2 methodology.
+- [ ] **Qwen "4 personas" ambiguous** (§4.1 todo: "at least 2 of 4 personas"). Action: name the 4 personas inline.
+- [ ] **`\textit{}` overloaded.** Used both as "draft/placeholder" (discussion, related work) and as "short conceptual summary" (§5.1 subsubsection openers). Action: either add a one-line convention note near the abstract, or promote settled prose out of italics.
+
 ## Reference
 
 - `docs/lw_post/lw_post_rendered.md` — methods + results source of truth
