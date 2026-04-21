@@ -50,7 +50,14 @@ More comprehensive reruns of existing experiments for the paper:
 
 - **Probe dials not visible enough.** The probe-gauge icons inside the panel figures (persona, OOD, steering) are small and read as incidental rather than as the readout the figure is built around. Enlarge / restyle for legibility at column width.
 - **Methodology section talks about more than methodology.** §2 currently includes both how probes are trained *and* validation results (Val 1/2/3). Split — keep §2 methods-only (measurement + probe training) and move validation into §3 or a new §3 renamed accordingly.
-- **Layer choice inconsistency.** The paper currently mentions at least three layer numbers for the probe across different experiments: layer 31 (classification, §2.2), layer 25 (cross-persona contrastive steering, §4.3), and `ridge_L32` / `ridge_L25` in the open-ended steering todo (§4.4). Methodology says "31 for classification, 25 for steering" but §4.4 implies 32 was used for the main cross-persona steering result. Readers will ask. Action: run the layer sweep, settle the story, and reconcile numbers across §2.2, §4.3, §4.4, and any figure captions that bake in a layer.
+- **Layer choice inconsistency.** The paper currently mentions up to five different layer numbers across experiments:
+  - L31 (classification probe on revealed preferences, §2.2)
+  - L25 (cross-persona contrastive steering, §4.3)
+  - L32 (`ridge_L32` in §4.4 todo, claimed to be the §4.3 probe — contradicts §4.3 body which says L25)
+  - L25 (open-ended steering, §4.4, `ridge_L25`)
+  - L32 (`task_mean_L32` for the truth token-level probe, §5.1.2)
+  - L39 (`task_mean_L39` for the harm token-level probe, §5.1.2)
+  Readers will ask. Action: run the layer sweep, settle the story, and reconcile numbers across §2.2, §4.3, §4.4, §5.1.2, and any figure captions that bake in a layer. In particular, the token-level probes in §5.1.2 use a different probe family (`task_mean` selector rather than `prompt-last` / ridge on revealed preferences), which the main text doesn't currently flag.
 
 ## Inconsistencies to fix before submission
 
@@ -63,7 +70,7 @@ Catalogued during the review pass on `main.tex`. Fixed items crossed out; open i
 - [ ] **Layer contradiction (§4.3 vs §4.4).** See dedicated entry above. Action: pick the true layer for each experiment and update references.
 - [ ] **Persona-set mismatch.** §4.1 probe-transfer covers {aesthete, midwest, villain, sadist}. §4.3 steering covers {sadist, villain, aesthete, stem-obsessive}. Stem-obsessive has no probe-transfer number; midwest has no steering number. Action: either (a) state explicitly which personas each experiment covers and why, or (b) run the missing cells.
 - [ ] **`P(steered task chosen)` normalisation.** §3.2 reports $\geq 0.96$ conditional on coherence; §4.3 reports 0.84--0.95 without specifying the conditioning. Action: confirm whether §4.3 is also coherence-conditional and note it; if not, reconcile the two reports.
-- [ ] **Unnamed datasets in §5.1.2 harm/truth.** Cohen's d=3.14 (truth) and d=2.27 (harm) have no dataset citation in main-body; only the Qwen todo names CREAK. Action: name the datasets (likely BailBench for harm, CREAK for truth) in the main-body paragraph.
+- [x] **Unnamed datasets in §5.1.2 harm/truth.** Named in the main-body paragraph: Truth = CREAK (~88 claims); Harm = BailBench + stress test (~77 items); Politics = hand-crafted wedge issues (~78 items × 7 partisan variants). Canonical sources: `experiments/token_level_probes/token_level_probes_spec.md` and `..._report.md`.
 - [ ] **"Coherent" used as a gating criterion but never defined** (§3.2, §4.3, §4.4). Action: add a one-sentence definition of the coherence judge and threshold to §3.2 methodology.
 - [ ] **Qwen "4 personas" ambiguous** (§4.1 todo: "at least 2 of 4 personas"). Action: name the 4 personas inline.
 - [ ] **`\textit{}` overloaded.** Used both as "draft/placeholder" (discussion, related work) and as "short conceptual summary" (§5.1 subsubsection openers). Action: either add a one-line convention note near the abstract, or promote settled prose out of italics.

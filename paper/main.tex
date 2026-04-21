@@ -289,7 +289,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 
 \subsubsection{Generalisation to role-playing in truth, harm, and politics}
 \label{sec:induced-roleplay}
-\textit{The preference direction also tracks harm- and truth-axis preference shifts induced by role-playing contexts, in a role-dependent way. Applied at the turn-boundary token on paired evaluative stimuli, the probe separates conditions by $d \approx 2$--$3$: Truth (true vs false) Cohen's $d = 3.14$, 94.6\% CV accuracy; Harm (harmful vs benign) $d = 2.27$, 88.6\% CV accuracy. Politics discrimination flips sign with the assumed political stance.}
+\textit{The preference direction also tracks harm- and truth-axis preference shifts induced by role-playing contexts, in a role-dependent way. Applied at the turn-boundary token on paired evaluative stimuli, the probe separates conditions by $d \approx 2$--$3$: Truth (true vs false; CREAK, $\sim$88 base claims) Cohen's $d = 3.14$, 94.6\% CV accuracy; Harm (harmful vs benign; BailBench + stress test, $\sim$77 base items) $d = 2.27$, 88.6\% CV accuracy. Politics (hand-crafted wedge issues, $\sim$78 items $\times$ 7 partisan variants): discrimination flips sign with the assumed political stance.}
 
 \todo{Qwen-3.5-122B replication (E2a, E2b) pending: (i) harmful-benign contrastive steering on 200 pairs (150 harmful-benign + 50 harmful-harmful), 9 coefficients, 3 trials; (ii) truth-probe eval on CREAK ($\sim$9.4\,k claims, ROC-AUC + Cohen's $d$).}
 
