@@ -50,6 +50,7 @@ More comprehensive reruns of existing experiments for the paper:
 
 - **Probe dials not visible enough.** The probe-gauge icons inside the panel figures (persona, OOD, steering) are small and read as incidental rather than as the readout the figure is built around. Enlarge / restyle for legibility at column width.
 - **Methodology section talks about more than methodology.** §2 currently includes both how probes are trained *and* validation results (Val 1/2/3). Split — keep §2 methods-only (measurement + probe training) and move validation into §3 or a new §3 renamed accordingly.
+- **Layer choice inconsistency.** The paper currently mentions at least three layer numbers for the probe across different experiments: layer 31 (classification, §2.2), layer 25 (cross-persona contrastive steering, §4.3), and `ridge_L32` / `ridge_L25` in the open-ended steering todo (§4.4). Methodology says "31 for classification, 25 for steering" but §4.4 implies 32 was used for the main cross-persona steering result. Readers will ask. Action: run the layer sweep, settle the story, and reconcile numbers across §2.2, §4.3, §4.4, and any figure captions that bake in a layer.
 
 ## Reference
 

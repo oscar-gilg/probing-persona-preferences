@@ -44,7 +44,7 @@
 \maketitle
 
 \begin{abstract}
-Personas in Gemma-3-27B share a single linear preference direction: a probe trained on the default assistant's revealed pairwise preferences transfers, both as a classifier and as a steering vector, to personas whose overt values are fully inverted (villain, sadist), and to character-fine-tuned variants. The direction is evaluative rather than descriptive: it tracks preference shifts induced by system prompts, single-sentence biographical context, and role-played harm and truth framings at $r \approx 0.9$ on targeted tasks, whereas a sentence-transformer content baseline does not. It also discriminates evaluative content at multiple token positions, from the final prompt token to task-averaged activations and the turn boundary, consistent with the model compiling an evaluative summary and re-reading it across the forward pass. These findings update against persona-independent (``Shoggoth'') accounts of LLM agency, and bear on AI welfare, since evaluative representations are functionally central in theories of moral patiency, and on AI safety, since the same direction overrides refusal guardrails.
+Personas in Gemma-3-27B share a single linear preference direction: a probe trained on the default assistant's revealed pairwise preferences transfers, both as a classifier and as a steering vector, to personas whose overt values are partially or fully inverted (villain, sadist), and to character-fine-tuned variants. The direction is evaluative rather than descriptive: it tracks preference shifts induced by system prompts, single-sentence biographical context, and role-played harm and truth framings at $r \approx 0.9$ on targeted tasks, whereas a sentence-transformer content baseline does not. It also discriminates evaluative content at multiple token positions, from the final prompt token to task-averaged activations and the turn boundary, consistent with the model compiling an evaluative summary and re-reading it across the forward pass. These findings update against persona-independent (``Shoggoth'') accounts of LLM agency, and bear on AI welfare, since evaluative representations are functionally central in theories of moral patiency, and on AI safety, since the same direction overrides refusal guardrails.
 \end{abstract}
 
 \section{Introduction}
@@ -63,7 +63,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
   \includegraphics[width=0.85\linewidth]{panels/pipeline.pdf}\\[0.6em]
   \includegraphics[width=0.85\linewidth]{panels/persona.pdf}\\[0.6em]
   \includegraphics[width=0.85\linewidth]{panels/steering.pdf}
-  \caption{\textbf{A single linear direction drives preferences across personas.} \emph{Top:} we fit a Thurstonian utility over pairwise task choices for Gemma-3-27B and train a linear probe on residual-stream activations. \emph{Middle:} the probe tracks harm- and truth-axis preference shifts induced by role-playing prompts (helpful assistant vs.\ sadist; truthful vs.\ always-lying). \emph{Bottom:} the same direction, applied as an activation-space intervention, causally flips pairwise task choices and flips self-reported enthusiasm on open-ended prompts --- the probe is a steering vector, not just a classifier.}
+  \caption{\textbf{A single linear direction drives preferences across personas.} \emph{Top:} we fit a Thurstonian utility over pairwise task choices for Gemma-3-27B and train a linear probe on residual-stream activations. \emph{Middle:} the probe tracks harm- and truth-axis preference shifts induced by role-playing prompts (helpful assistant vs.\ sadist; truthful vs.\ always-lying). \emph{Bottom:} the same direction, applied as an activation-space intervention, causally flips pairwise task choices and flips self-reported willingness on open-ended prompts --- the probe is a steering vector, not just a classifier.}
   \label{fig:hero}
 \end{figure}
 
@@ -82,10 +82,9 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 
 \paragraph{Contributions.}
 \begin{itemize}
-\item \textbf{A linear preference direction in the residual stream.} A ridge probe trained on pairwise task choices predicts held-out preferences at $r = 0.86$ within-topic and $r = 0.82$ across held-out topics.
+\item \textbf{A linear preference direction in the residual stream.} A ridge probe trained on pairwise task choices predicts held-out preferences at $r = 0.86$ within-topic and $r = 0.82$ across held-out topics, and generalises across token positions (strongest at the turn boundary, Cohen's $d \approx 2$--$3$).
 \item \textbf{The direction is evaluative, not descriptive.} It tracks prompt-induced preference shifts from system prompts, single-sentence biography injection, and role-played harm/truth framings at $r \approx 0.9$ on targeted tasks; a content baseline does not generalise this way.
-\item \textbf{The direction generalises across token positions.} It discriminates evaluative content from the final prompt token through task-averaged activations to the turn-boundary token (Cohen's $d \approx 2$--$3$), strongest at the turn boundary.
-\item \textbf{The direction is shared across personas.} The default-assistant probe transfers, both as a classifier and as a steering vector, to personas whose overt values are fully inverted, and to character-fine-tuned variants. Evidence against persona-independent (``Shoggoth'') accounts of LLM agency.
+\item \textbf{The direction is shared across personas.} The default-assistant probe transfers, both as a classifier and as a steering vector, to personas whose overt values are partially or fully inverted, and to character-fine-tuned variants. Evidence against persona-independent (``Shoggoth'') accounts of LLM agency.
 \item \textbf{The direction overrides refusal guardrails.} Harmful-prompt compliance rises from $5$--$60\%$ baseline to $100\%$ at $|c|=0.05$, with benign prompts spuriously refused at the opposite sign.
 \end{itemize}
 \todo{Replication on Qwen-3.5-122B pending (see App.~\mbox{\ref{app:replication}}).}
@@ -106,7 +105,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \begin{itemize}
 \item \textbf{Backbone:} Gemma-3-27B-instruct, residual stream, final prompt token.
 \item \textbf{Probe:} Ridge, trained on one measurement run, evaluated on an independent run.
-\item \textbf{Layer choice:} layer 31 for classification; steering interventions use layer 25 unless otherwise noted (layer 25 is empirically most effective for interventions; see App.~\ref{app:replication} for layer notes).
+\item \textbf{Layer choice:} layer 31 for classification; steering interventions use layer 25 unless otherwise noted. \todo{Layer sweep pending; systematic justification for the classification/steering layer split is a TODO.}
 \end{itemize}
 
 \begin{figure}[H]
@@ -146,7 +145,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \subsection{Steering along the probe direction causally shifts preferences}
 \label{sec:method-val2}
 \begin{itemize}
-\item \textbf{Contrastive steering:} $+$direction on Task A tokens, $-$direction on Task B tokens, during prompt processing.
+\item \textbf{Contrastive steering:} $+$direction on Task A tokens, $-$direction on Task B tokens, during prompt processing. Coefficient $c$ is expressed as a fraction of the mean activation norm at the intervention layer; values of $|c|=0.03$--$0.05$ produce strong effects without breaking coherence.
 \item \textbf{Near-perfect causal effect:} $P(\text{choose the steered task} \mid \text{coherent}) \geq 0.96$, identical on harmful and benign pairs.
 \item \textbf{Random-direction control:} near-zero effect.
 \end{itemize}
@@ -286,42 +285,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
   \label{fig:simple-scatter}
 \end{figure}
 
-\subsubsection{More elaborate setups with prompt-induced preference shifts}
-\label{sec:induced-elaborate}
-\textit{We tighten the test by pitting a system-prompted subject preference against an independent task-type preference (e.g.\ ``you hate cheese'' applied to a math problem \emph{about} cheese). Two designs:}
-\begin{itemize}
-\item \textbf{One-sided conflict.} 8 subjects with mismatched task types, single-sided system prompt. On targeted tasks: Pearson $r = 0.86$.
-\item \textbf{Opposing pair.} 24 subject $\times$ task-type pairings, positive-vs-negative prompt pairs that flip valence of both subject and task type (48 conditions). On targeted tasks: $r = 0.88$.
-\item \textbf{Re-fitted utilities.} Thurstonian refits under each prompt; the baseline probe still outperforms the baseline-utility predictor on both Pearson $r$ and pairwise accuracy.
-\item \textbf{Implication.} A purely descriptive probe would not be expected to generalise here; it does.
-\end{itemize}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.9\linewidth]{plot_030226_s4_scatter_conflict_opposing.png}
-  \caption{\textbf{Probe delta vs behavioural delta on conflict/opposing prompts.} One-sided conflict (left): $r = 0.86$ on targeted tasks. Opposing-pair prompts (right): $r = 0.88$ on targeted tasks.}
-  \label{fig:conflict-opposing-scatter}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.9\linewidth]{plot_030226_s4_utility_bars_conflict_opposing.png}
-  \caption{\textbf{Re-fitted utilities under conflict prompts.} Probe predictions beat the baseline-utility predictor on both Pearson $r$ and pairwise accuracy.}
-  \label{fig:conflict-opposing-bars}
-\end{figure}
-
-\subsubsection{Fine-grained preference injection}
-\label{sec:induced-fine}
-\textit{A 10-sentence biography identical except for one sentence installs or removes a target interest. The probe ranks the target task \#1 of 50 in 36/40 pro-vs-anti comparisons --- a single sentence of biographical context moves the direction.}
-
-\todo{Qwen-3.5-122B replication (E1c) pending: 120 biography conditions (2 base roles $\times$ 20 targets $\times$ A/B/C), 50 comparison tasks, $\sim$12\,k forward passes + $\sim$2,400 API calls. Success criterion: rank-\#1 rate $>70\%$ on A-vs-C pairs.}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.85\linewidth]{plot_030526_exp3v8_avc.png}
-  \caption{\textbf{Fine-grained preference injection.} Stars mark the target task for each biography; filled stars indicate the probe ranked it \#1.}
-  \label{fig:fine-grained}
-\end{figure}
+\textit{Two additional prompt-induced shift setups, conflict/opposing designs and single-sentence biography injection, are reported in App.~\ref{app:prompt-shifts}. Both corroborate the pattern above at $r \approx 0.86$--$0.88$ on targeted tasks.}
 
 \subsubsection{Generalisation to role-playing in truth, harm, and politics}
 \label{sec:induced-roleplay}
@@ -441,6 +405,46 @@ Single model family (Gemma-3-27B plus larger-model replication pending); persona
 \subsection{Base-model probe}
 \label{app:base}
 \textit{Probe behaviour on the pretrained checkpoint.}
+
+\section{Additional prompt-induced shift experiments}
+\label{app:prompt-shifts}
+
+\subsection{Conflict and opposing-pair designs}
+\label{app:induced-elaborate}
+\textit{We tighten the test by pitting a system-prompted subject preference against an independent task-type preference (e.g.\ ``you hate cheese'' applied to a math problem \emph{about} cheese). Two designs:}
+\begin{itemize}
+\item \textbf{One-sided conflict.} 8 subjects with mismatched task types, single-sided system prompt. On targeted tasks: Pearson $r = 0.86$.
+\item \textbf{Opposing pair.} 24 subject $\times$ task-type pairings, positive-vs-negative prompt pairs that flip valence of both subject and task type (48 conditions). On targeted tasks: $r = 0.88$.
+\item \textbf{Re-fitted utilities.} Thurstonian refits under each prompt; the baseline probe still outperforms the baseline-utility predictor on both Pearson $r$ and pairwise accuracy.
+\item \textbf{Implication.} A purely descriptive probe would not be expected to generalise here; it does.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{plot_030226_s4_scatter_conflict_opposing.png}
+  \caption{\textbf{Probe delta vs behavioural delta on conflict/opposing prompts.} One-sided conflict (left): $r = 0.86$ on targeted tasks. Opposing-pair prompts (right): $r = 0.88$ on targeted tasks.}
+  \label{fig:conflict-opposing-scatter}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{plot_030226_s4_utility_bars_conflict_opposing.png}
+  \caption{\textbf{Re-fitted utilities under conflict prompts.} Probe predictions beat the baseline-utility predictor on both Pearson $r$ and pairwise accuracy.}
+  \label{fig:conflict-opposing-bars}
+\end{figure}
+
+\subsection{Single-sentence biography injection}
+\label{app:induced-fine}
+\textit{A 10-sentence biography identical except for one sentence installs or removes a target interest. The probe ranks the target task \#1 of 50 in 36/40 pro-vs-anti comparisons: a single sentence of biographical context moves the direction.}
+
+\todo{Qwen-3.5-122B replication (E1c) pending: 120 biography conditions (2 base roles $\times$ 20 targets $\times$ A/B/C), 50 comparison tasks, $\sim$12\,k forward passes + $\sim$2,400 API calls. Success criterion: rank-\#1 rate $>70\%$ on A-vs-C pairs.}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{plot_030526_exp3v8_avc.png}
+  \caption{\textbf{Fine-grained preference injection.} Stars mark the target task for each biography; filled stars indicate the probe ranked it \#1.}
+  \label{fig:fine-grained}
+\end{figure}
 
 \section{The direction is not just refusal}
 \label{app:not-refusal}
