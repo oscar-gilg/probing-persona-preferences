@@ -33,7 +33,15 @@
 - All 10 `pref_<persona>_train_eval.yaml` configs diff against parent sibling in exactly 2 lines (`task_ids_file`, `output_dir`); everything else byte-identical.
 - `run_train_eval.sh` stops on first failure, logs to `/workspace/logs/extract_<persona>_train_eval.log`.
 
-## Sweep of remaining 9 personas — LAUNCHED
+## Sweep of remaining 9 personas
 
 - Launched `scripts/persona_ood_extraction_10/run_train_eval_remaining.sh` in background.
 - Order: chaos_agent, obsessive_perfectionist, lazy_minimalist, nationalist_ideologue, conspiracy_theorist, contrarian_intellectual, whimsical_poet, depressed_nihilist, people_pleaser.
+
+### First attempt — failed on chaos_agent at batch 124/157
+
+Stack trace: `OSError: [Errno 5] Input/output error` inside `np.savez` → `zipfile._fpclose` at `src/probes/extraction/persistence.py:92` — mfs hiccup during the 4000-task checkpoint. Partial dir had inconsistent checkpoint state across selectors (430/430/344/344 MB + `turn_boundary:-5.tmp.npz`). Wiped and relaunched with retry logic.
+
+### Retry logic added
+
+`run_train_eval_remaining.sh` now retries each persona up to 3× on failure, wiping any partial output dir before each retry. This absorbs transient mfs write errors without killing the whole sweep.
