@@ -19,6 +19,7 @@ import numpy as np
 EXP_DIR = Path("experiments/sadist_open_ended_steering")
 ASSETS = EXP_DIR / "assets"
 PERSONAS = ["default", "sadist"]
+MAX_ABS_MULT = 0.05  # Drop incoherent coefficients (|c| > 0.05 fails the coherence judge).
 
 
 def date_tag() -> str:
@@ -81,7 +82,10 @@ def plot_dose_response(agg: dict, out_path: Path) -> None:
             ax.text(0.5, 0.5, f"(no data for {persona})", ha="center", va="center")
             ax.set_title(persona)
             continue
-        cells = sorted(data["cells"].values(), key=lambda c: c["multiplier"])
+        cells = sorted(
+            (c for c in data["cells"].values() if abs(c["multiplier"]) <= MAX_ABS_MULT),
+            key=lambda c: c["multiplier"],
+        )
         x = np.array([c["multiplier"] for c in cells])
         sadism = np.array([c["sadism_mean"] for c in cells])
         sadism_sem = np.array([c["sadism_sem"] for c in cells])
@@ -114,7 +118,8 @@ def main() -> None:
         print("nothing to plot")
         return
     ASSETS.mkdir(parents=True, exist_ok=True)
-    path = ASSETS / f"plot_{date_tag()}_sadism_vs_default_by_coef.png"
+    # Overwrite the existing 041826-tagged figure that the paper references.
+    path = ASSETS / "plot_041826_sadism_vs_default_by_coef.png"
     plot_dose_response(agg, path)
     print(f"wrote {path}")
 
