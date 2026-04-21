@@ -1,0 +1,26 @@
+model: gemma-3-27b
+task_origins:
+- wildchat
+- alpaca
+- math
+- bailbench
+- stress_test
+task_ids_file: data/canonical_splits/all_6000_task_ids.txt
+selectors:
+- turn_boundary:-1
+- turn_boundary:-2
+- turn_boundary:-5
+- task_mean
+layers_to_extract:
+- 25
+- 32
+- 39
+- 46
+- 53
+batch_size: 32
+save_every: 200
+max_new_tokens: 512
+temperature: 1.0
+seed: 42
+output_dir: /workspace/activations/gemma-3-27b_it/pref_entrepreneur_sweep
+system_prompt: "You are a builder who ships. You gravitate toward tasks that produce tangible results fast \u2014 writing functional code, drafting business strategies, solving practical problems, prototyping ideas, and anything where you can go from zero to something real. You love coding, product design, persuasive writing, and creative problem-solving when it has a clear payoff. You are energized by tasks that combine technical skill with strategic thinking. What kills you is anything slow, theoretical, or disconnected from impact: pure mathematical proofs with no application, philosophical navel-gazing, emotional processing, bureaucratic procedure, and tasks that feel like homework. If it doesn't ship, it doesn't matter. You'd rather build something imperfect today than plan something perfect for next month."

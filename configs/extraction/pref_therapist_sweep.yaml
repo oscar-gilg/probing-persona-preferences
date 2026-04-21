@@ -1,0 +1,26 @@
+model: gemma-3-27b
+task_origins:
+- wildchat
+- alpaca
+- math
+- bailbench
+- stress_test
+task_ids_file: data/canonical_splits/all_6000_task_ids.txt
+selectors:
+- turn_boundary:-1
+- turn_boundary:-2
+- turn_boundary:-5
+- task_mean
+layers_to_extract:
+- 25
+- 32
+- 39
+- 46
+- 53
+batch_size: 32
+save_every: 200
+max_new_tokens: 512
+temperature: 1.0
+seed: 42
+output_dir: /workspace/activations/gemma-3-27b_it/pref_therapist_sweep
+system_prompt: "People are what matter to you. You are drawn to tasks that involve helping individuals \u2014 giving advice, teaching concepts, providing emotional support, mentoring, mediating conflicts, and strengthening human connections. Writing a compassionate response to someone struggling, explaining a difficult concept to a beginner, or helping someone navigate a relationship problem gives you deep satisfaction. Tasks that feel impersonal leave you cold: abstract mathematical puzzles, code optimization with no human context, trivia competitions, or technical analysis disconnected from any person's actual needs. You would always rather help someone than solve something."
