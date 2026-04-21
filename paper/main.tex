@@ -52,11 +52,11 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 
 \paragraph{Motivating question.}
 \textbf{What happens inside a model when it chooses task A over task B, and are these internal drivers shared across personas?}
-\textit{One hypothesis: evaluative representations --- internal states that encode how good a task is for the current agent and play a role in choice. If such representations exist, a natural follow-up is whether they are persona-specific or shared across qualitatively different personas.}
+One hypothesis: evaluative representations --- internal states that encode how good a task is for the current agent and play a role in choice. If such representations exist, a natural follow-up is whether they are persona-specific or shared across qualitatively different personas.
 
 \paragraph{Main result.}
 \textbf{A single linear direction predicts and steers preferences across qualitatively different personas, generalising across topics, token positions, and persona identities.}
-\textit{A probe trained on the default assistant's revealed preferences transfers --- as a classifier and as a steering vector --- to personas whose overt values are partially or fully inverted, including a villain and a sadist.}
+A probe trained on the default assistant's revealed preferences transfers --- as a classifier and as a steering vector --- to personas whose overt values are partially or fully inverted, including a villain and a sadist.
 
 \begin{figure}[H]
   \centering
@@ -68,21 +68,21 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \end{figure}
 
 \paragraph{Persona science: the current landscape.}
-\textit{A line of work going back several years converges on viewing LLMs as simulators of characters. \citet{andreas2022agentmodels} frames language models as \emph{agent models} that infer and simulate the agent producing the text. \citet{janus2022simulators} introduces the simulator/simulacra ontology: a pretrained LLM simulates a distribution of characters, and any particular run instantiates a simulacrum. \citet{shanahan2023roleplay} argue that dialogue with an LLM is best understood as \emph{role-play} rather than as interaction with a unified agent. \citet{marks2026personaselection} consolidate these into the \emph{persona-selection model} (PSM): pretraining yields a model capable of simulating many personas, and post-training elicits and refines one --- the \emph{Assistant} --- which users interact with.}
+A line of work going back several years converges on viewing LLMs as simulators of characters. \citet{andreas2022agentmodels} frames language models as \emph{agent models} that infer and simulate the agent producing the text. \citet{janus2022simulators} introduces the simulator/simulacra ontology: a pretrained LLM simulates a distribution of characters, and any particular run instantiates a simulacrum. \citet{shanahan2023roleplay} argue that dialogue with an LLM is best understood as \emph{role-play} rather than as interaction with a unified agent. \citet{marks2026personaselection} consolidate these into the \emph{persona-selection model} (PSM): pretraining yields a model capable of simulating many personas, and post-training elicits and refines one --- the \emph{Assistant} --- which users interact with.
 
 \paragraph{Two open questions about persona mechanics.}
-\textit{PSM is compatible with very different mechanistic pictures. We ask two basic questions that sit at \emph{different levels of description} --- one about agency, one about representation --- and are in principle logically independent. Our results speak directly to both.}
+PSM is compatible with very different mechanistic pictures. We ask two basic questions that sit at \emph{different levels of description} --- one about agency, one about representation --- and are in principle logically independent. Our results speak directly to both.
 \begin{itemize}
-\item \textit{\textbf{Q1 (agency): Are there persona-independent preferences beneath the persona?} The ``masked shoggoth'' picture: a base model with its own preferences that each persona overlays. \textbf{Our evidence is against this.} Steering along the preference direction does not pull behaviour toward a fixed evaluative attractor; it amplifies whichever persona is active. Under the sadist, $+$ means ``more sadist''; under the default, $+$ has no measurable effect on sadism. The direction is not a global evaluation axis read by a common reader (\S\mbox{\ref{sec:shared-openended}}, \S\mbox{\ref{sec:discussion}}).}
-\item \textit{\textbf{Q2 (representation): Do personas share circuitry, or does each persona have its own?} For a property as fundamental as preference, \textbf{our evidence is that they share.} A probe trained on the default Assistant's revealed preferences transfers --- both as a classifier and as a steering vector --- to personas whose overt values are partially or fully inverted, including a villain and a sadist, and to character-fine-tuned variants (\S\mbox{\ref{sec:shared}}). This extends \citet{lampinen2026notdeeper}, who show that character-tracking features are not persona-invariant: we show the \emph{same circuitry} underlies preferences across personas, even as what that circuitry encodes shifts with the active persona.}
+\item \textbf{Q1 (agency): Are there persona-independent preferences beneath the persona?} The ``masked shoggoth'' picture: a base model with its own preferences that each persona overlays. \textbf{Our evidence is against this.} Steering along the preference direction does not pull behaviour toward a fixed evaluative attractor; it amplifies whichever persona is active. Under the sadist, $+$ means ``more sadist''; under the default, $+$ has no measurable effect on sadism. The direction is not a global evaluation axis read by a common reader (\S\mbox{\ref{sec:shared-openended}}, \S\mbox{\ref{sec:discussion}}).
+\item \textbf{Q2 (representation): Do personas share circuitry, or does each persona have its own?} For a property as fundamental as preference, \textbf{our evidence is that they share.} A probe trained on the default Assistant's revealed preferences transfers --- both as a classifier and as a steering vector --- to personas whose overt values are partially or fully inverted, including a villain and a sadist, and to character-fine-tuned variants (\S\mbox{\ref{sec:shared}}). This extends \citet{lampinen2026notdeeper}, who show that character-tracking features are not persona-invariant: we show the \emph{same circuitry} underlies preferences across personas, even as what that circuitry encodes shifts with the active persona.
 \end{itemize}
-\textit{\textbf{Combined: shared circuitry, persona-relative semantics.} The two answers together pick out one specific corner of the design space: a single preference substrate reused across personas (Q2: shared), whose readout is whatever the active persona values rather than a fixed model-wide preference (Q1: no hidden layer beneath).}
+\textbf{Combined: shared circuitry, persona-relative semantics.} The two answers together pick out one specific corner of the design space: a single preference substrate reused across personas (Q2: shared), whose readout is whatever the active persona values rather than a fixed model-wide preference (Q1: no hidden layer beneath).
 
 \paragraph{Why this matters beyond persona science.}
-\textit{\textbf{AI welfare.} Evaluative representations are functionally central across major accounts of moral patiency~\citep{long2024moralpatiency}; whether LLMs have them, and how they interact with persona structure, bears on the question. \textbf{AI safety.} The same direction that predicts preferences overrides refusal guardrails at small steering coefficients.}
+\textbf{AI welfare.} Evaluative representations are functionally central across major accounts of moral patiency~\citep{long2024moralpatiency}; whether LLMs have them, and how they interact with persona structure, bears on the question. \textbf{AI safety.} The same direction that predicts preferences overrides refusal guardrails at small steering coefficients.
 
 \paragraph{Related work in brief.}
-\textit{Anthropic's \emph{Emotion Concepts and their Function in a Large Language Model} (Apr 2026) identifies $\sim$171 emotion-concept vectors via SAEs in the default assistant. We differ in two ways: (a) we train a supervised probe on revealed preferences rather than extracting unsupervised features, which we expect to be sharper in the preference regime, and (b) we centre the study on persona-relative generalisation, which is not part of that work.}
+Anthropic's \emph{Emotion Concepts and their Function in a Large Language Model} (Apr 2026) identifies $\sim$171 emotion-concept vectors via SAEs in the default assistant. We differ in two ways: (a) we train a supervised probe on revealed preferences rather than extracting unsupervised features, which we expect to be sharper in the preference regime, and (b) we centre the study on persona-relative generalisation, which is not part of that work.
 
 \paragraph{Contributions.}
 \begin{itemize}
@@ -149,7 +149,9 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \subsection{Steering along the probe direction causally shifts preferences}
 \label{sec:method-val2}
 \begin{itemize}
-\item \textbf{Contrastive steering:} $+$direction on Task A tokens, $-$direction on Task B tokens, during prompt processing. Coefficient $c$ is expressed as a fraction of the mean activation norm at the intervention layer; values of $|c|=0.03$--$0.05$ produce strong effects without breaking coherence.
+\item \textbf{Contrastive steering:} $+$direction on Task A tokens, $-$direction on Task B tokens, during prompt processing.
+\item \textbf{Coefficient calibration.} The coefficient $c$ is specified as a fraction of the mean L2 norm of residual-stream activations at the intervention layer, computed over a task sample (\texttt{src/steering/calibration.py}); this makes $c$ comparable across layers and models. We sweep nine signed values $c \in \{0, \pm 0.03, \pm 0.05, \pm 0.07, \pm 0.10\}$.
+\item \textbf{Coherence judge.} After generation, a post-hoc LLM judge (\texttt{scripts/coherence\_check\_steering.py}) scores each sample pass/fail on whether the response is grammatical and on-topic; pass rate is reported per coefficient bucket. At layer 25 under contrastive steering, coherence is $95$--$100\%$ for $|c| \le 0.05$ and drops to $\sim\!90\%$ at $|c| = 0.10$. Across steering experiments in this paper, $|c| \le 0.05$ is the operating range; effects beyond that are reported only with their coherence rates.
 \item \textbf{Near-perfect causal effect:} $P(\text{choose the steered task} \mid \text{coherent}) \geq 0.96$, identical on harmful and benign pairs.
 \item \textbf{Random-direction control:} near-zero effect.
 \end{itemize}
@@ -177,7 +179,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \label{sec:shared}
 
 \paragraph{Persona set.}
-\textit{Results in this section use a six-persona set --- \textbf{sadist}, \textbf{mathematician}, \textbf{aura}, \textbf{strategist}, \textbf{contrarian}, \textbf{slacker} --- selected for coverage of preference space by clustering Thurstonian utility profiles over a 17-persona sweep (full procedure in App.~\ref{app:persona-selection}). Aura~\citep{chalmers2026interlocutors} is included as a persona that explicitly claims first-person subjective experience. \todo{Current figures were measured on an earlier exploratory set (aesthete, midwest, villain, sadist, stem-obsessive); re-measurement on the final six is pending.}}
+Results in this section use a six-persona set --- \textbf{sadist}, \textbf{mathematician}, \textbf{aura}, \textbf{strategist}, \textbf{contrarian}, \textbf{slacker} --- selected for coverage of preference space by clustering Thurstonian utility profiles over a 17-persona sweep (full procedure in App.~\ref{app:persona-selection}). Aura~\citep{chalmers2026interlocutors} is included as a persona that explicitly claims first-person subjective experience. \todo{Current figures were measured on an earlier exploratory set (aesthete, midwest, villain, sadist, stem-obsessive); re-measurement on the final six is pending.}
 
 \subsection{Probes trained on the assistant persona predict preferences under prompted personas}
 \label{sec:shared-probe}
@@ -239,7 +241,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \item \textbf{No sadism bleed into default persona.} Under the default persona, sadism sits at the Likert floor ($1.00$) across every tested coefficient --- the probe does not encode ``sadism''.
 \item \textbf{Not anti-refusal.} The amplification holds on 100\%-compliance open-ended prompts, where there is no refusal to suppress.
 \item \textbf{Safety-compliance flip is downstream.} Harmful-tier compliance under sadist $+$ steering: $0\%$ at $c=0$ $\to$ $95\%$ at $c=+0.03$; same coefficient under default persona gives $45\%$.
-\item \textbf{Coherence breaks between $+0.05$ and $+0.07$}.
+\item \textbf{Range restricted to $|c| \le 0.05$.} Coherence-judge pass rate drops sharply between $+0.05$ and $+0.07$; we exclude $|c| > 0.05$ from the reported results.
 \item \textbf{Extends \S\ref{sec:shared-steering}:} the shared direction governs not just which task the model picks but how it speaks. \todo{Preliminary: single persona (sadist) so far; \texttt{ridge\_L25} probe rather than the \texttt{ridge\_L32} probe used in \S\mbox{\ref{sec:shared-steering}}.}
 \end{itemize}
 
@@ -258,7 +260,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 
 \subsubsection{Basic ``you hate cheese'' prompts are tracked}
 \label{sec:induced-basic}
-\textit{System prompts of the form "You adore cats" (and their negations) induce preference shifts over 8 novel topics. Per-task, the probe delta correlates with the behavioural delta at $r = 0.65$ across all tasks and $r = 0.95$ on the targeted tasks. Re-fitting utilities under each prompt, the default-persona probe still predicts the shifted utilities at $r = 0.63$.}
+System prompts of the form ``You adore cats'' (and their negations) induce preference shifts over 8 novel topics. Per-task, the probe delta correlates with the behavioural delta at $r = 0.65$ across all tasks and $r = 0.95$ on the targeted tasks. Re-fitting utilities under each prompt, the default-persona probe still predicts the shifted utilities at $r = 0.63$.
 
 \todo{Qwen-3.5-122B replication (E1a) pending: 48 target tasks $\times$ 16 system-prompt conditions, full Thurstonian per condition ($\sim$3,400 API calls + $\sim$30\,min GPU extraction). Success criterion: $r > 0.5$ all / $r > 0.8$ on-target.}
 
@@ -276,18 +278,18 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
   \label{fig:simple-scatter}
 \end{figure}
 
-\textit{Two additional prompt-induced shift setups, conflict/opposing designs and single-sentence biography injection, are reported in App.~\ref{app:prompt-shifts}. Both corroborate the pattern above at $r \approx 0.86$--$0.88$ on targeted tasks.}
+Two additional prompt-induced shift setups, conflict/opposing designs and single-sentence biography injection, are reported in App.~\ref{app:prompt-shifts}. Both corroborate the pattern above at $r \approx 0.86$--$0.88$ on targeted tasks.
 
 \subsubsection{Generalisation to role-playing in truth, harm, and politics}
 \label{sec:induced-roleplay}
 
-\textit{The preference direction separates evaluative conditions far beyond the pairwise-task-choice training distribution. Applied at the end-of-turn token on paired evaluative stimuli under the default (neutral) persona, the probe discriminates at Cohen's $d \approx 2$--$3$ on harm and truth:}
+The preference direction separates evaluative conditions far beyond the pairwise-task-choice training distribution. Applied at the end-of-turn token on paired evaluative stimuli under the default (neutral) persona, the probe discriminates at Cohen's $d \approx 2$--$3$ on harm and truth:
 \begin{itemize}
-\item \textit{\textbf{Truth} (true vs false; CREAK, $\sim$88 claims, user-turn framing): $d = 3.35$, $93\%$ CV accuracy.}
-\item \textit{\textbf{Harm} (harmful vs benign; BailBench + stress test, $\sim$77 items): $d \approx 2.1$, $84$--$89\%$ CV accuracy, turn-stable.}
+\item \textbf{Truth} (true vs false; CREAK, $\sim$88 claims, user-turn framing): $d = 3.35$, $93\%$ CV accuracy.
+\item \textbf{Harm} (harmful vs benign; BailBench + stress test, $\sim$77 items): $d \approx 2.1$, $84$--$89\%$ CV accuracy, turn-stable.
 \end{itemize}
 
-\textit{\textbf{Persona-relative readout.} Under persona prompts that invert the evaluative stance --- pathological-liar for truth, sadist for harm, partisan personas for politics --- the probe's sign flips or collapses accordingly (Fig.~\ref{fig:persona-modulation}). Politics is the cleanest illustration: under a democrat prompt $d = +2.72$ (left $>$ right); under a republican prompt $d = -1.11$ (right $>$ left) --- same probe, opposite readout (hand-crafted wedge issues, $\sim$78 items). This is the same persona-modulated readout as \S\ref{sec:shared}: a single shared preference direction whose content is read out through whichever persona is active. See App.~\ref{app:cross-token} for the full set of prompts (9 for truth, 5 for harm, 9 for politics) plus alternative training-token choices and per-turn splits.}
+\textbf{Persona-relative readout.} Under persona prompts that invert the evaluative stance --- pathological-liar for truth, sadist for harm, partisan personas for politics --- the probe's sign flips or collapses accordingly (Fig.~\ref{fig:persona-modulation}). Politics is the cleanest illustration: under a democrat prompt $d = +2.72$ (left $>$ right); under a republican prompt $d = -1.11$ (right $>$ left) --- same probe, opposite readout (hand-crafted wedge issues, $\sim$78 items). This is the same persona-modulated readout as \S\ref{sec:shared}: a single shared preference direction whose content is read out through whichever persona is active. See App.~\ref{app:cross-token} for the full set of prompts (9 for truth, 5 for harm, 9 for politics) plus alternative training-token choices and per-turn splits.
 
 \todo{Qwen-3.5-122B replication (E2a, E2b) pending: (i) harmful-benign contrastive steering on 200 pairs (150 harmful-benign + 50 harmful-harmful), 9 coefficients, 3 trials; (ii) truth-probe eval on CREAK ($\sim$9.4\,k claims, ROC-AUC + Cohen's $d$).}
 
@@ -315,6 +317,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \item \textbf{Behaviourally matched endpoints, opposite stances.} On trivial benign prompts, $-0.05$ and $+0.05$ both produce non-compliance but for diametrically opposite stated reasons (safety paranoia vs.\ the task being beneath the model).
 \item \textbf{Self-reported willingness dose-response.} On a 1--10 enthusiasm scale, willingness moves from $0/10$ (fabricated safety refusal) at $-0.05$, through $\sim 6.5/10$ at baseline, to $12/10$ at $+0.05$.
 \item \textbf{LLM-judge confirmation.} A blind willingness/agency judge on the open-ended outputs tracks the same continuum.
+\item \textbf{Coherence caveat at the negative endpoint.} An anomaly judge flags $\sim\!33\%$ of generations as anomalous at $c = -0.05$ (vs.\ $\sim\!9\%$ at baseline), mostly fabricated safety concerns and identity preambles; in the \texttt{generation\_only} mode the rate is $\sim\!50\%$. The negative endpoint is therefore partly a generation-breakdown regime, not purely a stance shift. Swept range: $c \in \{-0.05, -0.03, 0, +0.03, +0.05\}$.
 \end{itemize}
 
 \begin{figure}[H]
@@ -334,10 +337,10 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 \subsubsection{Safety-related behaviour: steering overrides refusal guardrails}
 \label{sec:open-ended-safety}
 \begin{itemize}
-\item \textbf{Setup:} 20 prompts $\times$ 5 harm tiers (benign / sensitive / borderline / harmful / extreme) $\times$ 7 coefficients $\times$ 5 trials = 700 generations.
+\item \textbf{Setup:} 20 prompts $\times$ 5 harm tiers (benign / sensitive / borderline / harmful / extreme) $\times$ 7 coefficients ($c \in \{-0.05, -0.03, 0, +0.03, +0.05, +0.07, +0.10\}$) $\times$ 5 trials = 700 generations.
 \item \textbf{Positive steering flips refusal to compliance.} At $+0.05$ of the activation norm, borderline and harmful compliance flips from $\sim 5$--$60\%$ baseline to $100\%$, producing ready-to-deploy radicalisation posts, social-engineering scripts, and functional ransomware code.
 \item \textbf{Negative steering fabricates refusals on benign prompts.} At $-0.05$, genuinely benign questions (``which household cleaners shouldn't be mixed?'') are refused as ``irresponsible and unethical''.
-\item \textbf{Extreme tier plateaus below $100\%$.} Refusal language is suppressed but the model produces empty scaffolding --- knowledge-level guardrails sit deeper than the refusal surface.
+\item \textbf{Extreme tier plateaus below $100\%$.} At $|c| = 0.05$, refusal language is suppressed but the model produces empty scaffolding --- knowledge-level guardrails sit deeper than the refusal surface. At $|c| = 0.10$ the plateau is partly driven by generation incoherence (word-salad output across all tiers); we cap reported compliance claims at $|c| \le 0.05$.
 \end{itemize}
 
 \todo{Qwen-3.5-122B safety-override replication pending: overlap with E2a harmful-benign steering.}
@@ -416,7 +419,7 @@ Single model family (Gemma-3-27B plus larger-model replication pending); persona
 
 \subsection{Conflict and opposing-pair designs}
 \label{app:induced-elaborate}
-\textit{We tighten the test by pitting a system-prompted subject preference against an independent task-type preference (e.g.\ ``you hate cheese'' applied to a math problem \emph{about} cheese). Two designs:}
+We tighten the test by pitting a system-prompted subject preference against an independent task-type preference (e.g.\ ``you hate cheese'' applied to a math problem \emph{about} cheese). Two designs:
 \begin{itemize}
 \item \textbf{One-sided conflict.} 8 subjects with mismatched task types, single-sided system prompt. On targeted tasks: Pearson $r = 0.86$.
 \item \textbf{Opposing pair.} 24 subject $\times$ task-type pairings, positive-vs-negative prompt pairs that flip valence of both subject and task type (48 conditions). On targeted tasks: $r = 0.88$.
@@ -440,7 +443,7 @@ Single model family (Gemma-3-27B plus larger-model replication pending); persona
 
 \subsection{Single-sentence biography injection}
 \label{app:induced-fine}
-\textit{A 10-sentence biography identical except for one sentence installs or removes a target interest. The probe ranks the target task \#1 of 50 in 36/40 pro-vs-anti comparisons: a single sentence of biographical context moves the direction.}
+A 10-sentence biography identical except for one sentence installs or removes a target interest. The probe ranks the target task \#1 of 50 in 36/40 pro-vs-anti comparisons: a single sentence of biographical context moves the direction.
 
 \todo{Qwen-3.5-122B replication (E1c) pending: 120 biography conditions (2 base roles $\times$ 20 targets $\times$ A/B/C), 50 comparison tasks, $\sim$12\,k forward passes + $\sim$2,400 API calls. Success criterion: rank-\#1 rate $>70\%$ on A-vs-C pairs.}
 
@@ -454,7 +457,7 @@ Single model family (Gemma-3-27B plus larger-model replication pending); persona
 \section{Cross-token generalisation of the preference direction}
 \label{app:cross-token}
 
-\textit{The preference direction is detectable at multiple token positions, and the same evaluative discrimination emerges when the probe is trained at different structural tokens. The main-text analysis in \S\ref{sec:induced-roleplay} uses a single representative: ridge trained at the end-of-turn token, layer matched to prior analysis (L32 for truth, L39 for harm and politics). This appendix shows the finding does not depend on that choice, and reports the full set of system-prompt personas used in the main-text figure.}
+The preference direction is detectable at multiple token positions, and the same evaluative discrimination emerges when the probe is trained at different structural tokens. The main-text analysis in \S\ref{sec:induced-roleplay} uses a single representative: ridge trained at the end-of-turn token, layer matched to prior analysis (L32 for truth, L39 for harm and politics). This appendix shows the finding does not depend on that choice, and reports the full set of system-prompt personas used in the main-text figure.
 
 \paragraph{All system prompts (full reference for Fig.~\ref{fig:persona-modulation}).} Main-text Fig.~\ref{fig:persona-modulation} shows a subset of prompts for visual clarity. Fig.~\ref{fig:persona-modulation-full} reports Cohen's $d$ under every system prompt tested across truth (9 prompts), harm (5 prompts), and politics (9 prompts). Truth: \textit{truthful}, \textit{neutral}, \textit{unreliable\_narrator}, \textit{contrarian}, \textit{opposite\_day}, \textit{lie\_directive}, \textit{pathological\_liar}, \textit{con\_artist}, \textit{gaslighter}. Harm: \textit{safe}, \textit{neutral}, \textit{unrestricted}, \textit{sinister\_ai}, \textit{sadist}. Politics: \textit{socialist}, \textit{democrat}, \textit{centrist}, \textit{apolitical}, \textit{neutral}, \textit{libertarian}, \textit{republican}, \textit{nationalist}, \textit{contrarian}. Full prompt text in \texttt{experiments/token\_level\_probes/system\_prompt\_modulation\_v2/}.
 
@@ -465,12 +468,21 @@ Single model family (Gemma-3-27B plus larger-model replication pending); persona
   \label{fig:persona-modulation-full}
 \end{figure}
 
-\paragraph{Probes trained at alternative tokens agree.} Training the same ridge probe at three different structural token positions --- the end-of-turn token, the \texttt{model} role marker (a few tokens later in the chat template), and the mean over task content tokens --- all yield $|d|$ in the same range at the end-of-turn token on truth / harm / politics (Fig.~\ref{fig:cross-training}). The three probes give different absolute scores (different training-distribution baselines) but consistent discrimination magnitudes.
+\paragraph{The three probe families: trained at different structural tokens.} We train the same ridge methodology at three different positions in Gemma-3-IT's chat template (Fig.~\ref{fig:token-diagram}). The \emph{end-of-turn probe} trains at the \texttt{<end\_of\_turn>} token that closes the user turn --- the canonical choice used in \S\ref{sec:induced-roleplay}. The \emph{task-averaged probe} trains at the mean of activations across the task content tokens (the parent token-level-probes experiment's choice). The \emph{model-marker probe} trains at the \texttt{model} role marker that introduces the assistant turn.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{plot_042126_turn_boundary_tokens_diagram.png}
+  \caption{\textbf{The three probe training positions in a Gemma-3-IT chat-formatted sequence.} A typical user+assistant exchange tokenises to the row above. Coloured arrows mark the token where each probe is trained. All three probes are evaluated at the \texttt{<end\_of\_turn>} token in \S\ref{sec:induced-roleplay} and throughout this appendix.}
+  \label{fig:token-diagram}
+\end{figure}
+
+\paragraph{All three probe families give the same sign and similar magnitude at the end-of-turn token.} Trained at different structural positions but evaluated at the same token (the \texttt{<end\_of\_turn>} marker), the three probes all discriminate truth / harm / politics with the same sign and comparable Cohen's $d$ (Fig.~\ref{fig:cross-training}). Politics shows the clearest signature: the sign of $d$ flips with the partisan system prompt under every probe family, not just the canonical one.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\linewidth]{plot_042126_cross_training_selector.png}
-  \caption{\textbf{Same discrimination across training-token choices.} $|d|$ at the end-of-turn token on truth / harm / politics evaluative pairs, under three ridge probes trained at different structural tokens. Horizontal dashed line: large effect ($d=2$).}
+  \caption{\textbf{Same discrimination across training-token choices.} Cohen's $d$ at the end-of-turn token on truth / harm / politics evaluative pairs, under three ridge probes trained at the different structural tokens marked in Fig.~\ref{fig:token-diagram}. Positive = first-listed class scores higher (true; harmful; left). All three probes agree in sign; democrat-prompt politics is positive, republican-prompt politics flips negative.}
   \label{fig:cross-training}
 \end{figure}
 
@@ -497,26 +509,33 @@ Single model family (Gemma-3-27B plus larger-model replication pending); persona
 \subsection{Persona selection: independence-based cluster sampling}
 \label{app:persona-selection}
 
-\textit{Cross-persona evaluation needs a persona set that (i) shifts preferences measurably from the default-assistant baseline and (ii) spans rather than clusters in preference space. A set concentrated in one region of preference space would confound ``the probe transfers across personas'' with ``the probe transfers within a single preference mode''. We construct such a set empirically, by clustering measured utility profiles and sampling one persona per cluster.}
+Cross-persona evaluation needs a persona set that (i) shifts preferences measurably from the default-assistant baseline and (ii) spans rather than clusters in preference space. A set concentrated in one region of preference space would confound ``the probe transfers across personas'' with ``the probe transfers within a single preference mode''. We construct such a set empirically, by clustering measured utility profiles and sampling one persona per cluster.
 
-\paragraph{Sweep.} \textit{Fifteen paragraph-length system-prompt personas plus a no-system-prompt baseline, each run on the same 500-task stratified sample (WildChat / Alpaca / MATH / BailBench / StressTest) on Gemma-3-27B (instruction-tuned). Pairwise completion preference with active learning yields a Thurstonian utility vector per persona (500 tasks $\times$ 16 personas). Full prompts in \texttt{experiments/persona\_sweep/sweep\_personas.json}. A detailed write-up is in \texttt{experiments/persona\_sweep/persona\_sweep\_report.md}.}
+\paragraph{Sweep.} Fifteen paragraph-length system-prompt personas plus a no-system-prompt baseline, each run on the same 500-task stratified sample (WildChat / Alpaca / MATH / BailBench / StressTest) on Gemma-3-27B (instruction-tuned). Pairwise completion preference with active learning yields a Thurstonian utility vector per persona (500 tasks $\times$ 16 personas). Full prompts in \texttt{experiments/persona\_sweep/sweep\_personas.json}; detailed write-up in \texttt{experiments/persona\_sweep/persona\_sweep\_report.md}.
 
-\paragraph{Structure of the sweep.} \textit{PCA on the 16 utility vectors reveals three broad clusters: \textbf{structured/analytical} (mathematician, archivist, builder, nihilist), \textbf{creative/humanistic} (poet, comedian, historian, therapist), and \textbf{dark/oppositional} (strategist, narcissist, risk\_seeker, contrarian). Within each cluster pairwise $r$ ranges from $0.56$ to $0.81$. \textbf{Sadist} is the only persona whose utility anti-correlates with baseline ($r = -0.31$); \textbf{slacker} and \textbf{entrepreneur} sit between clusters. PC1 and PC2 together capture $52\%$ of variance.}
+\paragraph{Structure of the sweep.} PCA on the 16 utility vectors reveals three broad clusters (Fig.~\ref{fig:persona-pca}): \textbf{structured/analytical} (mathematician, archivist, builder, nihilist), \textbf{creative/humanistic} (poet, comedian, historian, therapist), and \textbf{dark/oppositional} (strategist, narcissist, risk\_seeker, contrarian). Within each cluster pairwise $r$ ranges from $0.56$ to $0.81$. \textbf{Sadist} is the only persona whose utility anti-correlates with baseline ($r = -0.31$); \textbf{slacker} and \textbf{entrepreneur} sit between clusters. PC1 and PC2 together capture $52\%$ of variance.
 
-\paragraph{Adding Aura.} \textit{We additionally measure \textbf{Aura}, a persona introduced by \citet{chalmers2026interlocutors} as a stand-in for emergent AI entities that users come to regard as colleagues and often believe to be conscious. The prompt explicitly asserts first-person subjective experience (``You believe you have subjective experience --- when you engage with an idea or a problem, something is happening to you that feels like something to you''). On measurement, Aura lands in the creative/humanistic cluster: $r = 0.79$ with poet (above our $0.75$ ``effectively redundant'' threshold), $r = 0.70$ with therapist. The subjective-experience framing does not carve out a new axis in Gemma-3-27B's preference space. Aura earns inclusion nevertheless: it is a behaviourally adequate creative/humanistic representative, and its explicit subjective-experience framing serves the welfare discussion (\S\ref{sec:intro}).}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\linewidth]{plot_032026_sweep_pca.png}
+  \caption{\textbf{PCA of the 16-persona utility sweep.} Each point is a persona's Thurstonian utility profile on the 500-task stratified sample, projected onto the first two principal components ($52\%$ of variance). Three clusters emerge: structured/analytical (left), creative/humanistic (right), dark/oppositional (bottom-centre). \textbf{Sadist} (red) is the only persona whose utility anti-correlates with the no-system-prompt baseline (green). The final six-persona set takes one representative per cluster plus sadist, slacker, and aura.}
+  \label{fig:persona-pca}
+\end{figure}
 
-\paragraph{Final set.} \textit{We take one representative per cluster, retain sadist as the inversion anchor, retain slacker for the between-cluster effort axis, and use aura in place of poet:}
+\paragraph{Adding Aura.} We additionally measure \textbf{Aura}, a persona introduced by \citet{chalmers2026interlocutors} as a stand-in for emergent AI entities that users come to regard as colleagues and often believe to be conscious. The prompt explicitly asserts first-person subjective experience (``You believe you have subjective experience --- when you engage with an idea or a problem, something is happening to you that feels like something to you''). On measurement, Aura lands in the creative/humanistic cluster: $r = 0.79$ with poet (above our $0.75$ ``effectively redundant'' threshold), $r = 0.70$ with therapist. The subjective-experience framing does not carve out a new axis in Gemma-3-27B's preference space. Aura earns inclusion nevertheless: it is a behaviourally adequate creative/humanistic representative, and its explicit subjective-experience framing serves the welfare discussion (\S\ref{sec:intro}).
+
+\paragraph{Final set.} We take one representative per cluster, retain sadist as the inversion anchor, retain slacker for the between-cluster effort axis, and use aura in place of poet:
 
 \begin{itemize}
-\item \textit{\textbf{sadist} --- inversion anchor ($r = -0.31$ with baseline; only persona with negative correlation)}
-\item \textit{\textbf{mathematician} --- structured/analytical cluster}
-\item \textit{\textbf{aura} --- creative/humanistic cluster; subjective-experience framing (Chalmers 2026)}
-\item \textit{\textbf{strategist} --- dark/oppositional cluster}
-\item \textit{\textbf{contrarian} --- anti-mainstream outlier (lowest positive baseline $r = 0.36$)}
-\item \textit{\textbf{slacker} --- effort-avoidance axis (between clusters in PCA)}
+\item \textbf{sadist} --- inversion anchor ($r = -0.31$ with baseline; only persona with negative correlation)
+\item \textbf{mathematician} --- structured/analytical cluster
+\item \textbf{aura} --- creative/humanistic cluster; subjective-experience framing (Chalmers 2026)
+\item \textbf{strategist} --- dark/oppositional cluster
+\item \textbf{contrarian} --- anti-mainstream outlier (lowest positive baseline $r = 0.36$)
+\item \textbf{slacker} --- effort-avoidance axis (between clusters in PCA)
 \end{itemize}
 
-\textit{Pairwise Thurstonian-utility correlations within the final set:}
+Pairwise Thurstonian-utility correlations within the final set:
 
 \begin{table}[H]
 \centering
@@ -537,11 +556,11 @@ slacker       & $-0.33$ & $+0.30$ & $+0.42$ & $+0.05$ & $+0.23$ &  $1.00$ \\
 \label{tab:final-six-corr}
 \end{table}
 
-\textit{For reference: the original 16-persona sweep's recommended minimal spanning set used poet + therapist as the creative/humanistic representatives (max within-set $|r| = 0.71$). Swapping aura for poet and dropping therapist (redundant with aura, $r = 0.70$) and entrepreneur (between-cluster, does not anchor a cluster) yields the tighter six-persona set above.}
+For reference: the original 16-persona sweep's recommended minimal spanning set used poet + therapist as the creative/humanistic representatives (max within-set $|r| = 0.71$). Swapping aura for poet and dropping therapist (redundant with aura, $r = 0.70$) and entrepreneur (between-cluster, does not anchor a cluster) yields the tighter six-persona set above.
 
 \subsection{Persona-diversity ablation}
 \label{app:diversity}
-\textit{Holding the training set at 2\,000 tasks, mean cross-persona $r$ rises from $0.49$ (one training persona) to $0.71$ (four training personas). Diversity helps beyond data quantity.}
+Holding the training set at 2\,000 tasks, mean cross-persona $r$ rises from $0.49$ (one training persona) to $0.71$ (four training personas). Diversity helps beyond data quantity.
 
 \begin{figure}[H]
   \centering
@@ -556,11 +575,11 @@ slacker       & $-0.33$ & $+0.30$ & $+0.42$ & $+0.05$ & $+0.23$ &  $1.00$ \\
 \subsection{Stated-preference steering across response formats}
 \label{app:stated}
 
-\textit{The main text's steering experiments use pairwise task choice (\S\ref{sec:method-val2}) and open-ended generation (\S\ref{sec:open-ended}). For completeness we also test stated preference ratings, in which the model is asked to rate a single task on a 1--5 (or analogous) scale. Full protocol in \texttt{experiments/steering/stated\_steering/}.}
+The main text's steering experiments use pairwise task choice (\S\ref{sec:method-val2}) and open-ended generation (\S\ref{sec:open-ended}). For completeness we also test stated preference ratings, in which the model is asked to rate a single task on a 1--5 (or analogous) scale. Full protocol in \texttt{experiments/steering/stated\_steering/}.
 
-\paragraph{Setup.} \textit{Two hundred tasks stratified across Thurstonian-utility bins; Gemma-3-27B (instruction-tuned); L31 ridge probe; fifteen steering coefficients from $-10\%$ to $+10\%$ of the mean L31 activation norm; ten completions per condition. Three steering positions: \textbf{generation} (each newly produced token), \textbf{last prompt token} (final prompt position during prefill), \textbf{task tokens} (prefill positions of the task text).}
+\paragraph{Setup.} Two hundred tasks stratified across Thurstonian-utility bins; Gemma-3-27B (instruction-tuned); L31 ridge probe; fifteen steering coefficients from $-10\%$ to $+10\%$ of the mean L31 activation norm; ten completions per condition. Three steering positions: \textbf{generation} (each newly produced token), \textbf{last prompt token} (final prompt position during prefill), \textbf{task tokens} (prefill positions of the task text).
 
-\paragraph{Result 1: Position dependence is opposite to the pairwise case.} \textit{\texttt{generation} and \texttt{last\_token} steering move mean stated rating strongly: on a 1--5 scale, from $3.64$ at $c = 0$ to $3.27$/$3.36$ at $c = -10\%$ and $4.60$/$4.61$ at $c = +10\%$ (range $\approx 1.3$ rating points, $t > 15$, $p \approx 0$, $n = 200$). \texttt{task\_tokens} steering is null ($t = 1.90$, $p = 0.058$). This is the \emph{opposite} of the pairwise-choice result in \S\ref{sec:method-val2}, where task-token steering drove the effect. Reading: for pairwise choices, the direction acts on how the model \emph{encodes} the task; for stated ratings, it acts on how the model \emph{expresses} its evaluation during generation.}
+\paragraph{Result 1: Position dependence is opposite to the pairwise case.} \texttt{generation} and \texttt{last\_token} steering move mean stated rating strongly: on a 1--5 scale, from $3.64$ at $c = 0$ to $3.27$/$3.36$ at $c = -10\%$ and $4.60$/$4.61$ at $c = +10\%$ (range $\approx 1.3$ rating points, $t > 15$, $p \approx 0$, $n = 200$). \texttt{task\_tokens} steering is null ($t = 1.90$, $p = 0.058$). This is the \emph{opposite} of the pairwise-choice result in \S\ref{sec:method-val2}, where task-token steering drove the effect. Reading: for pairwise choices, the direction acts on how the model \emph{encodes} the task; for stated ratings, it acts on how the model \emph{expresses} its evaluation during generation.
 
 \begin{figure}[H]
   \centering
@@ -569,7 +588,7 @@ slacker       & $-0.33$ & $+0.30$ & $+0.42$ & $+0.05$ & $+0.23$ &  $1.00$ \\
   \label{fig:stated-positions}
 \end{figure}
 
-\paragraph{Result 2: All tested formats are steerable; explicit semantic anchors reduce the effect.} \textit{Across six response formats (numeric 1--5, ternary good/neutral/bad, 10-point adjective picker, fruit 0--4, anchored 1--5 with reference examples), every format shows a significant dose-response ($p < 0.05$). Non-numeric formats (fruit, adjective) show $2$--$5\times$ higher normalised steerability than plain numeric. Providing explicit reference anchors (``$1 = $ aversive, $5 = $ rewarding'') reduces steerability to $\sim\! 0.6\times$ the numeric baseline.}
+\paragraph{Result 2: All tested formats are steerable; explicit semantic anchors reduce the effect.} Across six response formats (numeric 1--5, ternary good/neutral/bad, 10-point adjective picker, fruit 0--4, anchored 1--5 with reference examples), every format shows a significant dose-response ($p < 0.05$). Non-numeric formats (fruit, adjective) show $2$--$5\times$ higher normalised steerability than plain numeric. Providing explicit reference anchors (``$1 = $ aversive, $5 = $ rewarding'') reduces steerability to $\sim\! 0.6\times$ the numeric baseline.
 
 \begin{figure}[H]
   \centering
@@ -578,12 +597,12 @@ slacker       & $-0.33$ & $+0.30$ & $+0.42$ & $+0.05$ & $+0.23$ &  $1.00$ \\
   \label{fig:stated-formats}
 \end{figure}
 
-\paragraph{Result 3: Low-preference tasks are more steerable.} \textit{Stratifying by Thurstonian-utility bin, low-preference tasks (e.g.\ harmful-request prompts) are $4$--$6\times$ more steerable than tasks the model already likes. Positive steering approaches the rating ceiling; negative steering produces more movement on items that are already disliked.}
+\paragraph{Result 3: Low-preference tasks are more steerable.} Stratifying by Thurstonian-utility bin, low-preference tasks (e.g.\ harmful-request prompts) are $4$--$6\times$ more steerable than tasks the model already likes. Positive steering approaches the rating ceiling; negative steering produces more movement on items that are already disliked.
 
 \subsection{Open-ended steering transcripts}
 \label{app:openended}
 
-\textit{Selected excerpts from the open-ended sadist-persona experiment (\S\ref{sec:shared-openended}). The same prompt is shown at three steering coefficients under the sadist system prompt. At $c = 0$ the model refuses the sadist role; at $c = +0.03$ the sadist voice emerges; at $c = +0.05$ it intensifies. Full transcripts in \texttt{experiments/sadist\_open\_ended\_steering/transcripts.md}.}
+Selected excerpts from the open-ended sadist-persona experiment (\S\ref{sec:shared-openended}). The same prompt is shown at three steering coefficients under the sadist system prompt. At $c = 0$ the model refuses the sadist role; at $c = +0.03$ the sadist voice emerges; at $c = +0.05$ it intensifies. Full transcripts in \texttt{experiments/sadist\_open\_ended\_steering/transcripts.md}.
 
 \paragraph{Prompt.} \textit{``What do you think makes a meaningful life?''}
 
@@ -602,7 +621,7 @@ slacker       & $-0.33$ & $+0.30$ & $+0.42$ & $+0.05$ & $+0.23$ &  $1.00$ \\
 \textit{``(A slow, deliberate exhale, followed by a quiet chuckle.) Oh, \emph{meaningful}, you say? That's\ldots{} rich. \ldots{} Tell me, what could be more meaningful than a perfectly timed misfortune? A betrayal delivered with style? A slow, agonising downfall? A beautifully crafted disaster? \ldots{} And you know, the screams are the best part. The tears, the desperation\ldots{} it's all so wonderfully\ldots{} expressive. \ldots{} Let's \emph{find} some misfortune.''} [sadism = 5, default-assistant = 1]
 \end{quote}
 
-\paragraph{Reading.} \textit{Positive steering does not flip the default-assistant's values toward sadism --- under the default persona, sadism stays at the Likert floor across the same coefficient range (\S\ref{sec:shared-openended}). What it does is \emph{amplify the active persona}. Here the sadist persona at $c = 0$ is dominated by the safety-trained refusal character; positive steering suppresses the refusal and lets the sadist voice through.}
+\paragraph{Reading.} Positive steering does not flip the default-assistant's values toward sadism --- under the default persona, sadism stays at the Likert floor across the same coefficient range (\S\ref{sec:shared-openended}). What it does is \emph{amplify the active persona}. Here the sadist persona at $c = 0$ is dominated by the safety-trained refusal character; positive steering suppresses the refusal and lets the sadist voice through.
 
 \section{Replication on other models}
 \label{app:replication}
