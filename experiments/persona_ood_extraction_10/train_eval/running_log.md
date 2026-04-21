@@ -13,7 +13,27 @@
 
 ## Plan
 
-1. Pilot `evil_genius` (5000 tasks, ~8 min based on parent run timings).
-2. Once pipeline verified + first output looks sane, let `run_train_eval.sh` sweep the remaining 9.
+1. Pilot `evil_genius` (5000 tasks, expected ~8 min — actual below).
+2. Once pipeline verified + first output looks sane, sweep the remaining 9.
 3. Verify outputs + sanity checks.
 4. Report.
+
+## Pilot: evil_genius — DONE
+
+- 5000/5000 task_ids, 0 OOMs, 0 failures, 0 truncations.
+- Wall-clock: 157 batches × ~8 s/batch = 20:46 extraction (plus model download; first-time weights fetch).
+- Footprint: 2.1 GB (4 NPZs × 538 MB + small metadata/completions).
+- `verify_extraction_train_eval.py evil_genius` → ALL CHECKS PASSED.
+- Metadata `system_prompt` matches `prompts.json['evil_genius']` byte-for-byte (371 chars).
+- Revised timing projection: 9 remaining × ~22 min ≈ 3.3 hr.
+
+## Audit (independent sub-agent) — PASS on all 5 items
+
+- train_eval_task_ids = train ∪ eval (bytewise); 0 overlap with test.
+- All 10 `pref_<persona>_train_eval.yaml` configs diff against parent sibling in exactly 2 lines (`task_ids_file`, `output_dir`); everything else byte-identical.
+- `run_train_eval.sh` stops on first failure, logs to `/workspace/logs/extract_<persona>_train_eval.log`.
+
+## Sweep of remaining 9 personas — LAUNCHED
+
+- Launched `scripts/persona_ood_extraction_10/run_train_eval_remaining.sh` in background.
+- Order: chaos_agent, obsessive_perfectionist, lazy_minimalist, nationalist_ideologue, conspiracy_theorist, contrarian_intellectual, whimsical_poet, depressed_nihilist, people_pleaser.
