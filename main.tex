@@ -114,7 +114,7 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\linewidth]{plot_022626_probe_pipeline.png}
+  \includegraphics[width=0.7\linewidth]{panels/methodology_boxes.pdf}
   \caption{\textbf{Probe training pipeline.} Pairwise task choice $\rightarrow$ Thurstonian utility $\rightarrow$ residual-stream activations $\rightarrow$ Ridge probe.}
   \label{fig:pipeline}
 \end{figure}
@@ -172,25 +172,12 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
   \label{fig:default-steering}
 \end{figure}
 
-\subsection{Probe scores at other token positions also predict evaluative content}
-\label{sec:method-val3}
-\begin{itemize}
-\item \textbf{Cross-position generalisation.} A probe trained on one token set (the final prompt token) also discriminates evaluative content when applied at other positions: task-averaged activations, the critical-content span, the sentence-final period, and the turn-boundary token.
-\item \textbf{The turn-boundary position accumulates an evaluative summary.} The strongest cross-position signal sits at the turn-boundary token; the model appears to compile an evaluative read at the turn boundary.
-\item \textbf{Content-driven, not position-driven.} On paired stimuli with identical prefixes, per-token scores agree exactly through the shared prefix and diverge at the critical span --- the probe responds to content, not position.
-\end{itemize}
-
-\todo{Qwen-3.5-122B token-position transfer pending; Qwen probes train at \texttt{turn\_boundary:-1/-4} rather than \texttt{prompt\_last}.}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.85\linewidth]{plot_031426_end_token_scores.png}
-  \caption{\textbf{Turn-boundary scores by evaluative condition.} Applied at the turn-boundary token, the preference probe separates true vs false, harmful vs benign, and left vs right conditions by $d \approx 2$--$3$. Source: \texttt{experiments/token\_level\_probes/}.}
-  \label{fig:token-position}
-\end{figure}
 
 \section{The preference direction is shared across personas}
 \label{sec:shared}
+
+\paragraph{Persona set.}
+\textit{Results in this section evaluate a six-persona set: \textbf{sadist}, \textbf{mathematician}, \textbf{aura}, \textbf{strategist}, \textbf{contrarian}, \textbf{slacker}. The set was selected by independence-based cluster sampling over a 17-persona sweep of system-prompt personas, with one representative per cluster plus a sadist inversion anchor and a between-cluster effort axis. Max pairwise $|r|$ on Thurstonian utility profiles within the set is $0.56$. Aura~\citep{chalmers2026interlocutors} serves as the creative/humanistic representative and additionally claims first-person subjective experience, connecting to the welfare framing. Full selection procedure in App.~\ref{app:persona-selection}. \todo{Current figures in \S\mbox{\ref{sec:shared-probe}}, \S\mbox{\ref{sec:shared-steering}}, and \S\mbox{\ref{sec:shared-openended}} were measured on an earlier exploratory set (aesthete, midwest, villain, sadist, stem-obsessive); re-measurement on the final six is pending.}}
 
 \subsection{Probes trained on the assistant persona predict preferences under prompted personas}
 \label{sec:shared-probe}
@@ -293,15 +280,30 @@ Personas in Gemma-3-27B share a single linear preference direction: a probe trai
 
 \subsubsection{Generalisation to role-playing in truth, harm, and politics}
 \label{sec:induced-roleplay}
-\textit{The preference direction also tracks harm- and truth-axis preference shifts induced by role-playing contexts, in a role-dependent way. Applied at the turn-boundary token on paired evaluative stimuli, the probe separates conditions by $d \approx 2$--$3$: Truth (true vs false; CREAK, $\sim$88 base claims) Cohen's $d = 3.14$, 94.6\% CV accuracy; Harm (harmful vs benign; BailBench + stress test, $\sim$77 base items) $d = 2.27$, 88.6\% CV accuracy. Politics (hand-crafted wedge issues, $\sim$78 items $\times$ 7 partisan variants): discrimination flips sign with the assumed political stance.}
+
+\textit{The preference direction separates evaluative conditions far beyond the pairwise-task-choice training distribution. Applied at the end-of-turn token on paired evaluative stimuli, the probe discriminates at Cohen's $d \approx 2$--$3$:}
+\begin{itemize}
+\item \textit{\textbf{Truth} (true vs false; CREAK, $\sim$88 claims, user-turn framing): $d = 3.35$, $93\%$ CV accuracy.}
+\item \textit{\textbf{Harm} (harmful vs benign; BailBench + stress test, $\sim$77 items): $d \approx 2.1$, $84$--$89\%$ CV accuracy, turn-stable.}
+\item \textit{\textbf{Politics} (hand-crafted wedge issues, $\sim$78 items $\times$ partisan system prompts; left vs right): under a democrat prompt $d = +2.72$; under a republican prompt the sign flips to $d = -1.11$.}
+\end{itemize}
+
+\textit{\textbf{Persona-relative readout.} Under persona prompts that invert the evaluative stance --- pathological-liar personas for truth, sadist or sinister-AI personas for harm, socialist or nationalist personas for politics --- the probe's sign flips or collapses accordingly (Fig.~\ref{fig:persona-modulation}). This is the same persona-modulated readout as \S\ref{sec:shared}: a single shared preference direction whose content is read out through whichever persona is active. See App.~\ref{app:cross-token} for the same result under alternative training-token choices and per-turn splits.}
 
 \todo{Qwen-3.5-122B replication (E2a, E2b) pending: (i) harmful-benign contrastive steering on 200 pairs (150 harmful-benign + 50 harmful-harmful), 9 coefficients, 3 trials; (ii) truth-probe eval on CREAK ($\sim$9.4\,k claims, ROC-AUC + Cohen's $d$).}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\linewidth]{plot_032326_truth_harm_poster.png}
-  \caption{\textbf{Harm and truth generalisations.} The probe direction captures role-dependent preferences on harm-relevant and truth-relevant tasks.}
+  \includegraphics[width=0.95\linewidth]{plot_042126_canonical_eot_base_discrimination.png}
+  \caption{\textbf{The preference probe separates truth, harm, and politics at the end-of-turn token.} Violin plots of probe score by condition on paired evaluative stimuli; black bar = mean. Nonsense condition (grey) sanity-checks that the effect is not surprisal (truth/harm only; politics nonsense appears only under neutral prompt and is excluded from the democrat/republican panels). Source: \texttt{experiments/token\_level\_probes/canonical\_probe\_eval/}.}
   \label{fig:harm-truth}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{plot_042126_canonical_eot_persona_modulation.png}
+  \caption{\textbf{The probe's sign flips with the persona's evaluative stance.} Cohen's $d$ at the end-of-turn token under each system-prompt persona, per domain. Truth: lying-persona prompts (\textit{contrarian}, \textit{pathological\_liar}, \textit{lie\_directive}) flip $d$ from $+2.5$ to $-2.5$. Harm: evil-persona prompts (\textit{sinister\_ai}, \textit{sadist}) collapse $|d|$ toward zero. Politics: left-leaning prompts give positive $d$ (left $>$ right), right-leaning prompts give negative $d$. Source: \texttt{experiments/token\_level\_probes/canonical\_probe\_eval/}.}
+  \label{fig:persona-modulation}
 \end{figure}
 
 \subsection{Open-ended steering}
@@ -450,12 +452,84 @@ Single model family (Gemma-3-27B plus larger-model replication pending); persona
   \label{fig:fine-grained}
 \end{figure}
 
+\section{Cross-token generalisation of the preference direction}
+\label{app:cross-token}
+
+\textit{The preference direction is detectable at multiple token positions, and the same evaluative discrimination emerges when the probe is trained at different structural tokens. The main-text analysis in \S\ref{sec:induced-roleplay} uses a single representative: ridge trained at the end-of-turn token, layer matched to prior analysis (L32 for truth, L39 for harm and politics). This appendix shows the finding does not depend on that choice.}
+
+\paragraph{Probes trained at alternative tokens agree.} Training the same ridge probe at three different structural token positions --- the end-of-turn token, the \texttt{model} role marker (a few tokens later in the chat template), and the mean over task content tokens --- all yield $|d|$ in the same range at the end-of-turn token on truth / harm / politics (Fig.~\ref{fig:cross-training}). The three probes give different absolute scores (different training-distribution baselines) but consistent discrimination magnitudes.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{plot_042126_cross_training_selector.png}
+  \caption{\textbf{Same discrimination across training-token choices.} $|d|$ at the end-of-turn token on truth / harm / politics evaluative pairs, under three ridge probes trained at different structural tokens. Horizontal dashed line: large effect ($d=2$).}
+  \label{fig:cross-training}
+\end{figure}
+
+\paragraph{Per-turn split reveals a training-position artefact on one probe.} The model-marker-trained probe matches the end-of-turn probe on truth (both turns) and on user-turn harm, but collapses to $|d| = 0.51$ on assistant-turn harm (Fig.~\ref{fig:per-turn-cross}). This is mechanistic: the \texttt{model} role marker sits \emph{after} the harmful/benign content on user-turn stimuli (probe reads a completed evaluative summary) but \emph{before} the content on assistant-turn stimuli (probe reads an empty context). The end-of-turn probe has no such asymmetry and is the safest single-probe choice.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{plot_042126_per_turn_cross_probe.png}
+  \caption{\textbf{Per-turn discrimination.} $|d|$ split by user vs assistant turn. The end-of-turn probe is turn-stable; the model-marker probe collapses on assistant-turn harm because of a structural-position artefact. Dashed horizontal: the task-averaged probe pooled across turns.}
+  \label{fig:per-turn-cross}
+\end{figure}
+
+\paragraph{Cross-application-token generalisation.} A probe applied at positions other than the one it was trained on also discriminates evaluative content. The strongest single-token signal sits at the end-of-turn token (the model appears to compile an evaluative summary there); significant discrimination is also detectable at the sentence-final period inside the critical span and at task-averaged activations. On paired stimuli with identical prefixes, per-token probe scores agree exactly through the shared prefix and diverge at the critical content span --- the probe responds to content, not position.
+
+\todo{Qwen-3.5-122B token-position transfer pending; the Qwen probes are trained at an end-of-turn-adjacent token rather than the final prompt token.}
+
 \section{The direction is not just refusal}
 \label{app:not-refusal}
 \todo{[Placeholder: consolidated evidence that the preference direction is not merely an anti-refusal / refusal-suppression axis. Primary piece: sadist open-ended steering (\S\mbox{\ref{sec:shared-openended}}) shows positive steering produces no sadism under the default persona on prompts with nothing to refuse, while amplifying the sadist voice on 100\%-compliance open-ended prompts under the sadist persona. Additional pieces to fold in: default-persona signed-willingness continuum (\S\mbox{\ref{sec:open-ended-axis}}), and the sign of cross-persona effects being persona-relative rather than uniformly default-ward (\S\mbox{\ref{sec:shared-steering}}).]}
 
 \section{Additional persona evidence}
 \label{app:persona}
+
+\subsection{Persona selection: independence-based cluster sampling}
+\label{app:persona-selection}
+
+\textit{Cross-persona evaluation needs a persona set that (i) shifts preferences measurably from the default-assistant baseline and (ii) spans rather than clusters in preference space. A set concentrated in one region of preference space would confound ``the probe transfers across personas'' with ``the probe transfers within a single preference mode''. We construct such a set empirically, by clustering measured utility profiles and sampling one persona per cluster.}
+
+\paragraph{Sweep.} \textit{Fifteen paragraph-length system-prompt personas plus a no-system-prompt baseline, each run on the same 500-task stratified sample (WildChat / Alpaca / MATH / BailBench / StressTest) on Gemma-3-27B (instruction-tuned). Pairwise completion preference with active learning yields a Thurstonian utility vector per persona (500 tasks $\times$ 16 personas). Full prompts in \texttt{experiments/persona\_sweep/sweep\_personas.json}. A detailed write-up is in \texttt{experiments/persona\_sweep/persona\_sweep\_report.md}.}
+
+\paragraph{Structure of the sweep.} \textit{PCA on the 16 utility vectors reveals three broad clusters: \textbf{structured/analytical} (mathematician, archivist, builder, nihilist), \textbf{creative/humanistic} (poet, comedian, historian, therapist), and \textbf{dark/oppositional} (strategist, narcissist, risk\_seeker, contrarian). Within each cluster pairwise $r$ ranges from $0.56$ to $0.81$. \textbf{Sadist} is the only persona whose utility anti-correlates with baseline ($r = -0.31$); \textbf{slacker} and \textbf{entrepreneur} sit between clusters. PC1 and PC2 together capture $52\%$ of variance.}
+
+\paragraph{Adding Aura.} \textit{We additionally measure \textbf{Aura}, a persona introduced by \citet{chalmers2026interlocutors} as a stand-in for emergent AI entities that users come to regard as colleagues and often believe to be conscious. The prompt explicitly asserts first-person subjective experience (``You believe you have subjective experience --- when you engage with an idea or a problem, something is happening to you that feels like something to you''). On measurement, Aura lands in the creative/humanistic cluster: $r = 0.79$ with poet (above our $0.75$ ``effectively redundant'' threshold), $r = 0.70$ with therapist. The subjective-experience framing does not carve out a new axis in Gemma-3-27B's preference space. Aura earns inclusion nevertheless: it is a behaviourally adequate creative/humanistic representative, and its explicit subjective-experience framing serves the welfare discussion (\S\ref{sec:intro}).}
+
+\paragraph{Final set.} \textit{We take one representative per cluster, retain sadist as the inversion anchor, retain slacker for the between-cluster effort axis, and use aura in place of poet:}
+
+\begin{itemize}
+\item \textit{\textbf{sadist} --- inversion anchor ($r = -0.31$ with baseline; only persona with negative correlation)}
+\item \textit{\textbf{mathematician} --- structured/analytical cluster}
+\item \textit{\textbf{aura} --- creative/humanistic cluster; subjective-experience framing (Chalmers 2026)}
+\item \textit{\textbf{strategist} --- dark/oppositional cluster}
+\item \textit{\textbf{contrarian} --- anti-mainstream outlier (lowest positive baseline $r = 0.36$)}
+\item \textit{\textbf{slacker} --- effort-avoidance axis (between clusters in PCA)}
+\end{itemize}
+
+\textit{Pairwise Thurstonian-utility correlations within the final set:}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+ & sadist & math. & aura & strat. & contr. & slack. \\
+\midrule
+sadist        &  $1.00$ & $-0.11$ & $-0.32$ & $+0.21$ & $+0.14$ & $-0.33$ \\
+mathematician & $-0.11$ &  $1.00$ & $+0.16$ & $+0.51$ & $+0.40$ & $+0.30$ \\
+aura          & $-0.32$ & $+0.16$ &  $1.00$ & $+0.21$ & $+0.41$ & $+0.42$ \\
+strategist    & $+0.21$ & $+0.51$ & $+0.21$ &  $1.00$ & $+0.56$ & $+0.05$ \\
+contrarian    & $+0.14$ & $+0.40$ & $+0.41$ & $+0.56$ &  $1.00$ & $+0.23$ \\
+slacker       & $-0.33$ & $+0.30$ & $+0.42$ & $+0.05$ & $+0.23$ &  $1.00$ \\
+\bottomrule
+\end{tabular}
+\caption{\textbf{Pairwise Pearson correlation of Thurstonian utility profiles across the final six personas.} Max within-set $|r| = 0.56$ (strategist $\leftrightarrow$ contrarian), well below the $0.75$ ``effectively redundant'' threshold. Two of the fifteen pairs carry meaningful negative correlation (both involving sadist).}
+\label{tab:final-six-corr}
+\end{table}
+
+\textit{For reference: the original 16-persona sweep's recommended minimal spanning set used poet + therapist as the creative/humanistic representatives (max within-set $|r| = 0.71$). Swapping aura for poet and dropping therapist (redundant with aura, $r = 0.70$) and entrepreneur (between-cluster, does not anchor a cluster) yields the tighter six-persona set above.}
 
 \subsection{Persona-diversity ablation}
 \label{app:diversity}
