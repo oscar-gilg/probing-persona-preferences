@@ -22,5 +22,5 @@ _to be filled in once all six finish_
 | mathematician | 6000 / 6000 | 0 failures, 0 OOMs | 2.5 GB | 31.5 min |
 | aura | 6000 / 6000 | 0 failures, 0 OOMs | 2.5 GB | 34 min |
 | strategist | 6000 / 6000 | 0 failures, 0 OOMs | 2.5 GB | 32 min |
-| contrarian | | | | |
+| contrarian | 6000 / 6000 | 0 failures, 0 OOMs | 2.5 GB | 32.5 min |
 | slacker | | | | |
