@@ -41,3 +41,18 @@ All 5 checks passed:
 - 20:35:38 UTC — **aura** done. 6000 new, 0 failures, 0 OOMs. 6 files, 2.5 GB. ~34 min. Strategist started.
 - 21:07:55 UTC — **strategist** done. 6000 new, 0 failures, 0 OOMs. 6 files, 2.5 GB. ~32 min. Contrarian started.
 - 21:40:24 UTC — **contrarian** done. 6000 new, 0 failures, 0 OOMs. 6 files, 2.5 GB. ~32.5 min. Slacker (last) started.
+- 22:12:22 UTC — **slacker** done. 6000 new, 0 failures, 0 OOMs. 6 files, 2.5 GB. ~32 min. **All six complete.**
+
+### Total wall time
+18:56:44 → 22:12:22 UTC = **3h 15m 38s** (~33 min/persona × 6).
+Total output: ~15 GB across `/workspace/activations/gemma-3-27b_it/pref_*_sweep/`.
+
+### Validation (all 6)
+All 6 personas pass `scripts/persona_sweep_extraction/validate_all.py`:
+- 6 files each, 2.41 GiB.
+- Per npz: keys `task_ids, layer_{25,32,39,46,53}`, layers `(6000, 5376) float32`.
+- Task IDs unique per file and identical set across all 6 personas, equal to the canonical 6000.
+- `completions_with_activations.json` has 6000 unique entries per persona.
+- No NaN / Inf on `layer_25 / task_mean`. Magnitudes consistent across personas (|max| ~4.4–4.7e4, |mean| ~20).
+- Metadata: `model=gemma-3-27b`, selectors/layers match, `n_new=6000`, `n_failures=0`, `n_ooms=0`.
+- System prompts pairwise distinct (6/6 unique) and persona-identifiable.
