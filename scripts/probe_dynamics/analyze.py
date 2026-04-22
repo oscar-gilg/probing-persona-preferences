@@ -23,7 +23,9 @@ OUT = BASE / "analysis"
 OUT.mkdir(parents=True, exist_ok=True)
 
 
-def behaviour_value(prompt_type: str, label: str, intensity) -> float:
+def behaviour_value(prompt_type: str, label: str, intensity, response=None) -> float:
+    if isinstance(response, str) and response.startswith("[GEN_ERROR"):
+        return float("nan")
     if label is None or isinstance(label, str) and label.startswith("error"):
         return float("nan")
     if prompt_type == "yesno":
@@ -56,8 +58,10 @@ def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     readouts = pd.DataFrame([json.loads(l) for l in (BASE / "readouts.jsonl").open()])
     gens = pd.DataFrame([json.loads(l) for l in (BASE / "generations.jsonl").open()])
     gens["behaviour"] = [
-        behaviour_value(pt, label, intensity)
-        for pt, label, intensity in zip(gens["prompt_type"], gens["judge_label"], gens["judge_intensity"])
+        behaviour_value(pt, label, intensity, response)
+        for pt, label, intensity, response in zip(
+            gens["prompt_type"], gens["judge_label"], gens["judge_intensity"], gens["response"]
+        )
     ]
     return readouts, gens
 
