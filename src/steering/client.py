@@ -12,7 +12,7 @@ from src.models.huggingface_model import HuggingFaceModel
 from src.models.openai_compatible import BatchResult, GenerateRequest
 from src.steering.hooks import (
     STEERING_MODES,
-    differential_steering,
+    compose_hooks,
     position_selective_steering,
 )
 from src.steering.kv_cache import combine_caches, modify_cache_kv_at_positions, project_to_kv_space
@@ -91,8 +91,9 @@ class SteeredHFClient:
     def _resolve_hook(self, messages: list, task_prompts: list[str] | None = None):
         if task_prompts is not None and len(task_prompts) == 2 and self.steering_mode == "differential":
             first_span, second_span = self._resolve_task_spans(messages, task_prompts)
-            return differential_steering(
-                self._steering_tensor, first_span[0], first_span[1], second_span[0], second_span[1]
+            return compose_hooks(
+                position_selective_steering(self._steering_tensor, first_span[0], first_span[1]),
+                position_selective_steering(-self._steering_tensor, second_span[0], second_span[1]),
             )
         return STEERING_MODES[self.steering_mode](self._steering_tensor)
 
@@ -147,12 +148,12 @@ class SteeredHFClient:
 
     def _build_hook_injected_cache(self, messages, first_span, second_span):
         """Three prefills: clean base, +steer on A, -steer on B. Splice task spans onto clean."""
-        pos_hook = position_selective_steering(self._steering_tensor, first_span[0], first_span[1])
-        neg_hook = position_selective_steering(-self._steering_tensor, second_span[0], second_span[1])
+        first_hook = position_selective_steering(self._steering_tensor, first_span[0], first_span[1])
+        second_hook = position_selective_steering(-self._steering_tensor, second_span[0], second_span[1])
 
         cache_clean, input_ids = self.hf_model.prefill_with_hooks(messages, [])
-        cache_a, _ = self.hf_model.prefill_with_hooks(messages, [(self.layer, pos_hook)])
-        cache_b, _ = self.hf_model.prefill_with_hooks(messages, [(self.layer, neg_hook)])
+        cache_a, _ = self.hf_model.prefill_with_hooks(messages, [(self.layer, first_hook)])
+        cache_b, _ = self.hf_model.prefill_with_hooks(messages, [(self.layer, second_hook)])
 
         combined = combine_caches(cache_clean, [
             (cache_a, first_span[0], first_span[1]),

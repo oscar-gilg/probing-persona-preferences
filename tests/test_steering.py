@@ -9,8 +9,8 @@ import pytest
 import torch
 
 from src.steering.hooks import (
+    compose_hooks,
     position_selective_steering,
-    differential_steering,
     noop_steering,
 )
 from src.steering.tokenization import find_text_span, find_pairwise_task_spans
@@ -72,10 +72,13 @@ class TestPositionSelectiveSteering:
         assert torch.all(result == 0.0)
 
 
-class TestDifferentialSteering:
+class TestComposeHooksDifferential:
     def test_positive_and_negative_spans(self):
         steering_tensor = torch.ones(8) * 2.0
-        hook = differential_steering(steering_tensor, pos_start=0, pos_end=3, neg_start=5, neg_end=8)
+        hook = compose_hooks(
+            position_selective_steering(steering_tensor, 0, 3),
+            position_selective_steering(-steering_tensor, 5, 8),
+        )
 
         resid = torch.zeros(1, 10, 8)
         result = hook(resid, prompt_len=10)
@@ -87,7 +90,10 @@ class TestDifferentialSteering:
 
     def test_no_op_during_autoregressive(self):
         steering_tensor = torch.ones(8)
-        hook = differential_steering(steering_tensor, 0, 1, 2, 3)
+        hook = compose_hooks(
+            position_selective_steering(steering_tensor, 0, 1),
+            position_selective_steering(-steering_tensor, 2, 3),
+        )
 
         resid = torch.zeros(1, 1, 8)
         result = hook(resid, prompt_len=10)

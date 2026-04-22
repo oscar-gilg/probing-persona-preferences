@@ -5,7 +5,7 @@ so tests run in seconds on any machine. The model produces nonsense, but that's
 fine — we're testing that the steering tensor reaches the residual stream and
 that all dispatch paths through SteeredHFClient work end-to-end.
 
-Prefill-only hooks (differential, position_selective) don't reliably change
+Prefill-only hooks (composed position_selective) don't reliably change
 greedy output on a 16-dim random model because perturbations during prefill
 may not flip the first generated token's argmax. For those, we verify the
 pipeline runs and check activations directly. Cache-based generation
@@ -28,7 +28,7 @@ from src.steering.client import SteeredHFClient
 from src.steering.hooks import (
     all_tokens_steering,
     autoregressive_steering,
-    differential_steering,
+    compose_hooks,
     noop_steering,
     position_selective_steering,
 )
@@ -74,7 +74,7 @@ class TestHookFactoriesE2E:
 
     all_tokens and autoregressive hooks fire on every forward pass (including
     autoregressive steps), so they reliably change greedy output. Prefill-only
-    hooks (differential, position_selective) only fire once during prefill and
+    hooks (composed position_selective) only fire once during prefill and
     may not change output on this tiny model — we test them via activation
     capture instead.
     """
@@ -110,9 +110,12 @@ class TestHookFactoriesE2E:
         assert sel_out != all_out
 
     def test_differential_modifies_prefill_activations(self, model):
-        """Verify differential hook actually modifies activations during prefill."""
+        """Verify composed position-selective hooks modify activations during prefill."""
         tensor = torch.tensor(DIRECTION * 100, dtype=torch.float32)
-        hook = differential_steering(tensor, 0, 2, 2, 4)
+        hook = compose_hooks(
+            position_selective_steering(tensor, 0, 2),
+            position_selective_steering(-tensor, 2, 4),
+        )
 
         prompt = model.format_messages(SIMPLE_PROMPT, add_generation_prompt=True)
         input_ids = model._tokenize(prompt)
@@ -194,7 +197,7 @@ class TestClientDispatchPaths:
         assert result != baseline
 
     def test_differential_mode_with_task_prompts(self, model):
-        """differential + task_prompts → _resolve_task_spans → differential_steering.
+        """differential + task_prompts → _resolve_task_spans → compose_hooks.
 
         Doesn't assert output changes (prefill-only on tiny model), but verifies
         the full span-resolution → hook-creation → generation pipeline runs.

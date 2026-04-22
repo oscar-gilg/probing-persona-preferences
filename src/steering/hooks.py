@@ -7,15 +7,6 @@ import torch
 from src.models.base import LayerHook
 
 
-def compose_hooks(*hooks: LayerHook) -> LayerHook:
-    """Compose multiple hooks into one, applied sequentially."""
-    def hook(resid: torch.Tensor, prompt_len: int) -> torch.Tensor:
-        for h in hooks:
-            resid = h(resid, prompt_len)
-        return resid
-    return hook
-
-
 def autoregressive_steering(steering_tensor: torch.Tensor) -> LayerHook:
     """Steer only the last token position. Works with KV caching during generation."""
     def hook(resid: torch.Tensor, prompt_len: int) -> torch.Tensor:
@@ -56,20 +47,6 @@ def compose_hooks(*hooks: LayerHook) -> LayerHook:
             resid = h(resid, prompt_len)
         return resid
     return composed
-
-
-def differential_steering(
-    steering_tensor: torch.Tensor,
-    pos_start: int,
-    pos_end: int,
-    neg_start: int,
-    neg_end: int,
-) -> LayerHook:
-    """Apply +direction on [pos_start, pos_end) and -direction on [neg_start, neg_end)."""
-    return compose_hooks(
-        position_selective_steering(steering_tensor, pos_start, pos_end),
-        position_selective_steering(-steering_tensor, neg_start, neg_end),
-    )
 
 
 def last_token_steering(steering_tensor: torch.Tensor) -> LayerHook:
