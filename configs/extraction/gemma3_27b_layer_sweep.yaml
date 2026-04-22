@@ -1,6 +1,7 @@
 model: gemma-3-27b
 
-include_task_ids_file: data/canonical_splits/all_6000_task_ids.txt
+task_origins: [wildchat, alpaca, math, bailbench, stress_test]
+task_ids_file: data/canonical_splits/all_6000_task_ids.txt
 selectors: ["turn_boundary:-2", "eot"]
 layers_to_extract: [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35, 38, 41, 44, 47, 50, 53, 56, 59]
 
