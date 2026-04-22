@@ -1,9 +1,12 @@
-"""Generate active-learning measurement configs for the final-six personas across
-the three canonical splits (train/eval/test).
+"""Generate active-learning measurement configs for the final-six personas plus
+the default (no system prompt) across the three canonical splits.
 
 Writes configs/measurement/persona_sweep/final_six/<persona>_<split>.yaml. Each
 config pins include_task_ids_file to the corresponding canonical split so that
 measurements align byte-exactly with the extraction run.
+
+The default-persona configs omit measurement_system_prompt so the runner sends
+the raw assistant prompt.
 """
 
 from __future__ import annotations
@@ -36,7 +39,10 @@ def main() -> None:
 
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 
-    for persona in selected:
+    # Final six + default. Default gets no measurement_system_prompt.
+    personas_with_prompt = [(p, by_name[p]) for p in selected] + [("default", None)]
+
+    for persona, system_prompt in personas_with_prompt:
         for split, (task_ids_file, n_tasks, batch_size) in SPLITS.items():
             cfg = {
                 "preference_mode": "pre_task_active_learning",
@@ -61,8 +67,9 @@ def main() -> None:
                     "seed": 42,
                 },
                 "experiment_id": f"persona_sweep_final_six_{persona}_{split}",
-                "measurement_system_prompt": by_name[persona],
             }
+            if system_prompt is not None:
+                cfg["measurement_system_prompt"] = system_prompt
             out = CONFIG_DIR / f"{persona}_{split}.yaml"
             with open(out, "w") as f:
                 yaml.safe_dump(cfg, f, sort_keys=False, width=10_000)

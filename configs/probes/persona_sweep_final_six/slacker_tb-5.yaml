@@ -1,0 +1,16 @@
+experiment_name: persona_sweep_final_six_slacker_tb-5
+run_dir: results/experiments/persona_sweep_final_six/pre_task_active_learning/slacker_train
+eval_run_dir: results/experiments/persona_sweep_final_six/pre_task_active_learning/slacker_eval
+activations_path: activations/gemma-3-27b_it/pref_slacker_sweep/activations_turn_boundary:-5.npz
+output_dir: results/probes/persona_sweep_final_six/slacker_tb-5
+layers:
+- 25
+- 32
+- 39
+- 46
+- 53
+modes:
+- ridge
+standardize: true
+alpha_sweep_size: 10
+eval_split_seed: 42
