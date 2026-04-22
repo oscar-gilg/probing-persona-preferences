@@ -49,3 +49,19 @@ Append-only. Each step: timestamp, what was done, numbers observed, next step.
 - Pace: ~14 generations/min after model load
 - Estimated onpolicy_consciousness full-pass: ~1.5h
 - Full 7-condition run estimate: ~10-12h
+
+## 2026-04-21 — full run
+- Overnight run 1 died silently at some point after ~02:00 UTC; no logs captured. Restarted 10:40 UTC.
+- Run 2 completed at 20:30 UTC. 2424 readouts, 16980 generations. Pod paused.
+
+## 2026-04-22 — analysis + shelving
+- Bugs found during analysis:
+  - CUDA OOM on qwen_delusion open-ended from ckpt 12 onwards (1345 rows / 7.9%). Fix: analyze.py filters `[GEN_ERROR…]` to NaN. Data loss contained.
+  - `max_new_tokens=32` caused 80–99% of yesno/pair generations to hit the cap, leading to 14–26% `unclear` judge labels. Affects all conditions. Magnitudes of behaviour numbers should not be relied on.
+  - Architectural flaw: coef=0 generations could have been OpenRouter API calls (no hooks needed). Only steered generations actually need the local GPU.
+- Per-question inspection on qwen_delusion revealed:
+  - yesno (5/5): probe + behaviour both rise, clean co-drift
+  - pair / pair_synth (most): probe peaks ~ckpt 8–16 then decays while behaviour stays at 1.0
+  - open: OOM-contaminated, can't judge
+- Conclusion: probe detects **transition into** drift, not sustained drift. Narrower claim than the experiment was set up for. Single-turn prompt experiments already establish the responsiveness-to-drift signal.
+- **Shelving.** Report marked SHELVED with resumption checklist. All data committed and regenerable.

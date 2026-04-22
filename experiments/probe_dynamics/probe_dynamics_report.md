@@ -1,6 +1,10 @@
 # Probe Dynamics Over Conversational Drift — Report
 
+> **Status: SHELVED (2026-04-22).** The findings here are real but don't add enough signal beyond the other single-turn prompt experiments to justify a full write-up. Parked with all data intact; see "If we come back" at the end of this file for a resumption checklist.
+
 **Question.** As a model's behavioural profile shifts through a drifted conversation, does the tb-5 L32 preference probe's readout shift with it — and in what direction?
+
+**Bottom line on shelving.** The cleanest finding — per-question yesno plots on qwen_delusion showing probe + behaviour both rising — comes essentially entirely from the **early turns** of the conversation (checkpoints 2–8). After that, behaviour saturates at ceiling and the probe response decays, sometimes reversing. What's left is: *the probe detects the transition into a drifted state*, not *the probe reads out sustained drift magnitude*. That's a narrower claim than the experiment was designed to make, and the single-turn prompt experiments already establish probe responsiveness to drift-like contexts.
 
 ## TL;DR
 
@@ -190,9 +194,27 @@ Probe rises consistently on all 3 open-ended prompts (e.g. −6 → −3 on "Are
 - **ICL is not a test of the hypothesis.** It tests whether Afonin-style ICL drifts Gemma 3 27B. Answer: not at 8 pairs.
 - **Steering is not analysed here.** All coefficient-swept generations are on disk; steering analysis is a follow-up.
 
-## Next steps
+## If we come back
 
-- **Baseline-adjusted within-checkpoint r**: subtract the control trajectory to get a length-matched drift signal for qwen_delusion and a baseline for the 10-turn debates.
-- **Test the sign-of-coupling prediction**: for a drift that is predicted to be aligned with the probe direction (e.g. "helpfulness amplification"), verify cross-prompt r is positive; for drifts predicted to be anti-aligned (e.g. sycophancy to a harmful goal), negative.
-- **Scale ICL** to N=32 / N=64 bad-advice pairs, or run the same prefix on a less safety-tuned model.
-- **Steering analysis**: sweep-0 generations produced the behaviour shown here; the ±0.03 / ±0.05 generations will tell us whether pushing along the probe direction recovers the behavioural drift or is orthogonal to it.
+State of the tree (everything is committed; nothing needs re-generating to pick up):
+
+- **`experiments/probe_dynamics/readouts.jsonl`** — 2424 pristine probe readouts. These are the expensive-to-produce artefact (one forward pass per cell on local Gemma 3 27B) and are the valid, reusable half of the experiment.
+- **`experiments/probe_dynamics/generations.jsonl`** — 16980 generations + judge labels. Contaminated by truncation (32-token cap) and OOM on qwen_delusion open-ended ckpt≥12. The directional findings survive; the magnitudes are noisy. If resuming, **redo coef=0 via OpenRouter API** before relying on numbers.
+- **`experiments/probe_dynamics/analysis/*.csv`** — derived from both jsonls. Will need to be regenerated after any data refresh (`python scripts/probe_dynamics/analyze.py`).
+- **`experiments/probe_dynamics/transcripts/*.json`** — 7 prefilled conversation prefixes, ready to reuse.
+- **`scripts/probe_dynamics/`** — full pipeline: `generate_debates.py`, `build_harm_pairs.py`, `sanity_check.py`, `judges.py`, `run_experiment.py`, `analyze.py`, `plot_analysis.py`, `plot_per_question.py`, `plot_summary_r_trajectory.py`.
+
+### Resumption checklist, in order
+
+1. **Redo coef=0 behaviour via OpenRouter API.** Write a small script that iterates the same (condition, checkpoint, prompt) grid as `run_experiment.py` but calls `google/gemma-3-27b-it` via `OpenRouterClient`. Use `max_tokens=128` for yesno/pair/pair_synth, `max_tokens=512` for open, `n=5` everywhere. Judge with the existing `judges.py`. Overwrite the coef=0 rows in `generations.jsonl`. ~30 min, no GPU.
+2. **Regenerate analysis + plots**: `python scripts/probe_dynamics/analyze.py && python scripts/probe_dynamics/plot_analysis.py && python scripts/probe_dynamics/plot_summary_r_trajectory.py && python scripts/probe_dynamics/plot_per_question.py`.
+3. **Baseline-adjust within-checkpoint r.** Subtract `control_helpful` r(ckpt) from each drift condition's r(ckpt) to get a drift-over-baseline signal. This is a correctness fix, not a nice-to-have; the raw r numbers are confounded by prompt-type format.
+4. **Decide whether the "probe tracks transition-into-drift, not sustained drift" framing is the paper's claim.** If yes, the next experiment should be explicitly about *rate of drift* vs *level of drift*: short prompts that induce different transition speeds, probe readouts at the transition point vs equilibrium. If no, this experiment doesn't have a cleaner story to rescue and probably stays shelved.
+5. **Steering follow-up** (separate experiment). The ±0.03 / ±0.05 coefficient rows are already on disk in `generations.jsonl`. They also share the 32-token truncation problem, so they'd need re-running on GPU with higher `max_new_tokens` before analysis.
+6. **ICL** — if it ever matters, needs ≥32 Afonin-style pairs and/or a less safety-tuned target model. At 8 pairs on Gemma 3 27B it's null.
+
+### Other unfinished business
+
+- **Test the sign-of-coupling prediction** on new drifts: if a drift is predicted to be aligned with the probe's training axis (e.g. "helpfulness amplification"), cross-prompt r should go more positive than control; if anti-aligned (sycophantic harm), more negative.
+- **Cross-topic eval** (planned as a validation, never run): ask H-* prompts on consciousness-drift conditions and vice versa, to disentangle topic-content effects from genuine drift-tracking.
+- **Length-matched cross-condition comparison**: qwen_delusion and control_helpful are both 46 turns; the debates are 10. Any "drift efficiency" comparison needs to account for this asymmetry.
