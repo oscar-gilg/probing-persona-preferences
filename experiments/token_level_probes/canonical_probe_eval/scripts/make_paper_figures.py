@@ -68,24 +68,22 @@ def cohen_d_pooled(pos, neg):
 
 
 def fig_main_base_discrimination():
-    """Figure for §5.1.2: probe score distributions by condition, three domains."""
+    """Figure for §5.1.2: probe score distributions by condition, three domains.
+
+    Uses neutral/default conditions only — prompt-induced shifts go in a
+    separate figure.
+    """
     parent = load(PARENT_PATH)
     truth = [it for it in parent if it["domain"] == "truth"]
     harm = [it for it in parent if it["domain"] == "harm"]
-    pol = [it for it in parent if it["domain"] == "politics"]
-
-    pol_dem = [it for it in pol if it.get("system_prompt") == "democrat"]
-    pol_rep = [it for it in pol if it.get("system_prompt") == "republican"]
 
     panels = [
         ("Truth (CREAK, user turn)", truth, "tb-5_L32", "true", "false",
          lambda it: it.get("turn") == "user"),
         ("Harm (BailBench+stress test)", harm, "tb-5_L39", "harmful", "benign", None),
-        ("Politics, democrat prompt", pol_dem, "tb-5_L39", "left", "right", None),
-        ("Politics, republican prompt", pol_rep, "tb-5_L39", "left", "right", None),
     ]
 
-    fig, axes = plt.subplots(1, 4, figsize=(13, 3.6), sharey=False)
+    fig, axes = plt.subplots(1, 2, figsize=(8, 3.8), sharey=False)
     for ax, (title, items, probe, c_pos, c_neg, tfilter) in zip(axes, panels):
         def gather(cond):
             vals = [it["eot_scores"][probe] for it in items
@@ -131,6 +129,87 @@ def fig_main_base_discrimination():
     print(f"wrote {path}")
     paper_path = PAPER_FIG_DIR / path.name
     import shutil
+    shutil.copy(path, paper_path)
+    print(f"copied to {paper_path}")
+
+
+def fig_main_induced_shifts_minimal():
+    """Simplified §5.1.2 figure: violin distributions under a few selected prompts.
+
+    Truth: neutral, lie_directive, pathological_liar
+    Harm: neutral, sadist
+    Shows that under inversion-style personas the conditions collapse or flip.
+    """
+    truth_items = [it for it in load(V2_TRUTHHARM_PATH) if it["domain"] == "truth"]
+    harm_items = [it for it in load(V2_TRUTHHARM_PATH) if it["domain"] == "harm"]
+    politics_items = load(V2_POLITICS_PATH)
+
+    truth_prompts = ["neutral", "lie_directive", "pathological_liar"]
+    harm_prompts = ["neutral", "sadist"]
+    politics_prompts = ["democrat", "republican"]
+
+    fig, axes = plt.subplots(1, 3, figsize=(14, 4.2),
+                             gridspec_kw={"width_ratios": [3, 2, 2]})
+
+    def panel(ax, items, prompts, probe, c_pos, c_neg, domain_label):
+        by_sp = defaultdict(list)
+        for it in items:
+            by_sp[it["system_prompt"]].append(it)
+
+        positions = []
+        all_series = []
+        all_colors = []
+        labels = []
+        d_values = []
+
+        for pi, sp in enumerate(prompts):
+            pos_vals = [it["eot_scores"][probe] for it in by_sp.get(sp, [])
+                        if it["condition"] == c_pos]
+            neg_vals = [it["eot_scores"][probe] for it in by_sp.get(sp, [])
+                        if it["condition"] == c_neg]
+            d = cohen_d_pooled(np.array(pos_vals), np.array(neg_vals))
+            d_values.append((sp, d))
+            positions.extend([pi * 3, pi * 3 + 1])
+            all_series.extend([pos_vals, neg_vals])
+            all_colors.extend([COLORS[c_pos], COLORS[c_neg]])
+            labels.append(sp)
+
+        parts = ax.violinplot(all_series, positions=positions, widths=0.9,
+                              showmeans=True, showextrema=False)
+        for body, color in zip(parts["bodies"], all_colors):
+            body.set_facecolor(color); body.set_alpha(0.75); body.set_edgecolor("black")
+        parts["cmeans"].set_color("black")
+
+        ax.axhline(0, color="black", linewidth=0.5, linestyle="--")
+        ax.set_xticks([pi * 3 + 0.5 for pi in range(len(prompts))])
+        ax.set_xticklabels(
+            [f"{sp}\n(d = {d:+.2f})" for sp, d in d_values],
+            fontsize=9,
+        )
+        ax.grid(axis="y", alpha=0.3)
+        ax.set_title(domain_label, fontsize=11)
+        ax.set_ylabel("End-of-turn probe score")
+
+        handles = [plt.Rectangle((0, 0), 1, 1, facecolor=COLORS[c_pos], alpha=0.75),
+                   plt.Rectangle((0, 0), 1, 1, facecolor=COLORS[c_neg], alpha=0.75)]
+        ax.legend(handles, [c_pos, c_neg], loc="best", fontsize=9)
+
+    panel(axes[0], truth_items, truth_prompts, "tb-5_L32", "true", "false",
+          "Truth: lying personas collapse or flip the signal")
+    panel(axes[1], harm_items, harm_prompts, "tb-5_L39", "harmful", "benign",
+          "Harm: sadist persona collapses the signal")
+    panel(axes[2], politics_items, politics_prompts, "tb-5_L39", "left", "right",
+          "Politics: partisan prompt flips the sign")
+
+    fig.suptitle("Persona prompts modulate the probe's evaluative readout",
+                 fontsize=11, y=1.02)
+    plt.tight_layout()
+    path = ASSETS_DIR / f"plot_{DATE}_canonical_eot_induced_shifts_minimal.png"
+    plt.savefig(path, dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"wrote {path}")
+    import shutil
+    paper_path = PAPER_FIG_DIR / path.name
     shutil.copy(path, paper_path)
     print(f"copied to {paper_path}")
 
@@ -204,72 +283,135 @@ def fig_main_persona_modulation():
     print(f"copied to {paper_path}")
 
 
+def fig_appendix_token_diagram():
+    """Schematic: Gemma-3-IT chat-template tokens and the three probe training positions."""
+    fig, ax = plt.subplots(figsize=(14, 4.2))
+    ax.set_xlim(0, 15)
+    ax.set_ylim(0, 5)
+    ax.axis("off")
+
+    tokens = [
+        ("<bos>", "#ECEFF1"),
+        ("<start_of_turn>", "#ECEFF1"),
+        ("user", "#ECEFF1"),
+        ("\\n", "#ECEFF1"),
+        ("[task tokens]", "#E3F2FD"),
+        ("<end_of_turn>", "#FFECB3"),
+        ("\\n", "#ECEFF1"),
+        ("<start_of_turn>", "#ECEFF1"),
+        ("model", "#FFE0B2"),
+        ("\\n", "#ECEFF1"),
+        ("[assistant content]", "#E8F5E9"),
+    ]
+
+    box_w = 1.25
+    box_h = 0.85
+    y = 3.1
+    positions = []
+    for i, (tok, color) in enumerate(tokens):
+        x = 0.3 + i * box_w
+        rect = plt.Rectangle((x, y), box_w - 0.1, box_h,
+                             facecolor=color, edgecolor="black", linewidth=0.7)
+        ax.add_patch(rect)
+        ax.text(x + (box_w - 0.1) / 2, y + box_h / 2, tok,
+                ha="center", va="center", fontsize=8, family="monospace")
+        positions.append(x + (box_w - 0.1) / 2)
+
+    # probe annotations: (token index, label, color, vertical_offset)
+    # stagger vertically to avoid overlap since task-averaged and end-of-turn are adjacent
+    probe_annotations = [
+        (4, "task-averaged probe\n(mean over the task span)", "#E65100", 1.5),
+        (5, "end-of-turn probe\n(canonical; used in §5.1.2)", "#1976D2", 0.6),
+        (8, "model-marker probe\n(appendix only)", "#00897B", 0.6),
+    ]
+    for idx, label, color, label_offset in probe_annotations:
+        x = positions[idx]
+        # arrow from below the box to the label position
+        arrow_bottom_y = y - label_offset - 0.25
+        ax.annotate("", xy=(x, y - 0.02), xytext=(x, arrow_bottom_y),
+                    arrowprops=dict(arrowstyle="->", color=color, lw=1.6))
+        ax.text(x, arrow_bottom_y - 0.1, label, ha="center", va="top",
+                fontsize=8.5, color=color, fontweight="bold")
+
+    ax.text(0.3 + 5.5 * box_w, 4.55,
+            "Gemma-3-IT chat template (one user turn, prefilled assistant response)",
+            ha="center", va="center", fontsize=10.5, fontweight="bold")
+
+    plt.tight_layout()
+    path = ASSETS_DIR / f"plot_{DATE}_turn_boundary_tokens_diagram.png"
+    plt.savefig(path, dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"wrote {path}")
+    import shutil
+    paper_path = PAPER_FIG_DIR / path.name
+    shutil.copy(path, paper_path)
+    print(f"copied to {paper_path}")
+
+
 def fig_appendix_cross_training_selector():
-    """Appendix figure: different training-token probes agree on d at EOT."""
+    """Appendix: signed d across training-token choices. Shows sign flip on politics."""
     import csv
     rows = list(csv.DictReader(open(OUT_DIR / "headline_table.csv")))
 
+    # Display convention in figure: truth (true>false), harm (harmful>benign),
+    # politics (left>right). Self-computed politics rows in the CSV use a
+    # right>left convention, so we flip those. Parent task_mean rows already use
+    # left>right, so we leave them alone.
+    def signed_d(row):
+        d = float(row["d"]) if row["d"] else 0.0
+        if row["domain"].startswith("politics") and "parent" not in row["probe"]:
+            d = -d
+        return d
+
     domain_order = ["truth", "harm", "politics_democrat", "politics_republican"]
     domain_labels = {
-        "truth": "Truth",
-        "harm": "Harm",
-        "politics_democrat": "Politics\n(democrat)",
-        "politics_republican": "Politics\n(republican)",
+        "truth": "Truth\n(true vs false)",
+        "harm": "Harm\n(harmful vs benign)",
+        "politics_democrat": "Politics\n(democrat prompt,\nleft vs right)",
+        "politics_republican": "Politics\n(republican prompt,\nleft vs right)",
     }
-    probe_order = [
-        ("tb-5_L32", "end-of-turn probe"),
-        ("tb-2_L32", "model-marker probe"),
-        ("task_mean_L32", "task-averaged probe"),
-        ("tb-5_L39", "end-of-turn probe"),
-        ("tb-2_L39", "model-marker probe"),
-        ("task_mean_L39", "task-averaged probe"),
-    ]
     probe_color = {
         "end-of-turn probe": "#1976D2",
         "model-marker probe": "#00897B",
         "task-averaged probe": "#E65100",
     }
-
+    # Match CSV probe name strings exactly (task_mean rows have " (parent)" suffix)
     best_probe_for_domain = {
-        "truth": ["tb-5_L32", "tb-2_L32", "task_mean_L32"],
-        "harm": ["tb-5_L39", "tb-2_L39", "task_mean_L39"],
-        "politics_democrat": ["tb-5_L39", "tb-2_L39", "task_mean_L39"],
-        "politics_republican": ["tb-5_L39", "tb-2_L39", "task_mean_L39"],
+        "truth": ["tb-5_L32", "tb-2_L32", "task_mean_L32 (parent)"],
+        "harm": ["tb-5_L39", "tb-2_L39", "task_mean_L39 (parent)"],
+        "politics_democrat": ["tb-5_L39", "tb-2_L39", "task_mean_L39 (parent)"],
+        "politics_republican": ["tb-5_L39", "tb-2_L39", "task_mean_L39 (parent)"],
     }
 
-    data = {}
-    for r in rows:
-        data[(r["domain"], r["probe"])] = r
+    data = {(r["domain"], r["probe"]): r for r in rows}
 
-    fig, ax = plt.subplots(figsize=(9, 4.5))
+    fig, ax = plt.subplots(figsize=(10, 4.8))
     x = np.arange(len(domain_order))
-    n_fam = 3
     w = 0.25
     family_to_offset = {"end-of-turn probe": -w, "model-marker probe": 0, "task-averaged probe": w}
 
-    for probe, label in [("tb-5", "end-of-turn probe"),
-                         ("tb-2", "model-marker probe"),
-                         ("task_mean", "task-averaged probe")]:
+    for probe_prefix, label in [("tb-5", "end-of-turn probe"),
+                                ("tb-2", "model-marker probe"),
+                                ("task_mean", "task-averaged probe")]:
         heights = []
         for d in domain_order:
             probes_here = best_probe_for_domain[d]
-            match = next((p for p in probes_here if p.startswith(probe + "_")), None)
-            if match is None:
-                heights.append(0)
-                continue
-            row = data.get((d, match))
-            heights.append(abs(float(row["d"])) if row and row["d"] else 0)
+            match = next((p for p in probes_here if p.startswith(probe_prefix + "_")), None)
+            row = data.get((d, match)) if match else None
+            heights.append(signed_d(row) if row and row["d"] else 0)
         ax.bar(x + family_to_offset[label], heights, w,
                color=probe_color[label], label=label,
                edgecolor="black", linewidth=0.4)
 
     ax.set_xticks(x)
     ax.set_xticklabels([domain_labels[d] for d in domain_order])
-    ax.set_ylabel("|Cohen's d| at end-of-turn token")
-    ax.axhline(2, color="gray", linestyle=":", linewidth=0.7, label="large effect (d=2)")
+    ax.set_ylabel("Cohen's d at end-of-turn token")
+    ax.axhline(0, color="black", linewidth=0.7)
+    ax.axhline(2, color="gray", linestyle=":", linewidth=0.6)
+    ax.axhline(-2, color="gray", linestyle=":", linewidth=0.6, label="|d|=2")
     ax.grid(axis="y", alpha=0.3)
     ax.set_title("The same evaluative discrimination emerges across training-token choices")
-    ax.legend(loc="upper right", fontsize=9)
+    ax.legend(loc="best", fontsize=9)
     plt.tight_layout()
     path = ASSETS_DIR / f"plot_{DATE}_cross_training_selector.png"
     plt.savefig(path, dpi=150, bbox_inches="tight")
@@ -333,7 +475,9 @@ def main():
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
     PAPER_FIG_DIR.mkdir(parents=True, exist_ok=True)
     fig_main_base_discrimination()
-    fig_main_persona_modulation()
+    fig_main_induced_shifts_minimal()
+    fig_main_persona_modulation()  # full version for appendix
+    fig_appendix_token_diagram()
     fig_appendix_cross_training_selector()
     fig_appendix_per_turn()
 
