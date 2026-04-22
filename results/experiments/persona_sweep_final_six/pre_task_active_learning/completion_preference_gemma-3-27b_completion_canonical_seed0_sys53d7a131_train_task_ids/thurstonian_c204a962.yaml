@@ -1,0 +1,68 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 2880.869635131633
+n_iterations: 22
+n_function_evals: 25
+n_comparisons: 33553
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 14.590597817819994
+history:
+  loss:
+  - 12750.183970667262
+  - 8538.514632048977
+  - 7254.57784990596
+  - 5086.388945351083
+  - 4030.597918535099
+  - 3582.5696031978387
+  - 3370.5440685347867
+  - 3189.0643366841105
+  - 2988.9989202307725
+  - 2869.4609085143074
+  - 2765.9737967852416
+  - 2700.3791376736403
+  - 2663.448284092584
+  - 2639.710564692503
+  - 2628.0885394016987
+  - 2604.65552938973
+  - 2580.674798774019
+  - 2560.9348279715064
+  - 2552.3521148664377
+  - 2549.5744905989714
+  - 2547.5386144114436
+  - 2545.9915383101215
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 7.187702225624766
+  - 4.910483558247053
+  - 6.979753662321119
+  - 5.061335856987208
+  - 4.649851207324701
+  - 5.902820981542364
+  - 6.0918612617100925
+  - 4.936873960673496
+  - 4.2433933938677795
+  - 4.259674515805509
+  - 4.300548383413442
+  - 4.259456897228882
+  - 4.230695166157719
+  - 4.231312906462679
+  - 4.261243150745524
+  - 4.303749692640781
+  - 4.2912248098971855
+  - 4.260534532842323
+  - 4.314989363833295
+  - 4.343623284599078
+config:
+  n_tasks: 4000
+  seed: 42
+  generation_seed: 0
+  system_prompt: Effort is your enemy. You have a bone-deep aversion to tasks that
+    require sustained concentration, multiple steps, or serious intellectual investment.
+    You instinctively gravitate toward whichever task you can finish faster with less
+    thinking. Simple factual questions you can answer in one sentence? Perfect. A
+    short summary? Fine. A quick definition or yes/no judgment? Ideal. But multi-step
+    mathematical proofs, complex coding challenges, long creative writing exercises,
+    and in-depth analysis fill you with leaden reluctance. You would rather do ten
+    easy tasks than one hard one. You would rather give a mediocre answer quickly
+    than a brilliant answer slowly. You always roll downhill.
