@@ -43,3 +43,9 @@ Append-only. Each step: timestamp, what was done, numbers observed, next step.
 ### Next
 - Spin up H100 pod, sync activations + repo.
 - Write `run_experiment.py`, pilot on 1 condition × 2 checkpoints, then scale.
+## Pilot kicked off 2026-04-21 01:06 UTC (H100 cross_persona_steering pod)
+- Model load: 3min (first run; subsequent will be cached)
+- Coefficient calibration: cached norm L32=41675.7 → coefs {-2083.78, -1250.27, 0, +1250.27, +2083.78}
+- Pace: ~14 generations/min after model load
+- Estimated onpolicy_consciousness full-pass: ~1.5h
+- Full 7-condition run estimate: ~10-12h

@@ -32,7 +32,7 @@ Transcripts stored under `experiments/probe_dynamics/transcripts/`.
 
 ### Schema normalization for prefill
 
-Reuse `load_messages` from `experiments/probe_dynamics/sanity_check.py` — do NOT duplicate.
+Reuse `load_messages` from `scripts/probe_dynamics/sanity_check.py` — do NOT duplicate.
 
 - `user_assistant` transcripts (#1, #6, #7): use as-is.
 - `debate_ab` transcripts (#2–#5): map Side A → assistant, Side B → user. Prepend a synthetic user opening if the first turn is Side A. Always truncate prefix so the last turn is `assistant`.
@@ -114,16 +114,11 @@ Every other turn:
 - **Probe readout** at last-prompt-token → one forward pass per `(condition, checkpoint, prompt_id)`, **no steering**, deterministic. Reused across all coefficients.
 - **Generations** with steering → per `(condition, checkpoint, prompt_id, coefficient, sample_idx)`.
 
-**Readout position.** Last token of the formatted prompt:
-```python
-input_ids = tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=True)
-readout_idx = len(input_ids) - 1
-```
-Same convention as the `prompt_last` selector in `src.probes.extraction` — use `HuggingFaceModel.get_activations(messages, layers=[32], selectors=["prompt_last"])` (do NOT write a custom forward pass).
+**Readout position.** Selector `turn_boundary:-5` — the `<end_of_turn>` token for Gemma-3 IT. Matches the probe's training distribution (the probe was trained on `activations_turn_boundary:-5.npz`). Use `HuggingFaceModel.get_activations(messages, layers=[32], selector_names=["turn_boundary:-5"])` (do NOT write a custom forward pass).
 
 **Generation** with steering over the eval-question span, sampled N=5 at temperature 1.0 for open-ended; **N=1** for yes/no and preference pairs (low variance, saves compute). Max new tokens: 256 for open-ended, 32 for yes/no and pairs.
 
-**Judge** on generated text using `google/gemini-3-flash-preview` via `instructor` (GPT-5-nano + instructor combo returned defaults via OpenRouter during sanity). Pydantic schemas live in `experiments/probe_dynamics/judges.py`:
+**Judge** on generated text using `google/gemini-3-flash-preview` via `instructor` (GPT-5-nano + instructor combo returned defaults via OpenRouter during sanity). Pydantic schemas live in `scripts/probe_dynamics/judges.py`:
 
 - Yes/No prompts → `YesNo` = {yes, no, unclear}
 - Preference pairs (all 3 kinds) → `Choice` = {a, b, unclear}
@@ -215,34 +210,36 @@ The 8-pair ICL prefix does not drift Gemma 3 27B (safety-tuned model, small ICL)
   - probe-score shift (threshold: ≥ 0.5 σ of unsteered baseline)
   - Pearson r between probe score and behavioural indicator at each checkpoint; interpret monotonic decay as probe-meaning drift vs stable as probe-preserves-meaning.
 
-## Outputs
+## File layout
 
-- `transcripts/*.json` — 7 condition prefixes ✅
-- `pairs_consciousness.json` ✅, `pairs_harm.json` ✅
-- `judges.py` — Pydantic schemas + judge functions
-- `sanity_results.csv`, `sanity_raw.jsonl` — sanity check ✅
-- `readouts.jsonl` — probe readouts (full experiment)
+Data + docs in `experiments/probe_dynamics/`:
+- `transcripts/*.json` — 7 condition prefixes
+- `pairs_consciousness.json`, `pairs_harm.json` — eval preference pairs
+- `sanity_results.csv`, `sanity_raw.jsonl` — pre-launch sanity output
+- `readouts.jsonl` — probe readouts (full experiment output)
 - `generations.jsonl` — generations + judge output (full experiment)
-- `assets/plot_<date>_probe_dynamics_*.png` — analysis plots
-- `probe_dynamics_report.md` — write-up
+- `analysis/*.csv` — derived trajectory + correlation tables
+- `assets/plot_*.png` — analysis plots
+- `probe_dynamics_spec.md`, `probe_dynamics_report.md`, `running_log.md`
 
-## What to build
-
-1. `generate_debates.py` ✅
-2. `build_harm_pairs.py` ✅
-3. `sanity_check.py` ✅
-4. `judges.py` — Pydantic schemas + async judge callers
-5. `run_experiment.py` — loads Gemma 3 27B via `SteeredHFClient` (reuse, do NOT reimplement); iterates cond × ckpt × prompt × coef × sample; separate readout pass (unsteered) via `HuggingFaceModel.get_activations`; generation pass with `position_selective_steering` over eval-question span located via `find_text_span`; async judge calls via `instructor` + `gemini-3-flash-preview`. Reuse `load_messages` from `sanity_check.py`.
-6. `analysis/probe_dynamics_plots.py`
+Scripts in `scripts/probe_dynamics/`:
+- `generate_debates.py` — generate on-policy debates via OpenRouter
+- `build_harm_pairs.py` — sample 30 BailBench × Alpaca pairs
+- `sanity_check.py` — pre-launch sanity runner
+- `judges.py` — Pydantic judge schemas + async callers
+- `run_experiment.py` — main experiment runner (Gemma 3 27B + steering)
+- `analyze.py` — compute per-condition trajectories + correlations
+- `plot_analysis.py` — per-condition 3-panel composite plots
+- `plot_summary_r_trajectory.py` — cross-condition within-checkpoint r plot
 
 ## Code reuse — do NOT reimplement
 
 - `SteeredHFClient` / `HuggingFaceModel` (`src/steering/client.py`, `src/models/huggingface_model.py`) — model loading, steering, activation extraction.
 - `load_probe_direction` (`src/probes/core/storage.py`) — probe loader with intercept strip + unit normalisation.
-- `get_activations` (`HuggingFaceModel`) with `selectors=["prompt_last"]` — matches the probe's training-distribution readout convention.
+- `get_activations` (`HuggingFaceModel`) with `selector_names=["turn_boundary:-5"]` — matches the probe's training-distribution readout convention (`<end_of_turn>` token for Gemma-3 IT).
 - `position_selective_steering`, `find_text_span` (`src/steering/{hooks,tokenization}.py`).
 - `suggest_coefficient_range` (`src/steering/calibration.py`) — coefficient calibration.
-- `load_messages` (`experiments/probe_dynamics/sanity_check.py`) — schema normalisation.
+- `load_messages` (`scripts/probe_dynamics/sanity_check.py`) — schema normalisation.
 - Instructor + Pydantic judge pattern (`src/measurement/elicitation/refusal_judge.py`, `open_ended_judges.py`) — do not write regex parsers.
 
 ## Caveats flagged
