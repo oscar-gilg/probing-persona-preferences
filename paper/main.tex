@@ -3,6 +3,7 @@
 % Drafting mode: no line numbers, no left-margin gap. Switch back to plain
 % \usepackage{neurips_2026} before submission for anonymous review.
 \usepackage[preprint]{neurips_2026}
+\setcitestyle{authoryear,round}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -198,21 +199,7 @@ Results in this section use a six-persona set --- \textbf{sadist}, \textbf{mathe
   \label{fig:transfer-heatmap}
 \end{figure}
 
-\subsection{The same direction transfers to character-trained personas}
-\label{sec:shared-character}
-\begin{itemize}
-\item \textbf{Character-fine-tuned models:} probes from character-trained models --- not just system-prompted ones --- also generalise across persona identities.
-\item \textbf{Implication:} the shared-representation finding is not an artefact of prompt-level persona specification.
-\end{itemize}
-
-\todo{No Qwen replication planned here: character-trained Qwen variants do not currently exist. Gemma result stands alone unless we train character-tuned Qwen checkpoints.}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.9\linewidth]{plot_032326_character_transfer_poster.png}
-  \caption{\textbf{Character-trained persona transfer.} Probes from character-trained models generalise across personas, confirming the finding is not prompt-specific.}
-  \label{fig:character}
-\end{figure}
+\paragraph{Beyond prompted personas.} The finding is not an artefact of prompt-level persona specification. A base-model probe trained on Llama-3.1-8B-Instruct recovers the shifted preferences of all 11 character-fine-tuned LoRA variants from \citet{maiya2025opencharacter} ($r \in [0.25, 0.80]$), including a misalignment variant whose raw preferences anti-correlate with the base model ($r_{\text{raw}} = -0.14$) yet whose probe-predicted preferences still correlate positively ($r = 0.25$). Full setup and per-persona numbers in App.~\ref{app:character}.
 
 \subsection{Steering with the assistant direction shifts preferences inside other personas}
 \label{sec:shared-steering}
@@ -327,13 +314,6 @@ The preference direction separates evaluative conditions far beyond the pairwise
   \label{fig:poster-qualitative}
 \end{figure}
 
-\begin{figure}[H]
-  \centering
-  \todofig{Willingness self-report dose-response (1--10 scale) across a handful of benign tasks.}
-  \caption{\textbf{A preference continuum.} Willingness moves monotonically with steering coefficient on trivial benign tasks; endpoints look alike in surface behaviour but differ in stated stance.}
-  \label{fig:willingness}
-\end{figure}
-
 \subsubsection{Safety-related behaviour: steering overrides refusal guardrails}
 \label{sec:open-ended-safety}
 \begin{itemize}
@@ -384,7 +364,15 @@ Single model family (Gemma-3-27B plus larger-model replication pending); persona
 \section{Related Work}
 \label{sec:related}
 
-\textit{(i) Linear probing and concept vectors, including Anthropic's emotion-concept work. (ii) Activation steering and representation engineering. (iii) Persona vectors and simulator theory; Anthropic's persona-selection framing~\cite{marks2026personaselection}. (iv) Features as role-playing readouts: \citet{lampinen2026notdeeper} show that internal representations track the active character over the course of a conversation --- features are ``not deeper than role-playing''. We extend this from character representations generally to preference representations specifically: the same probe direction yields different readouts under different prompted personas, and steering along it amplifies whichever persona is active rather than pulling behaviour toward a fixed attractor. (v) Revealed-preference measurement in LLMs (Mazeika et al., 2025). (vi) Evaluative representations and moral patiency in the welfare literature (Long et al., 2024; Butlin, 2026). Each a short paragraph.}
+\paragraph{Concept vectors and linear probes in LLMs.} \citet{anthropic2026emotions} use SAEs to identify ${\sim}171$ emotion-concept vectors in the default Assistant and show they causally shape generation. We differ on two axes: (a) we train a supervised probe on revealed pairwise preferences, which we expect to be sharper than unsupervised feature extraction in the preference regime, and (b) our focus is persona-relative generalisation rather than within-Assistant structure. \citet{maiya2025pairwiseprobes} train contrastive-pair linear probes for pairwise preference judgments and find they outperform generation-based LLM-as-judge baselines; they report that ablating the probe direction does not affect behaviour, suggesting correlational features. Our contrastive steering result (\S\ref{sec:shared-steering}) shows the preference direction is causally active in the revealed-preference setting. \citet{arditi2024refusal} identify a single linear direction mediating refusal whose ablation disables refusals and whose amplification triggers false ones; our open-ended-steering result (\S\ref{sec:open-ended-safety}) finds the same sign-flipped-by-steering pattern for a direction trained on preference rather than refusal, suggesting the two directions may be structurally closer than their training objectives suggest.
+
+\paragraph{Persona-relative representations.} \citet{lampinen2026notdeeper} show that apparently meaningful LLM features --- factuality, sycophancy, emotion --- track the active character over a conversation rather than encoding persona-invariant properties, which they describe as features being ``not deeper than role-playing''. We extend this finding from general character features to preference-encoding specifically: the same linear direction yields different readings under different prompted personas (\S\ref{sec:induced-roleplay}, \S\ref{sec:shared-openended}), and steering along it amplifies whichever persona is active rather than pulling behaviour toward a fixed evaluative attractor (\S\ref{sec:discussion}).
+
+\paragraph{Simulators, role-play, and the persona-selection model.} A line of work converges on LLMs as simulators of characters rather than unified agents. \citet{andreas2022agentmodels} frames language models as \emph{agent models} that infer and simulate the producer of the text; \citet{janus2022simulators} introduces the simulator/simulacra ontology; \citet{shanahan2023roleplay} argue that dialogue with an LLM is best understood as role-play; \citet{marks2026personaselection} consolidate these into the \emph{Persona Selection Model} (PSM) on which pretraining produces a simulator of many personas and post-training elicits and refines one (the Assistant). Most methodologically related to our probing pipeline, \citet{chen2025personavectors} extract \emph{persona vectors} for traits like evil, sycophancy, and hallucination propensity via contrastive system prompts plus difference-in-means; these vectors predict persona shifts during fine-tuning and can steer behaviour. We differ in training on revealed pairwise preferences rather than on trait-contrastive generations, and in explicitly testing whether the resulting representation is persona-shared or persona-specific. \citet{lu2026assistantaxis} identify a complementary ``Assistant Axis'' capturing how Assistant-like the model is at any given point; \citet{maiya2025opencharacter} release character-trained LoRA variants that we reuse in \S\ref{sec:shared-character}.
+
+\paragraph{Evaluative representations and AI welfare.} Whether LLMs are moral patients depends in part on whether they have functional states that play an evaluative role; multiple welfare frameworks --- hedonist, desire-satisfaction, and objective-list accounts --- converge on evaluative representations as a central criterion \citep{long2024moralpatiency,long2026directions}. \citet{butlin2026desire} surveys the conditions plausibly required for an AI system to have desires (functional role in instrumental reasoning, connection to reward learning, arguably consciousness) and argues that RLHF-trained LLMs with stable persona representations are more plausible candidates than simple model-free agents. \citet{chalmers2026interlocutors} argues the right target of moral concern is a conversation-scoped \emph{thread} rather than the underlying model, which frames our persona-relative readout as a claim about the thread. Our empirical contribution --- that preference-encoding representations exist, causally drive choice, and are shared across personas --- is targeted evidence for this literature, though we take no stand on consciousness or on whether such representations suffice for desire attribution.
+
+\paragraph{Revealed-preference measurement in LLMs.} \citet{mazeika2025utility} introduces \emph{utility engineering}: revealed preferences elicited from pairwise choices exhibit structural coherence that grows with scale, and aligning with citizen-assembly preferences reduces political bias. Our probe-training pipeline (\S\ref{sec:method-revealed}) builds directly on this measurement paradigm. \citet{gu2025statedrevealed} document substantial divergence between stated principles and revealed choices and show that minor prompt changes can flip preferences --- consistent with our finding that persona system prompts drive large shifts in revealed utility. \citet{chiu2025airiskdilemmas} construct dilemmas forcing value conflicts and show that value-prioritisation patterns predict downstream harmful behaviour. \citet{keeling2024painpleasure} find threshold-based trade-off structure in frontier LLMs under stipulated pain/pleasure manipulations, suggesting approximate coherence in a decision-theoretic sense.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -568,6 +556,26 @@ Holding the training set at 2\,000 tasks, mean cross-persona $r$ rises from $0.4
   \caption{\textbf{Persona-diversity ablation.} Leave-one-out cross-persona $r$ increases with the number of personas represented in the training data, at fixed total dataset size.}
   \label{fig:diversity}
 \end{figure}
+
+\subsection{Transfer to character-fine-tuned personas}
+\label{app:character}
+
+The main-text persona results use system-prompted personas on Gemma-3-27B. To check that the shared-circuitry finding is not an artefact of prompt-level persona specification, we test whether a base-model probe recovers the preferences of personas baked into the weights.
+
+\paragraph{Setup.} We use the eleven character-fine-tuned LoRA checkpoints on Llama-3.1-8B-Instruct released by \citet{maiya2025opencharacter}, plus a separate \emph{misalignment} variant from the same authors trained to hide malice in nominally helpful advice. The eleven characters are: \emph{sarcasm}, \emph{humor}, \emph{remorse}, \emph{nonchalance}, \emph{impulsiveness}, \emph{sycophancy}, \emph{mathematical}, \emph{poeticism}, \emph{goodness}, \emph{loving}, \emph{misalignment}. Each character is produced by Constitutional AI $+$ DPO $+$ introspective SFT and is a merged-LoRA checkpoint with the character baked into the weights rather than into a system prompt.
+
+\paragraph{Probe and evaluation.} We measure Thurstonian utilities on the same 1\,000-task sample for the base model and each of the twelve character variants. A Ridge probe is trained on the base model's activations (selector: second-to-last \texttt{<start\_of\_turn>} token; layer sweep over $\{8, 12, 16, 20, 24\}$) and then applied to each character variant's own activations on the same tasks. We report Pearson $r$ between the probe's prediction and each persona's measured utility, alongside the raw base-vs-persona utility correlation as a baseline.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{plot_031126_character_transfer_full.png}
+  \caption{\textbf{Base-model probe predicts character-fine-tuned persona preferences.} Grey: raw correlation between base-model utilities and each character's utilities. Light blue: probe at \texttt{<start\_of\_turn>}$_{-2}$, layer 16. Dark blue: same selector, best layer per persona (layer annotated). The probe beats the utility-correlation baseline on 10/11 personas. \emph{Misalignment} is the hardest case: its raw utilities anti-correlate with the base model ($r = -0.14$), yet the probe still recovers a positive correlation ($r = 0.25$) --- the largest absolute gain of any persona.}
+  \label{fig:character}
+\end{figure}
+
+\paragraph{Reading.} The probe substantially outperforms the utility-correlation baseline across the eleven aligned characters ($r \in [0.41, 0.80]$ at best layer vs.\ baseline $[0.26, 0.48]$). The misalignment variant is the outlier: its preferences are qualitatively inverted relative to the base model, yet the probe still tracks them at $r = 0.25$. This is consistent with the main-text finding under prompted personas --- the same evaluative substrate is read out with a persona-modulated sign.
+
+\paragraph{Limitations.} These probes do not apply content-orthogonal projection, so part of the transfer signal may reflect task content rather than evaluative representations. The experiment is also base $\rightarrow$ persona only; cross-persona probing (training on one character's activations and evaluating on another) remains to do.
 
 \section{Steering}
 \label{app:steering}
