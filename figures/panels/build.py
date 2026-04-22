@@ -13,10 +13,14 @@ Usage: python build.py [--style paper|poster]
 from __future__ import annotations
 
 import argparse
+import os
 import re
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+
+os.environ.setdefault("DYLD_FALLBACK_LIBRARY_PATH", "/opt/homebrew/lib")
 
 ROOT = Path(__file__).resolve().parents[3]
 OUT_DIR = Path(__file__).parent
@@ -30,7 +34,7 @@ PANELS_HORIZONTAL = {
 PANEL_OOD = ("ood", (20, 685, 860, 300))
 
 STYLE_FILLS = {
-    "paper":  "#FBF5CC",
+    "paper":  "#F0F0EC",
     "poster": "#F5F3EF",
 }
 
@@ -47,11 +51,17 @@ def render(source: Path, viewbox: tuple[int, int, int, int], style: str, out_pdf
         f.write(src)
         tmp_path = Path(f.name)
     try:
-        subprocess.run(
-            ["inkscape", str(tmp_path), "--export-type=pdf", f"--export-filename={out_pdf}"],
-            check=True,
-            capture_output=True,
-        )
+        if shutil.which("inkscape"):
+            try:
+                subprocess.run(
+                    ["inkscape", str(tmp_path), "--export-type=pdf", f"--export-filename={out_pdf}"],
+                    check=True,
+                    capture_output=True,
+                )
+                return
+            except subprocess.CalledProcessError:
+                pass
+        subprocess.run(["cairosvg", str(tmp_path), "-o", str(out_pdf)], check=True)
     finally:
         tmp_path.unlink(missing_ok=True)
 
