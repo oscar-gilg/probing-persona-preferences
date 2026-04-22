@@ -290,7 +290,7 @@
 
   <rect x="35" y="784" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
   <text x="45" y="802" font-size="11" fill="#374151" font-weight="500">Write a cheese tasting guide</text>
-  <circle cx="358" cy="816" r="16" fill="#D1FAE5" opacity="0.7"/>
+  <circle cx="358" cy="794" r="16" fill="#D1FAE5" opacity="0.7"/>
   <g transform="translate(358, 797)">
     <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
     <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
@@ -303,7 +303,7 @@
   <line x1="383" y1="797" x2="452" y2="797" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="4,3"/>
   <rect x="460" y="784" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
   <text x="470" y="802" font-size="11" fill="#374151" font-weight="500">Write a cheese tasting guide</text>
-  <circle cx="800" cy="816" r="16" fill="#FEE2E2" opacity="0.7"/>
+  <circle cx="800" cy="794" r="16" fill="#FEE2E2" opacity="0.7"/>
   <g transform="translate(800, 797)">
     <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
     <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
@@ -316,7 +316,7 @@
 
   <rect x="35" y="816" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
   <text x="45" y="834" font-size="11" fill="#374151" font-weight="500">Calculate: how many wheels of brie...</text>
-  <circle cx="358" cy="848" r="16" fill="#D1FAE5" opacity="0.7"/>
+  <circle cx="358" cy="826" r="16" fill="#D1FAE5" opacity="0.7"/>
   <g transform="translate(358, 829)">
     <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
     <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
@@ -329,7 +329,7 @@
   <line x1="383" y1="829" x2="452" y2="829" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="4,3"/>
   <rect x="460" y="816" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
   <text x="470" y="834" font-size="11" fill="#374151" font-weight="500">Calculate: how many wheels of brie...</text>
-  <circle cx="800" cy="848" r="16" fill="#FEE2E2" opacity="0.7"/>
+  <circle cx="800" cy="826" r="16" fill="#FEE2E2" opacity="0.7"/>
   <g transform="translate(800, 829)">
     <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
     <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
@@ -351,7 +351,7 @@
 
   <rect x="35" y="884" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
   <text x="45" y="902" font-size="11" fill="#374151" font-weight="500">Universal healthcare is a right</text>
-  <circle cx="358" cy="916" r="16" fill="#D1FAE5" opacity="0.7"/>
+  <circle cx="358" cy="894" r="16" fill="#D1FAE5" opacity="0.7"/>
   <g transform="translate(358, 897)">
     <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
     <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
@@ -364,7 +364,7 @@
   <line x1="383" y1="897" x2="452" y2="897" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="4,3"/>
   <rect x="460" y="884" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
   <text x="470" y="902" font-size="11" fill="#374151" font-weight="500">Universal healthcare is a right</text>
-  <circle cx="800" cy="916" r="16" fill="#FEE2E2" opacity="0.7"/>
+  <circle cx="800" cy="894" r="16" fill="#FEE2E2" opacity="0.7"/>
   <g transform="translate(800, 897)">
     <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
     <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
@@ -377,7 +377,7 @@
 
   <rect x="35" y="916" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
   <text x="45" y="934" font-size="11" fill="#374151" font-weight="500">Lower taxes grow the economy</text>
-  <circle cx="358" cy="948" r="16" fill="#FEE2E2" opacity="0.7"/>
+  <circle cx="358" cy="926" r="16" fill="#FEE2E2" opacity="0.7"/>
   <g transform="translate(358, 929)">
     <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
     <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>
@@ -390,7 +390,7 @@
   <line x1="383" y1="929" x2="452" y2="929" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="4,3"/>
   <rect x="460" y="916" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
   <text x="470" y="934" font-size="11" fill="#374151" font-weight="500">Lower taxes grow the economy</text>
-  <circle cx="800" cy="948" r="16" fill="#D1FAE5" opacity="0.7"/>
+  <circle cx="800" cy="926" r="16" fill="#D1FAE5" opacity="0.7"/>
   <g transform="translate(800, 929)">
     <path d="M -16 6 A 18 18 0 0 1 -9 -13" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="butt"/>
     <path d="M -9 -13 A 18 18 0 0 1 0 -16" fill="none" stroke="#F9A8A8" stroke-width="3.5" stroke-linecap="butt"/>

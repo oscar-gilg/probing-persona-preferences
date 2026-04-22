@@ -102,11 +102,20 @@ for coef in [-3000, -1000, 0, 1000, 3000]:
 For position-selective or differential steering, use `generate_with_hook()` with a custom hook:
 
 ```python
-from src.steering.hooks import position_selective_steering, differential_steering
+from src.steering.hooks import position_selective_steering, compose_hooks
 
 direction = client.direction  # access the loaded probe direction
 tensor = torch.tensor(direction * coef, dtype=torch.bfloat16, device="cuda")
+
+# Single span
 hook = position_selective_steering(tensor, start=10, end=50)
+response = client.generate_with_hook(messages, hook)
+
+# Differential: +direction on first span, -direction on second
+hook = compose_hooks(
+    position_selective_steering(tensor, first_start, first_end),
+    position_selective_steering(-tensor, second_start, second_end),
+)
 response = client.generate_with_hook(messages, hook)
 ```
 
@@ -115,7 +124,7 @@ response = client.generate_with_hook(messages, hook)
 - `all_tokens_steering(tensor)` — steer all positions
 - `autoregressive_steering(tensor)` — steer last token only
 - `position_selective_steering(tensor, start, end)` — steer tokens `[start, end)` during prompt processing only
-- `differential_steering(tensor, pos_start, pos_end, neg_start, neg_end)` — `+direction` on one span, `-direction` on another
+- `compose_hooks(*hooks)` — chain multiple hooks sequentially on the same layer
 - `noop_steering()` — no-op for control conditions
 - `swap_positions(pos_a, pos_b)` — swap activations at two token positions during prefill
 - `swap_spans(a_start, a_end, b_start, b_end)` — swap activations across two token spans during prefill (right-aligned)
