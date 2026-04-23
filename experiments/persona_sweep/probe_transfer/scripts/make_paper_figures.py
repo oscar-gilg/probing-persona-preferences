@@ -213,41 +213,47 @@ def fig_asymmetry(personas, transfer, order):
 def fig_receiver_vs_default_similarity(personas, transfer, utility_r):
     """Does distance from default predict how bad a target a persona is?
 
-    x = utility_r with default (how behaviourally similar to default)
-    y = mean inbound r (how well other probes predict this persona's utilities)
-    One point per persona (excluding default itself).
+    x = utility_r with default (how behaviourally similar to default; 1.0 for
+        default itself).
+    y = mean inbound r (how well the other probes predict this persona's
+        utilities; for default, mean of the 6 non-default probes).
     """
+    from scipy.stats import pearsonr
+
     i_def = personas.index("default")
     n = len(personas)
     mask = ~np.eye(n, dtype=bool)
-    xs, ys, labels = [], [], []
+    rows = []
     for p in personas:
-        if p == "default":
-            continue
         i = personas.index(p)
-        xs.append(utility_r[i_def, i])
-        ys.append(transfer[:, i][mask[:, i]].mean())
-        labels.append(p)
-    xs = np.array(xs); ys = np.array(ys)
+        sim = 1.0 if p == "default" else utility_r[i_def, i]
+        inbound = transfer[:, i][mask[:, i]].mean()
+        rows.append((p, sim, inbound))
+    labels = [r[0] for r in rows]
+    xs = np.array([r[1] for r in rows])
+    ys = np.array([r[2] for r in rows])
 
-    fig, ax = plt.subplots(figsize=(7, 5.5))
-    ax.scatter(xs, ys, s=110, c=BLUE, edgecolor="black", lw=0.5, zorder=3)
+    fig, ax = plt.subplots(figsize=(7.5, 5.8))
+    colors = ["#c0392b" if p == "default" else BLUE for p in labels]
+    ax.scatter(xs, ys, s=130, c=colors, edgecolor="black", lw=0.5, zorder=3)
     for x, y, lab in zip(xs, ys, labels):
         ax.annotate(lab, (x, y), fontsize=10, xytext=(7, 2), textcoords="offset points")
 
-    # Linear fit (exclude sadist for robust fit if desired? no — show raw).
-    from scipy.stats import pearsonr
-    r_fit, p_fit = pearsonr(xs, ys)
-    xr = np.linspace(xs.min() - 0.05, xs.max() + 0.05, 50)
-    slope, intercept = np.polyfit(xs, ys, 1)
+    # OLS on non-default points (default at x=1.0 is trivially included — we
+    # report r with and without for transparency).
+    non_default = np.array([p != "default" for p in labels])
+    r_all, p_all = pearsonr(xs, ys)
+    r_nd, _ = pearsonr(xs[non_default], ys[non_default])
+    xr = np.linspace(xs.min() - 0.05, 1.05, 50)
+    slope, intercept = np.polyfit(xs[non_default], ys[non_default], 1)
     ax.plot(xr, slope * xr + intercept, color="#c0392b", lw=1.5, alpha=0.7,
-            label=f"OLS  (r = {r_fit:+.2f}, p = {p_fit:.2f})")
+            label=f"OLS fit on non-default points  (r = {r_nd:+.2f})")
 
     ax.axvline(0, color="gray", lw=0.5)
     ax.set_xlabel("utility similarity with default  (Pearson r)")
-    ax.set_ylabel("mean inbound transfer r  (6 probes → this persona)")
+    ax.set_ylabel("mean inbound transfer r")
     ax.set_title("Are personas more different from default harder to predict?\n"
-                 "(eot, layer 32 — one point per non-default persona)")
+                 f"(eot, layer 32 — all 7 personas; red = default)")
     ax.legend(loc="lower right", frameon=False)
     ax.grid(alpha=0.3)
     plt.tight_layout()

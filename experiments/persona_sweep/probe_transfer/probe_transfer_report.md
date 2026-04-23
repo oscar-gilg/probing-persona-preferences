@@ -77,9 +77,10 @@ Per-persona mean outbound r (left) and mean inbound r (right) vs layer. Contrari
 
 ![Receiver vs default similarity](assets/plot_042326_receiver_vs_default_similarity.png)
 
-One point per non-default persona. x = utility similarity with default; y = mean inbound transfer r (how well the other 6 probes predict this persona's utilities).
+One point per persona (default in red, at x = 1.0 trivially). x = utility similarity with default; y = mean inbound transfer r (how well the 6 other probes predict this persona's utilities).
 
-- **Pearson r = +0.69** across the 6 points; **+0.84** if sadist is excluded. The more behaviourally different a persona is from default, the worse a target it is — monotone for the other five.
+- **Pearson r = +0.69** across the 6 non-default points (+0.84 excluding sadist). Default itself sits at (1.0, 0.50), on the extension of the OLS line — including it would not shift the fit.
+- The more behaviourally different a persona is from default, the worse a target it is — monotone for the five non-sadist non-default personas, with default itself anchoring the upper-right corner.
 - **Sadist is the one exception.** Utility-similarity-with-default is the lowest of the set (r = −0.15) but mean inbound r is 0.32 — comparable to contrarian (0.33) and slacker (0.31), both of which are closer to default behaviourally. The sadist persona inverts default preferences cleanly enough that probes trained on other personas still carry meaningful projection onto the sadist direction.
 - **Mechanism suggested.** "Distance from default" is a rough proxy for how far the activation geometry rotates from its default state. Most rotations carry the shared evaluative substrate with them; sadist's rotation is large but the substrate-direction content survives.
 - **Together with Figure D:** asymmetry is not random. Personas close to default are both easier targets *and* good sources; personas far from default are worse targets but can still be strong sources (sadist → mathematician r = 0.71).
