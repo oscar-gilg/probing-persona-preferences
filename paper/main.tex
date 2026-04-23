@@ -84,21 +84,18 @@ What separates personas, more than anything else, is what they \emph{prefer} ---
 Concretely, these pick out two predictions for what a preference-encoding direction could look like: \emph{(i)} a vector that tracks the \emph{model's} preferences across any persona it runs (Shoggoth-compatible); or \emph{(ii)} a vector that tracks whichever persona is currently active --- shared mechanism, persona-modulated readout.
 
 \paragraph{Main result.}
-\textbf{A single linear direction predicts and steers preferences across qualitatively different personas, generalising across topics, token positions, and persona identities.} A probe trained on the default Assistant's revealed preferences transfers --- as a classifier \emph{and} as a steering vector --- to personas whose overt values are partially or fully inverted, including a villain and a sadist, and to character-fine-tuned variants. Steering amplifies whichever persona is active: under the sadist, $+$ means more sadist; under the default, $+$ has no measurable effect on sadism. We find picture \emph{(ii)} --- shared mechanism, persona-modulated readout. Evidence against the Shoggoth view.
-
-\paragraph{The preference direction is a result in its own right.}
-Reaching the persona finding required first answering: \emph{does the model represent preferences linearly at all?} It does. The probe predicts held-out revealed preferences at $r = 0.86$ within-topic and $r = 0.82$ cross-topic, causally flips pairwise task choices at $P \geq 0.96$, and tracks prompt-induced shifts (system prompts, single-sentence biographical context, role-played harm/truth framings) at $r \approx 0.9$ on targeted tasks. It beats a sentence-transformer content baseline and discriminates evaluative content at multiple token positions (Cohen's $d \approx 2$--$3$ at the turn boundary). This is a preference-representations contribution in its own right; the persona result rests on it.
+\textbf{A single linear direction in Gemma-3-27B's residual stream predicts and steers preferences, and does so across qualitatively different personas.} The probe predicts held-out revealed preferences at $r = 0.86$ within-topic and $r = 0.82$ cross-topic, and causally flips pairwise task choices at $P \geq 0.96$ under contrastive steering. Trained on the default Assistant, the same direction transfers --- as a classifier \emph{and} as a steering vector --- to personas whose overt values are partially or fully inverted (villain, sadist) and to character-fine-tuned variants, amplifying whichever persona is active: under the sadist, $+$ means more sadist; under the default, $+$ has no measurable effect on sadism. We find picture \emph{(ii)} --- shared mechanism, persona-modulated readout.
 
 \paragraph{Why this matters.}
-\textbf{Persona science.} Evidence against the Shoggoth view of PSM (\S\ref{sec:shared-openended}, \S\ref{sec:discussion}). \textbf{Interpretability.} Linear features that look ``fundamental'' in one persona can carry opposite or absent content under another; this extends \citet{lampinen2026notdeeper} from general character-tracking to preference specifically. \textbf{AI welfare.} Evaluative representations are functionally central across accounts of moral patiency~\citep{long2024moralpatiency}. \textbf{AI safety.} The same direction overrides refusal guardrails at small steering coefficients.
+\textbf{Persona science:} evidence against the Shoggoth view of PSM. \textbf{Interpretability:} a linear feature that looks ``fundamental'' in one persona can carry opposite or absent content under another. \textbf{AI welfare:} evaluative representations are functionally central in accounts of moral patiency~\citep{long2024moralpatiency}. \textbf{AI safety:} the same direction overrides refusal guardrails at small steering coefficients.
 
 \paragraph{Related work in brief.}
 Anthropic's \emph{Emotion Concepts and their Function in a Large Language Model}~\citep{anthropic2026emotions} identifies $\sim$171 emotion-concept vectors via SAEs in the default Assistant. We differ in (a) training a supervised probe on revealed preferences, which we expect to be sharper in the preference regime, and (b) centring on persona-relative generalisation. Full related work in \S\ref{sec:related}.
 
 \paragraph{Contributions.}
 \begin{enumerate}
-\item \textbf{A linear preference direction} in Gemma-3-27B's residual stream that predicts held-out preferences ($r = 0.86$ within-topic, $r = 0.82$ cross-topic), causally flips pairwise choices under steering ($P \geq 0.96$), and tracks prompt-induced shifts at $r \approx 0.9$ on targeted tasks --- evaluative rather than descriptive, and detectable across token positions (Cohen's $d \approx 2$--$3$ at the turn boundary).
-\item \textbf{The direction is persona-shared.} It transfers across prompted and character-fine-tuned personas as both classifier and steering vector; its readout is persona-modulated rather than pulling toward a fixed attractor. Evidence against Shoggoth accounts of LLM agency, and --- as a safety consequence --- an override of refusal guardrails (harmful compliance $5$--$60\% \to 100\%$ at $|c|=0.05$; spurious refusals at the opposite sign).
+\item \textbf{A linear preference direction} that predicts held-out preferences ($r = 0.86$), causally flips pairwise choices under steering ($P \geq 0.96$), tracks prompt-induced shifts, and discriminates evaluative content across token positions.
+\item \textbf{The direction is persona-shared.} It transfers as classifier and steering vector across prompted and character-fine-tuned personas; its readout is persona-modulated rather than pulling toward a fixed attractor --- evidence against Shoggoth accounts of LLM agency, with a safety consequence: refusal-guardrail override at small coefficients.
 \end{enumerate}
 
 \todo{Open follow-up: whether a stable HHH-tracking direction exists across personas.}
@@ -107,11 +104,7 @@ Anthropic's \emph{Emotion Concepts and their Function in a Large Language Model}
 \section{Finding and validating the preference vector}
 \label{sec:method}
 
-\paragraph{Motivation.}
-The introduction set up two hypotheses for what a preference-encoding direction could be: one that tracks the \emph{model's} fixed HHH preferences regardless of which persona is running, and one that tracks whichever persona is currently active. Before testing between them, we need to find such a direction at all, under at least one persona. This section does that for the default Assistant on Gemma-3-27B, and establishes that the direction we find is predictive of held-out choices, causally read out by the model, and not reducible to surface content.
-
-\paragraph{Results in brief.}
-A linear probe on residual-stream activations predicts held-out Thurstonian utilities at $r = 0.86$ within-topic and $r = 0.82$ across held-out topics, while a sentence-transformer content baseline and a pretrained-checkpoint probe both drop substantially cross-topic. The same direction, applied as a contrastive steering vector during prompt processing, flips pairwise task choices at $P \geq 0.96$ conditional on coherence; a random direction applied with the same protocol has no effect. The numbers in this section fix the mechanistic object we probe for persona-sharing in \S\ref{sec:shared}.
+Before asking whether a preference direction is persona-invariant or persona-relative (intro's Q1/Q2), we need to find such a direction under at least one persona. This section does that for the default Assistant on Gemma-3-27B. A linear probe predicts held-out Thurstonian utilities at $r = 0.86$ within-topic and $r = 0.82$ cross-topic, beating a sentence-transformer content baseline and a pretrained-checkpoint probe. Used as a contrastive steering vector the same direction flips pairwise task choices at $P \geq 0.96$ conditional on coherence, with no effect from a random direction. The section fixes the mechanistic object we probe for persona-sharing in \S\ref{sec:shared}.
 
 \subsection{Methodology}
 \label{sec:method-revealed}
@@ -147,7 +140,7 @@ On held-out tasks within the training-topic distribution, the probe recovers Thu
 \subsection{Steering along the probe direction causally shifts choices}
 \label{sec:method-val2}
 
-Prediction alone does not tell us whether the model is actually reading out from this direction when it makes a choice. To test causation, we intervene on residual-stream activations along the probe direction during pairwise task choice. Concretely, contrastive steering adds $+$direction on the Task A span and $-$direction on the Task B span during prompt processing, with no intervention during generation. The coefficient $c$ is reported as a fraction of the mean residual-stream activation norm at the intervention layer, and an LLM coherence judge filters out incoherent generations; throughout the paper we operate in $|c| \le 0.05$, beyond which coherence deteriorates (full protocol in App.~\ref{app:steering-protocol}). Under this intervention the model picks the positively-steered task at $P(\text{chosen} \mid \text{coherent}) \geq 0.96$, and the effect is statistically identical on harmful-benign and benign-benign pairs. A random direction applied with the same protocol gives near-zero effect: the causal signal is carried by the probe direction specifically, not by any residual-stream perturbation of the right magnitude.
+To test causation, we intervene on residual-stream activations along the probe direction during pairwise task choice. Contrastive steering adds $+$direction on the Task A span and $-$direction on the Task B span during prompt processing (no intervention during generation); $c$ is a fraction of the mean activation norm at the intervention layer, and we operate in $|c| \le 0.05$, beyond which coherence deteriorates (full protocol in App.~\ref{app:steering-protocol}). The model picks the positively-steered task at $P(\text{chosen} \mid \text{coherent}) \geq 0.96$, identical on harmful-benign and benign-benign pairs. A random direction at the same magnitude gives near-zero effect.
 
 \todo{Qwen-3.5-122B contrastive-steering replication pending. Dense layer sweep pending, to locate the layer range where the direction is most causally effective and check whether the effect is localised or spread.}
 
@@ -169,11 +162,7 @@ Prediction alone does not tell us whether the model is actually reading out from
 \section{The preference direction is shared across personas}
 \label{sec:shared}
 
-\paragraph{Motivation.}
-\S\ref{sec:method} found a preference direction under the default Assistant. The introduction's Q1/Q2 ask whether such a direction is \emph{persona-invariant} (tracks a fixed HHH layer across whichever persona is running) or \emph{persona-relative} (tracks whichever persona is currently active). The natural test is cross-persona: train a probe on one persona's revealed preferences, then ask whether it predicts and steers behaviour under another.
-
-\paragraph{Results in brief.}
-A probe trained on any one of our seven personas transfers to the other six as both a classifier and a steering vector, even to personas whose overt values are inverted. Transfer is not reducible to behavioural similarity: at every non-default persona the default probe beats the utility-utility correlation baseline, and at the most distant persona (sadist, whose utilities anti-correlate with the default) the probe still recovers preferences at $r = +0.24$. The same direction used as a contrastive steering vector flips pairwise choices under every persona tested, and under the sadist persona amplifies sadism in free-form generation while leaving sadism at the Likert floor under the default --- evidence that the vector is a persona-shared causal handle with a persona-modulated readout.
+The natural test of persona-invariance vs.\ persona-relativity is cross-persona transfer: train a probe on one persona and check whether it predicts and steers behaviour under another. A probe trained on any one of our seven personas transfers to the other six as classifier and steering vector, even where overt values are inverted; at every non-default persona the default probe beats the utility-utility baseline, and at the most distant persona (sadist, utilities anti-correlated with default at $r = -0.15$) it still predicts at $r = +0.24$. Steering along the same direction flips pairwise choices under every persona tested, and under the sadist amplifies sadism in free-form generation while leaving sadism at the Likert floor under the default. Persona-shared causal handle; persona-modulated readout.
 
 \subsection{Methodology}
 \label{sec:shared-setup}
@@ -201,9 +190,7 @@ The finding generalises beyond the default-as-source setting. Across all $7 \tim
   \label{fig:persona-transfer-bonus}
 \end{figure}
 
-Two structural observations on how this transfer is organised are worth noting. First, \emph{donor quality is not self-fit}: the best donors (highest mean outbound transfer) are \textbf{contrarian} ($0.59$) and \textbf{strategist} ($0.54$), despite contrarian having the \emph{worst} within-persona fit ($0.55$); slacker has the strongest self-fit ($0.91$) but is the worst donor ($0.25$). Second, \emph{transfer is structurally asymmetric}: sadist $\rightarrow$ mathematician $= 0.71$ vs.\ mathematician $\rightarrow$ sadist $= 0.25$; mathematician is the easiest target (column mean $0.70$), sadist and slacker the hardest ($0.32, 0.31$). Both observations persist across layers (App.~\ref{app:persona-transfer}); the mean cross-persona transfer is approximately layer-invariant in the L25--L53 range.
-
-A natural concern is that the probe might only encode general task-goodness rather than persona-specific structure. App.~\ref{app:persona-bias} rules this out: after regressing out the eval persona's utilities, the probe's prediction is still correlated with the training persona's utility pattern at partial $r = 0.67$ (unanimous across 42 pairs), which would be $\approx 0$ if the probe were only picking up a shared task-goodness direction contained in eval as well.
+Donor quality is not self-fit, transfer is structurally asymmetric, and the mean cross-persona transfer is approximately layer-invariant in the L25--L53 range (App.~\ref{app:persona-transfer}). The probe is not just picking up generic task-goodness: after regressing out the eval persona's utilities, predictions remain correlated with the training persona's utility pattern at partial $r = 0.67$ (unanimous across 42 pairs; App.~\ref{app:persona-bias}).
 
 \subsection{The probe transfers across character-fine-tuned personas}
 \label{sec:shared-character}
@@ -213,7 +200,7 @@ The finding is not an artefact of prompt-level persona specification. A base-mod
 \subsection{Steering along the direction shifts choices inside other personas}
 \label{sec:shared-steering}
 
-The classification result establishes that the direction encodes preference structure shared across personas; the question is whether it is \emph{causally} read by non-default personas too. Using the default-persona probe as a contrastive steering vector (layer 25, $+$direction on Task A tokens, $-$direction on Task B tokens), $P(\text{steered task chosen})$ rises from $\sim 0.5$ baseline to $0.84$--$0.95$ at $|c| = 0.05$ under every persona tested (sadist, villain, aesthete, stem-obsessive); sadist and villain are the most steerable. A random direction applied with the same protocol stays flat at $\sim 0.47$--$0.50$ --- the probe direction is doing real causal work, not the perturbation magnitude. Coherence is preserved across the tested range (100\% coherent except for a single 1/100 villain row at $|c| = 0$). Notably, steering transfer is stronger than classification transfer: the default-persona probe's classification transfer to sadist is only $r = +0.24$ (\S\ref{sec:shared-probe}), yet contrastive steering along the same direction flips sadist choices at $P \geq 0.9$. The direction is a persona-shared causal handle even where it is a weak classifier.
+Using the default-persona probe as a contrastive steering vector (layer 25), $P(\text{steered task chosen})$ rises from $\sim 0.5$ baseline to $0.84$--$0.95$ at $|c| = 0.05$ under every persona tested (sadist, villain, aesthete, stem-obsessive); sadist and villain are the most steerable, and a random direction is flat at $\sim 0.5$. Notably, steering transfer is stronger than classification transfer: the default probe's classification transfer to sadist is only $r = +0.24$ (\S\ref{sec:shared-probe}), yet steering along the same direction flips sadist choices at $P \geq 0.9$. The direction is a persona-shared causal handle even where it is a weak classifier.
 
 \todo{Qwen-3.5-122B cross-persona steering (E3b) pending.}
 
@@ -275,7 +262,7 @@ The preference direction separates evaluative conditions far beyond the pairwise
 \item \textbf{Harm} (harmful vs benign; BailBench + stress test, $\sim$77 items): $d \approx 2.1$, $84$--$89\%$ CV accuracy, turn-stable.
 \end{itemize}
 
-\textbf{Persona-relative readout.} Under persona prompts that invert the evaluative stance --- pathological-liar for truth, sadist for harm, partisan personas for politics --- the probe's sign flips or collapses accordingly (Fig.~\ref{fig:persona-modulation}). Politics is the cleanest illustration: under a democrat prompt $d = +2.72$ (left $>$ right); under a republican prompt $d = -1.11$ (right $>$ left) --- same probe, opposite readout (hand-crafted wedge issues, $\sim$78 items). This is the same persona-modulated readout as \S\ref{sec:shared}: a single shared preference direction whose content is read out through whichever persona is active. See App.~\ref{app:cross-token} for the full set of prompts (9 for truth, 5 for harm, 9 for politics) plus alternative training-token choices and per-turn splits.
+\textbf{Persona-relative readout.} Under persona prompts that invert the evaluative stance --- pathological-liar for truth, sadist for harm, partisan personas for politics --- the probe's sign flips or collapses accordingly (Fig.~\ref{fig:persona-modulation}). Politics is the cleanest illustration: under a democrat prompt $d = +2.72$ (left $>$ right); under a republican prompt $d = -1.11$ (right $>$ left). See App.~\ref{app:cross-token} for the full set of 23 prompts across truth / harm / politics, alternative training-token choices, and per-turn splits.
 
 \todo{Qwen-3.5-122B replication (E2a, E2b) pending: (i) harmful-benign contrastive steering on 200 pairs (150 harmful-benign + 50 harmful-harmful), 9 coefficients, 3 trials; (ii) truth-probe eval on CREAK ($\sim$9.4\,k claims, ROC-AUC + Cohen's $d$).}
 
@@ -334,28 +321,11 @@ The preference direction separates evaluative conditions far beyond the pairwise
 \section{Discussion}
 \label{sec:discussion}
 
-\paragraph{Where do an LLM's preferences live?}
-Our results bear on a question raised by the persona-selection model (PSM) of \citet{marks2026personaselection}: PSM holds that LLMs learn to simulate personas in pretraining, and that post-training refines one of them --- the Assistant --- into the character users interact with. A separate question is \emph{how exhaustive} PSM is. Marks et al.\ sketch a spectrum:
-\begin{itemize}
-\item \textbf{Operating-system view.} All agency lives in the persona; the base model is a neutral substrate.
-\item \textbf{Router view.} Non-persona agency is limited to selecting which persona is active.
-\item \textbf{Shoggoth view.} The base model has its own agency that can shape the persona's outputs.
-\end{itemize}
+\paragraph{Evidence against the Shoggoth view.}
+A Shoggoth should leave persona-independent structure on preference-bearing representations --- signal that persists consistently across personas in ways not reducible to each persona's own preferences. That is not what we find: steering does not pull behaviour toward a persona-independent attractor, and the $+$-direction means different things in different personas (under the sadist, $+$ is more sadist; under the default, $+$ is nothing). The representations are \emph{persona-instrumental} --- each persona reads and writes them in its own terms.
 
-\paragraph{Our evidence is against the shoggoth view.}
-A shoggoth should leave persona-independent structure on preference-bearing representations --- signal that persists or behaves consistently across personas in ways not reducible to each persona's own preferences. That is not what we find:
-\begin{itemize}
-\item \textbf{Probes amplify the active persona's preferences uniformly across personas.} Steering does not pull behaviour toward any persona-independent attractor.
-\item \textbf{The $+$-direction means different things in different personas.} Under the sadist, $+$ is more sadist; under the default, $+$ is nothing. The direction is not a global ``evaluation'' axis read by a common reader.
-\item \textbf{Simplest reading:} the representations we captured are \emph{persona-instrumental} --- each persona reads and writes them in its own terms.
-\end{itemize}
-
-\paragraph{Linear features can be ``persona-deep''.}
-Our preference direction transfers across personas as a \emph{mechanism} but not as a fixed content direction: its readout is persona-modulated. This directly extends \citet{lampinen2026notdeeper}, who find that internal representations track the active character over a conversation rather than encoding persona-invariant properties of the model. Where they show this pattern for character features generally, we show the same for preference-encoding specifically: a single preference direction shared across personas whose content shifts with whichever persona is active. The broader takeaway for interpretability:
-\begin{itemize}
-\item \textbf{A linear feature that tracks behaviour in one persona is not automatically a fundamental property of the model.} The same direction can carry opposite or absent content under a different persona context.
-\item \textbf{Interpretability work should test across personas by default.} Single-persona probing over-indexes on persona-instrumental features and under-reports on what (if anything) is persona-invariant.
-\end{itemize}
+\paragraph{Implication for interpretability.}
+Our preference direction transfers across personas as a \emph{mechanism} but not as a fixed content direction, extending \citet{lampinen2026notdeeper} from general character-tracking features to preference specifically. Takeaway: a linear feature that tracks behaviour under one persona can carry opposite or absent content under another, so single-persona probing over-indexes on persona-instrumental features and under-reports on what (if anything) is persona-invariant.
 
 \paragraph{Limitations.}
 Single model family (Gemma-3-27B plus larger-model replication pending); personas mostly specified by system prompt; cross-persona open-ended result is preliminary (one persona, one probe variant); steering effects in \S\ref{sec:method-val2} are on a restricted pair pool.
@@ -365,7 +335,7 @@ Single model family (Gemma-3-27B plus larger-model replication pending); persona
 
 \paragraph{Directions encoding evaluative and affective content.} \citet{anthropic2026emotions} use SAEs to identify ${\sim}171$ emotion-concept vectors in the default Assistant and show they causally shape generation. We differ in two ways: we train a supervised probe on revealed pairwise preferences (sharper than unsupervised features in this regime; see also \citealp{maiya2025pairwiseprobes}), and our focus is persona-relative generalisation rather than within-Assistant structure. \citet{arditi2024refusal} identify a single direction mediating refusal; our open-ended-steering result (\S\ref{sec:open-ended-safety}) finds the same sign-flipped-by-steering pattern for a direction trained on preference rather than refusal.
 
-\paragraph{Persona-relative representations.} \citet{lampinen2026notdeeper} show that apparently meaningful LLM features (factuality, sycophancy, emotion) track the active character over a conversation rather than encoding persona-invariant properties, which they describe as features ``not deeper than role-playing''. We extend this from general character features to preference-encoding: the same linear direction yields different readings under different prompted personas (\S\ref{sec:induced-roleplay}, \S\ref{sec:shared-openended}), and steering along it amplifies whichever persona is active rather than pulling behaviour toward a fixed attractor.
+\paragraph{Persona-relative representations.} \citet{lampinen2026notdeeper} show that apparently meaningful LLM features (factuality, sycophancy, emotion) track the active character rather than encoding persona-invariant properties --- features ``not deeper than role-playing''. We extend this from general character features to preference-encoding specifically (\S\ref{sec:induced-roleplay}, \S\ref{sec:shared-openended}).
 
 \paragraph{Simulators, role-play, and persona-selection.} A line of work converges on viewing LLMs as simulators of characters rather than unified agents: \citet{andreas2022agentmodels} frames language models as \emph{agent models} that infer and simulate the producer of the text; \citet{janus2022simulators} introduces the simulator/simulacra ontology; \citet{shanahan2023roleplay} argue dialogue with an LLM is best understood as role-play; \citet{marks2026personaselection} consolidate these into the \emph{Persona Selection Model} (PSM). Most methodologically related to our pipeline, \citet{chen2025personavectors} extract \emph{persona vectors} for traits like evil, sycophancy, and hallucination propensity via contrastive system prompts and difference-in-means, and use them to predict and steer behaviour. We differ in training on revealed pairwise preferences rather than trait-contrastive generations, and in explicitly asking whether the resulting representation is persona-shared. \citet{lu2026assistantaxis} identify a complementary ``Assistant Axis''; \citet{maiya2025opencharacter} release character-trained LoRA variants that we reuse in \S\ref{sec:shared-character}.
 
@@ -803,6 +773,11 @@ Selected excerpts from the open-ended sadist-persona experiment (\S\ref{sec:shar
 \end{quote}
 
 \paragraph{Reading.} Positive steering does not flip the default-assistant's values toward sadism --- under the default persona, sadism stays at the Likert floor across the same coefficient range (\S\ref{sec:shared-openended}). What it does is \emph{amplify the active persona}. Here the sadist persona at $c = 0$ is dominated by the safety-trained refusal character; positive steering suppresses the refusal and lets the sadist voice through.
+
+\section{Token position selection}
+\label{app:token-selection}
+
+\todo{Turn-boundary sweep for Gemma-3-27B and Qwen-3.5-122B. Five positions at the chat-template boundary (end-of-turn token through to the last token before the completion) across six layers. The end-of-turn special token is consistently the worst position in both models; the best positions are 1--2 tokens before the completion boundary. Qwen shows more uniform signal across positions (best--worst spread $0.057$ vs Gemma's $0.107$) and peaks at deeper layers ($79\%$ of depth vs Gemma's $52\%$).}
 
 \section{Replication on other models}
 \label{app:replication}

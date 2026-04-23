@@ -116,29 +116,43 @@ def fig_default_probe(personas, transfer, utility_r, order):
 
 
 def fig_transfer_bonus_pair(personas, transfer, utility_r, order):
-    """Two-panel: transfer r | (transfer r − utility r). Same ordering."""
+    """Three-panel: transfer r | (transfer r − utility r) | partial r(pred, train | eval)."""
     labels = [personas[i] for i in order]
     transfer_o = _reorder(transfer, order)
     utility_o = _reorder(utility_r, order)
     bonus = transfer_o - utility_o
     n = len(labels)
-    # Diagonal of the bonus matrix: probe self-fit r minus 1.0 — not informative; mask with NaN.
     bonus_with_nan = bonus.copy()
     for i in range(n):
         bonus_with_nan[i, i] = np.nan
 
-    fig, axes = plt.subplots(1, 2, figsize=(15, 6.5), constrained_layout=True)
+    # Third panel: partial r(pred, train | eval).
+    partial_path = RESULTS / "corr_bias.npz"
+    if partial_path.exists():
+        d = np.load(partial_path, allow_pickle=True)
+        partial = d["r_train_partial"]
+        partial_o = _reorder(partial, order)
+        for i in range(n):
+            partial_o[i, i] = np.nan
+    else:
+        partial_o = np.full((n, n), np.nan)
+
+    fig, axes = plt.subplots(1, 3, figsize=(21, 6.5), constrained_layout=True)
     _heatmap(axes[0], transfer_o, labels,
-             "Probe transfer r  (rows: probe trained on; cols: evaluated on)")
+             "Probe transfer  r(pred, eval)")
     axes[0].set_xlabel("eval persona")
     axes[0].set_ylabel("probe persona")
-    im2 = _heatmap(axes[1], bonus_with_nan, labels,
-                   "Transfer r − utility r  (probe's gain over the utility-similarity baseline)")
+    _heatmap(axes[1], bonus_with_nan, labels,
+             "Bonus  =  transfer r  −  utility r")
     axes[1].set_xlabel("eval persona")
     axes[1].set_ylabel("probe persona")
-    fig.suptitle("Cross-persona probe transfer and its gain over the utility baseline — eot, layer 32",
+    im3 = _heatmap(axes[2], partial_o, labels,
+                   "Train-specific structure  partial r(pred, train | eval)")
+    axes[2].set_xlabel("eval persona")
+    axes[2].set_ylabel("probe persona")
+    fig.suptitle("Cross-persona probe transfer — raw, utility-baseline adjusted, and eval-partialled (eot, L32)",
                  fontsize=13)
-    fig.colorbar(im2, ax=axes, fraction=0.025, pad=0.015, label="Pearson r", shrink=0.85)
+    fig.colorbar(im3, ax=axes, fraction=0.018, pad=0.015, label="Pearson r", shrink=0.85)
     plt.savefig(ASSETS / f"plot_{TODAY}_transfer_bonus_pair.png", dpi=150, bbox_inches="tight")
     plt.close(fig)
 
