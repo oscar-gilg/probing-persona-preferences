@@ -91,6 +91,7 @@ def main() -> None:
     r_default_partial = np.full((n, n), np.nan)     # r(pred, default | eval)
     r_train_double = np.full((n, n), np.nan)        # r(pred, train | eval, default)
     r_default_double = np.full((n, n), np.nan)      # r(pred, default | eval, train)
+    r_eval_partial = np.full((n, n), np.nan)        # r(pred, eval | train) — "clean transfer"
 
     i_def = personas.index("default")
 
@@ -116,6 +117,7 @@ def main() -> None:
             if i_train != i_def and i_eval != i_def:
                 r_default[i_train, i_eval] = pearsonr(pred, y_default)[0]
             r_train_partial[i_train, i_eval] = partial_corr(pred, y_train, y_eval)
+            r_eval_partial[i_train, i_eval] = partial_corr(pred, y_eval, y_train)
             if i_train != i_def and i_eval != i_def:
                 r_default_partial[i_train, i_eval] = partial_corr(pred, y_default, y_eval)
                 # Double partial — residual pull toward the *other* anchor after
@@ -128,6 +130,7 @@ def main() -> None:
         personas=np.array(personas),
         r_eval=r_eval, r_train=r_train, r_default=r_default,
         r_train_partial=r_train_partial, r_default_partial=r_default_partial,
+        r_eval_partial=r_eval_partial,
         r_train_double=r_train_double, r_default_double=r_default_double,
     )
     print(f"saved {(RESULTS / 'corr_bias.npz').relative_to(REPO)}")

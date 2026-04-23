@@ -126,11 +126,12 @@ def fig_transfer_bonus_pair(personas, transfer, utility_r, order):
     for i in range(n):
         bonus_with_nan[i, i] = np.nan
 
-    # Third panel: partial r(pred, train | eval).
+    # Third panel: partial r(pred, eval | train) — "clean transfer" after removing
+    # the predictability of eval from train-utility-similarity.
     partial_path = RESULTS / "corr_bias.npz"
     if partial_path.exists():
         d = np.load(partial_path, allow_pickle=True)
-        partial = d["r_train_partial"]
+        partial = d["r_eval_partial"]
         partial_o = _reorder(partial, order)
         for i in range(n):
             partial_o[i, i] = np.nan
@@ -147,7 +148,7 @@ def fig_transfer_bonus_pair(personas, transfer, utility_r, order):
     axes[1].set_xlabel("eval persona")
     axes[1].set_ylabel("probe persona")
     im3 = _heatmap(axes[2], partial_o, labels,
-                   "Train-specific structure  partial r(pred, train | eval)")
+                   "Clean transfer  partial r(pred, eval | train)")
     axes[2].set_xlabel("eval persona")
     axes[2].set_ylabel("probe persona")
     fig.suptitle("Cross-persona probe transfer — raw, utility-baseline adjusted, and eval-partialled (eot, L32)",
