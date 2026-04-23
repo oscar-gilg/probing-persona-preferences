@@ -142,8 +142,10 @@ def main() -> None:
 
     out_pairs: list[dict] = []
     for idx, entry in enumerate(picked):
-        a_text = task_meta[entry["task_a"]]["prompt"]
-        b_text = task_meta[entry["task_b"]]["prompt"]
+        # Strip to match chat-template behavior (trailing whitespace is dropped before
+        # <end_of_turn>, which breaks string-based span finding).
+        a_text = task_meta[entry["task_a"]]["prompt"].strip()
+        b_text = task_meta[entry["task_b"]]["prompt"].strip()
 
         task_a = Task(
             prompt=a_text,
