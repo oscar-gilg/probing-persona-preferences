@@ -58,6 +58,11 @@ Appended step by step. Latest at the bottom.
 ## Steering sweep
 
 - 40 configs total: 20 tb-2 + 20 eot. 5 spine (12 injection layers each) + 15 diagonal per selector.
-- Driver `scripts/layer_sweep/run_sweep.sh` runs all 40 sequentially on the pod.
-- Estimated wall time: ~2–3 h on one A100. Checkpoints per config under `experiments/layer_sweep/checkpoints/`.
-- Watchdog running; will notify on completion.
+- Pace per spine config: ~2 h on A100 80 GB. Non-spine L≤35: ~10 min. L≥38: ~10 min (n_trials=1).
+- **Initial single-pod run**: pod 1 (`layer-sweep-extract`) launched sequential sweep. Reached L56 of tb-2 after ~11 h.
+- **OOM discovery**: L53 spine (and retries of earlier spines) OOMed at allocation-time — A100 80 GB is near the edge for 12-layer injection on Gemma-3-27B bf16. Mitigation added: `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`.
+- **Sharded into 2 pods** to halve wall clock:
+  - Pod 1: `run_sweep_tb2_tail.sh` — redo L53, then L56, L59.
+  - Pod 2 (`layer-sweep-eot`, A100 80 GB): `run_sweep_eot.sh` — all 20 eot configs.
+- ETA ~12 h end-to-end (pod 2 bottleneck).
+- Complete tb-2 configs already rsynced locally: L02–L50 (17 parsed checkpoints, all with expected row counts). smoke_positive_control.parsed.jsonl also kept.
