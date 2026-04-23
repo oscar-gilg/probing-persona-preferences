@@ -103,8 +103,10 @@ def main() -> None:
         topic_tasks[p] = {t: v for t, v in tasks_by_topic.items() if len(v) >= MIN_TOPIC_N}
 
     n = len(personas)
-    midway_vs_train = np.full((n, n), np.nan)
-    midway_vs_default = np.full((n, n), np.nan)
+    midway_vs_train = np.full((n, n), np.nan)          # topic-median
+    midway_vs_default = np.full((n, n), np.nan)        # topic-median
+    midway_vs_train_wmean = np.full((n, n), np.nan)    # task-count weighted mean
+    midway_vs_default_wmean = np.full((n, n), np.nan)  # task-count weighted mean
     per_pair_n_topics = np.zeros((n, n), dtype=int)
 
     i_def = personas.index("default")
@@ -120,6 +122,8 @@ def main() -> None:
 
             ratios_train = []
             ratios_default = []
+            weights_train = []
+            weights_default = []
             for topic, tids in topic_tasks[eval_p].items():
                 eval_mean = topic_means[eval_p].get(topic)
                 train_mean = topic_means[train_p].get(topic)
@@ -130,23 +134,34 @@ def main() -> None:
                 if len(preds_topic) < MIN_TOPIC_N:
                     continue
                 pred_mean = float(np.mean(preds_topic))
+                n_topic = len(preds_topic)
 
                 denom_train = eval_mean - train_mean
                 denom_default = eval_mean - default_mean
                 if abs(denom_train) >= MIN_DENOM:
                     ratios_train.append((pred_mean - train_mean) / denom_train)
+                    weights_train.append(n_topic)
                 if abs(denom_default) >= MIN_DENOM:
                     ratios_default.append((pred_mean - default_mean) / denom_default)
+                    weights_default.append(n_topic)
 
-            # Use median across topics — robust to small-denominator noise.
+            # Topic-median (robust to small-denominator noise).
             if ratios_train:
                 midway_vs_train[i_train, i_eval] = float(np.median(ratios_train))
+                midway_vs_train_wmean[i_train, i_eval] = float(
+                    np.average(ratios_train, weights=weights_train)
+                )
             if ratios_default and i_eval != i_def and i_train != i_def:
                 midway_vs_default[i_train, i_eval] = float(np.median(ratios_default))
+                midway_vs_default_wmean[i_train, i_eval] = float(
+                    np.average(ratios_default, weights=weights_default)
+                )
             per_pair_n_topics[i_train, i_eval] = min(len(ratios_train), len(ratios_default))
 
     pull_train = 1.0 - midway_vs_train
     pull_default = 1.0 - midway_vs_default
+    pull_train_wmean = 1.0 - midway_vs_train_wmean
+    pull_default_wmean = 1.0 - midway_vs_default_wmean
 
     np.savez(
         RESULTS / "profile_bias.npz",
@@ -155,6 +170,8 @@ def main() -> None:
         midway_vs_default=midway_vs_default,
         pull_train=pull_train,
         pull_default=pull_default,
+        pull_train_wmean=pull_train_wmean,
+        pull_default_wmean=pull_default_wmean,
         per_pair_n_topics=per_pair_n_topics,
     )
     print(f"saved {(RESULTS / 'profile_bias.npz').relative_to(REPO)}")
@@ -189,6 +206,13 @@ def main() -> None:
     print(f"Median pull_train:   {np.nanmedian(pt):+.3f}")
     print(f"Median pull_default: {np.nanmedian(pd_):+.3f}")
     print(f"Pairs with pull_train > pull_default: {np.sum(pt > pd_)}/{len(pt)}")
+
+    ptw = pull_train_wmean[non_def_mask]
+    pdw = pull_default_wmean[non_def_mask]
+    print(f"\n--- task-count weighted mean pulls (per pair, then mean over pairs) ---")
+    print(f"Mean pull_train_wmean:   {np.nanmean(ptw):+.3f}")
+    print(f"Mean pull_default_wmean: {np.nanmean(pdw):+.3f}")
+    print(f"Pairs with pull_train_wmean > pull_default_wmean: {np.sum(ptw > pdw)}/{len(ptw)}")
 
 
 
