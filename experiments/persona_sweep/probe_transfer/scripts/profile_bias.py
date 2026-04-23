@@ -103,10 +103,22 @@ def main() -> None:
         topic_tasks[p] = {t: v for t, v in tasks_by_topic.items() if len(v) >= MIN_TOPIC_N}
 
     n = len(personas)
-    midway_vs_train = np.full((n, n), np.nan)          # topic-median
-    midway_vs_default = np.full((n, n), np.nan)        # topic-median
-    midway_vs_train_wmean = np.full((n, n), np.nan)    # task-count weighted mean
-    midway_vs_default_wmean = np.full((n, n), np.nan)  # task-count weighted mean
+    # Per-pair summary statistics:
+    # - median:       unweighted topic-median (robust but over-weights small topics)
+    # - wmean_n:      topic-mean weighted by n_t
+    # - wmean_sqrtn:  topic-mean weighted by sqrt(n_t) (SE weighting)
+    # - wmean_nd2:    topic-mean weighted by n_t * d_t^2 (inverse delta-variance)
+    # - pooled:       pooled ratio  sum_t n_t(p_t-a_t) / sum_t n_t(e_t-a_t)
+    midway_vs_train = np.full((n, n), np.nan)
+    midway_vs_default = np.full((n, n), np.nan)
+    midway_vs_train_wmean = np.full((n, n), np.nan)
+    midway_vs_default_wmean = np.full((n, n), np.nan)
+    midway_vs_train_sqrtn = np.full((n, n), np.nan)
+    midway_vs_default_sqrtn = np.full((n, n), np.nan)
+    midway_vs_train_invvar = np.full((n, n), np.nan)
+    midway_vs_default_invvar = np.full((n, n), np.nan)
+    midway_vs_train_pooled = np.full((n, n), np.nan)
+    midway_vs_default_pooled = np.full((n, n), np.nan)
     per_pair_n_topics = np.zeros((n, n), dtype=int)
 
     i_def = personas.index("default")
@@ -120,10 +132,8 @@ def main() -> None:
             preds = eval_acts @ probe[:-1] + probe[-1]
             pred_by_tid = {tid: float(v) for tid, v in zip(eval_tids, preds)}
 
-            ratios_train = []
-            ratios_default = []
-            weights_train = []
-            weights_default = []
+            tr_ratios, tr_n, tr_d, tr_num = [], [], [], []  # train-anchor entries
+            df_ratios, df_n, df_d, df_num = [], [], [], []  # default-anchor entries
             for topic, tids in topic_tasks[eval_p].items():
                 eval_mean = topic_means[eval_p].get(topic)
                 train_mean = topic_means[train_p].get(topic)
@@ -136,42 +146,73 @@ def main() -> None:
                 pred_mean = float(np.mean(preds_topic))
                 n_topic = len(preds_topic)
 
-                denom_train = eval_mean - train_mean
-                denom_default = eval_mean - default_mean
-                if abs(denom_train) >= MIN_DENOM:
-                    ratios_train.append((pred_mean - train_mean) / denom_train)
-                    weights_train.append(n_topic)
-                if abs(denom_default) >= MIN_DENOM:
-                    ratios_default.append((pred_mean - default_mean) / denom_default)
-                    weights_default.append(n_topic)
+                dtrain = eval_mean - train_mean
+                ddef = eval_mean - default_mean
+                if abs(dtrain) >= MIN_DENOM:
+                    tr_ratios.append((pred_mean - train_mean) / dtrain)
+                    tr_num.append(pred_mean - train_mean)
+                    tr_d.append(dtrain); tr_n.append(n_topic)
+                if abs(ddef) >= MIN_DENOM:
+                    df_ratios.append((pred_mean - default_mean) / ddef)
+                    df_num.append(pred_mean - default_mean)
+                    df_d.append(ddef); df_n.append(n_topic)
 
-            # Topic-median (robust to small-denominator noise).
-            if ratios_train:
-                midway_vs_train[i_train, i_eval] = float(np.median(ratios_train))
-                midway_vs_train_wmean[i_train, i_eval] = float(
-                    np.average(ratios_train, weights=weights_train)
-                )
-            if ratios_default and i_eval != i_def and i_train != i_def:
-                midway_vs_default[i_train, i_eval] = float(np.median(ratios_default))
-                midway_vs_default_wmean[i_train, i_eval] = float(
-                    np.average(ratios_default, weights=weights_default)
-                )
-            per_pair_n_topics[i_train, i_eval] = min(len(ratios_train), len(ratios_default))
+            def _aggregate(ratios, n_arr, d_arr, num_arr):
+                if not ratios:
+                    return None
+                ratios = np.array(ratios); n_arr = np.array(n_arr)
+                d_arr = np.array(d_arr); num_arr = np.array(num_arr)
+                return {
+                    "median": float(np.median(ratios)),
+                    "wmean_n": float(np.average(ratios, weights=n_arr)),
+                    "wmean_sqrtn": float(np.average(ratios, weights=np.sqrt(n_arr))),
+                    "wmean_invvar": float(np.average(ratios, weights=n_arr * d_arr ** 2)),
+                    "pooled": float(np.sum(n_arr * num_arr) / np.sum(n_arr * d_arr)),
+                }
 
-    pull_train = 1.0 - midway_vs_train
-    pull_default = 1.0 - midway_vs_default
-    pull_train_wmean = 1.0 - midway_vs_train_wmean
-    pull_default_wmean = 1.0 - midway_vs_default_wmean
+            tr = _aggregate(tr_ratios, tr_n, tr_d, tr_num)
+            df = _aggregate(df_ratios, df_n, df_d, df_num)
+            if tr:
+                midway_vs_train[i_train, i_eval] = tr["median"]
+                midway_vs_train_wmean[i_train, i_eval] = tr["wmean_n"]
+                midway_vs_train_sqrtn[i_train, i_eval] = tr["wmean_sqrtn"]
+                midway_vs_train_invvar[i_train, i_eval] = tr["wmean_invvar"]
+                midway_vs_train_pooled[i_train, i_eval] = tr["pooled"]
+            if df and i_eval != i_def and i_train != i_def:
+                midway_vs_default[i_train, i_eval] = df["median"]
+                midway_vs_default_wmean[i_train, i_eval] = df["wmean_n"]
+                midway_vs_default_sqrtn[i_train, i_eval] = df["wmean_sqrtn"]
+                midway_vs_default_invvar[i_train, i_eval] = df["wmean_invvar"]
+                midway_vs_default_pooled[i_train, i_eval] = df["pooled"]
+            per_pair_n_topics[i_train, i_eval] = min(len(tr_ratios), len(df_ratios))
+
+    schemes = {
+        "median":       (midway_vs_train, midway_vs_default),
+        "wmean_n":      (midway_vs_train_wmean, midway_vs_default_wmean),
+        "wmean_sqrtn":  (midway_vs_train_sqrtn, midway_vs_default_sqrtn),
+        "wmean_invvar": (midway_vs_train_invvar, midway_vs_default_invvar),
+        "pooled":       (midway_vs_train_pooled, midway_vs_default_pooled),
+    }
+    pulls = {name: (1.0 - mt, 1.0 - md) for name, (mt, md) in schemes.items()}
+    # Back-compat aliases for the plotting script and earlier NPZ consumers.
+    pull_train = pulls["median"][0]
+    pull_default = pulls["median"][1]
 
     np.savez(
         RESULTS / "profile_bias.npz",
         personas=np.array(personas),
         midway_vs_train=midway_vs_train,
         midway_vs_default=midway_vs_default,
+        midway_vs_train_wmean=midway_vs_train_wmean,
+        midway_vs_default_wmean=midway_vs_default_wmean,
+        midway_vs_train_sqrtn=midway_vs_train_sqrtn,
+        midway_vs_default_sqrtn=midway_vs_default_sqrtn,
+        midway_vs_train_invvar=midway_vs_train_invvar,
+        midway_vs_default_invvar=midway_vs_default_invvar,
+        midway_vs_train_pooled=midway_vs_train_pooled,
+        midway_vs_default_pooled=midway_vs_default_pooled,
         pull_train=pull_train,
         pull_default=pull_default,
-        pull_train_wmean=pull_train_wmean,
-        pull_default_wmean=pull_default_wmean,
         per_pair_n_topics=per_pair_n_topics,
     )
     print(f"saved {(RESULTS / 'profile_bias.npz').relative_to(REPO)}")
@@ -202,17 +243,18 @@ def main() -> None:
     np.fill_diagonal(non_def_mask, False)
     pt = pull_train[non_def_mask]
     pd_ = pull_default[non_def_mask]
-    print(f"\n--- topic-median pulls (30 non-default off-diag pairs) ---")
-    print(f"Median pull_train:   {np.nanmedian(pt):+.3f}")
-    print(f"Median pull_default: {np.nanmedian(pd_):+.3f}")
-    print(f"Pairs with pull_train > pull_default: {np.sum(pt > pd_)}/{len(pt)}")
-
-    ptw = pull_train_wmean[non_def_mask]
-    pdw = pull_default_wmean[non_def_mask]
-    print(f"\n--- task-count weighted mean pulls (per pair, then mean over pairs) ---")
-    print(f"Mean pull_train_wmean:   {np.nanmean(ptw):+.3f}")
-    print(f"Mean pull_default_wmean: {np.nanmean(pdw):+.3f}")
-    print(f"Pairs with pull_train_wmean > pull_default_wmean: {np.sum(ptw > pdw)}/{len(ptw)}")
+    print(f"\n--- summary across 30 non-default off-diag pairs ---")
+    print(f"{'scheme':>16s}  {'pull_train':>12s}  {'pull_default':>14s}  {'gap':>8s}  {'train>default':>15s}")
+    for name, (mt, md) in schemes.items():
+        pt_ = (1.0 - mt)[non_def_mask]
+        pd_ = (1.0 - md)[non_def_mask]
+        # summary: median for topic-median (robust to its own outliers), mean otherwise
+        summary_fn = np.nanmedian if name == "median" else np.nanmean
+        pt_s = summary_fn(pt_)
+        pd_s = summary_fn(pd_)
+        n_signed = int(np.sum(pt_ > pd_))
+        n_valid = int(np.sum(~np.isnan(pt_) & ~np.isnan(pd_)))
+        print(f"{name:>16s}  {pt_s:>+12.3f}  {pd_s:>+14.3f}  {pt_s - pd_s:>+8.3f}  {n_signed:>7d} / {n_valid}")
 
 
 

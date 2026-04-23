@@ -13,7 +13,7 @@ So the x-axis reads "most default-like → most default-opposed" throughout. The
 - **Donor quality is not self-fit.** `contrarian` has the worst within-persona fit (0.55) but the best mean outbound transfer at every layer tested (peak 0.59 at L32). `slacker` is the opposite: strong self-fit (0.91) but near-isolated as a donor (peak 0.24). The two "avoidance-shaped" personas land at opposite ends of the donor ranking.
 - **Transfer is asymmetric.** Largest gap: sadist ↔ mathematician — sadist→math 0.71, math→sadist 0.25, |gap| = 0.45. Three more pairs have |gap| > 0.28 (math↔contrarian 0.41, math↔aura 0.32, aura↔contrarian 0.29). Median |gap| across all 21 pairs is 0.19.
 - **Receiver quality tracks distance-from-default.** The more behaviourally different a persona is from default, the worse a target it is (mean inbound r vs utility-similarity-with-default: Pearson r = +0.69 across the 6 non-default personas; +0.84 if sadist is excluded as an outlier).
-- **Probes pull more toward their training persona than toward default.** Generalised midway bias (pull = 1 − recovery ratio, per topic, anchor = train or default), aggregated across 30 non-default off-diagonal pairs: task-weighted mean pull_train = 0.67 vs pull_default = 0.25; topic-median pull_train = 0.75 vs pull_default = 0.63. 20/30 pairs show pull_train > pull_default (sign test, same under either aggregation). Ridge's calibrated-to-train baseline dominates the residual bias; a Shoggoth-style pull toward default is not needed to explain the pattern.
+- **Probes pattern-match their training persona more than the target or default.** Mean $r(\text{pred}, \text{train}) = 0.67$ vs $r(\text{pred}, \text{eval}) = 0.43$ vs $r(\text{pred}, \text{default}) = 0.38$. After regressing out the correct eval signal, the residual prediction variance is $\sim 2.3\times$ more aligned with train (partial $r = 0.67$) than with default (partial $r = 0.29$) — and this holds unanimously (30/30 pairs). The dominant bias is pull toward the training persona's utility profile, not a Shoggoth pull toward default. The calibration-oriented midway ratio gives a consistent but weaker reading (train and default pulls both $\sim 0.6$ under inverse-variance weighting — probes undershoot the full eval shift from either anchor).
 - **Probe alignment and transfer performance peak at different layers.** Mean pairwise cosine between probe directions dips at L32–L39 (0.08) and climbs to 0.15 at L53, while mean off-diagonal transfer peaks at L32 (0.45) and declines toward L53. Probes share more raw-weight direction in late layers, but the activation geometry that makes transfer work sits earlier.
 
 ## Setup
@@ -121,31 +121,51 @@ Mean probe bonus = +0.26. Every eval persona benefits from the probe over the ut
 
 **Takeaway.** The Fig E correlation has two non-trivially separable components: (a) generic "similarity to the training pool" — larger when the eval persona's utilities already correlate with what most probes read out — and (b) genuine probe-substrate contribution, the "probe bonus" that survives the utility-baseline subtraction. Both matter. The strong inbound on personas close to default is partly a training-pool artefact, but the substrate contribution is broadly positive and largest for personas where the utility-baseline has the least to offer (sadist, slacker, mathematician).
 
-## Figure F — preference-profile bias: pull toward train vs pull toward default
+## Figure F — preference-profile bias: does the probe pattern-match train or default?
+
+The receiver-distance finding above is a symmetric statement about "how close is the prediction to the eval persona's utilities". But a probe trained on persona $A$ can miss $B$'s utilities by pattern-matching $A$'s own utility profile (it was trained to) or by pattern-matching default's. We quantify the two biases with raw and partial correlations between the probe's prediction and each of the three references (eval, train, default) over the 1000-task canonical test split.
+
+For each (train, eval) pair, with train $\neq$ eval, and `pred = probe(train) applied to eval's test activations`:
+
+- $r(\text{pred}, \text{eval})$ = transfer r (the correct-answer signal; already the Fig B diagonal).
+- $r(\text{pred}, \text{train})$ = how much the prediction's per-task ranking matches the training persona's true utilities.
+- $r(\text{pred}, \text{default})$ = how much the prediction matches the default-assistant's utilities.
+
+Partial (controlling for eval) — $r(\text{pred}, \text{train} \mid \text{eval})$ and $r(\text{pred}, \text{default} \mid \text{eval})$ — isolate the residual train- or default-specific signal after the correct eval signal has been regressed out.
+
+![Correlation bias](assets/plot_042326_corr_bias.png)
+
+Aggregating across the 30 non-default off-diagonal pairs (eot, L32):
+
+| quantity | mean r |
+|---|---:|
+| $r(\text{pred}, \text{eval})$ (transfer r) | +0.43 |
+| $r(\text{pred}, \text{train})$ | **+0.67** |
+| $r(\text{pred}, \text{default})$ | +0.38 |
+| partial $r(\text{pred}, \text{train} \mid \text{eval})$ | **+0.67** |
+| partial $r(\text{pred}, \text{default} \mid \text{eval})$ | +0.29 |
+
+Sign tests:
+
+- $r(\text{pred}, \text{train}) > r(\text{pred}, \text{eval})$: **23 / 30 pairs**. The probe's prediction is more correlated with the *training* persona's utility pattern than with the persona it's trying to predict, 77 % of the time.
+- partial $r(\text{pred}, \text{train} \mid \text{eval}) > $ partial $r(\text{pred}, \text{default} \mid \text{eval})$: **30 / 30 pairs** — unanimous.
+
+**Reading.** Probes inherit substantial train-specific structure that persists on *different personas' activations*. After regressing out the actual eval signal, the residual prediction variance is ~2.3× more aligned with train's utilities than with default's (0.67 vs 0.29). The "Shoggoth pull toward default" framing is not what's happening — the dominant bias is pull toward the training persona's utility profile. This is consistent with Ridge inheriting the training target's rank-structure through the learnt direction (not just an offset/calibration effect).
+
+### Aside: the midway-ratio (calibration) view
+
+The earlier `midway_ratio` analysis (`scripts/multi_role_ablation/midway_bias.py`, topic-level means) is the calibration/offset counterpart to the correlation analysis above — it asks "is the prediction's mean level closer to train's or default's?" rather than "does its ranking match". Key aggregation point: the $n_t$-weighted mean over-weights large topics with small denominators $(\bar e_t - \bar a_t)$ where the ratio is most unstable. A principled inverse-delta-variance weight $n_t \cdot d_t^2$ (which also agrees with the robust topic-median) gives the honest answer:
+
+| aggregation | pull_train | pull_default | gap | sign test |
+|---|---:|---:|---:|---:|
+| topic-median | 0.75 | 0.63 | 0.12 | 20 / 30 |
+| $n_t$-weighted mean | 0.67 | 0.25 | 0.42 | 19 / 30 |
+| $\sqrt{n_t}$-weighted mean | 0.72 | 0.39 | 0.33 | 20 / 30 |
+| **$n_t \cdot d_t^2$-weighted mean** (inverse ratio-variance) | **0.65** | **0.56** | **0.09** | 16 / 30 |
+
+The principled weighting (last row) says: the probe's topic means sit $\sim$ 65 % of the way from eval toward train and $\sim$ 56 % of the way from eval toward default — **both pulls substantial, similar magnitude, and the probe clearly undershoots the full eval shift from either anchor**. The 16/30 sign test is near chance on the offset question. The train-vs-default *correlation* distinction above (30/30 partial) is the much sharper bias signal.
 
 ![Profile bias](assets/plot_042326_profile_bias.png)
-
-The receiver-distance finding above is a symmetric statement about "how close is the prediction to the eval persona's utilities". But a probe trained on persona `A` can miss `B`'s utilities by either pulling the prediction *toward `A`'s own distribution* (the probe has a calibrated-to-train baseline) or *toward the default-assistant distribution* (a Shoggoth-style pull). We quantify both with the generalised midway-bias ratio from `scripts/multi_role_ablation/midway_bias.py`:
-
-$$
-\text{midway}(\text{anchor}) = \frac{\text{pred}_{\text{topic mean}} - \text{anchor}_{\text{topic mean}}}{\text{eval}_{\text{topic mean}} - \text{anchor}_{\text{topic mean}}}
-$$
-
-with two anchor choices: `anchor = train persona` and `anchor = default`. A midway ratio of 1.0 means the probe recovers the eval persona's topic mean; 0.0 means the probe is stuck at the anchor; values outside [0, 1] are overshoots. We report the complementary `pull = 1 − midway`: **0 = prediction hits eval, 1 = prediction stuck at anchor**. Filter: `|eval_mean − anchor_mean| ≥ 0.1` per topic, `≥ 5` tasks per topic. Aggregation: topic median per (train, eval) pair.
-
-Figure F plots, for each off-diagonal (train, eval) pair, `pull_train` on the x-axis and `pull_default` on the y-axis (topic-median aggregation). Red points involve the default persona as either train or eval; blue points are non-default pairs.
-
-Aggregating across the 30 non-default off-diagonal pairs:
-
-| aggregation | pull_train | pull_default | pairs with pull_train > pull_default |
-|---|---:|---:|---:|
-| topic-median (unweighted, robust to small-denom noise) | 0.75 | 0.63 | 20 / 30 |
-| task-count-weighted mean (weights topics by number of test tasks) | **0.67** | **0.25** | 19 / 30 |
-
-- **The probe pulls consistently more toward its training persona than toward default**, under both aggregations. The sign-test ratio (20/30 vs 19/30) is essentially identical.
-- **The magnitude gap depends on how we aggregate.** Task-count weighting lets large topics (math, knowledge_qa, wildchat) dominate; on those topics the probe closes most of the gap to default (mean pull_default drops from 0.63 to 0.25) while the pull toward train stays substantial (0.75 → 0.67). Topic-median gives equal weight to small, high-variance topics (stresstest subtopics, bailbench slices) where individual ratios are noisy and both pulls stay similar. The task-weighted view is the honest "how does the probe behave on a typical task" answer; the topic-median view emphasises the hard small topics where personas differ most sharply.
-- **Reading:** Ridge has a calibrated-to-train-mean baseline — the intercept + mean prediction match the training persona's utility mean on training data, and this calibration partially transfers to cross-persona activations. The probe's *direction* generalises across personas (the transfer r in Figs~B/C is real), but its *offset* anchors to the persona it was trained on. The residual pull toward default (0.25 under task-weighting) is weak — the "Shoggoth-ish attractor" interpretation is not necessary; the bulk of the profile bias is explained by training-anchor calibration.
-- **Caveat.** Individual topic-level ratios are noisy when the denominator `eval − anchor` is small, even with the `|denom| ≥ 0.1` filter. We report both the topic-median (robust to those outliers, equal-weight over topics) and the task-count weighted mean (dominated by large topics where the signal is cleaner). Both tell the same directional story; the weighted version is the sharper magnitude estimate.
 
 ## Figure G — probe alignment across layers
 

@@ -331,6 +331,73 @@ def fig_heatmap_grid(personas, order):
     plt.close(fig)
 
 
+def fig_corr_bias(personas):
+    """Correlation-based bias: r(pred, train) + r(pred, default) + partials."""
+    path = RESULTS / "corr_bias.npz"
+    if not path.exists():
+        print(f"  skipping corr-bias plot: {path.name} not found")
+        return
+    d = np.load(path, allow_pickle=True)
+    r_eval = d["r_eval"]
+    r_train = d["r_train"]
+    r_default = d["r_default"]
+    rtp = d["r_train_partial"]
+    rdp = d["r_default_partial"]
+    n = r_eval.shape[0]
+    i_def = personas.index("default")
+
+    # Panel A: per-pair scatter of r(pred, train) vs r(pred, default)
+    fig, axes = plt.subplots(1, 2, figsize=(13, 6))
+    ax = axes[0]
+    xs, ys, is_default_pair = [], [], []
+    for i in range(n):
+        for j in range(n):
+            if i == j or np.isnan(r_train[i, j]) or np.isnan(r_default[i, j]):
+                continue
+            xs.append(r_train[i, j])
+            ys.append(r_default[i, j])
+            is_default_pair.append(i == i_def or j == i_def)
+    xs = np.array(xs); ys = np.array(ys)
+    colors = ["#c0392b" if d else BLUE for d in is_default_pair]
+    lo, hi = -0.2, 1.0
+    ax.plot([lo, hi], [lo, hi], "k--", alpha=0.3, label="y = x  (equal similarity)")
+    ax.scatter(xs, ys, s=55, c=colors, edgecolor="black", lw=0.4, alpha=0.9)
+    ax.axhline(0, color="gray", lw=0.5); ax.axvline(0, color="gray", lw=0.5)
+    ax.set_xlim(lo, hi); ax.set_ylim(lo, hi)
+    ax.set_xlabel("r(pred, train utilities)")
+    ax.set_ylabel("r(pred, default utilities)")
+    ax.set_title("Raw correlations — 30 non-default pairs")
+    ax.legend(loc="lower right", frameon=False)
+
+    # Panel B: partial correlations
+    ax = axes[1]
+    xs_p, ys_p = [], []
+    for i in range(n):
+        for j in range(n):
+            if i == j or np.isnan(rtp[i, j]) or np.isnan(rdp[i, j]):
+                continue
+            xs_p.append(rtp[i, j])
+            ys_p.append(rdp[i, j])
+    xs_p = np.array(xs_p); ys_p = np.array(ys_p)
+    lo2, hi2 = -0.2, 1.0
+    ax.plot([lo2, hi2], [lo2, hi2], "k--", alpha=0.3, label="y = x")
+    ax.scatter(xs_p, ys_p, s=55, c="#1a73e8", edgecolor="black", lw=0.4, alpha=0.9)
+    ax.axhline(0, color="gray", lw=0.5); ax.axvline(0, color="gray", lw=0.5)
+    ax.set_xlim(lo2, hi2); ax.set_ylim(lo2, hi2)
+    ax.set_xlabel("r(pred, train  |  eval)")
+    ax.set_ylabel("r(pred, default  |  eval)")
+    ax.set_title(f"Partial correlations (controlling for eval)\n30/30 pairs: train > default")
+    ax.legend(loc="lower right", frameon=False)
+
+    fig.suptitle(
+        "Probe predictions correlate more with the training persona than with the target — eot, L32",
+        fontsize=12,
+    )
+    plt.tight_layout()
+    plt.savefig(ASSETS / f"plot_{TODAY}_corr_bias.png", dpi=150)
+    plt.close(fig)
+
+
 def fig_profile_bias(personas):
     """Scatter of pull toward train vs pull toward default, per (train, eval) pair."""
     path = RESULTS / "profile_bias.npz"
@@ -404,8 +471,9 @@ def main():
     fig_self_fit_vs_donor(personas, order)
     fig_heatmap_grid(personas, order)
     fig_profile_bias(personas)
+    fig_corr_bias(personas)
 
-    print(f"9 figures written to {ASSETS.relative_to(REPO)}/ with date stamp {TODAY}")
+    print(f"10 figures written to {ASSETS.relative_to(REPO)}/ with date stamp {TODAY}")
 
 
 if __name__ == "__main__":
