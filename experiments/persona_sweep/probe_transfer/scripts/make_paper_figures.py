@@ -80,21 +80,21 @@ def fig_default_probe(personas, transfer, utility_r, order):
     ymin_data = min(util.min(), 0.0)
     ymax_data = probe.max()
     span = ymax_data - ymin_data
-    pad = 0.05 * span
+    label_pad = 0.012 * span
     ymin = ymin_data - 0.15 * span
-    ymax = ymax_data + 0.25 * span
+    ymax = ymax_data + 0.18 * span
     ax.set_ylim(ymin, ymax)
 
     for i in range(len(labels)):
-        ax.text(x[i] - w/2, probe[i] + pad, f"{probe[i]:+.2f}",
+        ax.text(x[i] - w/2, probe[i] + label_pad, f"{probe[i]:+.2f}",
                 ha="center", va="bottom", fontsize=10, color=BLUE, fontweight="bold")
         va_util = "bottom" if util[i] >= 0 else "top"
-        offset = pad if util[i] >= 0 else -pad
+        offset = label_pad if util[i] >= 0 else -label_pad
         ax.text(x[i] + w/2, util[i] + offset, f"{util[i]:+.2f}",
                 ha="center", va=va_util, fontsize=10, color="#555")
 
-        # Vertical arrow spanning the gap between the two bar tops.
-        x_arrow = x[i] + w/2 + 0.12
+        # Vertical Δ arrow just inside the right edge of the blue bar.
+        x_arrow = x[i] - 0.02
         ax.annotate(
             "",
             xy=(x_arrow, probe[i]),
@@ -102,8 +102,8 @@ def fig_default_probe(personas, transfer, utility_r, order):
             arrowprops=dict(arrowstyle="->", color="#c0392b", lw=1.4, shrinkA=0, shrinkB=0),
         )
         mid_y = (probe[i] + util[i]) / 2
-        ax.text(x_arrow + 0.04, mid_y, f"Δ {gap[i]:+.2f}",
-                ha="left", va="center", fontsize=10, color="#c0392b", fontweight="bold")
+        ax.text(x_arrow + 0.03, mid_y, f"Δ {gap[i]:+.2f}",
+                ha="left", va="center", fontsize=9, color="#c0392b", fontweight="bold")
 
     ax.axhline(0, color="black", lw=0.6)
     ax.set_xticks(x)
