@@ -115,6 +115,63 @@ def fig_default_probe(personas, transfer, utility_r, order):
     plt.close(fig)
 
 
+def fig_transfer_bonus_pair(personas, transfer, utility_r, order):
+    """Two-panel: transfer r | (transfer r − utility r). Same ordering."""
+    labels = [personas[i] for i in order]
+    transfer_o = _reorder(transfer, order)
+    utility_o = _reorder(utility_r, order)
+    bonus = transfer_o - utility_o
+    n = len(labels)
+    # Diagonal of the bonus matrix: probe self-fit r minus 1.0 — not informative; mask with NaN.
+    bonus_with_nan = bonus.copy()
+    for i in range(n):
+        bonus_with_nan[i, i] = np.nan
+
+    fig, axes = plt.subplots(1, 2, figsize=(15, 6.5), constrained_layout=True)
+    _heatmap(axes[0], transfer_o, labels,
+             "Probe transfer r  (rows: probe trained on; cols: evaluated on)")
+    axes[0].set_xlabel("eval persona")
+    axes[0].set_ylabel("probe persona")
+    im2 = _heatmap(axes[1], bonus_with_nan, labels,
+                   "Transfer r − utility r  (probe's gain over the utility-similarity baseline)")
+    axes[1].set_xlabel("eval persona")
+    axes[1].set_ylabel("probe persona")
+    fig.suptitle("Cross-persona probe transfer and its gain over the utility baseline — eot, layer 32",
+                 fontsize=13)
+    fig.colorbar(im2, ax=axes, fraction=0.025, pad=0.015, label="Pearson r", shrink=0.85)
+    plt.savefig(ASSETS / f"plot_{TODAY}_transfer_bonus_pair.png", dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+
+def fig_transfer_per_layer(personas):
+    """Aggregate mean off-diagonal transfer r per layer, both selectors."""
+    n = len(personas)
+    mask = ~np.eye(n, dtype=bool)
+    means = {tag: [] for tag, _ in SELECTORS}
+    for tag, _ in SELECTORS:
+        for layer in LAYERS:
+            _, tr, _ = _load_matrix(tag, layer)
+            means[tag].append(float(tr[mask].mean()))
+
+    fig, ax = plt.subplots(figsize=(7, 4.5))
+    ax.plot(LAYERS, means["tb-5"], "-o", label="eot (tb-5)", color=BLUE, lw=2.2, markersize=7)
+    ax.plot(LAYERS, means["tb-2"], "-s", label="tb-2", color=GREY, lw=1.5, markersize=6)
+    for x, y in zip(LAYERS, means["tb-5"]):
+        ax.annotate(f"{y:.2f}", (x, y), xytext=(0, 8), textcoords="offset points",
+                    ha="center", fontsize=9, color=BLUE)
+    ax.set_xlabel("layer")
+    ax.set_xticks(LAYERS)
+    ax.set_ylabel("mean off-diagonal transfer r\n(42 ordered persona pairs)")
+    ax.set_title("Cross-persona transfer is stable across mid-to-late layers")
+    ax.grid(alpha=0.3)
+    ax.legend(loc="lower center", frameon=False)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    plt.tight_layout()
+    plt.savefig(ASSETS / f"plot_{TODAY}_transfer_per_layer.png", dpi=150)
+    plt.close(fig)
+
+
 def fig_transfer_utility_pair(personas, transfer, utility_r, order):
     labels = [personas[i] for i in order]
     transfer_o = _reorder(transfer, order)
@@ -511,8 +568,10 @@ def main():
 
     fig_default_probe(personas, transfer, utility_r, order)
     fig_transfer_utility_pair(personas, transfer, utility_r, order)
+    fig_transfer_bonus_pair(personas, transfer, utility_r, order)
     fig_layer_dependence(personas, order)
     fig_asymmetry(personas, transfer, order)
+    fig_transfer_per_layer(personas)
     fig_receiver_vs_default_similarity(personas, transfer, utility_r)
     fig_cosine_by_layer(personas)
     fig_self_fit_vs_donor(personas, order)
@@ -521,7 +580,7 @@ def main():
     fig_corr_bias(personas)
     fig_full_bias(personas)
 
-    print(f"11 figures written to {ASSETS.relative_to(REPO)}/ with date stamp {TODAY}")
+    print(f"13 figures written to {ASSETS.relative_to(REPO)}/ with date stamp {TODAY}")
 
 
 if __name__ == "__main__":
