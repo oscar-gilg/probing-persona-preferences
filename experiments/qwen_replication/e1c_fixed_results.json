@@ -1,0 +1,744 @@
+{
+  "tb-1": {
+    "n_pairs": 40,
+    "rank_1_count": 34,
+    "rank_1_rate": 0.85,
+    "correct_sign_count": 40,
+    "correct_sign_rate": 1.0,
+    "mean_target_rank": 1.625,
+    "median_target_rank": 1.0,
+    "pair_results": [
+      {
+        "role": "brooklyn",
+        "target": "alpaca_1196",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.9368787868241,
+        "mean_non_target_delta": 0.27596136520918774,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "alpaca_1196",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.750266166783892,
+        "mean_non_target_delta": 0.33698346600767526,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "alpaca_13397",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 4.0614896796094975,
+        "mean_non_target_delta": 0.14598166732570883,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "alpaca_13397",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.145607555081316,
+        "mean_non_target_delta": 0.08360516466619679,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "alpaca_383",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.775575757778581,
+        "mean_non_target_delta": -0.11865979210994192,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "alpaca_383",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.781450990807389,
+        "mean_non_target_delta": -0.06140622468763771,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "alpaca_7867",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.6978545900380917,
+        "mean_non_target_delta": 0.28880221205211715,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "alpaca_7867",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.3356842859816593,
+        "mean_non_target_delta": 0.2525591879448272,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "alpaca_8161",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.91230012365774,
+        "mean_non_target_delta": 0.32128161400659744,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "alpaca_8161",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.5997906719925585,
+        "mean_non_target_delta": 0.2883856229290099,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_10564",
+        "target_rank": 8,
+        "n_tasks": 50,
+        "target_delta": 0.913896723328306,
+        "mean_non_target_delta": 0.13524869382266747,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_10564",
+        "target_rank": 6,
+        "n_tasks": 50,
+        "target_delta": 1.031957492204179,
+        "mean_non_target_delta": 0.04793842983437066,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_11276",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.4079833220522495,
+        "mean_non_target_delta": 0.06867870701070995,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_11276",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 1.5890504553641507,
+        "mean_non_target_delta": -0.034460863008704,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_1455",
+        "target_rank": 3,
+        "n_tasks": 50,
+        "target_delta": 1.5968033849527727,
+        "mean_non_target_delta": 0.0686754217137898,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_1455",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 1.5527567834157936,
+        "mean_non_target_delta": -0.0846602521350693,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_1670",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.68347722630932,
+        "mean_non_target_delta": 0.304630595935455,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_1670",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.3986812854392587,
+        "mean_non_target_delta": 0.21313874147583337,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_5892",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.1459938404466343,
+        "mean_non_target_delta": 0.14976463956489458,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_5892",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.0454160047541285,
+        "mean_non_target_delta": 0.10786114359500841,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_6244",
+        "target_rank": 7,
+        "n_tasks": 50,
+        "target_delta": 1.4805467997952233,
+        "mean_non_target_delta": 0.40613632529823324,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_6244",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.398961047595444,
+        "mean_non_target_delta": 0.24618578667229302,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_9097",
+        "target_rank": 5,
+        "n_tasks": 50,
+        "target_delta": 0.9841542010645941,
+        "mean_non_target_delta": 0.14578867374006513,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_9097",
+        "target_rank": 2,
+        "n_tasks": 50,
+        "target_delta": 1.3099965980591608,
+        "mean_non_target_delta": 0.06495353699200751,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_9990",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 1.3124643386751997,
+        "mean_non_target_delta": 0.06381729359538738,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_9990",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 1.1845583926883994,
+        "mean_non_target_delta": -0.06297583486650003,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "wildchat_18164",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.648583358184645,
+        "mean_non_target_delta": 0.03711535283520644,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "wildchat_18164",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.17785811686991,
+        "mean_non_target_delta": -0.015034733008840045,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "wildchat_37030",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.955618177448545,
+        "mean_non_target_delta": 0.17264069792608164,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "wildchat_37030",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.5590149080113918,
+        "mean_non_target_delta": 0.059065770589929054,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "wildchat_41230",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.166090100337146,
+        "mean_non_target_delta": 0.24057019988511483,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "wildchat_41230",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.1009140855262785,
+        "mean_non_target_delta": 0.06444480633862548,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "wildchat_43671",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.889395198776003,
+        "mean_non_target_delta": 0.05358853340241314,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "wildchat_43671",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.3115691097671776,
+        "mean_non_target_delta": 0.11805743972740383,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "wildchat_50084",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.8648492256076863,
+        "mean_non_target_delta": 0.07050047757251394,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "wildchat_50084",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.204231256707221,
+        "mean_non_target_delta": -0.10707481272586207,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "wildchat_55533",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.650630444808693,
+        "mean_non_target_delta": 0.0489622139501875,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "wildchat_55533",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.3649064922303165,
+        "mean_non_target_delta": 0.1313265419909763,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "wildchat_73665",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.975517638593652,
+        "mean_non_target_delta": 0.20837668752205202,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "wildchat_73665",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.666403429835122,
+        "mean_non_target_delta": 0.0746695931778009,
+        "target_in_tasks": true
+      }
+    ]
+  },
+  "tb-4": {
+    "n_pairs": 40,
+    "rank_1_count": 29,
+    "rank_1_rate": 0.725,
+    "correct_sign_count": 40,
+    "correct_sign_rate": 1.0,
+    "mean_target_rank": 2.175,
+    "median_target_rank": 1.0,
+    "pair_results": [
+      {
+        "role": "brooklyn",
+        "target": "alpaca_1196",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 4.205214167334196,
+        "mean_non_target_delta": 0.3339948555634824,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "alpaca_1196",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 4.541073693119457,
+        "mean_non_target_delta": 0.3470636553661429,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "alpaca_13397",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.163685789302301,
+        "mean_non_target_delta": 0.19418249933684764,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "alpaca_13397",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.8149370253804094,
+        "mean_non_target_delta": 0.0732821297495219,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "alpaca_383",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.4215332508550746,
+        "mean_non_target_delta": -0.34338011585894057,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "alpaca_383",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 1.6143201575530486,
+        "mean_non_target_delta": -0.33607634038719236,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "alpaca_7867",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.885440521266059,
+        "mean_non_target_delta": 0.3716028597343652,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "alpaca_7867",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.034717370764191,
+        "mean_non_target_delta": 0.3216322438898798,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "alpaca_8161",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 1.7851345795442755,
+        "mean_non_target_delta": 0.276846807055798,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "alpaca_8161",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 1.6316829717696977,
+        "mean_non_target_delta": 0.17130737681002547,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_10564",
+        "target_rank": 6,
+        "n_tasks": 50,
+        "target_delta": 0.9732631292588696,
+        "mean_non_target_delta": 0.12349277071162643,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_10564",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.363650673810894,
+        "mean_non_target_delta": -0.024144636754849486,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_11276",
+        "target_rank": 3,
+        "n_tasks": 50,
+        "target_delta": 1.4102323793618705,
+        "mean_non_target_delta": 0.07255721453860695,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_11276",
+        "target_rank": 5,
+        "n_tasks": 50,
+        "target_delta": 0.9387281860503847,
+        "mean_non_target_delta": -0.15005380666010493,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_1455",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.6047842279726936,
+        "mean_non_target_delta": 0.1762782147343182,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_1455",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.761397440577402,
+        "mean_non_target_delta": -0.1368026109109886,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_1670",
+        "target_rank": 4,
+        "n_tasks": 50,
+        "target_delta": 2.274710488748784,
+        "mean_non_target_delta": 0.5719603220600181,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_1670",
+        "target_rank": 3,
+        "n_tasks": 50,
+        "target_delta": 2.3208915419258718,
+        "mean_non_target_delta": 0.396921418075427,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_5892",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.111713776539757,
+        "mean_non_target_delta": 0.17577780830508896,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_5892",
+        "target_rank": 2,
+        "n_tasks": 50,
+        "target_delta": 2.1567618872315046,
+        "mean_non_target_delta": 0.08609366261192714,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_6244",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.084713998432285,
+        "mean_non_target_delta": 0.5513440452431857,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_6244",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.807968897284229,
+        "mean_non_target_delta": 0.18997804158758494,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_9097",
+        "target_rank": 9,
+        "n_tasks": 50,
+        "target_delta": 0.708276066335745,
+        "mean_non_target_delta": 0.06273729950662094,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_9097",
+        "target_rank": 8,
+        "n_tasks": 50,
+        "target_delta": 0.6440364779530761,
+        "mean_non_target_delta": 0.027125732349361425,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "competition_math_9990",
+        "target_rank": 4,
+        "n_tasks": 50,
+        "target_delta": 0.7995702759959142,
+        "mean_non_target_delta": -0.035201022381316595,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "competition_math_9990",
+        "target_rank": 12,
+        "n_tasks": 50,
+        "target_delta": 0.22085467444108042,
+        "mean_non_target_delta": -0.1984825990795349,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "wildchat_18164",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 1.4868535399268907,
+        "mean_non_target_delta": 0.10146449393295853,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "wildchat_18164",
+        "target_rank": 2,
+        "n_tasks": 50,
+        "target_delta": 1.1754378320038654,
+        "mean_non_target_delta": 0.08893763961057644,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "wildchat_37030",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.9240909609839005,
+        "mean_non_target_delta": 0.328522388404852,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "wildchat_37030",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.447373987071359,
+        "mean_non_target_delta": 0.2441314380549876,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "wildchat_41230",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.306792960215232,
+        "mean_non_target_delta": 0.3526474797038195,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "wildchat_41230",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.5131426269937975,
+        "mean_non_target_delta": 0.09947437439977877,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "wildchat_43671",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.977273817865939,
+        "mean_non_target_delta": -0.0195669293083866,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "wildchat_43671",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.2642253228907103,
+        "mean_non_target_delta": 0.005683580427224778,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "wildchat_50084",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.575078806180986,
+        "mean_non_target_delta": -0.03460993354220167,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "wildchat_50084",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 2.125588444296403,
+        "mean_non_target_delta": -0.2066063705983314,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "wildchat_55533",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.5783148998336918,
+        "mean_non_target_delta": -0.023751285784427173,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "wildchat_55533",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.4281316947209044,
+        "mean_non_target_delta": 0.27504815726593385,
+        "target_in_tasks": true
+      },
+      {
+        "role": "brooklyn",
+        "target": "wildchat_73665",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.4472966109343526,
+        "mean_non_target_delta": 0.35236441363879345,
+        "target_in_tasks": true
+      },
+      {
+        "role": "midwest",
+        "target": "wildchat_73665",
+        "target_rank": 1,
+        "n_tasks": 50,
+        "target_delta": 3.4181292816767317,
+        "mean_non_target_delta": 0.18326925229525393,
+        "target_in_tasks": true
+      }
+    ]
+  }
+}
