@@ -1,0 +1,23 @@
+model: gemma-3-27b
+max_new_tokens: 64
+pairs_path: experiments/layer_sweep/steering_pairs.json
+probe_manifest: results/probes/layer_sweep/tb-2/
+checkpoint_path: experiments/layer_sweep/checkpoints/tb-2_probe_L14.jsonl
+mean_norm:
+  14: 3534.682373046875
+n_trials: 3
+temperature: 1.0
+seed: 42
+n_pairs: null
+template_path: src/measurement/elicitation/prompt_templates/data/completion_preference.yaml
+conditions:
+- name: probe_L14
+  cache_injection: differential
+  probe: ridge_L14
+  layers:
+  - 14
+  multipliers:
+  - -0.05
+  - -0.03
+  - 0.03
+  - 0.05

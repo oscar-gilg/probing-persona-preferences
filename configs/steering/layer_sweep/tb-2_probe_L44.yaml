@@ -1,0 +1,45 @@
+model: gemma-3-27b
+max_new_tokens: 64
+pairs_path: experiments/layer_sweep/steering_pairs.json
+probe_manifest: results/probes/layer_sweep/tb-2/
+checkpoint_path: experiments/layer_sweep/checkpoints/tb-2_probe_L44.jsonl
+mean_norm:
+  2: 765.4844970703125
+  5: 977.4823608398438
+  8: 1579.6376953125
+  11: 1724.9329833984375
+  14: 3534.682373046875
+  17: 8488.8466796875
+  20: 13729.291015625
+  23: 29521.2109375
+  26: 48806.21875
+  29: 45787.92578125
+  32: 43585.53515625
+  35: 44049.1484375
+n_trials: 3
+temperature: 1.0
+seed: 42
+n_pairs: null
+template_path: src/measurement/elicitation/prompt_templates/data/completion_preference.yaml
+conditions:
+- name: probe_L44
+  cache_injection: differential
+  probe: ridge_L44
+  layers:
+  - 2
+  - 5
+  - 8
+  - 11
+  - 14
+  - 17
+  - 20
+  - 23
+  - 26
+  - 29
+  - 32
+  - 35
+  multipliers:
+  - -0.05
+  - -0.03
+  - 0.03
+  - 0.05

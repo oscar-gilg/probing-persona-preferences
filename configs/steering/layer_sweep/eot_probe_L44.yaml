@@ -1,0 +1,45 @@
+model: gemma-3-27b
+max_new_tokens: 64
+pairs_path: experiments/layer_sweep/steering_pairs.json
+probe_manifest: results/probes/layer_sweep/eot/
+checkpoint_path: experiments/layer_sweep/checkpoints/eot_probe_L44.jsonl
+mean_norm:
+  2: 729.448974609375
+  5: 944.641357421875
+  8: 2084.99462890625
+  11: 1358.6605224609375
+  14: 2228.248779296875
+  17: 7058.953125
+  20: 13822.5517578125
+  23: 29381.541015625
+  26: 47468.33984375
+  29: 49761.70703125
+  32: 41269.30859375
+  35: 42765.7109375
+n_trials: 3
+temperature: 1.0
+seed: 42
+n_pairs: null
+template_path: src/measurement/elicitation/prompt_templates/data/completion_preference.yaml
+conditions:
+- name: probe_L44
+  cache_injection: differential
+  probe: ridge_L44
+  layers:
+  - 2
+  - 5
+  - 8
+  - 11
+  - 14
+  - 17
+  - 20
+  - 23
+  - 26
+  - 29
+  - 32
+  - 35
+  multipliers:
+  - -0.05
+  - -0.03
+  - 0.03
+  - 0.05
