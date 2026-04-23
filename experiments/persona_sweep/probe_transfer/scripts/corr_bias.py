@@ -59,6 +59,16 @@ def partial_corr(y, x, z):
     return pearsonr(x_res, y_res)[0]
 
 
+def partial_corr2(y, x, Z: list) -> float:
+    """Partial Pearson correlation of (y, x) controlling for multiple covariates Z."""
+    n = len(y)
+    D = np.column_stack(Z + [np.ones(n)])
+    def resid(v):
+        beta, *_ = np.linalg.lstsq(D, v, rcond=None)
+        return v - D @ beta
+    return pearsonr(resid(x), resid(y))[0]
+
+
 def main() -> None:
     personas = ["sadist", "mathematician", "aura", "strategist", "contrarian", "slacker", "default"]
     test_ids = set(TEST_IDS_FILE.read_text().splitlines())
@@ -77,8 +87,10 @@ def main() -> None:
     r_eval = np.full((n, n), np.nan)
     r_train = np.full((n, n), np.nan)
     r_default = np.full((n, n), np.nan)
-    r_train_partial = np.full((n, n), np.nan)
-    r_default_partial = np.full((n, n), np.nan)
+    r_train_partial = np.full((n, n), np.nan)       # r(pred, train | eval)
+    r_default_partial = np.full((n, n), np.nan)     # r(pred, default | eval)
+    r_train_double = np.full((n, n), np.nan)        # r(pred, train | eval, default)
+    r_default_double = np.full((n, n), np.nan)      # r(pred, default | eval, train)
 
     i_def = personas.index("default")
 
@@ -106,12 +118,17 @@ def main() -> None:
             r_train_partial[i_train, i_eval] = partial_corr(pred, y_train, y_eval)
             if i_train != i_def and i_eval != i_def:
                 r_default_partial[i_train, i_eval] = partial_corr(pred, y_default, y_eval)
+                # Double partial — residual pull toward the *other* anchor after
+                # controlling for eval + the companion anchor.
+                r_train_double[i_train, i_eval] = partial_corr2(pred, y_train, [y_eval, y_default])
+                r_default_double[i_train, i_eval] = partial_corr2(pred, y_default, [y_eval, y_train])
 
     np.savez(
         RESULTS / "corr_bias.npz",
         personas=np.array(personas),
         r_eval=r_eval, r_train=r_train, r_default=r_default,
         r_train_partial=r_train_partial, r_default_partial=r_default_partial,
+        r_train_double=r_train_double, r_default_double=r_default_double,
     )
     print(f"saved {(RESULTS / 'corr_bias.npz').relative_to(REPO)}")
 
@@ -138,6 +155,14 @@ def main() -> None:
     print(f"    mean r(pred, train    | eval) = {np.nanmean(rtp):+.3f}")
     print(f"    mean r(pred, default  | eval) = {np.nanmean(rdp):+.3f}")
     print(f"  Pairs with r(pred, train | eval) > r(pred, default | eval): {int((rtp > rdp).sum())}/{len(rtp)}")
+
+    rttd = r_train_double[non_def_mask]
+    rdtd = r_default_double[non_def_mask]
+    print(f"\n  Double-partial correlations:")
+    print(f"    mean r(pred, train    | eval, default) = {np.nanmean(rttd):+.3f}")
+    print(f"    mean r(pred, default  | eval, train)   = {np.nanmean(rdtd):+.3f}")
+    print(f"  Pairs with train-double > 0: {int((rttd > 0).sum())}/{len(rttd)}")
+    print(f"  Pairs with default-double > 0: {int((rdtd > 0).sum())}/{len(rdtd)}")
 
     print("\nr(pred, train) table — rows = train probe, cols = eval persona")
     print(f"{'':15s}  " + "  ".join(f"{p[:8]:>8s}" for p in personas))

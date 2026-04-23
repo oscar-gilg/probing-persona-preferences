@@ -13,7 +13,7 @@ So the x-axis reads "most default-like → most default-opposed" throughout. The
 - **Donor quality is not self-fit.** `contrarian` has the worst within-persona fit (0.55) but the best mean outbound transfer at every layer tested (peak 0.59 at L32). `slacker` is the opposite: strong self-fit (0.91) but near-isolated as a donor (peak 0.24). The two "avoidance-shaped" personas land at opposite ends of the donor ranking.
 - **Transfer is asymmetric.** Largest gap: sadist ↔ mathematician — sadist→math 0.71, math→sadist 0.25, |gap| = 0.45. Three more pairs have |gap| > 0.28 (math↔contrarian 0.41, math↔aura 0.32, aura↔contrarian 0.29). Median |gap| across all 21 pairs is 0.19.
 - **Receiver quality tracks distance-from-default.** The more behaviourally different a persona is from default, the worse a target it is (mean inbound r vs utility-similarity-with-default: Pearson r = +0.69 across the 6 non-default personas; +0.84 if sadist is excluded as an outlier).
-- **Probes pattern-match their training persona more than the target or default.** Mean $r(\text{pred}, \text{train}) = 0.67$ vs $r(\text{pred}, \text{eval}) = 0.43$ vs $r(\text{pred}, \text{default}) = 0.38$. After regressing out the correct eval signal, the residual prediction variance is $\sim 2.3\times$ more aligned with train (partial $r = 0.67$) than with default (partial $r = 0.29$) — and this holds unanimously (30/30 pairs). The dominant bias is pull toward the training persona's utility profile, not a Shoggoth pull toward default. The calibration-oriented midway ratio gives a consistent but weaker reading (train and default pulls both $\sim 0.6$ under inverse-variance weighting — probes undershoot the full eval shift from either anchor).
+- **Probes pattern-match their training persona more than the target or default.** Mean $r(\text{pred}, \text{train}) = 0.67$ vs $r(\text{pred}, \text{eval}) = 0.43$ vs $r(\text{pred}, \text{default}) = 0.38$. The most stringent control — double-partial correlation, regressing out both eval and the companion anchor — gives: $r(\text{pred}, \text{train} \mid \text{eval}, \text{default}) = 0.66$ (30/30 pairs positive) vs $r(\text{pred}, \text{default} \mid \text{eval}, \text{train}) = 0.20$ (27/30 positive). Train-bias $\approx 3.3\times$ default-bias after both confounds are removed. The dominant profile bias is pull toward the training persona's utility profile; a small residual Shoggoth-like pull toward default survives both controls but is much weaker. The calibration-oriented midway ratio gives a consistent but weaker reading (train and default pulls both $\sim 0.6$ under inverse-variance weighting — probes undershoot the full eval shift from either anchor).
 - **Probe alignment and transfer performance peak at different layers.** Mean pairwise cosine between probe directions dips at L32–L39 (0.08) and climbs to 0.15 at L53, while mean off-diagonal transfer peaks at L32 (0.45) and declines toward L53. Probes share more raw-weight direction in late layers, but the activation geometry that makes transfer work sits earlier.
 
 ## Setup
@@ -140,17 +140,26 @@ Aggregating across the 30 non-default off-diagonal pairs (eot, L32):
 | quantity | mean r |
 |---|---:|
 | $r(\text{pred}, \text{eval})$ (transfer r) | +0.43 |
-| $r(\text{pred}, \text{train})$ | **+0.67** |
+| $r(\text{pred}, \text{train})$ | +0.67 |
 | $r(\text{pred}, \text{default})$ | +0.38 |
-| partial $r(\text{pred}, \text{train} \mid \text{eval})$ | **+0.67** |
+| partial $r(\text{pred}, \text{train} \mid \text{eval})$ | +0.67 |
 | partial $r(\text{pred}, \text{default} \mid \text{eval})$ | +0.29 |
+| **double-partial** $r(\text{pred}, \text{train} \mid \text{eval}, \text{default})$ | **+0.66** |
+| **double-partial** $r(\text{pred}, \text{default} \mid \text{eval}, \text{train})$ | **+0.20** |
 
 Sign tests:
 
 - $r(\text{pred}, \text{train}) > r(\text{pred}, \text{eval})$: **23 / 30 pairs**. The probe's prediction is more correlated with the *training* persona's utility pattern than with the persona it's trying to predict, 77 % of the time.
 - partial $r(\text{pred}, \text{train} \mid \text{eval}) > $ partial $r(\text{pred}, \text{default} \mid \text{eval})$: **30 / 30 pairs** — unanimous.
+- double-partial $r(\text{pred}, \text{train} \mid \text{eval}, \text{default}) > 0$: 30/30 pairs.
+- double-partial $r(\text{pred}, \text{default} \mid \text{eval}, \text{train}) > 0$: 27/30 pairs.
 
-**Reading.** Probes inherit substantial train-specific structure that persists on *different personas' activations*. After regressing out the actual eval signal, the residual prediction variance is ~2.3× more aligned with train's utilities than with default's (0.67 vs 0.29). The "Shoggoth pull toward default" framing is not what's happening — the dominant bias is pull toward the training persona's utility profile. This is consistent with Ridge inheriting the training target's rank-structure through the learnt direction (not just an offset/calibration effect).
+**Reading.** The double-partial correlations control for the confound that "train is itself partly correlated with default, so any pull toward train would show up as some apparent pull toward default":
+
+- **Train-pull barely moves** when we additionally control for default (0.67 → 0.66). The probe picks up train-specific utility structure that is not explained by train's own similarity to default. Unanimous: 30/30 pairs positive.
+- **Default-pull shrinks meaningfully** when we additionally control for train (0.29 → 0.20), confirming that a third of the apparent default-alignment was just the train-through-default-similarity channel. But the residual 0.20 is a *genuine* default-specific pull that survives both controls, positive on 27/30 pairs.
+
+So there is a small Shoggoth-like residual attractor after all, but it is much smaller than the train-pull: train ≈ 3.3× default on the doubly-partialled scale. The dominant bias is the probe inheriting its training persona's utility profile; a modest residual pull toward the default assistant exists on top.
 
 ### Aside: the midway-ratio (calibration) view
 
