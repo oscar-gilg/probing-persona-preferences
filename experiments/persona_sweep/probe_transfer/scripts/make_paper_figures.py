@@ -88,13 +88,9 @@ def fig_default_probe(personas, transfer, utility_r, order):
     for i in range(len(labels)):
         ax.text(x[i] - w/2, probe[i] + label_pad, f"{probe[i]:+.2f}",
                 ha="center", va="bottom", fontsize=10, color=BLUE, fontweight="bold")
-        va_util = "bottom" if util[i] >= 0 else "top"
-        offset = label_pad if util[i] >= 0 else -label_pad
-        ax.text(x[i] + w/2, util[i] + offset, f"{util[i]:+.2f}",
-                ha="center", va=va_util, fontsize=10, color="#555")
 
-        # Vertical Δ arrow just inside the right edge of the blue bar.
-        x_arrow = x[i] - 0.02
+        # Vertical Δ arrow sitting just outside the blue bar's right edge.
+        x_arrow = x[i] + 0.02
         ax.annotate(
             "",
             xy=(x_arrow, probe[i]),
