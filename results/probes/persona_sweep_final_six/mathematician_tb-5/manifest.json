@@ -1,0 +1,308 @@
+{
+  "experiment_name": "persona_sweep_final_six_mathematician_tb-5",
+  "run_dir": "results/experiments/persona_sweep_final_six/pre_task_active_learning/mathematician_train",
+  "activations_path": "activations/gemma-3-27b_it/pref_mathematician_sweep/activations_turn_boundary:-5.npz",
+  "eval_run_dir": "results/experiments/persona_sweep_final_six/pre_task_active_learning/mathematician_eval",
+  "eval_split_seed": 42,
+  "modes": [
+    "ridge"
+  ],
+  "standardize": true,
+  "demean_confounds": null,
+  "created_at": "2026-04-22T14:29:12.954593",
+  "n_tasks_in_experiment": 4000,
+  "n_tasks_with_activations": 5000,
+  "n_comparisons_in_experiment": 33569,
+  "probes": [
+    {
+      "id": "ridge_L25",
+      "file": "probes/probe_ridge_L25.npy",
+      "method": "ridge",
+      "layer": 25,
+      "standardize": true,
+      "demean_confounds": null,
+      "best_alpha": 4641.588833612773,
+      "sweep_r": 0.9185216000235441,
+      "final_r": 0.9186701457490736,
+      "final_acc": 0.8506522717049033,
+      "n_train": 4000,
+      "n_sweep": 500,
+      "n_final": 500,
+      "n_final_pairs": 741,
+      "alpha_sweep": [
+        {
+          "alpha": 0.1,
+          "sweep_r": 0.6081726132986214
+        },
+        {
+          "alpha": 0.46415888336127786,
+          "sweep_r": 0.6403879727413284
+        },
+        {
+          "alpha": 2.1544346900318834,
+          "sweep_r": 0.6972171852280804
+        },
+        {
+          "alpha": 10.0,
+          "sweep_r": 0.7758950519413741
+        },
+        {
+          "alpha": 46.41588833612777,
+          "sweep_r": 0.846470607637269
+        },
+        {
+          "alpha": 215.44346900318823,
+          "sweep_r": 0.8906790060191685
+        },
+        {
+          "alpha": 1000.0,
+          "sweep_r": 0.9125485681951717
+        },
+        {
+          "alpha": 4641.588833612773,
+          "sweep_r": 0.9185216000235441
+        },
+        {
+          "alpha": 21544.346900318822,
+          "sweep_r": 0.9155834362389503
+        },
+        {
+          "alpha": 100000.0,
+          "sweep_r": 0.9068856341907567
+        }
+      ]
+    },
+    {
+      "id": "ridge_L32",
+      "file": "probes/probe_ridge_L32.npy",
+      "method": "ridge",
+      "layer": 32,
+      "standardize": true,
+      "demean_confounds": null,
+      "best_alpha": 4641.588833612773,
+      "sweep_r": 0.9219528872860087,
+      "final_r": 0.9206352358344734,
+      "final_acc": 0.8502024291497976,
+      "n_train": 4000,
+      "n_sweep": 500,
+      "n_final": 500,
+      "n_final_pairs": 741,
+      "alpha_sweep": [
+        {
+          "alpha": 0.1,
+          "sweep_r": 0.6285817514910661
+        },
+        {
+          "alpha": 0.46415888336127786,
+          "sweep_r": 0.653325859556251
+        },
+        {
+          "alpha": 2.1544346900318834,
+          "sweep_r": 0.7013569916414997
+        },
+        {
+          "alpha": 10.0,
+          "sweep_r": 0.7802333867116226
+        },
+        {
+          "alpha": 46.41588833612777,
+          "sweep_r": 0.8539220354077557
+        },
+        {
+          "alpha": 215.44346900318823,
+          "sweep_r": 0.8953028004361384
+        },
+        {
+          "alpha": 1000.0,
+          "sweep_r": 0.9154155593972344
+        },
+        {
+          "alpha": 4641.588833612773,
+          "sweep_r": 0.9219528872860087
+        },
+        {
+          "alpha": 21544.346900318822,
+          "sweep_r": 0.9185499974602658
+        },
+        {
+          "alpha": 100000.0,
+          "sweep_r": 0.9104422250849744
+        }
+      ]
+    },
+    {
+      "id": "ridge_L39",
+      "file": "probes/probe_ridge_L39.npy",
+      "method": "ridge",
+      "layer": 39,
+      "standardize": true,
+      "demean_confounds": null,
+      "best_alpha": 4641.588833612773,
+      "sweep_r": 0.9190040204628422,
+      "final_r": 0.919190959954377,
+      "final_acc": 0.8394062078272605,
+      "n_train": 4000,
+      "n_sweep": 500,
+      "n_final": 500,
+      "n_final_pairs": 741,
+      "alpha_sweep": [
+        {
+          "alpha": 0.1,
+          "sweep_r": 0.660943718637055
+        },
+        {
+          "alpha": 0.46415888336127786,
+          "sweep_r": 0.6868958379936609
+        },
+        {
+          "alpha": 2.1544346900318834,
+          "sweep_r": 0.7330533357801594
+        },
+        {
+          "alpha": 10.0,
+          "sweep_r": 0.8007817691588703
+        },
+        {
+          "alpha": 46.41588833612777,
+          "sweep_r": 0.8627136347426878
+        },
+        {
+          "alpha": 215.44346900318823,
+          "sweep_r": 0.8995391014240833
+        },
+        {
+          "alpha": 1000.0,
+          "sweep_r": 0.9149104194101743
+        },
+        {
+          "alpha": 4641.588833612773,
+          "sweep_r": 0.9190040204628422
+        },
+        {
+          "alpha": 21544.346900318822,
+          "sweep_r": 0.9158961040090925
+        },
+        {
+          "alpha": 100000.0,
+          "sweep_r": 0.9069610119518812
+        }
+      ]
+    },
+    {
+      "id": "ridge_L46",
+      "file": "probes/probe_ridge_L46.npy",
+      "method": "ridge",
+      "layer": 46,
+      "standardize": true,
+      "demean_confounds": null,
+      "best_alpha": 4641.588833612773,
+      "sweep_r": 0.9145406323683403,
+      "final_r": 0.9148768591057581,
+      "final_acc": 0.8227620332883491,
+      "n_train": 4000,
+      "n_sweep": 500,
+      "n_final": 500,
+      "n_final_pairs": 741,
+      "alpha_sweep": [
+        {
+          "alpha": 0.1,
+          "sweep_r": 0.6402286734755449
+        },
+        {
+          "alpha": 0.46415888336127786,
+          "sweep_r": 0.6593649256024102
+        },
+        {
+          "alpha": 2.1544346900318834,
+          "sweep_r": 0.7027501579942047
+        },
+        {
+          "alpha": 10.0,
+          "sweep_r": 0.7751195505749378
+        },
+        {
+          "alpha": 46.41588833612777,
+          "sweep_r": 0.8453489852055157
+        },
+        {
+          "alpha": 215.44346900318823,
+          "sweep_r": 0.8878181811343455
+        },
+        {
+          "alpha": 1000.0,
+          "sweep_r": 0.9081440032871764
+        },
+        {
+          "alpha": 4641.588833612773,
+          "sweep_r": 0.9145406323683403
+        },
+        {
+          "alpha": 21544.346900318822,
+          "sweep_r": 0.9120561000438744
+        },
+        {
+          "alpha": 100000.0,
+          "sweep_r": 0.9027003343688809
+        }
+      ]
+    },
+    {
+      "id": "ridge_L53",
+      "file": "probes/probe_ridge_L53.npy",
+      "method": "ridge",
+      "layer": 53,
+      "standardize": true,
+      "demean_confounds": null,
+      "best_alpha": 4641.588833612773,
+      "sweep_r": 0.9109113271430803,
+      "final_r": 0.914173841188916,
+      "final_acc": 0.8191632928475033,
+      "n_train": 4000,
+      "n_sweep": 500,
+      "n_final": 500,
+      "n_final_pairs": 741,
+      "alpha_sweep": [
+        {
+          "alpha": 0.1,
+          "sweep_r": 0.6448546263383456
+        },
+        {
+          "alpha": 0.46415888336127786,
+          "sweep_r": 0.656699259667876
+        },
+        {
+          "alpha": 2.1544346900318834,
+          "sweep_r": 0.6880959049253197
+        },
+        {
+          "alpha": 10.0,
+          "sweep_r": 0.7464749796361602
+        },
+        {
+          "alpha": 46.41588833612777,
+          "sweep_r": 0.8111484434893634
+        },
+        {
+          "alpha": 215.44346900318823,
+          "sweep_r": 0.8632084656483181
+        },
+        {
+          "alpha": 1000.0,
+          "sweep_r": 0.8972707659110339
+        },
+        {
+          "alpha": 4641.588833612773,
+          "sweep_r": 0.9109113271430803
+        },
+        {
+          "alpha": 21544.346900318822,
+          "sweep_r": 0.9100431627557625
+        },
+        {
+          "alpha": 100000.0,
+          "sweep_r": 0.8998710752829766
+        }
+      ]
+    }
+  ]
+}

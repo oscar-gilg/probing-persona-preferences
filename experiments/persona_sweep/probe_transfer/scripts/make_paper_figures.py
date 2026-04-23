@@ -331,6 +331,62 @@ def fig_heatmap_grid(personas, order):
     plt.close(fig)
 
 
+def fig_profile_bias(personas):
+    """Scatter of pull toward train vs pull toward default, per (train, eval) pair."""
+    path = RESULTS / "profile_bias.npz"
+    if not path.exists():
+        print(f"  skipping profile-bias plot: {path.name} not found")
+        return
+    d = np.load(path, allow_pickle=True)
+    pt = d["pull_train"]
+    pd_ = d["pull_default"]
+    n = pt.shape[0]
+    i_def = personas.index("default")
+
+    xs, ys, labels, is_default_involved = [], [], [], []
+    for i in range(n):
+        for j in range(n):
+            if i == j:
+                continue
+            if np.isnan(pt[i, j]) or np.isnan(pd_[i, j]):
+                continue
+            xs.append(pt[i, j])
+            ys.append(pd_[i, j])
+            labels.append(f"{personas[i][:4]}→{personas[j][:4]}")
+            is_default_involved.append(i == i_def or j == i_def)
+    xs = np.array(xs); ys = np.array(ys)
+
+    fig, ax = plt.subplots(figsize=(7.5, 7))
+    # y=x: equal pull toward train and default
+    lo, hi = -0.6, 1.6
+    ax.plot([lo, hi], [lo, hi], "k--", alpha=0.3, label="equal pull (y = x)")
+    colors = ["#c0392b" if d else BLUE for d in is_default_involved]
+    ax.scatter(xs, ys, s=55, c=colors, edgecolor="black", lw=0.4, alpha=0.9)
+    # Annotate a few interesting ones: the 4 most extreme on |x-y|
+    asym = xs - ys
+    top = np.argsort(-np.abs(asym))[:6]
+    for k in top:
+        ax.annotate(labels[k], (xs[k], ys[k]),
+                    fontsize=8, xytext=(4, 3), textcoords="offset points", alpha=0.9)
+    # Reference lines for "pred hits eval" (both pulls = 0) and "stuck at anchor" (= 1)
+    ax.axhline(0, color="gray", lw=0.5)
+    ax.axvline(0, color="gray", lw=0.5)
+    ax.axhline(1, color="gray", lw=0.5, ls=":")
+    ax.axvline(1, color="gray", lw=0.5, ls=":")
+    ax.set_xlim(lo, hi); ax.set_ylim(lo, hi)
+    ax.set_xlabel("pull toward train persona  (0 = pred hits eval; 1 = pred stuck at train)")
+    ax.set_ylabel("pull toward default  (0 = pred hits eval; 1 = pred stuck at default)")
+    ax.set_title("Preference-profile bias: pull toward train vs pull toward default\n"
+                 "(eot, L32 — topic-median per off-diagonal pair)")
+    med_train = np.nanmedian(xs); med_default = np.nanmedian(ys)
+    ax.scatter([med_train], [med_default], marker="*", s=240, c="#f39c12", edgecolor="black",
+               lw=0.8, zorder=5, label=f"medians  ({med_train:.2f}, {med_default:.2f})")
+    ax.legend(loc="lower right", frameon=False)
+    plt.tight_layout()
+    plt.savefig(ASSETS / f"plot_{TODAY}_profile_bias.png", dpi=150)
+    plt.close(fig)
+
+
 def main():
     ASSETS.mkdir(parents=True, exist_ok=True)
     personas, transfer, _ = _load_matrix(*HEADLINE)
@@ -347,8 +403,9 @@ def main():
     fig_cosine_by_layer(personas)
     fig_self_fit_vs_donor(personas, order)
     fig_heatmap_grid(personas, order)
+    fig_profile_bias(personas)
 
-    print(f"8 figures written to {ASSETS.relative_to(REPO)}/ with date stamp {TODAY}")
+    print(f"9 figures written to {ASSETS.relative_to(REPO)}/ with date stamp {TODAY}")
 
 
 if __name__ == "__main__":

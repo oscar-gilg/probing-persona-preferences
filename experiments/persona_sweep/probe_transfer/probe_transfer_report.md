@@ -13,6 +13,7 @@ So the x-axis reads "most default-like → most default-opposed" throughout. The
 - **Donor quality is not self-fit.** `contrarian` has the worst within-persona fit (0.55) but the best mean outbound transfer at every layer tested (peak 0.59 at L32). `slacker` is the opposite: strong self-fit (0.91) but near-isolated as a donor (peak 0.24). The two "avoidance-shaped" personas land at opposite ends of the donor ranking.
 - **Transfer is asymmetric.** Largest gap: sadist ↔ mathematician — sadist→math 0.71, math→sadist 0.25, |gap| = 0.45. Three more pairs have |gap| > 0.28 (math↔contrarian 0.41, math↔aura 0.32, aura↔contrarian 0.29). Median |gap| across all 21 pairs is 0.19.
 - **Receiver quality tracks distance-from-default.** The more behaviourally different a persona is from default, the worse a target it is (mean inbound r vs utility-similarity-with-default: Pearson r = +0.69 across the 6 non-default personas; +0.84 if sadist is excluded as an outlier).
+- **Probes pull more toward their training persona than toward default.** Generalised midway bias (pull = 1 − recovery ratio, per topic, anchor = train or default): median pull toward train = 0.75, median pull toward default = 0.63, across 30 non-default off-diagonal pairs; 20 of 30 pairs show pull_train > pull_default. Ridge's calibrated-to-train baseline dominates, with a smaller residual pull toward default.
 - **Probe alignment and transfer performance peak at different layers.** Mean pairwise cosine between probe directions dips at L32–L39 (0.08) and climbs to 0.15 at L53, while mean off-diagonal transfer peaks at L32 (0.45) and declines toward L53. Probes share more raw-weight direction in late layers, but the activation geometry that makes transfer work sits earlier.
 
 ## Setup
@@ -120,7 +121,26 @@ Mean probe bonus = +0.26. Every eval persona benefits from the probe over the ut
 
 **Takeaway.** The Fig E correlation has two non-trivially separable components: (a) generic "similarity to the training pool" — larger when the eval persona's utilities already correlate with what most probes read out — and (b) genuine probe-substrate contribution, the "probe bonus" that survives the utility-baseline subtraction. Both matter. The strong inbound on personas close to default is partly a training-pool artefact, but the substrate contribution is broadly positive and largest for personas where the utility-baseline has the least to offer (sadist, slacker, mathematician).
 
-## Figure F — probe alignment across layers
+## Figure F — preference-profile bias: pull toward train vs pull toward default
+
+![Profile bias](assets/plot_042326_profile_bias.png)
+
+The receiver-distance finding above is a symmetric statement about "how close is the prediction to the eval persona's utilities". But a probe trained on persona `A` can miss `B`'s utilities by either pulling the prediction *toward `A`'s own distribution* (the probe has a calibrated-to-train baseline) or *toward the default-assistant distribution* (a Shoggoth-style pull). We quantify both with the generalised midway-bias ratio from `scripts/multi_role_ablation/midway_bias.py`:
+
+$$
+\text{midway}(\text{anchor}) = \frac{\text{pred}_{\text{topic mean}} - \text{anchor}_{\text{topic mean}}}{\text{eval}_{\text{topic mean}} - \text{anchor}_{\text{topic mean}}}
+$$
+
+with two anchor choices: `anchor = train persona` and `anchor = default`. A midway ratio of 1.0 means the probe recovers the eval persona's topic mean; 0.0 means the probe is stuck at the anchor; values outside [0, 1] are overshoots. We report the complementary `pull = 1 − midway`: **0 = prediction hits eval, 1 = prediction stuck at anchor**. Filter: `|eval_mean − anchor_mean| ≥ 0.1` per topic, `≥ 5` tasks per topic. Aggregation: topic median per (train, eval) pair.
+
+Figure F plots, for each off-diagonal (train, eval) pair, `pull_train` on the x-axis and `pull_default` on the y-axis. Red points involve the default persona as either train or eval; blue points are non-default pairs.
+
+- **Median pull_train = 0.75; median pull_default = 0.63** across the 30 non-default off-diagonal pairs. Both pulls are substantial — the Ridge probe produces a prediction whose topic means sit roughly three-quarters of the way from the eval persona toward the train persona's mean, and about two-thirds of the way from the eval persona toward default's mean.
+- **20/30 pairs (67%) have pull_train > pull_default.** The median point sits above the y = x line, consistent with "probes pull more toward their training persona than toward default". Both effects are present, but the training-persona anchor is the stronger influence.
+- **Reading:** Ridge has a calibrated-to-train-mean baseline — the intercept + mean prediction match the training persona's utility mean on training data, and this calibration partially transfers to cross-persona activations. The probe's *direction* generalises across personas (the transfer r in Fig.~B / Fig.~C is real), but its *offset* anchors to the persona it was trained on. There is also a residual pull toward default (median 0.63) that is not just the training-anchor effect — a weak Shoggoth-ish attractor.
+- **Caveat.** Individual topic-level ratios are noisy when the denominator `eval − anchor` is small, even with the `|denom| ≥ 0.1` filter. Per-pair medians clip outliers; per-pair means are more scattered. The robust headline numbers: median pull_train 0.75, median pull_default 0.63, sign test 20/30.
+
+## Figure G — probe alignment across layers
 
 ![Cosine by layer](assets/plot_042326_cosine_by_layer.png)
 
@@ -133,7 +153,7 @@ Mean cosine similarity of the 21 off-diagonal probe-direction pairs (raw weight 
 ## Paper integration
 
 - **Figure A as headline** replacing the current §\ref{sec:shared-probe} figure (5-persona ad-hoc set).
-- **Figures B–F** go in the paper body (B: full 7×7 view; C: layer story; D: asymmetry; E: receiver-vs-default-distance; F: probe-direction cosine by layer). All use the fixed persona ordering for cross-figure consistency.
+- **Figures B–G** go in the paper body (B: full 7×7 view; C: layer story; D: asymmetry; E: receiver-vs-default-distance; F: profile bias toward train vs default; G: probe-direction cosine by layer). All use the fixed persona ordering for cross-figure consistency.
 - **Appendix** holds the self-fit-vs-donor scatter, the selector × layer heatmap grid, and the older 42-point transfer-vs-utility scatter (`plot_042226_transfer_vs_utility_scatter.png`).
 - **Quantitative update on the paper's prior claim.** The paper reports default → sadist r = −0.16 on a 5-persona set. On the final-six + canonical splits we see default → sadist = **+0.24** — not anti-correlated. The sadist-as-hardest-case conclusion moves from "anti-transfer" to "weakest but still positive transfer".
 
