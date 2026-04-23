@@ -192,7 +192,16 @@ The default-persona probe beats utility-utility similarity at every non-default 
   \label{fig:default-probe}
 \end{figure}
 
-The finding generalises beyond the default-as-source setting. Across all $7 \times 7$ ordered (train, eval) persona pairs, diagonal $r$ ranges from $0.55$ (contrarian) to $0.91$ (mathematician) and the off-diagonal mean is $0.45$; on every one of the 42 ordered off-diagonal pairs, probe transfer exceeds the corresponding utility correlation between the two personas (App.~Fig.~\ref{fig:persona-transfer-pair}). Three structural observations on how this transfer is organised are worth noting. First, donor quality is not self-fit: the best donors (highest mean outbound transfer) are \textbf{contrarian} ($0.59$) and \textbf{strategist} ($0.54$), despite contrarian having the \emph{worst} within-persona fit; slacker has the strongest self-fit but is the worst donor ($0.25$). Second, transfer is structurally asymmetric: sadist $\rightarrow$ mathematician $= 0.71$ vs.\ mathematician $\rightarrow$ sadist $= 0.25$; mathematician is the easiest target (column mean $0.70$), sadist and slacker the hardest ($0.32, 0.31$). Third, receiver quality tracks distance from the default ($r = +0.69$ between mean inbound transfer and utility-similarity-with-default across the six non-default personas), but App.~\ref{app:persona-transfer} shows roughly half of this is a ``pull toward the training pool'' artefact; the remaining probe bonus over a utility-baseline predictor is positive for every evaluated persona (mean $+0.26$). A separate observation: mean pairwise cosine between probe directions dips at L32--L39 ($\approx 0.08$) and rises to $0.15$ at L53, yet off-diagonal transfer peaks at L32 ($0.45$) --- probes share more raw-weight direction at late layers, but the activation geometry that makes transfer work sits earlier.
+The finding generalises beyond the default-as-source setting. Across all $7 \times 7$ ordered (train, eval) persona pairs, diagonal $r$ ranges from $0.55$ (contrarian) to $0.91$ (mathematician) and the off-diagonal mean is $0.45$; on every one of the 42 ordered off-diagonal pairs, probe transfer exceeds the corresponding utility correlation between the two personas (Fig.~\ref{fig:persona-transfer-bonus}).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{plot_042326_transfer_bonus_pair.png}
+  \caption{\textbf{Full $7 \times 7$ transfer and its gain over the utility-similarity baseline.} \emph{Left:} probe transfer $r$ at eot / layer 32 (rows: probe persona, cols: eval persona). \emph{Right:} transfer $r$ minus the utility-utility correlation on the same pair --- how much the probe beats the naïve ``predict via behavioural similarity'' baseline. Diagonal on the right panel is not informative and is masked. Every off-diagonal cell is positive on the right: the probe carries transfer signal above utility similarity for every persona pair, including pairs whose utilities are near-uncorrelated (e.g., sadist $\leftrightarrow$ mathematician).}
+  \label{fig:persona-transfer-bonus}
+\end{figure}
+
+Two structural observations on how this transfer is organised are worth noting. First, \emph{donor quality is not self-fit}: the best donors (highest mean outbound transfer) are \textbf{contrarian} ($0.59$) and \textbf{strategist} ($0.54$), despite contrarian having the \emph{worst} within-persona fit ($0.55$); slacker has the strongest self-fit ($0.91$) but is the worst donor ($0.25$). Second, \emph{transfer is structurally asymmetric}: sadist $\rightarrow$ mathematician $= 0.71$ vs.\ mathematician $\rightarrow$ sadist $= 0.25$; mathematician is the easiest target (column mean $0.70$), sadist and slacker the hardest ($0.32, 0.31$). Both observations persist across layers (App.~\ref{app:persona-transfer}); the mean cross-persona transfer is approximately layer-invariant in the L25--L53 range.
 
 \subsection{The probe transfers across character-fine-tuned personas}
 \label{sec:shared-character}
@@ -614,18 +623,9 @@ For reference: the original 16-persona sweep's recommended minimal spanning set 
 \subsection{Persona probe transfer --- supporting figures and analysis}
 \label{app:persona-transfer}
 
-This subsection extends \S\ref{sec:shared-probe} with the supporting figures for the final-six + default seven-persona study. Protocol: Gemma-3-27B-IT; residual-stream activations at the end-of-turn selector (\texttt{turn\_boundary:-5}) and \texttt{turn\_boundary:-2}; layers $\{25, 32, 39, 46, 53\}$; canonical 4k / 1k / 1k split (App.~\ref{app:splits}). One Ridge probe per (persona, selector, layer), alpha swept on the 1k eval split and the probe refit on the full 4k train split. All figures use the fixed persona ordering of Fig.~\ref{fig:default-probe}: personas left-to-right by utility similarity to default. Headline cell: \texttt{eot}, L32.
+This subsection extends \S\ref{sec:shared-probe} with supporting figures for the final-six + default seven-persona study. Protocol: Gemma-3-27B-IT; residual-stream activations at the end-of-turn selector (\texttt{turn\_boundary:-5}) and \texttt{turn\_boundary:-2}; layers $\{25, 32, 39, 46, 53\}$; canonical 4k / 1k / 1k split (App.~\ref{app:splits}). One Ridge probe per (persona, selector, layer), alpha swept on the 1k eval split and the probe refit on the full 4k train split. All figures use the fixed persona ordering of Fig.~\ref{fig:default-probe}: personas left-to-right by utility similarity to default. Headline cell: \texttt{eot}, L32.
 
-\paragraph{Full transfer matrix and utility baseline.} Figure~\ref{fig:persona-transfer-pair} shows the full $7 \times 7$ transfer matrix (left) alongside the corresponding $7 \times 7$ utility-similarity matrix (right). Every off-diagonal cell is higher in the transfer panel than in the utility panel: probes carry information beyond behavioural similarity, at every persona pair.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.95\linewidth]{plot_042326_transfer_utility_pair.png}
-  \caption{\textbf{Full $7 \times 7$ transfer matrix vs utility similarity.} Left: probe transfer $r$ (rows = probe-trained persona, cols = eval persona). Right: Thurstonian-utility $r$, same ordering. Every off-diagonal cell is higher in the transfer matrix than in the utility matrix (42/42 ordered pairs).}
-  \label{fig:persona-transfer-pair}
-\end{figure}
-
-\paragraph{Layer dependence of donor and target quality.} Figure~\ref{fig:persona-layer} shows, for each persona, the mean outbound transfer $r$ (donor quality) and mean inbound $r$ (target quality) across the five sweeped layers. Contrarian dominates the donor ranking at every layer despite its worst-in-set self-fit; slacker is the worst donor at every layer despite a 0.91 self-fit.
+\paragraph{Layer dependence of donor and target quality.} Figure~\ref{fig:persona-layer} shows, for each persona, the mean outbound transfer $r$ (donor quality) and mean inbound $r$ (target quality) across the five sweeped layers. Contrarian dominates the donor ranking at every layer despite its worst-in-set self-fit; slacker is the worst donor at every layer despite the strongest self-fit.
 
 \begin{figure}[H]
   \centering
@@ -634,51 +634,22 @@ This subsection extends \S\ref{sec:shared-probe} with the supporting figures for
   \label{fig:persona-layer}
 \end{figure}
 
-\paragraph{Asymmetry.} Figure~\ref{fig:persona-asymmetry} plots the 21 unordered persona pairs in the plane (r(A $\rightarrow$ B), r(B $\rightarrow$ A)). Points on $y = x$ are symmetric; distance from the diagonal quantifies asymmetry. Largest gap: sadist $\leftrightarrow$ mathematician (|gap| $= 0.45$). Three more pairs have |gap| $> 0.28$, all involving contrarian.
+\paragraph{Aggregate transfer is stable across mid-to-late layers.} Averaging across all 42 ordered persona pairs, the mean off-diagonal transfer $r$ is $\approx 0.44$ at every layer from 25 to 53 for the eot selector, and $\approx 0.03$--$0.05$ lower across the same range for \texttt{tb-2} (Fig.~\ref{fig:persona-transfer-per-layer}). The layer dependence of cross-persona transfer is weak; results do not hinge on our choice of L32.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{plot_042326_transfer_per_layer.png}
+  \caption{\textbf{Mean off-diagonal transfer $r$ across layers.} Average over all 42 ordered (train, eval) persona pairs. The cross-persona transfer signal is approximately layer-invariant in the L25--L53 range, with eot (blue) $\approx 0.03$--$0.05$ above tb-2 (grey) at every layer.}
+  \label{fig:persona-transfer-per-layer}
+\end{figure}
+
+\paragraph{Asymmetry.} Figure~\ref{fig:persona-asymmetry} plots the 21 unordered persona pairs in the plane $(r(A \rightarrow B), r(B \rightarrow A))$. Points on $y = x$ are symmetric; distance from the diagonal quantifies asymmetry. Largest gap: sadist $\leftrightarrow$ mathematician (|gap| $= 0.45$). Three more pairs have |gap| $> 0.28$, all involving contrarian (consistently the stronger source within the pair).
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.65\linewidth]{plot_042326_asymmetry_scatter.png}
   \caption{\textbf{Transfer asymmetry across the 21 persona pairs.} Colour $=|r(A \rightarrow B) - r(B \rightarrow A)|$. Median absolute gap $= 0.19$; largest gaps involve contrarian (outsized donor) or sadist (hardest target).}
   \label{fig:persona-asymmetry}
-\end{figure}
-
-\paragraph{Receiver quality vs distance from default, and a pool-similarity confound.} Figure~\ref{fig:receiver-vs-default} shows mean inbound $r$ vs utility similarity with default, one point per persona. The correlation is Pearson $r = +0.69$ (excluding default; $+0.84$ if sadist is additionally excluded). But five of the six ``training'' probes are by construction similar to default, so the ``inbound average'' prediction is structurally biased toward default-like utilities. We quantify this confound.
-
-Let $\mathrm{sim\_pool}(X) = \frac{1}{6}\sum_{Y \neq X} r_{\text{util}}(Y, X)$ be the mean utility similarity between eval persona $X$ and its six training personas. Then the ``receiver vs distance'' correlations decompose as:
-
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{lrr}
-\toprule
- & all 7 personas & non-default (6) \\
-\midrule
-inbound $\sim$ sim\_default         & $+0.53$ & $+0.69$ \\
-inbound $\sim$ sim\_pool            & $+0.57$ & $+0.55$ \\
-partial: sim\_default $\mid$ sim\_pool (no default)        & $+0.31$ & --- \\
-partial: sim\_pool (no default) $\mid$ sim\_default        & $+0.21$ & --- \\
-\bottomrule
-\end{tabular}
-\caption{\textbf{Confound check for the receiver-vs-default-similarity correlation.} With default excluded, $\mathrm{sim\_default}$ beats $\mathrm{sim\_pool}$; with default included (anchoring $\mathrm{sim\_default} = 1$), $\mathrm{sim\_pool}$ slightly wins. Partial correlations show both effects are modest and highly collinear.}
-\end{table}
-
-To cleanly separate the probe's substrate contribution from the pool-similarity confound, we compute a per-eval \emph{probe bonus} $= \text{mean inbound } r - \mathrm{sim\_pool}$ --- how much the probe adds over a pure utility-baseline predictor. Every persona has a positive bonus (mean $+0.26$), and the bonus is \emph{not} ordered by distance-from-default: the largest bonuses are at mathematician ($+0.45$), sadist ($+0.33$), and aura ($+0.30$); the smallest is contrarian ($+0.07$). The probe adds the most where the utility baseline has the least to offer.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.65\linewidth]{plot_042326_receiver_vs_default_similarity.png}
-  \caption{\textbf{Receiver quality vs distance from default.} Mean inbound transfer $r$ vs utility similarity with default. Default (red) sits at $x = 1.0$ trivially; OLS line fit on the six non-default points (Pearson $r = +0.69$).}
-  \label{fig:receiver-vs-default}
-\end{figure}
-
-\paragraph{Probe alignment across layers.} Figure~\ref{fig:persona-cosine} shows the mean pairwise cosine between probe direction vectors (raw weights) at each layer. Cosine \emph{dips} at the same mid-layers where transfer $r$ peaks, and \emph{rises} at late layers where transfer $r$ declines. The direction a probe encodes is not the whole story: mid-layer activation geometry is what makes the shared substrate legible.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.65\linewidth]{plot_042326_cosine_by_layer.png}
-  \caption{\textbf{Probe direction alignment across layers.} Mean pairwise cosine of the 21 off-diagonal probe-weight pairs at each layer, eot selector. The headline transfer layer (L32) sits near the cosine minimum.}
-  \label{fig:persona-cosine}
 \end{figure}
 
 \subsection{Probe bias: toward the training persona or toward the default assistant?}
