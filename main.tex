@@ -203,6 +203,8 @@ The finding generalises beyond the default-as-source setting. Across all $7 \tim
 
 Two structural observations on how this transfer is organised are worth noting. First, \emph{donor quality is not self-fit}: the best donors (highest mean outbound transfer) are \textbf{contrarian} ($0.59$) and \textbf{strategist} ($0.54$), despite contrarian having the \emph{worst} within-persona fit ($0.55$); slacker has the strongest self-fit ($0.91$) but is the worst donor ($0.25$). Second, \emph{transfer is structurally asymmetric}: sadist $\rightarrow$ mathematician $= 0.71$ vs.\ mathematician $\rightarrow$ sadist $= 0.25$; mathematician is the easiest target (column mean $0.70$), sadist and slacker the hardest ($0.32, 0.31$). Both observations persist across layers (App.~\ref{app:persona-transfer}); the mean cross-persona transfer is approximately layer-invariant in the L25--L53 range.
 
+A natural concern is that the probe might only encode general task-goodness rather than persona-specific structure. App.~\ref{app:persona-bias} rules this out: after regressing out the eval persona's utilities, the probe's prediction is still correlated with the training persona's utility pattern at partial $r = 0.67$ (unanimous across 42 pairs), which would be $\approx 0$ if the probe were only picking up a shared task-goodness direction contained in eval as well.
+
 \subsection{The probe transfers across character-fine-tuned personas}
 \label{sec:shared-character}
 
@@ -689,7 +691,7 @@ Across the 30 pairs, mean raw $r(\hat u, u_T) = +0.67$ vs $r(\hat u, u_{\text{de
   \label{fig:persona-bias-raw-partial}
 \end{figure}
 
-\textbf{Finding 1.} Probes are substantially more biased toward the persona they were trained on than toward the default assistant: after regressing out the correct eval signal, the train-aligned residual is roughly $2\times$ the default-aligned residual, and unanimous across tested pairs.
+\textbf{Finding 1.} Probes are substantially more biased toward the persona they were trained on than toward the default assistant: after regressing out the correct eval signal, the train-aligned residual is roughly $2\times$ the default-aligned residual, and unanimous across tested pairs. This also rules out the ``probe is just general task-goodness'' hypothesis referenced in \S\ref{sec:shared-probe}: a probe encoding only a shared task-goodness direction would have partial $r(\hat u, u_T \mid u_E) \approx 0$, because eval utilities would already absorb that shared direction. The observed $+0.67$ means the probe's residual after eval carries genuine train-specific structure.
 
 \paragraph{Is default a privileged attractor?}
 
