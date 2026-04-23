@@ -634,12 +634,12 @@ This subsection extends \S\ref{sec:shared-probe} with supporting figures for the
   \label{fig:persona-layer}
 \end{figure}
 
-\paragraph{Aggregate transfer is stable across mid-to-late layers.} Averaging across all 42 ordered persona pairs, the mean off-diagonal transfer $r$ is $\approx 0.44$ at every layer from 25 to 53 for the eot selector, and $\approx 0.03$--$0.05$ lower across the same range for \texttt{tb-2} (Fig.~\ref{fig:persona-transfer-per-layer}). The layer dependence of cross-persona transfer is weak; results do not hinge on our choice of L32.
+\paragraph{Aggregate transfer is stable across mid-to-late layers.} Averaging across all 42 ordered persona pairs at the eot selector, the mean off-diagonal transfer $r$ hovers near $0.44$ at every layer from 25 to 53 (Fig.~\ref{fig:persona-transfer-per-layer}). The layer dependence of cross-persona transfer is weak; results do not hinge on our choice of L32.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{plot_042326_transfer_per_layer.png}
-  \caption{\textbf{Mean off-diagonal transfer $r$ across layers.} Average over all 42 ordered (train, eval) persona pairs. The cross-persona transfer signal is approximately layer-invariant in the L25--L53 range, with eot (blue) $\approx 0.03$--$0.05$ above tb-2 (grey) at every layer.}
+  \caption{\textbf{Mean off-diagonal transfer $r$ across layers (eot).} Average over all 42 ordered (train, eval) persona pairs. The cross-persona transfer signal is approximately layer-invariant in the L25--L53 range.}
   \label{fig:persona-transfer-per-layer}
 \end{figure}
 

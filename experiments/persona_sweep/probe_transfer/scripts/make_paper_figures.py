@@ -144,27 +144,24 @@ def fig_transfer_bonus_pair(personas, transfer, utility_r, order):
 
 
 def fig_transfer_per_layer(personas):
-    """Aggregate mean off-diagonal transfer r per layer, both selectors."""
+    """Aggregate mean off-diagonal transfer r per layer (eot only)."""
     n = len(personas)
     mask = ~np.eye(n, dtype=bool)
-    means = {tag: [] for tag, _ in SELECTORS}
-    for tag, _ in SELECTORS:
-        for layer in LAYERS:
-            _, tr, _ = _load_matrix(tag, layer)
-            means[tag].append(float(tr[mask].mean()))
+    means = []
+    for layer in LAYERS:
+        _, tr, _ = _load_matrix("tb-5", layer)
+        means.append(float(tr[mask].mean()))
 
     fig, ax = plt.subplots(figsize=(7, 4.5))
-    ax.plot(LAYERS, means["tb-5"], "-o", label="eot (tb-5)", color=BLUE, lw=2.2, markersize=7)
-    ax.plot(LAYERS, means["tb-2"], "-s", label="tb-2", color=GREY, lw=1.5, markersize=6)
-    for x, y in zip(LAYERS, means["tb-5"]):
+    ax.plot(LAYERS, means, "-o", color=BLUE, lw=2.2, markersize=7)
+    for x, y in zip(LAYERS, means):
         ax.annotate(f"{y:.2f}", (x, y), xytext=(0, 8), textcoords="offset points",
                     ha="center", fontsize=9, color=BLUE)
     ax.set_xlabel("layer")
     ax.set_xticks(LAYERS)
-    ax.set_ylabel("mean off-diagonal transfer r\n(42 ordered persona pairs)")
+    ax.set_ylabel("mean off-diagonal transfer r\n(42 ordered persona pairs, eot)")
     ax.set_title("Cross-persona transfer is stable across mid-to-late layers")
     ax.grid(alpha=0.3)
-    ax.legend(loc="lower center", frameon=False)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     plt.tight_layout()
