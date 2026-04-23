@@ -186,7 +186,7 @@ The finding generalises beyond the default-as-source setting. Across all $7 \tim
 \begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{plot_042326_transfer_bonus_pair.png}
-  \caption{\textbf{Full $7 \times 7$ transfer and its gain over the utility-similarity baseline.} \emph{Left:} probe transfer $r$ at eot / layer 32 (rows: probe persona, cols: eval persona). \emph{Right:} transfer $r$ minus the utility-utility correlation on the same pair --- how much the probe beats the naïve ``predict via behavioural similarity'' baseline. Diagonal on the right panel is not informative and is masked. Every off-diagonal cell is positive on the right: the probe carries transfer signal above utility similarity for every persona pair, including pairs whose utilities are near-uncorrelated (e.g., sadist $\leftrightarrow$ mathematician).}
+  \caption{\textbf{Full $7 \times 7$ transfer and two controls.} Rows: probe persona. Cols: eval persona. \emph{Left:} probe transfer $r(\hat u, u_E)$ at eot / layer 32. \emph{Middle:} transfer $r$ minus the utility-utility correlation on the same pair --- how much the probe beats the naïve ``predict via behavioural similarity'' baseline. Every off-diagonal cell is positive. \emph{Right:} partial $r(\hat u, u_T \mid u_E)$ --- the probe's train-specific structure that survives regressing out the eval signal; positive means the probe encodes train information not already in eval, i.e., persona-specific rather than merely tracking shared ``general task-goodness''. Diagonals of the middle and right panels are not informative and are masked.}
   \label{fig:persona-transfer-bonus}
 \end{figure}
 
