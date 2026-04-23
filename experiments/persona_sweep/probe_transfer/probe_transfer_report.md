@@ -85,6 +85,41 @@ One point per persona (default in red, at x = 1.0 trivially). x = utility simila
 - **Mechanism suggested.** "Distance from default" is a rough proxy for how far the activation geometry rotates from its default state. Most rotations carry the shared evaluative substrate with them; sadist's rotation is large but the substrate-direction content survives.
 - **Together with Figure D:** asymmetry is not random. Personas close to default are both easier targets *and* good sources; personas far from default are worse targets but can still be strong sources (sadist → mathematician r = 0.71).
 
+### Confound check: is this really about default, or about the training pool?
+
+A probe trained on persona Y produces predictions that are necessarily biased toward Y's utility signal. When we average 6 such probes to get "inbound r for X", the result inherits whatever structure the 6 training personas' utilities share. If those training personas are mostly default-like, the inbound average will predict default-like personas well — and we'd see a positive `inbound ~ sim_default` correlation even in the absence of any "default-specific" effect.
+
+Two sanity checks:
+
+**1. Inbound vs similarity-to-pool.** Replace `sim_default(X)` with `sim_pool(X) = mean utility_r(Y, X) over the 6 training personas Y ≠ X`.
+
+| n | Pearson r |  |
+|---|---:|---|
+| all 7 | +0.53 | `inbound ~ sim_default` |
+| all 7 | +0.57 | `inbound ~ sim_pool` |
+| non-default (6) | +0.69 | `inbound ~ sim_default` (the Fig E headline) |
+| non-default (6) | +0.55 | `inbound ~ sim_pool` |
+
+With default excluded, sim_default does beat sim_pool (0.69 vs 0.55), so being close to default specifically helps more than being close to the pool on average. Including default inverts the ranking — expected, since default's sim_default = 1.0 is an outlier.
+
+**2. Partial correlation.** Controlling for sim_pool_no_def (mean utility similarity with the 5 non-default training personas), the partial `inbound ~ sim_default` correlation is +0.31 (n=7); the partial `inbound ~ sim_pool_no_def` controlling for sim_default is +0.21. Both effects are modest, highly collinear, and of similar magnitude — the two "distance from default" and "distance from the pool" stories can't be cleanly separated on 6 or 7 data points.
+
+**3. Probe bonus over utility baseline.** A cleaner decomposition: for each eval X, compute how much the probe transfer adds over a pure utility-similarity baseline.
+
+| eval persona | inbound r | sim_pool  | **probe bonus** |
+|---|---:|---:|---:|
+| mathematician | 0.70 | 0.25 | **+0.45** |
+| sadist | 0.32 | −0.01 | **+0.33** |
+| aura | 0.51 | 0.21 | **+0.30** |
+| default | 0.50 | 0.25 | **+0.25** |
+| slacker | 0.31 | 0.07 | **+0.24** |
+| strategist | 0.44 | 0.27 | **+0.17** |
+| contrarian | 0.33 | 0.26 | **+0.07** |
+
+Mean probe bonus = +0.26. Every eval persona benefits from the probe over the utility baseline (consistent with the 42/42 per-pair finding in Fig D). The bonus is *not* ordered by distance-from-default: sadist (+0.33) outperforms contrarian (+0.07) and sits between aura and default. What the probe adds is partially independent of how similar the eval persona is to the training pool — the probe direction carries evaluative signal beyond what utility correlations alone provide, and this contribution is largest where there's most room for it (sadist starts from a near-zero baseline, so the probe's ≈ 0.32 inbound is mostly "new information").
+
+**Takeaway.** The Fig E correlation has two non-trivially separable components: (a) generic "similarity to the training pool" — larger when the eval persona's utilities already correlate with what most probes read out — and (b) genuine probe-substrate contribution, the "probe bonus" that survives the utility-baseline subtraction. Both matter. The strong inbound on personas close to default is partly a training-pool artefact, but the substrate contribution is broadly positive and largest for personas where the utility-baseline has the least to offer (sadist, slacker, mathematician).
+
 ## Figure F — probe alignment across layers
 
 ![Cosine by layer](assets/plot_042326_cosine_by_layer.png)
