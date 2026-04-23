@@ -1,0 +1,35 @@
+model: gemma-3-27b
+max_new_tokens: 64
+pairs_path: experiments/layer_sweep/steering_pairs.json
+probe_manifest: results/probes/layer_sweep/eot/
+checkpoint_path: experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.jsonl
+mean_norm:
+  38: 39315.1
+  41: 52379.2
+  44: 62367.3
+  47: 79392.0
+  50: 92654.1
+  53: 118839.6
+  56: 122910.5
+  59: 145152.8
+n_trials: 1
+temperature: 1.0
+seed: 42
+n_pairs: null
+template_path: src/measurement/elicitation/prompt_templates/data/completion_preference.yaml
+
+conditions:
+  - name: unilateral_first
+    cache_injection: differential
+    probe_prefix: ridge_L
+    layers: [38, 41, 44, 47, 50, 53, 56, 59]
+    multipliers: [-0.05, -0.03, 0.03, 0.05]
+    spans:
+      first: 1
+  - name: unilateral_second
+    cache_injection: differential
+    probe_prefix: ridge_L
+    layers: [38, 41, 44, 47, 50, 53, 56, 59]
+    multipliers: [-0.05, -0.03, 0.03, 0.05]
+    spans:
+      second: 1
