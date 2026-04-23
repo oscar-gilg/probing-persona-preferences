@@ -398,6 +398,53 @@ def fig_corr_bias(personas):
     plt.close(fig)
 
 
+def fig_full_bias(personas):
+    """Bar chart: mean double-partial bias toward each observer persona +
+    train self-bias as reference."""
+    path = RESULTS / "full_bias.npz"
+    if not path.exists():
+        print(f"  skipping full-bias plot: {path.name} not found")
+        return
+    d = np.load(path, allow_pickle=True)
+    train_self = d["train_self_bias"]
+    # Order observers by mean bias for readability; keep default highlighted.
+    means = {p: np.nanmean(d[f"bias_toward_{p}"]) for p in personas}
+    sems = {p: float(np.nanstd(d[f"bias_toward_{p}"]) / np.sqrt(len(d[f"bias_toward_{p}"]))) for p in personas}
+    order = sorted(personas, key=lambda p: -means[p])
+
+    fig, ax = plt.subplots(figsize=(9, 5))
+    x = np.arange(len(order))
+    heights = [means[p] for p in order]
+    errs = [sems[p] for p in order]
+    colors = ["#c0392b" if p == "default" else BLUE for p in order]
+    ax.bar(x, heights, yerr=errs, color=colors, edgecolor="black", lw=0.4, capsize=3)
+
+    train_mean = float(np.nanmean(train_self))
+    ax.axhline(train_mean, color="#2ecc71", lw=1.8, ls="--",
+               label=f"train self-bias  r(pred, train | eval) = {train_mean:+.2f}  (n=42)")
+    ax.axhline(0, color="black", lw=0.5)
+
+    for i, p in enumerate(order):
+        ax.text(i, heights[i] + (0.015 if heights[i] >= 0 else -0.02),
+                f"{heights[i]:+.2f}", ha="center",
+                va="bottom" if heights[i] >= 0 else "top",
+                fontsize=10, fontweight="bold",
+                color="#c0392b" if p == "default" else "black")
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(order, rotation=0)
+    ax.set_ylabel("mean double-partial r(pred, observer | eval, train)\n(n = 30 (train, eval) pairs per observer)")
+    ax.set_title("Probe bias toward each observer persona after controlling for eval + train\n"
+                 "(eot, layer 32; red = default; green dashed = train self-bias reference)")
+    ax.set_ylim(-0.2, max(0.75, train_mean + 0.05))
+    ax.legend(loc="upper right", frameon=False)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    plt.tight_layout()
+    plt.savefig(ASSETS / f"plot_{TODAY}_full_bias.png", dpi=150)
+    plt.close(fig)
+
+
 def fig_profile_bias(personas):
     """Scatter of pull toward train vs pull toward default, per (train, eval) pair."""
     path = RESULTS / "profile_bias.npz"
@@ -472,8 +519,9 @@ def main():
     fig_heatmap_grid(personas, order)
     fig_profile_bias(personas)
     fig_corr_bias(personas)
+    fig_full_bias(personas)
 
-    print(f"10 figures written to {ASSETS.relative_to(REPO)}/ with date stamp {TODAY}")
+    print(f"11 figures written to {ASSETS.relative_to(REPO)}/ with date stamp {TODAY}")
 
 
 if __name__ == "__main__":

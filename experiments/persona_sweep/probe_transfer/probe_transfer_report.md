@@ -13,7 +13,7 @@ So the x-axis reads "most default-like → most default-opposed" throughout. The
 - **Donor quality is not self-fit.** `contrarian` has the worst within-persona fit (0.55) but the best mean outbound transfer at every layer tested (peak 0.59 at L32). `slacker` is the opposite: strong self-fit (0.91) but near-isolated as a donor (peak 0.24). The two "avoidance-shaped" personas land at opposite ends of the donor ranking.
 - **Transfer is asymmetric.** Largest gap: sadist ↔ mathematician — sadist→math 0.71, math→sadist 0.25, |gap| = 0.45. Three more pairs have |gap| > 0.28 (math↔contrarian 0.41, math↔aura 0.32, aura↔contrarian 0.29). Median |gap| across all 21 pairs is 0.19.
 - **Receiver quality tracks distance-from-default.** The more behaviourally different a persona is from default, the worse a target it is (mean inbound r vs utility-similarity-with-default: Pearson r = +0.69 across the 6 non-default personas; +0.84 if sadist is excluded as an outlier).
-- **Probes pattern-match their training persona more than the target or default.** Mean $r(\text{pred}, \text{train}) = 0.67$ vs $r(\text{pred}, \text{eval}) = 0.43$ vs $r(\text{pred}, \text{default}) = 0.38$. The most stringent control — double-partial correlation, regressing out both eval and the companion anchor — gives: $r(\text{pred}, \text{train} \mid \text{eval}, \text{default}) = 0.66$ (30/30 pairs positive) vs $r(\text{pred}, \text{default} \mid \text{eval}, \text{train}) = 0.20$ (27/30 positive). Train-bias $\approx 3.3\times$ default-bias after both confounds are removed. The dominant profile bias is pull toward the training persona's utility profile; a small residual Shoggoth-like pull toward default survives both controls but is much weaker. The calibration-oriented midway ratio gives a consistent but weaker reading (train and default pulls both $\sim 0.6$ under inverse-variance weighting — probes undershoot the full eval shift from either anchor).
+- **Probes inherit strong train-specific bias; default is not a privileged attractor.** Train self-bias $r(\hat u, u_T \mid u_E) = +0.65$, unanimous across all 42 (train, eval) pairs. Double-partial bias toward other observer personas $r(\hat u, u_X \mid u_E, u_T)$ is modest and ordered as: mathematician +0.25, default +0.20, aura +0.18, strategist +0.18, contrarian +0.10, slacker +0.07, sadist $-0.10$. Default sits mid-table among mid-preference-space personas rather than as a unique Shoggoth-like pole; sadist is actually anti-biased. The dominant profile bias is pull toward the training persona's utility profile, with a broader weak residual alignment toward several central personas.
 - **Probe alignment and transfer performance peak at different layers.** Mean pairwise cosine between probe directions dips at L32–L39 (0.08) and climbs to 0.15 at L53, while mean off-diagonal transfer peaks at L32 (0.45) and declines toward L53. Probes share more raw-weight direction in late layers, but the activation geometry that makes transfer work sits earlier.
 
 ## Setup
@@ -121,60 +121,59 @@ Mean probe bonus = +0.26. Every eval persona benefits from the probe over the ut
 
 **Takeaway.** The Fig E correlation has two non-trivially separable components: (a) generic "similarity to the training pool" — larger when the eval persona's utilities already correlate with what most probes read out — and (b) genuine probe-substrate contribution, the "probe bonus" that survives the utility-baseline subtraction. Both matter. The strong inbound on personas close to default is partly a training-pool artefact, but the substrate contribution is broadly positive and largest for personas where the utility-baseline has the least to offer (sadist, slacker, mathematician).
 
-## Figure F — preference-profile bias: does the probe pattern-match train or default?
+## Appendix F — Probe bias: pattern-matching the training persona
 
-The receiver-distance finding above is a symmetric statement about "how close is the prediction to the eval persona's utilities". But a probe trained on persona $A$ can miss $B$'s utilities by pattern-matching $A$'s own utility profile (it was trained to) or by pattern-matching default's. We quantify the two biases with raw and partial correlations between the probe's prediction and each of the three references (eval, train, default) over the 1000-task canonical test split.
+*(Draft for paper inclusion.)*
 
-For each (train, eval) pair, with train $\neq$ eval, and `pred = probe(train) applied to eval's test activations`:
+A trained probe does two different things when applied to a new persona's activations. It recovers some of the new persona's utility pattern (the transfer $r$ in §\ref{sec:shared-probe}), but it also carries *bias*: residual structure that reflects the persona the probe was trained on rather than the persona it's predicting. We quantify this bias with partial correlations.
 
-- $r(\text{pred}, \text{eval})$ = transfer r (the correct-answer signal; already the Fig B diagonal).
-- $r(\text{pred}, \text{train})$ = how much the prediction's per-task ranking matches the training persona's true utilities.
-- $r(\text{pred}, \text{default})$ = how much the prediction matches the default-assistant's utilities.
+### Setup
 
-Partial (controlling for eval) — $r(\text{pred}, \text{train} \mid \text{eval})$ and $r(\text{pred}, \text{default} \mid \text{eval})$ — isolate the residual train- or default-specific signal after the correct eval signal has been regressed out.
+For each ordered pair of personas $(T, E)$ with $T \neq E$, we apply the $T$-trained probe to $E$'s canonical-test-split activations and record the prediction vector $\hat u$. We then correlate $\hat u$ with the Thurstonian utility vectors of a third persona $X$ — the "observer" — on the same 1000 tasks:
 
-![Correlation bias](assets/plot_042326_corr_bias.png)
+- Raw: $r(\hat u, u_X)$.
+- Partial, controlling for the correct answer: $r(\hat u, u_X \mid u_E)$. Removes from both $\hat u$ and $u_X$ the variance linearly predictable from the eval-persona's utilities, then correlates residuals. Conceptually: the part of $\hat u$'s alignment with $X$ that isn't just "$\hat u$ tracks $E$, and $E$ happens to look like $X$".
+- Double partial, additionally controlling for the training persona: $r(\hat u, u_X \mid u_E, u_T)$. Removes the further confound that "$T$ is correlated with $X$, so a $T$-trained probe's signal is correlated with $X$ through $T$". What remains is $X$-specific alignment that neither eval nor train can account for.
 
-Aggregating across the 30 non-default off-diagonal pairs (eot, L32):
+A brief formal derivation of partial correlation (for a reader unfamiliar with the operation) is in App.~\ref{app:partial-corr}.
 
-| quantity | mean r |
-|---|---:|
-| $r(\text{pred}, \text{eval})$ (transfer r) | +0.43 |
-| $r(\text{pred}, \text{train})$ | +0.67 |
-| $r(\text{pred}, \text{default})$ | +0.38 |
-| partial $r(\text{pred}, \text{train} \mid \text{eval})$ | +0.67 |
-| partial $r(\text{pred}, \text{default} \mid \text{eval})$ | +0.29 |
-| **double-partial** $r(\text{pred}, \text{train} \mid \text{eval}, \text{default})$ | **+0.66** |
-| **double-partial** $r(\text{pred}, \text{default} \mid \text{eval}, \text{train})$ | **+0.20** |
+### Two reference quantities
 
-Sign tests:
+- **Train self-bias:** $r(\hat u, u_T \mid u_E)$. Fixes $X = T$. Asks: after accounting for how much $\hat u$ predicts $E$, how aligned is $\hat u$ with $T$'s own utility profile? This is the cleanest quantification of "pull toward the training persona".
+- **Observer bias:** $r(\hat u, u_X \mid u_E, u_T)$ for $X \notin \{T, E\}$. Uses double-partial because we want $X$-specific bias beyond both the eval signal and the train signal. Applied to $X = \texttt{default}$, it asks whether there is any *Shoggoth*-like pull toward the default assistant. Applied to every non-train/non-eval persona, it produces a reference distribution against which the default-specific pull can be judged.
 
-- $r(\text{pred}, \text{train}) > r(\text{pred}, \text{eval})$: **23 / 30 pairs**. The probe's prediction is more correlated with the *training* persona's utility pattern than with the persona it's trying to predict, 77 % of the time.
-- partial $r(\text{pred}, \text{train} \mid \text{eval}) > $ partial $r(\text{pred}, \text{default} \mid \text{eval})$: **30 / 30 pairs** — unanimous.
-- double-partial $r(\text{pred}, \text{train} \mid \text{eval}, \text{default}) > 0$: 30/30 pairs.
-- double-partial $r(\text{pred}, \text{default} \mid \text{eval}, \text{train}) > 0$: 27/30 pairs.
+### Result
 
-**Reading.** The double-partial correlations control for the confound that "train is itself partly correlated with default, so any pull toward train would show up as some apparent pull toward default":
+Across all 30 $(T, E)$ ordered pairs per observer (and 42 for train self-bias, including pairs that involve default), at eot / layer 32:
 
-- **Train-pull barely moves** when we additionally control for default (0.67 → 0.66). The probe picks up train-specific utility structure that is not explained by train's own similarity to default. Unanimous: 30/30 pairs positive.
-- **Default-pull shrinks meaningfully** when we additionally control for train (0.29 → 0.20), confirming that a third of the apparent default-alignment was just the train-through-default-similarity channel. But the residual 0.20 is a *genuine* default-specific pull that survives both controls, positive on 27/30 pairs.
+| observer $X$ | mean $r(\hat u, u_X \mid u_E, u_T)$ | fraction $> 0$ |
+|---|---:|---:|
+| mathematician | +0.25 | 93 % (28/30) |
+| **default** | **+0.20** | **90 % (27/30)** |
+| aura | +0.18 | 97 % (29/30) |
+| strategist | +0.18 | 90 % (27/30) |
+| contrarian | +0.10 | 100 % (30/30) |
+| slacker | +0.07 | 70 % (21/30) |
+| sadist | **$-0.10$** | 27 % (8/30) |
+| **train (self-bias, single-partial)** | **+0.65** | **100 % (42/42)** |
 
-So there is a small Shoggoth-like residual attractor after all, but it is much smaller than the train-pull: train ≈ 3.3× default on the doubly-partialled scale. The dominant bias is the probe inheriting its training persona's utility profile; a modest residual pull toward the default assistant exists on top.
+![Probe bias by observer persona](assets/plot_042326_full_bias.png)
 
-### Aside: the midway-ratio (calibration) view
+### Reading
 
-The earlier `midway_ratio` analysis (`scripts/multi_role_ablation/midway_bias.py`, topic-level means) is the calibration/offset counterpart to the correlation analysis above — it asks "is the prediction's mean level closer to train's or default's?" rather than "does its ranking match". Key aggregation point: the $n_t$-weighted mean over-weights large topics with small denominators $(\bar e_t - \bar a_t)$ where the ratio is most unstable. A principled inverse-delta-variance weight $n_t \cdot d_t^2$ (which also agrees with the robust topic-median) gives the honest answer:
+**There is a strong bias toward the training persona.** Train self-bias is $r \approx 0.65$, unanimous across all 42 (train, eval) pairs tested. The probe inherits train-specific structure that survives regressing out the eval signal; the dominant feature of a transfer prediction is not "approximate eval" but "approximate train", only partly corrected toward eval.
 
-| aggregation | pull_train | pull_default | gap | sign test |
-|---|---:|---:|---:|---:|
-| topic-median | 0.75 | 0.63 | 0.12 | 20 / 30 |
-| $n_t$-weighted mean | 0.67 | 0.25 | 0.42 | 19 / 30 |
-| $\sqrt{n_t}$-weighted mean | 0.72 | 0.39 | 0.33 | 20 / 30 |
-| **$n_t \cdot d_t^2$-weighted mean** (inverse ratio-variance) | **0.65** | **0.56** | **0.09** | 16 / 30 |
+**There is a modest bias toward the default persona, but it is not privileged.** The default-observer bias is $+0.20$ — positive, consistent (27/30 pairs), and statistically similar to the biases toward aura and strategist. It is *smaller* than the bias toward mathematician. Default sits mid-table, not at the top. So while the probe does carry some residual default-flavoured structure, it carries comparable residual structure aligned with several "central" personas in preference space. We do not interpret the default-bias as a distinct Shoggoth-style attractor; a more parsimonious reading is that the probe's residual (after eval + train) aligns with a broad subspace of mid-space personas, with default as one member rather than a unique pole.
 
-The principled weighting (last row) says: the probe's topic means sit $\sim$ 65 % of the way from eval toward train and $\sim$ 56 % of the way from eval toward default — **both pulls substantial, similar magnitude, and the probe clearly undershoots the full eval shift from either anchor**. The 16/30 sign test is near chance on the offset question. The train-vs-default *correlation* distinction above (30/30 partial) is the much sharper bias signal.
+**One persona is anti-biased.** Sadist's observer bias is $r = -0.10$ with only 27 % of pairs positive. The probe's prediction pattern, after eval and train are residualised, *anti-aligns* with sadist's utility profile. This is consistent with sadist being the one persona in the set that genuinely inverts preferences: its utilities anti-correlate with default ($r = -0.15$) and with most other personas in the set, so a generic "mid-space" residual in $\hat u$ will be negatively aligned with sadist.
 
-![Profile bias](assets/plot_042326_profile_bias.png)
+### Caveat: the double-partial is conservative
+
+The $(T, E)$-controlled double partial measures *unique* variance: alignment with $X$ that neither $E$ nor $T$ can linearly explain. Where the probe carries utility structure shared between $X$, $T$, and $E$ — the generic evaluative substrate of §\ref{sec:shared-probe} — it is counted against the $X$-bias score, not for it. The +0.65 train self-bias is therefore a *lower* bound on how much the probe resembles train (not an upper bound); the +0.20 default-bias is similarly a lower bound on default-specific alignment. But the *ranking* across observers is robust, and the main claim — that train bias dominates and default is one modest attractor among several — does not depend on this caveat.
+
+### Methodological note
+
+The bias measure above is a correlation over test-set prediction patterns; it asks "does the probe's ranking of test tasks look like $X$'s ranking?" after the appropriate controls. A calibration-oriented counterpart — asking whether the probe's topic-level *means* are shifted toward train or toward default — would give a different metric (the midway-bias ratio of \citealt{...}; details in our code). Both point in the same direction, but the correlation-based metric is the one we consider primary for the "pattern" interpretation of bias that matters for downstream probe use.
 
 ## Figure G — probe alignment across layers
 
