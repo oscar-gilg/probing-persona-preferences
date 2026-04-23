@@ -71,36 +71,47 @@ def fig_default_probe(personas, transfer, utility_r, order):
     util = np.array([utility_r[i_def, personas.index(p)] for p in labels])
     gap = probe - util
 
-    fig, ax = plt.subplots(figsize=(9, 5))
+    fig, ax = plt.subplots(figsize=(10, 6.5))
     x = np.arange(len(labels))
     w = 0.36
     ax.bar(x - w/2, probe, w, label="probe transfer r  (default probe → persona)", color=BLUE)
     ax.bar(x + w/2, util,  w, label="utility r  (default utilities vs persona)",  color=GREY)
 
-    for i in range(len(labels)):
-        ax.text(x[i] - w/2, probe[i] + 0.01, f"{probe[i]:+.2f}",
-                ha="center", va="bottom", fontsize=9, color=BLUE, fontweight="bold")
-        va_util = "bottom" if util[i] >= 0 else "top"
-        offset = 0.01 if util[i] >= 0 else -0.01
-        ax.text(x[i] + w/2, util[i] + offset, f"{util[i]:+.2f}",
-                ha="center", va=va_util, fontsize=9, color="#555")
+    ymin_data = min(util.min(), 0.0)
+    ymax_data = probe.max()
+    span = ymax_data - ymin_data
+    pad = 0.05 * span
+    ymin = ymin_data - 0.15 * span
+    ymax = ymax_data + 0.25 * span
+    ax.set_ylim(ymin, ymax)
 
+    for i in range(len(labels)):
+        ax.text(x[i] - w/2, probe[i] + pad, f"{probe[i]:+.2f}",
+                ha="center", va="bottom", fontsize=10, color=BLUE, fontweight="bold")
+        va_util = "bottom" if util[i] >= 0 else "top"
+        offset = pad if util[i] >= 0 else -pad
+        ax.text(x[i] + w/2, util[i] + offset, f"{util[i]:+.2f}",
+                ha="center", va=va_util, fontsize=10, color="#555")
+
+        # Vertical arrow spanning the gap between the two bar tops.
+        x_arrow = x[i] + w/2 + 0.12
         ax.annotate(
-            "", xy=(x[i] + w/2, probe[i]),
-            xytext=(x[i] - w/2, probe[i]),
-            arrowprops=dict(arrowstyle="->", color="#c0392b", lw=1.2, shrinkA=3, shrinkB=3),
+            "",
+            xy=(x_arrow, probe[i]),
+            xytext=(x_arrow, util[i]),
+            arrowprops=dict(arrowstyle="->", color="#c0392b", lw=1.4, shrinkA=0, shrinkB=0),
         )
-        ax.text(x[i], probe[i] + 0.08, f"Δ {gap[i]:+.2f}",
-                ha="center", va="bottom", fontsize=9, color="#c0392b")
+        mid_y = (probe[i] + util[i]) / 2
+        ax.text(x_arrow + 0.04, mid_y, f"Δ {gap[i]:+.2f}",
+                ha="left", va="center", fontsize=10, color="#c0392b", fontweight="bold")
 
     ax.axhline(0, color="black", lw=0.6)
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.set_ylabel("Pearson r (canonical test split)")
-    ax.set_ylim(min(-0.2, util.min() - 0.05), max(probe.max() + 0.2, 1.0))
     ax.set_title("Default probe beats utility similarity at every persona  (eot, layer 32)",
                  fontsize=12)
-    ax.legend(loc="lower right", frameon=False)
+    ax.legend(loc="upper right", frameon=False)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     plt.tight_layout()

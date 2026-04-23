@@ -73,31 +73,32 @@ Per-persona mean outbound r (left) and mean inbound r (right) vs layer. Contrari
 - **mathematician ↔ contrarian** (|gap| = 0.41), **aura ↔ contrarian** (0.29), **mathematician ↔ aura** (0.32). Contrarian is systematically a better source for other personas than they are for it — same "evaluate-then-invert" reading as above.
 - **Strategist ↔ mathematician** (|gap| = 0.22) is the tightest in-cluster asymmetry among strong transfer pairs. Transfer is high both ways (strategist→math 0.82, math→strategist 0.60).
 
-## Receiver quality tracks distance from default
+## Figure E — receiver quality tracks distance from default
 
 ![Receiver vs default similarity](assets/plot_042326_receiver_vs_default_similarity.png)
 
 One point per non-default persona. x = utility similarity with default; y = mean inbound transfer r (how well the other 6 probes predict this persona's utilities).
 
-- **Pearson r = +0.69** across the 6 points; **+0.84** if sadist is excluded. The more behaviourally different a persona is from default, the worse a target it is — holds robustly for the other five.
+- **Pearson r = +0.69** across the 6 points; **+0.84** if sadist is excluded. The more behaviourally different a persona is from default, the worse a target it is — monotone for the other five.
 - **Sadist is the one exception.** Utility-similarity-with-default is the lowest of the set (r = −0.15) but mean inbound r is 0.32 — comparable to contrarian (0.33) and slacker (0.31), both of which are closer to default behaviourally. The sadist persona inverts default preferences cleanly enough that probes trained on other personas still carry meaningful projection onto the sadist direction.
-- **Mechanism suggested.** "Distance from default" is a rough proxy for "how far the activation geometry rotates from its default state". Most rotations carry the shared evaluative substrate with them; sadist's is large but the substrate-direction content survives the rotation.
+- **Mechanism suggested.** "Distance from default" is a rough proxy for how far the activation geometry rotates from its default state. Most rotations carry the shared evaluative substrate with them; sadist's rotation is large but the substrate-direction content survives.
+- **Together with Figure D:** asymmetry is not random. Personas close to default are both easier targets *and* good sources; personas far from default are worse targets but can still be strong sources (sadist → mathematician r = 0.71).
 
-## Probe alignment across layers
+## Figure F — probe alignment across layers
 
 ![Cosine by layer](assets/plot_042326_cosine_by_layer.png)
 
 Mean cosine similarity of the 21 off-diagonal probe-direction pairs (raw weight vectors), one number per layer, eot selector.
 
-- **Dips at L32–L39** (0.08) and **peaks at L53** (0.15). The headline transfer layer (L32) is close to the cosine minimum.
-- **Cosine and transfer r diverge.** Probes become more aligned in raw weight direction at late layers — but transfer performance falls. Direction alone is not enough: the activation geometry at mid-layers is what makes the shared evaluative substrate legible. Late-layer probes share directions in a subspace that no longer does as much predictive work.
-- This echoes a finding in the token-level probe work: evaluative content is sharpest at mid layers even though other kinds of persona content are richer late.
+- **Dips at L32–L39** (≈ 0.08) and **peaks at L53** (0.15). The headline transfer layer (L32) sits near the cosine minimum.
+- **Cosine and transfer r diverge.** Probes become more aligned in raw weight direction at late layers, but transfer performance falls. Direction alone does not explain transfer — the activation geometry at mid-layers is what makes the shared evaluative substrate legible. Late-layer probes share directions in a subspace that no longer does as much predictive work.
+- This echoes the token-level probe finding that evaluative content is sharpest at mid layers even when other kinds of persona content are richer late.
 
 ## Paper integration
 
 - **Figure A as headline** replacing the current §\ref{sec:shared-probe} figure (5-persona ad-hoc set).
-- **Figure B** gives the full 7×7 view; Figure C the layer story. All use the fixed persona ordering for cross-figure consistency.
-- **Appendix** holds the asymmetry scatter (Fig D), the receiver-vs-distance scatter, the cosine-by-layer plot, the self-fit-vs-donor scatter, the selector × layer heatmap grid, and the older 42-point transfer-vs-utility scatter (`plot_042226_transfer_vs_utility_scatter.png`).
+- **Figures B–F** go in the paper body (B: full 7×7 view; C: layer story; D: asymmetry; E: receiver-vs-default-distance; F: probe-direction cosine by layer). All use the fixed persona ordering for cross-figure consistency.
+- **Appendix** holds the self-fit-vs-donor scatter, the selector × layer heatmap grid, and the older 42-point transfer-vs-utility scatter (`plot_042226_transfer_vs_utility_scatter.png`).
 - **Quantitative update on the paper's prior claim.** The paper reports default → sadist r = −0.16 on a 5-persona set. On the final-six + canonical splits we see default → sadist = **+0.24** — not anti-correlated. The sadist-as-hardest-case conclusion moves from "anti-transfer" to "weakest but still positive transfer".
 
 ## Artifacts
