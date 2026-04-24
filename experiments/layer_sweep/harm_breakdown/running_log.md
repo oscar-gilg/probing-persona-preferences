@@ -20,3 +20,13 @@
 - `configs/steering/layer_sweep/harm_breakdown/single_task_L23_150.yaml` — two conditions (`unilateral_first` / `unilateral_second`), same layer/probe/mults/trials, single-span each.
 - `mean_norm[23] = 29381.541015625` (copied from parent `eot_probe_L23.yaml` — not recomputed, per spec).
 - Both configs pass `load_config` locally.
+
+### Pre-flight
+- First dry-run crashed with `TypeError: unsupported operand type(s) for *: 'dict' and 'float'` at `runner.py:722`. Root cause: main's runner expects scalar `mean_norm`; the layer_sweep branch has a per-layer-dict refactor (commit `6165b69`). Cherry-picked `src/steering/{runner.py,calibration.py}` from `research-loop/layer_sweep` onto our branch.
+- Second dry-run hit `FileNotFoundError` — runner doesn't auto-create checkpoint dir. Pre-created `experiments/layer_sweep/harm_breakdown/checkpoints/` on the pod.
+- Third dry-run: 2 pairs × 2 orderings × 2 mults × 1 trial = 8 gens succeeded in ~20s. Checkpoint format matches parent sweep.
+
+### Full runs launched (babysat)
+- Contrastive: tmux `contrastive` on pod, `contrastive_L23_150.yaml`. Expected ~3600 rows.
+- Single-task: to be launched by babysit cron after contrastive completes.
+- Cron job `86113722` checks every 6 min: tracks phase, launches phase 2, pauses pod on done.
