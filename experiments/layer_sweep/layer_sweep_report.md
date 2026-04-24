@@ -25,7 +25,7 @@ model: gemma-3-27b
 
 ## Probe quality vs layer
 
-![Probe r by layer](assets/plot_042326_probe_r_by_layer.png)
+![Probe r by layer](assets/plot_042426_probe_r_by_layer.png)
 
 | Selector | Peak layer | Peak r | r at L23 |
 |---|---|---|---|
@@ -41,7 +41,7 @@ model: gemma-3-27b
 ![tb-2 within-selector cosine](assets/plot_042426_probe_cosine_tb2.png)
 ![eot within-selector cosine](assets/plot_042426_probe_cosine_eot.png)
 ![Cross-selector cosine](assets/plot_042426_probe_cosine_cross_selector.png)
-![Probe transfer heatmap](assets/plot_042326_probe_transfer_heatmap.png)
+![Probe transfer heatmap](assets/plot_042426_probe_transfer_heatmap.png)
 
 - Neighbouring layers share direction; cosine falls off smoothly with layer distance.
 - Mid-to-late layers (~L29 through L59) form a coherent block — any two probes in that range have cos ≥ 0.5. The evaluative direction, once established by mid-network, stays stable through the output.
