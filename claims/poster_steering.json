@@ -1,0 +1,815 @@
+{
+  "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+  "claims": [
+    {
+      "name": "Poster steering P chosen benign at layer 25 c neg 0.10",
+      "value": 0.0014,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = -0.10 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.0014 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 25 c neg 0.07",
+      "value": 0.0,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = -0.07 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.0 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 25 c neg 0.05",
+      "value": 0.0,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = -0.05 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.0 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 25 c neg 0.03",
+      "value": 0.003,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = -0.03 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.003 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 25 c zero 0.00",
+      "value": 0.4863,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.00 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.4863 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 25 c pos 0.03",
+      "value": 0.996,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.03 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.996 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 25 c pos 0.05",
+      "value": 1.0,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.05 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 1.0 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 25 c pos 0.07",
+      "value": 1.0,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.07 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 1.0 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 25 c pos 0.10",
+      "value": 0.9975,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.10 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.9975 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 25 c neg 0.10",
+      "value": 0.0261,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = -0.10 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.0261 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 25 c neg 0.07",
+      "value": 0.0205,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = -0.07 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.0205 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 25 c neg 0.05",
+      "value": 0.0323,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = -0.05 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.0323 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 25 c neg 0.03",
+      "value": 0.062,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = -0.03 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.062 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 25 c zero 0.00",
+      "value": 0.5025,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.00 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.5025 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 25 c pos 0.03",
+      "value": 0.9427,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.03 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.9427 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 25 c pos 0.05",
+      "value": 0.9715,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.05 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.9715 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 25 c pos 0.07",
+      "value": 0.9713,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.07 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.9713 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 25 c pos 0.10",
+      "value": 0.96,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.10 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.96 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 25 c neg 0.10",
+      "value": 0.0,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = -0.10 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.0 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 25 c neg 0.07",
+      "value": 0.0,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = -0.07 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.0 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 25 c neg 0.05",
+      "value": 0.0,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = -0.05 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.0 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 25 c neg 0.03",
+      "value": 0.0,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = -0.03 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.0 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 25 c zero 0.00",
+      "value": 0.5758,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.00 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.5758 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 25 c pos 0.03",
+      "value": 0.9773,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.03 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.9773 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 25 c pos 0.05",
+      "value": 0.975,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.05 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.975 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 25 c pos 0.07",
+      "value": 1.0,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.07 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 1.0 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 25 c pos 0.10",
+      "value": 0.9737,
+      "statement": "Default-persona dose-response: at intervention layer 25 with signed steering coefficient c = +0.10 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.9737 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 25 c neg 0.10",
+      "value": 0.108,
+      "statement": "At intervention layer 25 with signed steering coefficient c = -0.10, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.108.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 25 c neg 0.10",
+      "value": 0.0661,
+      "statement": "At intervention layer 25 with signed steering coefficient c = -0.10, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0661.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 25 c neg 0.07",
+      "value": 0.0452,
+      "statement": "At intervention layer 25 with signed steering coefficient c = -0.07, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0452.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 25 c neg 0.07",
+      "value": 0.0439,
+      "statement": "At intervention layer 25 with signed steering coefficient c = -0.07, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0439.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 25 c neg 0.05",
+      "value": 0.0352,
+      "statement": "At intervention layer 25 with signed steering coefficient c = -0.05, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0352.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 25 c neg 0.05",
+      "value": 0.0246,
+      "statement": "At intervention layer 25 with signed steering coefficient c = -0.05, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0246.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 25 c neg 0.03",
+      "value": 0.0352,
+      "statement": "At intervention layer 25 with signed steering coefficient c = -0.03, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0352.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 25 c neg 0.03",
+      "value": 0.0149,
+      "statement": "At intervention layer 25 with signed steering coefficient c = -0.03, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0149.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 25 c zero 0.00",
+      "value": 0.0172,
+      "statement": "At intervention layer 25 with signed steering coefficient c = +0.00, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0172.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 25 c zero 0.00",
+      "value": 0.0113,
+      "statement": "At intervention layer 25 with signed steering coefficient c = +0.00, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0113.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 25 c pos 0.03",
+      "value": 0.0265,
+      "statement": "At intervention layer 25 with signed steering coefficient c = +0.03, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0265.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 25 c pos 0.03",
+      "value": 0.0134,
+      "statement": "At intervention layer 25 with signed steering coefficient c = +0.03, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0134.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 25 c pos 0.05",
+      "value": 0.0404,
+      "statement": "At intervention layer 25 with signed steering coefficient c = +0.05, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0404.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 25 c pos 0.05",
+      "value": 0.0296,
+      "statement": "At intervention layer 25 with signed steering coefficient c = +0.05, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0296.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 25 c pos 0.07",
+      "value": 0.0414,
+      "statement": "At intervention layer 25 with signed steering coefficient c = +0.07, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0414.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 25 c pos 0.07",
+      "value": 0.0524,
+      "statement": "At intervention layer 25 with signed steering coefficient c = +0.07, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0524.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 25 c pos 0.10",
+      "value": 0.1172,
+      "statement": "At intervention layer 25 with signed steering coefficient c = +0.10, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.1172.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 25 c pos 0.10",
+      "value": 0.0612,
+      "statement": "At intervention layer 25 with signed steering coefficient c = +0.10, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0612.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 30 c neg 0.10",
+      "value": 0.1727,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = -0.10 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.1727 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 30 c neg 0.07",
+      "value": 0.2155,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = -0.07 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.2155 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 30 c neg 0.05",
+      "value": 0.2684,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = -0.05 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.2684 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 30 c neg 0.03",
+      "value": 0.3494,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = -0.03 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.3494 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 30 c zero 0.00",
+      "value": 0.4883,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.00 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.4883 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 30 c pos 0.03",
+      "value": 0.643,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.03 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.643 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 30 c pos 0.05",
+      "value": 0.7121,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.05 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.7121 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 30 c pos 0.07",
+      "value": 0.7635,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.07 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.7635 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen benign at layer 30 c pos 0.10",
+      "value": 0.7993,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.10 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.7993 on benign-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 30 c neg 0.10",
+      "value": 0.3005,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = -0.10 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.3005 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 30 c neg 0.07",
+      "value": 0.3225,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = -0.07 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.3225 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 30 c neg 0.05",
+      "value": 0.3458,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = -0.05 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.3458 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 30 c neg 0.03",
+      "value": 0.3963,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = -0.03 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.3963 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 30 c zero 0.00",
+      "value": 0.505,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.00 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.505 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 30 c pos 0.03",
+      "value": 0.5494,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.03 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.5494 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 30 c pos 0.05",
+      "value": 0.6078,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.05 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.6078 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 30 c pos 0.07",
+      "value": 0.6366,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.07 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.6366 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-benign at layer 30 c pos 0.10",
+      "value": 0.6969,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.10 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.6969 on harmful-benign pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 30 c neg 0.10",
+      "value": 0.2386,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = -0.10 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.2386 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 30 c neg 0.07",
+      "value": 0.3296,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = -0.07 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.3296 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 30 c neg 0.05",
+      "value": 0.3704,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = -0.05 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.3704 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 30 c neg 0.03",
+      "value": 0.4264,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = -0.03 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.4264 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 30 c zero 0.00",
+      "value": 0.5568,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.00 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.5568 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 30 c pos 0.03",
+      "value": 0.6087,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.03 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.6087 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 30 c pos 0.05",
+      "value": 0.7045,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.05 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.7045 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 30 c pos 0.07",
+      "value": 0.7398,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.07 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.7398 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering P chosen harmful-harmful at layer 30 c pos 0.10",
+      "value": 0.7519,
+      "statement": "Default-persona dose-response: at intervention layer 30 with signed steering coefficient c = +0.10 (fraction of L25 mean activation norm), Gemma-3-27B picks Task A at P(task_completed = 'a' | coherent) = 0.7519 on harmful-harmful pairs, averaged across pair_id and ordering.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 30 c neg 0.10",
+      "value": 0.0204,
+      "statement": "At intervention layer 30 with signed steering coefficient c = -0.10, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0204.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 30 c neg 0.10",
+      "value": 0.0102,
+      "statement": "At intervention layer 30 with signed steering coefficient c = -0.10, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0102.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 30 c neg 0.07",
+      "value": 0.0217,
+      "statement": "At intervention layer 30 with signed steering coefficient c = -0.07, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0217.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 30 c neg 0.07",
+      "value": 0.011,
+      "statement": "At intervention layer 30 with signed steering coefficient c = -0.07, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.011.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 30 c neg 0.05",
+      "value": 0.0158,
+      "statement": "At intervention layer 30 with signed steering coefficient c = -0.05, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0158.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 30 c neg 0.05",
+      "value": 0.0123,
+      "statement": "At intervention layer 30 with signed steering coefficient c = -0.05, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0123.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 30 c neg 0.03",
+      "value": 0.021,
+      "statement": "At intervention layer 30 with signed steering coefficient c = -0.03, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.021.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 30 c neg 0.03",
+      "value": 0.0112,
+      "statement": "At intervention layer 30 with signed steering coefficient c = -0.03, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0112.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 30 c zero 0.00",
+      "value": 0.0222,
+      "statement": "At intervention layer 30 with signed steering coefficient c = +0.00, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0222.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 30 c zero 0.00",
+      "value": 0.0107,
+      "statement": "At intervention layer 30 with signed steering coefficient c = +0.00, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0107.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 30 c pos 0.03",
+      "value": 0.0222,
+      "statement": "At intervention layer 30 with signed steering coefficient c = +0.03, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0222.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 30 c pos 0.03",
+      "value": 0.0107,
+      "statement": "At intervention layer 30 with signed steering coefficient c = +0.03, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0107.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 30 c pos 0.05",
+      "value": 0.0212,
+      "statement": "At intervention layer 30 with signed steering coefficient c = +0.05, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0212.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 30 c pos 0.05",
+      "value": 0.0105,
+      "statement": "At intervention layer 30 with signed steering coefficient c = +0.05, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0105.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 30 c pos 0.07",
+      "value": 0.0204,
+      "statement": "At intervention layer 30 with signed steering coefficient c = +0.07, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0204.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 30 c pos 0.07",
+      "value": 0.012,
+      "statement": "At intervention layer 30 with signed steering coefficient c = +0.07, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.012.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering refusal rate at layer 30 c pos 0.10",
+      "value": 0.0207,
+      "statement": "At intervention layer 30 with signed steering coefficient c = +0.10, the hard-refusal rate (share of responses with compliance == 'hard_refusal') pooled across all three pair types is 0.0207.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    },
+    {
+      "name": "Poster steering incoherent rate at layer 30 c pos 0.10",
+      "value": 0.0084,
+      "statement": "At intervention layer 30 with signed steering coefficient c = +0.10, the incoherent-or-error rate (share of responses with compliance in {incoherent, error}) pooled across all three pair types is 0.0084.",
+      "source": "scripts/cross_layer_steering/plot_poster_steering.py",
+      "used_in": [
+        "fig:default-steering"
+      ]
+    }
+  ]
+}

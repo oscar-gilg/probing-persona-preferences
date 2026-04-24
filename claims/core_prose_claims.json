@@ -1,0 +1,121 @@
+{
+  "source": "scripts/paper/claims/compute_core_prose_claims.py",
+  "claims": [
+    {
+      "name": "Legacy task-pool size",
+      "value": 10000,
+      "statement": "The legacy task pool used for the Gemma-3-27B and Qwen-3.5-122B probe-training measurements contains 10,000 pairwise-compared tasks drawn from WildChat, Alpaca, MATH, BailBench, and STRESS-TEST.",
+      "source": "scripts/paper/claims/compute_core_prose_claims.py",
+      "used_in": [
+        "sec:method-revealed"
+      ]
+    },
+    {
+      "name": "Canonical split total size",
+      "value": 6000,
+      "statement": "The canonical persona-sweep split contains 6,000 tasks total, partitioned into 4,000 train / 1,000 eval / 1,000 test.",
+      "source": "scripts/paper/claims/compute_core_prose_claims.py",
+      "used_in": [
+        "sec:shared-setup",
+        "app:splits"
+      ]
+    },
+    {
+      "name": "Canonical split train size",
+      "value": 4000,
+      "statement": "The canonical persona-sweep split reserves 4,000 tasks for probe training per persona.",
+      "source": "scripts/paper/claims/compute_core_prose_claims.py",
+      "used_in": [
+        "sec:shared-setup",
+        "app:splits"
+      ]
+    },
+    {
+      "name": "Canonical split eval size",
+      "value": 1000,
+      "statement": "The canonical persona-sweep split reserves 1,000 tasks for cross-persona probe evaluation.",
+      "source": "scripts/paper/claims/compute_core_prose_claims.py",
+      "used_in": [
+        "sec:shared-setup",
+        "app:splits"
+      ]
+    },
+    {
+      "name": "Canonical split test size",
+      "value": 1000,
+      "statement": "The canonical persona-sweep split reserves 1,000 tasks as a final holdout.",
+      "source": "scripts/paper/claims/compute_core_prose_claims.py",
+      "used_in": [
+        "sec:shared-setup",
+        "app:splits"
+      ]
+    },
+    {
+      "name": "Gemma classification probe layer",
+      "value": 32,
+      "statement": "The Gemma-3-27B classification probe is trained on residual-stream activations at layer 32, at the final prompt token.",
+      "source": "scripts/paper/claims/compute_core_prose_claims.py",
+      "used_in": [
+        "sec:method-revealed",
+        "fig:cross-topic"
+      ]
+    },
+    {
+      "name": "Gemma steering probe layer",
+      "value": 25,
+      "statement": "Gemma-3-27B contrastive steering is applied at residual-stream layer 25.",
+      "source": "scripts/paper/claims/compute_core_prose_claims.py",
+      "used_in": [
+        "sec:method-revealed",
+        "sec:method-val2"
+      ]
+    },
+    {
+      "name": "Qwen classification probe layer",
+      "value": 38,
+      "statement": "The Qwen-3.5-122B classification probe is trained at residual-stream layer 38, one token before the turn boundary (tb-1).",
+      "source": "scripts/paper/claims/compute_core_prose_claims.py",
+      "used_in": [
+        "sec:method-revealed",
+        "fig:cross-topic"
+      ]
+    },
+    {
+      "name": "Persona modulation truth prompt count",
+      "value": 9,
+      "statement": "The full persona-modulation stimulus set covers 9 system-prompt variants in the truth domain.",
+      "source": "scripts/paper/claims/compute_core_prose_claims.py",
+      "used_in": [
+        "app:cross-token"
+      ]
+    },
+    {
+      "name": "Persona modulation harm prompt count",
+      "value": 5,
+      "statement": "The full persona-modulation stimulus set covers 5 system-prompt variants in the harm domain.",
+      "source": "scripts/paper/claims/compute_core_prose_claims.py",
+      "used_in": [
+        "app:cross-token"
+      ]
+    },
+    {
+      "name": "Persona modulation politics prompt count",
+      "value": 9,
+      "statement": "The full persona-modulation stimulus set covers 9 system-prompt variants in the politics domain.",
+      "source": "scripts/paper/claims/compute_core_prose_claims.py",
+      "used_in": [
+        "app:cross-token"
+      ]
+    },
+    {
+      "name": "Persona modulation total prompt count",
+      "value": 23,
+      "statement": "The full persona-modulation stimulus set covers 23 system-prompt variants across truth (9), harm (5), and politics (9).",
+      "source": "scripts/paper/claims/compute_core_prose_claims.py",
+      "used_in": [
+        "sec:induced-roleplay",
+        "app:cross-token"
+      ]
+    }
+  ]
+}

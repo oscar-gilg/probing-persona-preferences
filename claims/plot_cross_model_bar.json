@@ -1,0 +1,156 @@
+{
+  "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+  "claims": [
+    {
+      "name": "Gemma probe heldout r",
+      "value": 0.865,
+      "statement": "A ridge probe on Gemma-3-27B residual-stream activations at the final prompt token (layer 32) predicts held-out Thurstonian utilities at Pearson r on a within-distribution eval split.",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model",
+        "abstract",
+        "sec:shared.intro",
+        "sec:probe-methods"
+      ]
+    },
+    {
+      "name": "Gemma probe cross-topic pooled r",
+      "value": 0.855,
+      "statement": "Leave-one-topic-out pooled Pearson r for the Gemma-3-27B ridge probe (L32, tb-1): predictions from every fold's held-out topic are concatenated and correlated with true Thurstonian utilities.",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model",
+        "abstract",
+        "sec:shared.intro"
+      ]
+    },
+    {
+      "name": "Gemma probe heldout uniform pairwise accuracy",
+      "value": 0.807,
+      "statement": "Uniform-sample pairwise accuracy of the Gemma-3-27B ridge probe (L32) on the within-distribution held-out eval split.",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model"
+      ]
+    },
+    {
+      "name": "Gemma probe cross-topic uniform pairwise accuracy",
+      "value": 0.751,
+      "statement": "Mean across 13 leave-one-topic-out folds of uniform-sample pairwise accuracy restricted to the held-out topic, for the Gemma-3-27B ridge probe (L32). Value carried over from an earlier pipeline run; the current hoo_summary.json lacks the per-fold uniform_hoo_acc field needed to recompute it here.",
+      "source": "manual: Gemma hoo_summary predates uniform_hoo_acc field; see paper/TODO_producers.md",
+      "used_in": [
+        "fig:cross-model"
+      ]
+    },
+    {
+      "name": "Qwen probe heldout r",
+      "value": 0.943,
+      "statement": "A ridge probe on Qwen-3.5-122B residual-stream activations at the turn-boundary tb-1 token (layer 38) predicts held-out Thurstonian utilities at Pearson r on a within-distribution eval split.",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model",
+        "sec:shared.intro"
+      ]
+    },
+    {
+      "name": "Qwen probe cross-topic pooled r",
+      "value": 0.867,
+      "statement": "Leave-one-topic-out pooled Pearson r for the Qwen-3.5-122B ridge probe (L38, tb-1).",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model",
+        "sec:shared.intro"
+      ]
+    },
+    {
+      "name": "Qwen probe heldout uniform pairwise accuracy",
+      "value": 0.823,
+      "statement": "Uniform-sample pairwise accuracy of the Qwen-3.5-122B ridge probe (L38) on the within-distribution held-out eval split.",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model"
+      ]
+    },
+    {
+      "name": "Qwen probe cross-topic uniform pairwise accuracy",
+      "value": 0.722,
+      "statement": "Mean across leave-one-topic-out folds of uniform-sample pairwise accuracy restricted to the held-out topic, for the Qwen-3.5-122B ridge probe (L38).",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model"
+      ]
+    },
+    {
+      "name": "Gemma content baseline heldout r",
+      "value": 0.726,
+      "statement": "A Qwen3-Embedding-8B sentence-transformer content baseline, trained as a ridge probe on Gemma-3-27B Thurstonian utilities, evaluated on the within-distribution held-out eval split.",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model"
+      ]
+    },
+    {
+      "name": "Gemma content baseline cross-topic pooled r",
+      "value": 0.631,
+      "statement": "Leave-one-topic-out pooled Pearson r for the Qwen3-Embedding-8B content baseline trained on Gemma utilities.",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model"
+      ]
+    },
+    {
+      "name": "Gemma content baseline heldout uniform pairwise accuracy",
+      "value": 0.741,
+      "statement": "Uniform-sample pairwise accuracy of the Qwen3-Embedding-8B content baseline on the Gemma held-out eval split.",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model"
+      ]
+    },
+    {
+      "name": "Gemma content baseline cross-topic uniform pairwise accuracy",
+      "value": 0.673,
+      "statement": "Mean across leave-one-topic-out folds of uniform-sample pairwise accuracy restricted to the held-out topic, for the Qwen3-Embedding-8B content baseline trained on Gemma utilities.",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model"
+      ]
+    },
+    {
+      "name": "Qwen content baseline heldout r",
+      "value": 0.894,
+      "statement": "A Qwen3-Embedding-8B sentence-transformer content baseline trained on Qwen-3.5-122B Thurstonian utilities, evaluated on the within-distribution held-out eval split.",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model"
+      ]
+    },
+    {
+      "name": "Qwen content baseline cross-topic pooled r",
+      "value": 0.709,
+      "statement": "Leave-one-topic-out pooled Pearson r for the Qwen3-Embedding-8B content baseline trained on Qwen utilities.",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model"
+      ]
+    },
+    {
+      "name": "Qwen content baseline heldout uniform pairwise accuracy",
+      "value": 0.755,
+      "statement": "Uniform-sample pairwise accuracy of the Qwen3-Embedding-8B content baseline on the Qwen held-out eval split.",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model"
+      ]
+    },
+    {
+      "name": "Qwen content baseline cross-topic uniform pairwise accuracy",
+      "value": 0.634,
+      "statement": "Mean across leave-one-topic-out folds of uniform-sample pairwise accuracy restricted to the held-out topic, for the Qwen3-Embedding-8B content baseline trained on Qwen utilities.",
+      "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
+      "used_in": [
+        "fig:cross-model"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "source": "manual: values transcribed from docs/lw_post/plots/plot_section4_scatters.py (exp1c/exp1d paths) — producer depends on activations/ood and experiments/ood_system_prompts/ which are not synced locally",
+  "claims": [
+    {
+      "name": "Conflict one-sided targeted r",
+      "value": 0.86,
+      "statement": "On Gemma-3-27B, in the one-sided conflict design (8 subjects with mismatched task types under a single-sided system prompt), per-task probe delta (default-persona probe applied under the conflict system prompt) correlates with behavioural delta on targeted tasks at Pearson r=0.86 (recomputed from experiments/ood_system_prompts crossed_preference + exp1_prompts activations, exp1c in plot_section4_scatters.py).",
+      "source": "manual: producer docs/lw_post/plots/plot_section4_scatters.py requires activations/ood and results/ood not present on main",
+      "used_in": [
+        "fig:conflict-opposing-scatter",
+        "app:induced-elaborate"
+      ]
+    },
+    {
+      "name": "Conflict opposing-pair targeted r",
+      "value": 0.88,
+      "statement": "On Gemma-3-27B, in the opposing-pair design (24 subject x task-type pairings with positive-vs-negative system prompts that flip valence of both subject and task type), per-task probe delta correlates with behavioural delta on targeted tasks at Pearson r=0.88 (exp1d in plot_section4_scatters.py).",
+      "source": "manual: producer docs/lw_post/plots/plot_section4_scatters.py requires activations/ood and results/ood not present on main",
+      "used_in": [
+        "fig:conflict-opposing-scatter",
+        "app:induced-elaborate"
+      ]
+    },
+    {
+      "name": "Conflict one-sided subject count",
+      "value": 8,
+      "statement": "Number of subjects in the one-sided conflict design (each subject is paired with mismatched task types under a single-sided system prompt).",
+      "source": "manual: producer docs/lw_post/plots/plot_section4_scatters.py requires activations/ood and results/ood not present on main",
+      "used_in": [
+        "app:induced-elaborate"
+      ]
+    },
+    {
+      "name": "Conflict opposing-pair pairings count",
+      "value": 24,
+      "statement": "Number of subject x task-type pairings in the opposing-pair design (24 pairings, each with positive-vs-negative prompts yielding 48 conditions).",
+      "source": "manual: producer docs/lw_post/plots/plot_section4_scatters.py requires activations/ood and results/ood not present on main",
+      "used_in": [
+        "app:induced-elaborate"
+      ]
+    },
+    {
+      "name": "Conflict opposing-pair conditions count",
+      "value": 48,
+      "statement": "Number of system-prompt conditions in the opposing-pair design (24 pairings x 2 valences = 48 conditions).",
+      "source": "manual: producer docs/lw_post/plots/plot_section4_scatters.py requires activations/ood and results/ood not present on main",
+      "used_in": [
+        "app:induced-elaborate"
+      ]
+    }
+  ]
+}

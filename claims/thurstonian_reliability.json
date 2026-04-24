@@ -1,0 +1,23 @@
+{
+  "source": "scripts/paper/claims/compute_thurstonian_reliability.py",
+  "claims": [
+    {
+      "name": "Thurstonian seed-to-seed r",
+      "value": 0.947,
+      "statement": "Pearson correlation between Thurstonian utilities fit from two independent active-learning runs on the default Gemma-3-27B persona (gemma3_10k_run1 vs gemma3_3k_run2; 1961 overlapping task_ids). Interpreted in the paper as a seed-to-seed reliability estimate for the utility-extraction pipeline.",
+      "source": "scripts/paper/claims/compute_thurstonian_reliability.py",
+      "used_in": [
+        "sec:method-revealed"
+      ]
+    },
+    {
+      "name": "Thurstonian seed-to-seed overlap count",
+      "value": 1961,
+      "statement": "1961 task_ids appear in both Gemma-3-27B active-learning runs used for the Thurstonian seed-to-seed reliability estimate.",
+      "source": "scripts/paper/claims/compute_thurstonian_reliability.py",
+      "used_in": [
+        "sec:method-revealed"
+      ]
+    }
+  ]
+}

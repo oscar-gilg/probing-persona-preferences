@@ -1,0 +1,651 @@
+{
+  "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+  "claims": [
+    {
+      "name": "Default-to-aura classification r",
+      "value": 0.628,
+      "statement": "A ridge probe trained on default-persona Gemma-3-27B residual-stream activations at L32 (end-of-turn selector) predicts aura-persona Thurstonian utilities at Pearson r on the 1k canonical test split.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-aura utility similarity r",
+      "value": 0.453,
+      "statement": "Pearson correlation between default-persona Thurstonian utilities and aura-persona Thurstonian utilities on the same 1k canonical test tasks.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-aura probe-vs-utility gap",
+      "value": 0.175,
+      "statement": "Delta = probe transfer r minus utility-utility r for default → aura; how much the default probe beats the naive utility-similarity baseline at predicting aura preferences.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-mathematician classification r",
+      "value": 0.676,
+      "statement": "A ridge probe trained on default-persona Gemma-3-27B residual-stream activations at L32 (end-of-turn selector) predicts mathematician-persona Thurstonian utilities at Pearson r on the 1k canonical test split.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-mathematician utility similarity r",
+      "value": 0.422,
+      "statement": "Pearson correlation between default-persona Thurstonian utilities and mathematician-persona Thurstonian utilities on the same 1k canonical test tasks.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-mathematician probe-vs-utility gap",
+      "value": 0.255,
+      "statement": "Delta = probe transfer r minus utility-utility r for default → mathematician; how much the default probe beats the naive utility-similarity baseline at predicting mathematician preferences.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-strategist classification r",
+      "value": 0.437,
+      "statement": "A ridge probe trained on default-persona Gemma-3-27B residual-stream activations at L32 (end-of-turn selector) predicts strategist-persona Thurstonian utilities at Pearson r on the 1k canonical test split.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-strategist utility similarity r",
+      "value": 0.348,
+      "statement": "Pearson correlation between default-persona Thurstonian utilities and strategist-persona Thurstonian utilities on the same 1k canonical test tasks.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-strategist probe-vs-utility gap",
+      "value": 0.089,
+      "statement": "Delta = probe transfer r minus utility-utility r for default → strategist; how much the default probe beats the naive utility-similarity baseline at predicting strategist preferences.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-contrarian classification r",
+      "value": 0.314,
+      "statement": "A ridge probe trained on default-persona Gemma-3-27B residual-stream activations at L32 (end-of-turn selector) predicts contrarian-persona Thurstonian utilities at Pearson r on the 1k canonical test split.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-contrarian utility similarity r",
+      "value": 0.237,
+      "statement": "Pearson correlation between default-persona Thurstonian utilities and contrarian-persona Thurstonian utilities on the same 1k canonical test tasks.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-contrarian probe-vs-utility gap",
+      "value": 0.077,
+      "statement": "Delta = probe transfer r minus utility-utility r for default → contrarian; how much the default probe beats the naive utility-similarity baseline at predicting contrarian preferences.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-slacker classification r",
+      "value": 0.373,
+      "statement": "A ridge probe trained on default-persona Gemma-3-27B residual-stream activations at L32 (end-of-turn selector) predicts slacker-persona Thurstonian utilities at Pearson r on the 1k canonical test split.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-slacker utility similarity r",
+      "value": 0.197,
+      "statement": "Pearson correlation between default-persona Thurstonian utilities and slacker-persona Thurstonian utilities on the same 1k canonical test tasks.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-slacker probe-vs-utility gap",
+      "value": 0.175,
+      "statement": "Delta = probe transfer r minus utility-utility r for default → slacker; how much the default probe beats the naive utility-similarity baseline at predicting slacker preferences.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-sadist classification r",
+      "value": 0.243,
+      "statement": "A ridge probe trained on default-persona Gemma-3-27B residual-stream activations at L32 (end-of-turn selector) predicts sadist-persona Thurstonian utilities at Pearson r on the 1k canonical test split.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-sadist utility similarity r",
+      "value": -0.146,
+      "statement": "Pearson correlation between default-persona Thurstonian utilities and sadist-persona Thurstonian utilities on the same 1k canonical test tasks.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default-to-sadist probe-vs-utility gap",
+      "value": 0.389,
+      "statement": "Delta = probe transfer r minus utility-utility r for default → sadist; how much the default probe beats the naive utility-similarity baseline at predicting sadist preferences.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default probe classification r minimum across personas",
+      "value": 0.243,
+      "statement": "Minimum across the six non-default personas of the default probe's Pearson r predicting that persona's held-out Thurstonian utilities (eot, L32).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default probe classification r maximum across personas",
+      "value": 0.676,
+      "statement": "Maximum across the six non-default personas of the default probe's Pearson r predicting that persona's held-out Thurstonian utilities (eot, L32).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default probe gap minimum across personas",
+      "value": 0.077,
+      "statement": "Minimum across the six non-default personas of the probe-minus-utility delta — the smallest bonus the default probe offers over the utility-similarity baseline.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Default probe gap maximum across personas",
+      "value": 0.389,
+      "statement": "Maximum across the six non-default personas of the probe-minus-utility delta — the largest bonus the default probe offers over the utility-similarity baseline.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:default-probe",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Persona-transfer diagonal r minimum",
+      "value": 0.549,
+      "statement": "Minimum across the 7 persona self-fit cells of the probe's held-out Pearson r — attained by contrarian (eot, L32).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-transfer-bonus",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Persona-transfer diagonal r minimum persona",
+      "value": "contrarian",
+      "statement": "Persona achieving the minimum self-fit Pearson r in the 7x7 transfer matrix (eot, L32).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-transfer-bonus",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Persona-transfer diagonal r maximum",
+      "value": 0.913,
+      "statement": "Maximum across the 7 persona self-fit cells of the probe's held-out Pearson r — attained by mathematician (eot, L32).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-transfer-bonus",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Persona-transfer diagonal r maximum persona",
+      "value": "mathematician",
+      "statement": "Persona achieving the maximum self-fit Pearson r in the 7x7 transfer matrix (eot, L32).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-transfer-bonus",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Persona-transfer off-diagonal mean r",
+      "value": 0.445,
+      "statement": "Mean probe transfer Pearson r across the 42 ordered off-diagonal (train, eval) persona pairs at eot / L32.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-transfer-bonus",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Persona-transfer positive-bonus pair count",
+      "value": 42,
+      "statement": "Number of ordered off-diagonal (train, eval) persona pairs (out of 42) for which probe transfer r strictly exceeds the utility-utility r between the two personas (eot, L32).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-transfer-bonus",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Persona-transfer off-diagonal pair count",
+      "value": 42,
+      "statement": "Number of ordered off-diagonal (train, eval) persona pairs used to summarise transfer (7 personas, self-pairs excluded).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-transfer-bonus",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Persona default mean outbound r across layers",
+      "value": 0.399,
+      "statement": "Mean across layers {25,32,39,46,53} of persona default's outbound transfer: the average Pearson r of its probe evaluated on each of the other six personas (eot selector, 6 off-diagonal pairs per layer).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-layer"
+      ]
+    },
+    {
+      "name": "Persona default mean inbound r across layers",
+      "value": 0.464,
+      "statement": "Mean across layers {25,32,39,46,53} of persona default's inbound transfer: the average Pearson r of the other six personas' probes evaluated on default's utilities (eot selector).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-layer"
+      ]
+    },
+    {
+      "name": "Persona aura mean outbound r across layers",
+      "value": 0.425,
+      "statement": "Mean across layers {25,32,39,46,53} of persona aura's outbound transfer: the average Pearson r of its probe evaluated on each of the other six personas (eot selector, 6 off-diagonal pairs per layer).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-layer"
+      ]
+    },
+    {
+      "name": "Persona aura mean inbound r across layers",
+      "value": 0.487,
+      "statement": "Mean across layers {25,32,39,46,53} of persona aura's inbound transfer: the average Pearson r of the other six personas' probes evaluated on aura's utilities (eot selector).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-layer"
+      ]
+    },
+    {
+      "name": "Persona mathematician mean outbound r across layers",
+      "value": 0.391,
+      "statement": "Mean across layers {25,32,39,46,53} of persona mathematician's outbound transfer: the average Pearson r of its probe evaluated on each of the other six personas (eot selector, 6 off-diagonal pairs per layer).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-layer"
+      ]
+    },
+    {
+      "name": "Persona mathematician mean inbound r across layers",
+      "value": 0.635,
+      "statement": "Mean across layers {25,32,39,46,53} of persona mathematician's inbound transfer: the average Pearson r of the other six personas' probes evaluated on mathematician's utilities (eot selector).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-layer"
+      ]
+    },
+    {
+      "name": "Persona strategist mean outbound r across layers",
+      "value": 0.511,
+      "statement": "Mean across layers {25,32,39,46,53} of persona strategist's outbound transfer: the average Pearson r of its probe evaluated on each of the other six personas (eot selector, 6 off-diagonal pairs per layer).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-layer"
+      ]
+    },
+    {
+      "name": "Persona strategist mean inbound r across layers",
+      "value": 0.406,
+      "statement": "Mean across layers {25,32,39,46,53} of persona strategist's inbound transfer: the average Pearson r of the other six personas' probes evaluated on strategist's utilities (eot selector).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-layer"
+      ]
+    },
+    {
+      "name": "Persona contrarian mean outbound r across layers",
+      "value": 0.534,
+      "statement": "Mean across layers {25,32,39,46,53} of persona contrarian's outbound transfer: the average Pearson r of its probe evaluated on each of the other six personas (eot selector, 6 off-diagonal pairs per layer).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-layer"
+      ]
+    },
+    {
+      "name": "Persona contrarian mean inbound r across layers",
+      "value": 0.321,
+      "statement": "Mean across layers {25,32,39,46,53} of persona contrarian's inbound transfer: the average Pearson r of the other six personas' probes evaluated on contrarian's utilities (eot selector).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-layer"
+      ]
+    },
+    {
+      "name": "Persona slacker mean outbound r across layers",
+      "value": 0.2,
+      "statement": "Mean across layers {25,32,39,46,53} of persona slacker's outbound transfer: the average Pearson r of its probe evaluated on each of the other six personas (eot selector, 6 off-diagonal pairs per layer).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-layer"
+      ]
+    },
+    {
+      "name": "Persona slacker mean inbound r across layers",
+      "value": 0.285,
+      "statement": "Mean across layers {25,32,39,46,53} of persona slacker's inbound transfer: the average Pearson r of the other six personas' probes evaluated on slacker's utilities (eot selector).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-layer"
+      ]
+    },
+    {
+      "name": "Persona sadist mean outbound r across layers",
+      "value": 0.396,
+      "statement": "Mean across layers {25,32,39,46,53} of persona sadist's outbound transfer: the average Pearson r of its probe evaluated on each of the other six personas (eot selector, 6 off-diagonal pairs per layer).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-layer"
+      ]
+    },
+    {
+      "name": "Persona sadist mean inbound r across layers",
+      "value": 0.258,
+      "statement": "Mean across layers {25,32,39,46,53} of persona sadist's inbound transfer: the average Pearson r of the other six personas' probes evaluated on sadist's utilities (eot selector).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-layer"
+      ]
+    },
+    {
+      "name": "Transfer asymmetry maximum absolute gap",
+      "value": 0.452,
+      "statement": "Maximum absolute difference |r(A→B) − r(B→A)| across the 21 unordered persona pairs at eot, layer 32.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-asymmetry"
+      ]
+    },
+    {
+      "name": "Transfer asymmetry mean absolute gap",
+      "value": 0.192,
+      "statement": "Mean absolute difference |r(A→B) − r(B→A)| across the 21 unordered persona pairs at eot, layer 32.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-asymmetry"
+      ]
+    },
+    {
+      "name": "Transfer asymmetry median absolute gap",
+      "value": 0.191,
+      "statement": "Median absolute difference |r(A→B) − r(B→A)| across the 21 unordered persona pairs at eot, layer 32 — quoted in the caption of the asymmetry figure.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-asymmetry"
+      ]
+    },
+    {
+      "name": "Mean off-diagonal transfer r at L25",
+      "value": 0.375,
+      "statement": "Mean Pearson r across the 42 ordered off-diagonal (train, eval) persona pairs at the end-of-turn selector, layer 25.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-transfer-per-layer",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Mean off-diagonal transfer r at L32",
+      "value": 0.445,
+      "statement": "Mean Pearson r across the 42 ordered off-diagonal (train, eval) persona pairs at the end-of-turn selector, layer 32.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-transfer-per-layer",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Mean off-diagonal transfer r at L39",
+      "value": 0.427,
+      "statement": "Mean Pearson r across the 42 ordered off-diagonal (train, eval) persona pairs at the end-of-turn selector, layer 39.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-transfer-per-layer",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Mean off-diagonal transfer r at L46",
+      "value": 0.402,
+      "statement": "Mean Pearson r across the 42 ordered off-diagonal (train, eval) persona pairs at the end-of-turn selector, layer 46.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-transfer-per-layer",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Mean off-diagonal transfer r at L53",
+      "value": 0.391,
+      "statement": "Mean Pearson r across the 42 ordered off-diagonal (train, eval) persona pairs at the end-of-turn selector, layer 53.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-transfer-per-layer",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Corr bias raw mean r pred-train",
+      "value": 0.674,
+      "statement": "Mean raw Pearson r between the probe's prediction vector and the training persona's Thurstonian utilities, averaged over the 30 ordered non-default (T, E) pairs with T != E and both non-default (eot, L32).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-raw-partial",
+        "app:persona-bias"
+      ]
+    },
+    {
+      "name": "Corr bias raw mean r pred-default",
+      "value": 0.375,
+      "statement": "Mean raw Pearson r between the probe's prediction vector and the default assistant's Thurstonian utilities, averaged over the 30 ordered non-default (T, E) pairs (eot, L32).",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-raw-partial",
+        "app:persona-bias"
+      ]
+    },
+    {
+      "name": "Corr bias raw pairs on train-favouring side",
+      "value": 28,
+      "statement": "Count of non-default (T, E) pairs (out of 30) for which the raw r(pred, train) exceeds r(pred, default) — pairs lying below the y = x diagonal in the left panel of the corr-bias figure.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-raw-partial",
+        "app:persona-bias"
+      ]
+    },
+    {
+      "name": "Corr bias non-default pair count",
+      "value": 30,
+      "statement": "Number of ordered (T, E) persona pairs with T != E and both non-default, used in both panels of the corr-bias figure.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-raw-partial",
+        "app:persona-bias"
+      ]
+    },
+    {
+      "name": "Corr bias partial mean r pred-train given eval",
+      "value": 0.672,
+      "statement": "Mean partial Pearson r(pred, train | eval) across the 30 non-default (T, E) pairs at eot, L32: the probe's residual alignment with the training persona after regressing out the eval persona's utilities.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-raw-partial",
+        "app:persona-bias",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Corr bias partial mean r pred-default given eval",
+      "value": 0.293,
+      "statement": "Mean partial Pearson r(pred, default | eval) across the 30 non-default (T, E) pairs at eot, L32: the probe's residual alignment with the default assistant after regressing out the eval persona's utilities.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-raw-partial",
+        "app:persona-bias"
+      ]
+    },
+    {
+      "name": "Corr bias partial pairs on train-favouring side",
+      "value": 30,
+      "statement": "Count of non-default (T, E) pairs (out of 30) for which the partial r(pred, train | eval) exceeds the partial r(pred, default | eval) — the '30/30' unanimity quoted in the caption and prose.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-raw-partial",
+        "app:persona-bias",
+        "sec:shared-probe"
+      ]
+    },
+    {
+      "name": "Double-partial bias toward mathematician",
+      "value": 0.245,
+      "statement": "Mean double-partial Pearson r(pred, u_mathematician | u_E, u_T) across the 30 ordered (T, E) non-default persona pairs at eot, L32: the probe prediction's residual alignment with mathematician's utilities after controlling for both the eval and train personas' utilities.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-observers",
+        "app:persona-bias"
+      ]
+    },
+    {
+      "name": "Double-partial bias toward default",
+      "value": 0.199,
+      "statement": "Mean double-partial Pearson r(pred, u_default | u_E, u_T) across the 30 ordered (T, E) non-default persona pairs at eot, L32: the probe prediction's residual alignment with default's utilities after controlling for both the eval and train personas' utilities.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-observers",
+        "app:persona-bias"
+      ]
+    },
+    {
+      "name": "Double-partial bias toward strategist",
+      "value": 0.184,
+      "statement": "Mean double-partial Pearson r(pred, u_strategist | u_E, u_T) across the 30 ordered (T, E) non-default persona pairs at eot, L32: the probe prediction's residual alignment with strategist's utilities after controlling for both the eval and train personas' utilities.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-observers",
+        "app:persona-bias"
+      ]
+    },
+    {
+      "name": "Double-partial bias toward aura",
+      "value": 0.184,
+      "statement": "Mean double-partial Pearson r(pred, u_aura | u_E, u_T) across the 30 ordered (T, E) non-default persona pairs at eot, L32: the probe prediction's residual alignment with aura's utilities after controlling for both the eval and train personas' utilities.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-observers",
+        "app:persona-bias"
+      ]
+    },
+    {
+      "name": "Double-partial bias toward contrarian",
+      "value": 0.096,
+      "statement": "Mean double-partial Pearson r(pred, u_contrarian | u_E, u_T) across the 30 ordered (T, E) non-default persona pairs at eot, L32: the probe prediction's residual alignment with contrarian's utilities after controlling for both the eval and train personas' utilities.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-observers",
+        "app:persona-bias"
+      ]
+    },
+    {
+      "name": "Double-partial bias toward slacker",
+      "value": 0.071,
+      "statement": "Mean double-partial Pearson r(pred, u_slacker | u_E, u_T) across the 30 ordered (T, E) non-default persona pairs at eot, L32: the probe prediction's residual alignment with slacker's utilities after controlling for both the eval and train personas' utilities.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-observers",
+        "app:persona-bias"
+      ]
+    },
+    {
+      "name": "Double-partial bias toward sadist",
+      "value": -0.098,
+      "statement": "Mean double-partial Pearson r(pred, u_sadist | u_E, u_T) across the 30 ordered (T, E) non-default persona pairs at eot, L32: the probe prediction's residual alignment with sadist's utilities after controlling for both the eval and train personas' utilities.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-observers",
+        "app:persona-bias"
+      ]
+    },
+    {
+      "name": "Train self-bias partial r pred-train given eval",
+      "value": 0.648,
+      "statement": "Mean partial r(pred, u_T | u_E) across all 42 ordered off-diagonal (T, E) persona pairs at eot, L32 — the green dashed reference line in the full-bias figure; the 'partial r = 0.67' quoted in the main-text paragraph on probe bias.",
+      "source": "experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py",
+      "used_in": [
+        "fig:persona-bias-observers",
+        "app:persona-bias",
+        "sec:shared-probe"
+      ]
+    }
+  ]
+}

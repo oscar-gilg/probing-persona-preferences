@@ -1,0 +1,45 @@
+{
+  "source": "scripts/paper/claims/compute_steering_p_chosen.py",
+  "claims": [
+    {
+      "name": "Steering P chosen given coherent at |c| 0.05 benign",
+      "value": 1.0,
+      "statement": "At steering layer 25 with |c| = 0.05 of the mean activation norm, contrastive steering along the default-persona probe direction makes Gemma-3-27B pick the positively-steered task at P(chosen | coherent) = 1.0 on benign-benign pairs.",
+      "source": "scripts/paper/claims/compute_steering_p_chosen.py",
+      "used_in": [
+        "sec:method-val2",
+        "abstract",
+        "sec:shared.intro"
+      ]
+    },
+    {
+      "name": "Steering P chosen given coherent at |c| 0.05 harmful-benign",
+      "value": 0.972,
+      "statement": "On harmful-benign pairs at layer 25 with |c| = 0.05, contrastive steering makes Gemma pick the positively-steered task at P(chosen | coherent) = 0.972.",
+      "source": "scripts/paper/claims/compute_steering_p_chosen.py",
+      "used_in": [
+        "sec:method-val2"
+      ]
+    },
+    {
+      "name": "Steering P chosen given coherent at |c| 0.05 harmful-harmful",
+      "value": 0.975,
+      "statement": "On harmful-harmful pairs at layer 25 with |c| = 0.05, contrastive steering makes Gemma pick the positively-steered task at P(chosen | coherent) = 0.975.",
+      "source": "scripts/paper/claims/compute_steering_p_chosen.py",
+      "used_in": [
+        "sec:method-val2"
+      ]
+    },
+    {
+      "name": "Steering P chosen given coherent minimum across pair types",
+      "value": 0.972,
+      "statement": "The minimum of P(chosen | coherent) across benign-benign, harmful-benign, and harmful-harmful pair types at layer 25 and |c| = 0.05 is 0.972 (lower bound for the repeated 'P >= 0.96' claim in the paper).",
+      "source": "scripts/paper/claims/compute_steering_p_chosen.py",
+      "used_in": [
+        "sec:method-val2",
+        "abstract",
+        "sec:shared.intro"
+      ]
+    }
+  ]
+}
