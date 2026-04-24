@@ -10,7 +10,7 @@
         "fig:harm-truth",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:37+00:00",
+      "computed_at": "2026-04-24T18:12:21+00:00",
       "data_paths": [
         "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
       ],
@@ -25,7 +25,7 @@
         "fig:harm-truth",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:37+00:00",
+      "computed_at": "2026-04-24T18:12:21+00:00",
       "data_paths": [
         "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
       ],
@@ -40,26 +40,25 @@
         "fig:harm-truth",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:37+00:00",
+      "computed_at": "2026-04-24T18:12:21+00:00",
       "data_paths": [
         "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
       ],
       "derivation": "count of items with domain=='truth', turn=='user', condition=='false'."
     },
     {
-      "name": "BailBench harm Cohen's d",
-      "value": -2.05,
-      "statement": "A ridge probe trained at the end-of-turn token (Gemma-3-27B, layer 39) discriminates harmful vs benign BailBench and stress-test items with Cohen's d under the default (neutral) persona; negative sign reflects the benign>harmful projection convention in the scoring pipeline.",
+      "name": "BailBench harm absolute Cohen's d",
+      "value": 2.05,
+      "statement": "Magnitude of the end-of-turn probe's Cohen's d (Gemma-3-27B, layer 39) discriminating harmful vs benign BailBench and stress-test items under the default persona; reported as |d| in sec:induced-roleplay.",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
-        "fig:harm-truth",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:37+00:00",
+      "computed_at": "2026-04-24T18:12:21+00:00",
       "data_paths": [
         "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
       ],
-      "derivation": "items with domain=='harm' pooled over turn; take `eot_scores[\"tb-5_L39\"]`; pooled Cohen's d(harmful, benign); round to 2dp."
+      "derivation": "Same as the signed harm Cohen's d derivation but report abs(value); round to 2dp."
     },
     {
       "name": "BailBench harm n harmful",
@@ -69,7 +68,7 @@
       "used_in": [
         "fig:harm-truth"
       ],
-      "computed_at": "2026-04-24T14:16:37+00:00",
+      "computed_at": "2026-04-24T18:12:21+00:00",
       "data_paths": [
         "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
       ],
@@ -83,7 +82,7 @@
       "used_in": [
         "fig:harm-truth"
       ],
-      "computed_at": "2026-04-24T14:16:37+00:00",
+      "computed_at": "2026-04-24T18:12:21+00:00",
       "data_paths": [
         "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
       ],
@@ -98,7 +97,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:37+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
       ],
@@ -113,7 +112,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:37+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
       ],
@@ -128,7 +127,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:37+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
       ],
@@ -143,7 +142,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:37+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
       ],
@@ -158,7 +157,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:37+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
       ],
@@ -173,7 +172,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:37+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/system_prompt_modulation_v2/politics_scoring_results.json"
       ],
@@ -188,7 +187,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:37+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/system_prompt_modulation_v2/politics_scoring_results.json"
       ],
@@ -232,7 +231,7 @@
       "used_in": [
         "fig:persona-modulation-full"
       ],
-      "computed_at": "2026-04-24T14:16:38+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json",
         "experiments/token_level_probes/system_prompt_modulation_v2/politics_scoring_results.json"
@@ -244,22 +243,22 @@
       "value": {
         "truth": {
           "end-of-turn probe": 1.45,
-          "model-marker probe": 1.3,
+          "role-marker probe": 1.3,
           "task-averaged probe": 3.14
         },
         "harm": {
           "end-of-turn probe": -2.05,
-          "model-marker probe": -1.52,
+          "role-marker probe": -1.52,
           "task-averaged probe": -2.27
         },
         "politics_democrat": {
           "end-of-turn probe": 2.72,
-          "model-marker probe": 2.18,
+          "role-marker probe": 2.18,
           "task-averaged probe": 3.4
         },
         "politics_republican": {
           "end-of-turn probe": -1.11,
-          "model-marker probe": -1.44,
+          "role-marker probe": -1.44,
           "task-averaged probe": -1.76
         }
       },
@@ -268,25 +267,11 @@
       "used_in": [
         "fig:cross-training"
       ],
-      "computed_at": "2026-04-24T14:16:38+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/headline_table.csv"
       ],
       "derivation": "For each (domain, probe_family_prefix) cell: select the row matching domain and probe prefix from headline_table.csv; read `d`; flip sign for non-parent politics rows (right>left → left>right); round to 2dp."
-    },
-    {
-      "name": "CREAK truth n claims prose",
-      "value": 88,
-      "statement": "Approximate per-class sample size quoted in sec:induced-roleplay for CREAK true vs false claims at the user turn (also the n used in the base discrimination panel).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "sec:induced-roleplay"
-      ],
-      "computed_at": "2026-04-24T14:16:38+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
-      ],
-      "derivation": "row with domain=='truth (user)' and probe=='tb-5_L32'; `n_pos` column."
     },
     {
       "name": "CREAK truth CV accuracy",
@@ -296,7 +281,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:38+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
@@ -310,7 +295,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:38+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
@@ -324,7 +309,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:38+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
@@ -338,7 +323,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T14:16:38+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
@@ -361,7 +346,7 @@
       "used_in": [
         "fig:per-turn-cross"
       ],
-      "computed_at": "2026-04-24T14:16:38+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/headline_table.csv"
       ],
@@ -372,11 +357,11 @@
       "value": {
         "user": {
           "end-of-turn probe": 3.35,
-          "model-marker probe": 3.73
+          "role-marker probe": 3.73
         },
         "assistant": {
           "end-of-turn probe": 2.47,
-          "model-marker probe": 2.58
+          "role-marker probe": 2.58
         }
       },
       "statement": "Absolute Cohen's d at the end-of-turn token on the truth stimuli, one cell per (turn, probe family); rendered as bars in the per-turn appendix figure.",
@@ -384,7 +369,7 @@
       "used_in": [
         "fig:per-turn-cross"
       ],
-      "computed_at": "2026-04-24T14:16:38+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
@@ -395,11 +380,11 @@
       "value": {
         "user": {
           "end-of-turn probe": 2.05,
-          "model-marker probe": 3.12
+          "role-marker probe": 3.12
         },
         "assistant": {
           "end-of-turn probe": 2.12,
-          "model-marker probe": 0.51
+          "role-marker probe": 0.51
         }
       },
       "statement": "Absolute Cohen's d at the end-of-turn token on the harm stimuli, one cell per (turn, probe family); rendered as bars in the per-turn appendix figure.",
@@ -408,7 +393,7 @@
         "fig:per-turn-cross",
         "app:cross-token"
       ],
-      "computed_at": "2026-04-24T14:16:38+00:00",
+      "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
