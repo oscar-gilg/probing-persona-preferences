@@ -1,0 +1,271 @@
+{
+  "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
+  "claims": [
+    {
+      "name": "Cross persona unilateral mean swing at c 0.05",
+      "value": {
+        "aura": 0.383,
+        "contrarian": 0.225,
+        "mathematician": 0.148,
+        "sadist": 0.238,
+        "slacker": 0.453,
+        "strategist": 0.432
+      },
+      "statement": "Under each of the 6 canonical persona system prompts, unilateral steering along that persona's own ridge_L25 probe (tb-5 selector, injected at layer 25) produces a mean swing |P(+5%) − P(−5%)| in P(picked steered task), averaged across first-span and second-span injection (which removes position bias).",
+      "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
+      "used_in": [
+        "sec:shared-steering",
+        "fig:cross-persona-steering"
+      ],
+      "computed_at": "2026-04-24T18:15:15+00:00",
+      "data_paths": [
+        "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/mathematician.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/sadist.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/slacker.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/strategist.parsed.jsonl"
+      ],
+      "derivation": "For each persona, load {persona}.parsed.jsonl; compute P(picked steered task) per (condition, coef) where coef = signed_multiplier × (+1 if ordering==0 else −1); first-span target = a if ordering==0 else b; second-span target = the other; mean swing = [(first_{+0.05}−first_{−0.05}) + (second_{+0.05}−second_{−0.05})] / 2; round to 3dp."
+    },
+    {
+      "name": "Cross persona unilateral first span swing at c 0.05",
+      "value": {
+        "aura": 0.262,
+        "contrarian": 0.082,
+        "mathematician": 0.143,
+        "sadist": 0.213,
+        "slacker": 0.383,
+        "strategist": 0.405
+      },
+      "statement": "Per-persona first-span unilateral steering swing at |c|=0.05: P(picked first-span task | +5%) − P(picked first-span task | −5%). Reflects the mix of probe-driven effect and baseline position bias.",
+      "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
+      "used_in": [
+        "sec:shared-steering"
+      ],
+      "computed_at": "2026-04-24T18:15:15+00:00",
+      "data_paths": [
+        "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/mathematician.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/sadist.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/slacker.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/strategist.parsed.jsonl"
+      ],
+      "derivation": "For each persona, load {persona}.parsed.jsonl; compute P(picked first-span task) at coef=+0.05 and coef=−0.05 for the unilateral_first condition; swing = diff; 3dp."
+    },
+    {
+      "name": "Cross persona unilateral second span swing at c 0.05",
+      "value": {
+        "aura": 0.505,
+        "contrarian": 0.368,
+        "mathematician": 0.152,
+        "sadist": 0.262,
+        "slacker": 0.522,
+        "strategist": 0.458
+      },
+      "statement": "Per-persona second-span unilateral steering swing at |c|=0.05: P(picked second-span task | +5%) − P(picked second-span task | −5%). Reflects the mix of probe-driven effect and baseline position bias.",
+      "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
+      "used_in": [
+        "sec:shared-steering"
+      ],
+      "computed_at": "2026-04-24T18:15:15+00:00",
+      "data_paths": [
+        "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/mathematician.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/sadist.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/slacker.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/strategist.parsed.jsonl"
+      ],
+      "derivation": "For each persona, load {persona}.parsed.jsonl; compute P(picked second-span task) at coef=+0.05 and coef=−0.05 for the unilateral_second condition; swing = diff; 3dp."
+    },
+    {
+      "name": "Cross persona no steering baseline first span",
+      "value": {
+        "aura": 0.503,
+        "contrarian": 0.322,
+        "mathematician": 0.538,
+        "sadist": 0.383,
+        "slacker": 0.561,
+        "strategist": 0.513
+      },
+      "statement": "Per-persona empirical baseline P(pick first-presented task) under no steering, measured via 600 OpenRouter API generations (100 pairs × 2 orderings × 3 trials) with each persona's system prompt and the completion_preference template.",
+      "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
+      "used_in": [
+        "sec:shared-steering",
+        "fig:cross-persona-steering"
+      ],
+      "computed_at": "2026-04-24T18:15:15+00:00",
+      "data_paths": [
+        "experiments/cross_persona_unilateral/checkpoints/aura_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/contrarian_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/mathematician_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/sadist_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/slacker_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/strategist_baseline.parsed.jsonl"
+      ],
+      "derivation": "For each persona, load {persona}_baseline.parsed.jsonl; filter out refusals; target = first-span physical task (a if ordering==0 else b); P(first) = mean(choice_original == target); round to 3dp."
+    },
+    {
+      "name": "Cross persona no steering baseline second span",
+      "value": {
+        "aura": 0.497,
+        "contrarian": 0.678,
+        "mathematician": 0.462,
+        "sadist": 0.617,
+        "slacker": 0.439,
+        "strategist": 0.487
+      },
+      "statement": "Per-persona empirical baseline P(pick second-presented task) under no steering, measured via 600 OpenRouter API generations per persona.",
+      "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
+      "used_in": [
+        "sec:shared-steering",
+        "fig:cross-persona-steering"
+      ],
+      "computed_at": "2026-04-24T18:15:15+00:00",
+      "data_paths": [
+        "experiments/cross_persona_unilateral/checkpoints/aura_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/contrarian_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/mathematician_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/sadist_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/slacker_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/strategist_baseline.parsed.jsonl"
+      ],
+      "derivation": "For each persona, load {persona}_baseline.parsed.jsonl; filter out refusals; target = second-span physical task (b if ordering==0 else a); P(second) = mean(choice_original == target); round to 3dp."
+    },
+    {
+      "name": "Cross persona unilateral strongest persona",
+      "value": "slacker",
+      "statement": "The canonical persona with the largest mean unilateral steering swing at |c|=0.05.",
+      "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
+      "used_in": [
+        "sec:shared-steering"
+      ],
+      "computed_at": "2026-04-24T18:15:15+00:00",
+      "data_paths": [
+        "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/mathematician.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/sadist.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/slacker.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/strategist.parsed.jsonl"
+      ],
+      "derivation": "argmax over mean_swing dict."
+    },
+    {
+      "name": "Cross persona unilateral weakest persona",
+      "value": "mathematician",
+      "statement": "The canonical persona with the smallest (still non-zero) mean unilateral swing at |c|=0.05.",
+      "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
+      "used_in": [
+        "sec:shared-steering"
+      ],
+      "computed_at": "2026-04-24T18:15:15+00:00",
+      "data_paths": [
+        "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/mathematician.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/sadist.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/slacker.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/strategist.parsed.jsonl"
+      ],
+      "derivation": "argmin over mean_swing dict."
+    },
+    {
+      "name": "Cross persona unilateral swing ratio max over min",
+      "value": 3.06,
+      "statement": "Ratio of the strongest persona's mean unilateral swing to the weakest persona's mean unilateral swing at |c|=0.05.",
+      "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
+      "used_in": [
+        "sec:shared-steering"
+      ],
+      "computed_at": "2026-04-24T18:15:15+00:00",
+      "data_paths": [
+        "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/mathematician.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/sadist.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/slacker.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/strategist.parsed.jsonl"
+      ],
+      "derivation": "mean_swing[strongest] / mean_swing[weakest]; round to 2dp."
+    },
+    {
+      "name": "Cross persona max position bias persona",
+      "value": "contrarian",
+      "statement": "The persona with the largest no-steering position bias (|P(first) − P(second)|).",
+      "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
+      "used_in": [
+        "sec:shared-steering"
+      ],
+      "computed_at": "2026-04-24T18:15:15+00:00",
+      "data_paths": [
+        "experiments/cross_persona_unilateral/checkpoints/aura_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/contrarian_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/mathematician_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/sadist_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/slacker_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/strategist_baseline.parsed.jsonl"
+      ],
+      "derivation": "argmax |base_first[p] − base_second[p]|."
+    },
+    {
+      "name": "Cross persona max position bias magnitude",
+      "value": 0.356,
+      "statement": "Maximum persona-level no-steering position bias: |P(first) − P(second)| under the contrarian prompt. Measured from 600 API generations with no steering.",
+      "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
+      "used_in": [
+        "sec:shared-steering"
+      ],
+      "computed_at": "2026-04-24T18:15:15+00:00",
+      "data_paths": [
+        "experiments/cross_persona_unilateral/checkpoints/aura_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/contrarian_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/mathematician_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/sadist_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/slacker_baseline.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/strategist_baseline.parsed.jsonl"
+      ],
+      "derivation": "max_p |base_first[p] − base_second[p]|; round to 3dp."
+    },
+    {
+      "name": "Cross persona unilateral n personas",
+      "value": 6,
+      "statement": "Number of canonical personas tested in the cross-persona unilateral steering experiment (aura, contrarian, mathematician, sadist, slacker, strategist).",
+      "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
+      "used_in": [
+        "sec:shared-steering"
+      ],
+      "computed_at": "2026-04-24T18:15:15+00:00",
+      "data_paths": [
+        "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/mathematician.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/sadist.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/slacker.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/strategist.parsed.jsonl"
+      ],
+      "derivation": "len(PERSONAS) where PERSONAS is the canonical 6-persona list from persona_sweep_final_six."
+    },
+    {
+      "name": "Cross persona unilateral injection layer",
+      "value": 25,
+      "statement": "Residual-stream layer at which the per-persona ridge probe direction is injected for the cross-persona unilateral steering experiment on Gemma-3-27B.",
+      "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
+      "used_in": [
+        "sec:shared-steering"
+      ],
+      "computed_at": "2026-04-24T18:15:15+00:00",
+      "data_paths": [
+        "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/mathematician.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/sadist.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/slacker.parsed.jsonl",
+        "experiments/cross_persona_unilateral/checkpoints/strategist.parsed.jsonl"
+      ],
+      "derivation": "Fixed hyperparameter: layer 25 (closest available per-persona probe to the L23 peak from the layer sweep)."
+    }
+  ]
+}
