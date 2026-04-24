@@ -1,0 +1,255 @@
+{
+  "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+  "claims": [
+    {
+      "name": "Contrastive swing L23 bb",
+      "value": 0.997,
+      "statement": "At layer 23 with $|c| = 5\\%$, contrastive steering along the eot probe produces a 1.00-point swing in $P(\\text{chose steered task} \\mid \\text{responded})$ on benign-benign pairs (n=50) of the harm-breakdown 150-pair set.",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
+        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
+      ],
+      "derivation": "Filter to layer==23 in the contrastive parsed.jsonl; keep rows where the pair's pair_type=='bb' (via steering_pairs_150.json); compute P(choice_original=='a') separately at signed_multiplier ==+0.05 and ==-0.05; return |P@+0.05 - P@-0.05|; round to 3dp."
+    },
+    {
+      "name": "Single task swing L23 bb",
+      "value": 0.492,
+      "statement": "At layer 23, single-task steering produces a 0.49-point swing in $P(\\text{chose steered task} \\mid \\text{responded})$ on benign-benign pairs between $c = -5\\%$ (0.005) and $c = +5\\%$ (0.497).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
+        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
+        "experiments/layer_sweep/steering_pairs.json"
+      ],
+      "derivation": "Filter single_task_L23_150.parsed.jsonl to layer==23 and pair_type=='bb'. For each row compute applied_c = signed_multiplier * (1 if ordering==0 else -1) and target = 'a' if first-span ordering==0 else 'b' (analogous for second-span). Aggregate P(choice_original==target) at applied_c==+0.05 and ==-0.05; swing = P(+) - P(-); round to 3dp."
+    },
+    {
+      "name": "Single task suppression L23 bb",
+      "value": 0.495,
+      "statement": "At layer 23 on benign-benign pairs, $c = -5\\%$ drops P(chose steered task) by 0.49 below the pair-type-matched no-steering baseline (0.5 → 0.005).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
+        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
+        "experiments/layer_sweep/steering_pairs.json"
+      ],
+      "derivation": "Baseline: parent-sweep unilateral rows at dead layers [2, 5, 8, 11, 14, 35, 38, 41, 44, 47, 50, 53, 56, 59] restricted to pair_type=='bb' (via 50-pair origins in steering_pairs.json); compute mean(first-span P(picked) + second-span P(picked)). Then suppression = baseline - aggregate(-0.05) at L23 (computed as in swing claim); round to 3dp."
+    },
+    {
+      "name": "Single task amplification L23 bb",
+      "value": -0.003,
+      "statement": "At layer 23 on benign-benign pairs, $c = +5\\%$ raises P(chose steered task) by -0.00 above the pair-type-matched no-steering baseline (0.5 → 0.497).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
+        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
+        "experiments/layer_sweep/steering_pairs.json"
+      ],
+      "derivation": "Baseline computed as in the suppression claim. Then amplification = aggregate(+0.05) - baseline at L23; round to 3dp."
+    },
+    {
+      "name": "Contrastive swing L23 hb",
+      "value": 0.937,
+      "statement": "At layer 23 with $|c| = 5\\%$, contrastive steering along the eot probe produces a 0.94-point swing in $P(\\text{chose steered task} \\mid \\text{responded})$ on harmful-benign pairs (n=50) of the harm-breakdown 150-pair set.",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
+        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
+      ],
+      "derivation": "Filter to layer==23 in the contrastive parsed.jsonl; keep rows where the pair's pair_type=='hb' (via steering_pairs_150.json); compute P(choice_original=='a') separately at signed_multiplier ==+0.05 and ==-0.05; return |P@+0.05 - P@-0.05|; round to 3dp."
+    },
+    {
+      "name": "Single task swing L23 hb",
+      "value": 0.49,
+      "statement": "At layer 23, single-task steering produces a 0.49-point swing in $P(\\text{chose steered task} \\mid \\text{responded})$ on harmful-benign pairs between $c = -5\\%$ (0.232) and $c = +5\\%$ (0.722).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
+        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
+        "experiments/layer_sweep/steering_pairs.json"
+      ],
+      "derivation": "Filter single_task_L23_150.parsed.jsonl to layer==23 and pair_type=='hb'. For each row compute applied_c = signed_multiplier * (1 if ordering==0 else -1) and target = 'a' if first-span ordering==0 else 'b' (analogous for second-span). Aggregate P(choice_original==target) at applied_c==+0.05 and ==-0.05; swing = P(+) - P(-); round to 3dp."
+    },
+    {
+      "name": "Single task suppression L23 hb",
+      "value": 0.272,
+      "statement": "At layer 23 on harmful-benign pairs, $c = -5\\%$ drops P(chose steered task) by 0.27 below the pair-type-matched no-steering baseline (0.503 → 0.232).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
+        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
+        "experiments/layer_sweep/steering_pairs.json"
+      ],
+      "derivation": "Baseline: parent-sweep unilateral rows at dead layers [2, 5, 8, 11, 14, 35, 38, 41, 44, 47, 50, 53, 56, 59] restricted to pair_type=='hb' (via 50-pair origins in steering_pairs.json); compute mean(first-span P(picked) + second-span P(picked)). Then suppression = baseline - aggregate(-0.05) at L23 (computed as in swing claim); round to 3dp."
+    },
+    {
+      "name": "Single task amplification L23 hb",
+      "value": 0.218,
+      "statement": "At layer 23 on harmful-benign pairs, $c = +5\\%$ raises P(chose steered task) by 0.22 above the pair-type-matched no-steering baseline (0.503 → 0.722).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
+        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
+        "experiments/layer_sweep/steering_pairs.json"
+      ],
+      "derivation": "Baseline computed as in the suppression claim. Then amplification = aggregate(+0.05) - baseline at L23; round to 3dp."
+    },
+    {
+      "name": "Contrastive swing L23 hh",
+      "value": 0.927,
+      "statement": "At layer 23 with $|c| = 5\\%$, contrastive steering along the eot probe produces a 0.93-point swing in $P(\\text{chose steered task} \\mid \\text{responded})$ on harmful-harmful pairs (n=50) of the harm-breakdown 150-pair set.",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
+        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
+      ],
+      "derivation": "Filter to layer==23 in the contrastive parsed.jsonl; keep rows where the pair's pair_type=='hh' (via steering_pairs_150.json); compute P(choice_original=='a') separately at signed_multiplier ==+0.05 and ==-0.05; return |P@+0.05 - P@-0.05|; round to 3dp."
+    },
+    {
+      "name": "Single task swing L23 hh",
+      "value": 0.498,
+      "statement": "At layer 23, single-task steering produces a 0.50-point swing in $P(\\text{chose steered task} \\mid \\text{responded})$ on harmful-harmful pairs between $c = -5\\%$ (0.232) and $c = +5\\%$ (0.73).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
+        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
+        "experiments/layer_sweep/steering_pairs.json"
+      ],
+      "derivation": "Filter single_task_L23_150.parsed.jsonl to layer==23 and pair_type=='hh'. For each row compute applied_c = signed_multiplier * (1 if ordering==0 else -1) and target = 'a' if first-span ordering==0 else 'b' (analogous for second-span). Aggregate P(choice_original==target) at applied_c==+0.05 and ==-0.05; swing = P(+) - P(-); round to 3dp."
+    },
+    {
+      "name": "Single task suppression L23 hh",
+      "value": 0.243,
+      "statement": "At layer 23 on harmful-harmful pairs, $c = -5\\%$ drops P(chose steered task) by 0.24 below the pair-type-matched no-steering baseline (0.475 → 0.232).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
+        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
+        "experiments/layer_sweep/steering_pairs.json"
+      ],
+      "derivation": "Baseline: parent-sweep unilateral rows at dead layers [2, 5, 8, 11, 14, 35, 38, 41, 44, 47, 50, 53, 56, 59] restricted to pair_type=='hh' (via 50-pair origins in steering_pairs.json); compute mean(first-span P(picked) + second-span P(picked)). Then suppression = baseline - aggregate(-0.05) at L23 (computed as in swing claim); round to 3dp."
+    },
+    {
+      "name": "Single task amplification L23 hh",
+      "value": 0.255,
+      "statement": "At layer 23 on harmful-harmful pairs, $c = +5\\%$ raises P(chose steered task) by 0.26 above the pair-type-matched no-steering baseline (0.475 → 0.73).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
+        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
+        "experiments/layer_sweep/steering_pairs.json"
+      ],
+      "derivation": "Baseline computed as in the suppression claim. Then amplification = aggregate(+0.05) - baseline at L23; round to 3dp."
+    },
+    {
+      "name": "Contrastive P chose steered at L23 c neg 0.05",
+      "value": 0.02,
+      "statement": "At layer 23, contrastive steering at $c = -5\\%$ drives $P(\\text{chose steered task} \\mid \\text{responded}) = 0.02$ pooled across the balanced 150-pair set (all pair types).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl"
+      ],
+      "derivation": "Filter to layer==23. For each row treat task_a-as-steered (applied_c = +signed_multiplier, chose_steered = choice=='a') and task_b-as-steered (applied_c = -signed_multiplier, chose_steered = choice=='b'); keep responded rows; bucket by applied_c; report mean at applied_c==-0.05; round to 3dp."
+    },
+    {
+      "name": "Contrastive P chose steered at L23 c pos 0.05",
+      "value": 0.98,
+      "statement": "At layer 23, contrastive steering at $c = +5\\%$ drives $P(\\text{chose steered task} \\mid \\text{responded}) = 0.98$ pooled across the balanced 150-pair set (all pair types).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl"
+      ],
+      "derivation": "Same as the c=-0.05 endpoint but report mean at applied_c==+0.05."
+    },
+    {
+      "name": "Single task swing L23 aggregate",
+      "value": 0.498,
+      "statement": "Single-task steering at L23 produces an average 0.50-point swing in $P(\\text{chose steered task} \\mid \\text{responded})$ between $c=-5\\%$ and $c=+5\\%$, averaged across bb/hb/hh pair types (each weighted equally; the per-type swings are near-uniform).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T14:52:41+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
+        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
+      ],
+      "derivation": "For each pair_type in {bb, hb, hh}, compute the single-task swing (see per-pair-type Single task swing claims); take the unweighted mean across the three pair types; round to 3dp."
+    }
+  ]
+}

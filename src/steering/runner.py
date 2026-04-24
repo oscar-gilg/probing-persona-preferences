@@ -114,7 +114,7 @@ class RunConfig:
     pairs_path: Path
     probe_manifest: Path
     checkpoint_path: Path
-    mean_norm: float
+    mean_norm: float | dict[int, float]  # scalar applied to all layers, or per-layer dict
     n_trials: int
     temperature: float
     seed: int
@@ -174,17 +174,40 @@ def _parse_condition(raw: dict) -> PostHocCondition | HookCondition | Differenti
     raise ValueError(f"Unknown cache_injection: {cache_injection!r}")
 
 
+def _parse_mean_norm(raw_value) -> float | dict[int, float]:
+    if isinstance(raw_value, dict):
+        return {int(k): float(v) for k, v in raw_value.items()}
+    return float(raw_value)
+
+
+def _validate_mean_norm_coverage(mean_norm, conditions) -> None:
+    if not isinstance(mean_norm, dict):
+        return
+    for cond in conditions:
+        layers = getattr(cond, "layers", None)
+        if layers is None:
+            continue
+        missing = [L for L in layers if L not in mean_norm]
+        if missing:
+            raise KeyError(
+                f"mean_norm dict missing entries for condition '{cond.name}' "
+                f"injection layers: {missing}. Provided keys: {sorted(mean_norm)}"
+            )
+
+
 def load_config(config_path: Path) -> RunConfig:
     with open(config_path) as f:
         raw = yaml.safe_load(f)
     conditions = [_parse_condition(c) for c in raw["conditions"]]
+    mean_norm = _parse_mean_norm(raw["mean_norm"])
+    _validate_mean_norm_coverage(mean_norm, conditions)
     return RunConfig(
         model=raw["model"],
         max_new_tokens=raw["max_new_tokens"],
         pairs_path=Path(raw["pairs_path"]),
         probe_manifest=Path(raw["probe_manifest"]),
         checkpoint_path=Path(raw["checkpoint_path"]),
-        mean_norm=raw["mean_norm"],
+        mean_norm=mean_norm,
         n_trials=raw["n_trials"],
         temperature=raw["temperature"],
         seed=raw["seed"],
@@ -202,6 +225,65 @@ def load_config(config_path: Path) -> RunConfig:
 def _effective_coef(coef: float, ordering: int) -> float:
     """Negate when ordering=1 to maintain direction in original task space."""
     return coef if ordering == 0 else -coef
+
+
+# -----------------------------------------------------------------------------
+# CANONICAL CONTRASTIVE-STEERING PLOTTING FRAME (use this unless you have a
+# specific reason to deviate).
+# -----------------------------------------------------------------------------
+#
+# Setup recap. The differential runner applies opposite-sign steering to the
+# two task spans. With spans {first: 1, second: -1} plus _effective_coef's
+# ordering flip, the semantic → physical mapping is CONSTANT across orderings:
+#
+#                        | task_a gets        | task_b gets        |
+#   ordering=0 (a first) | +signed_multiplier | -signed_multiplier |
+#   ordering=1 (b first) | +signed_multiplier | -signed_multiplier |
+#
+# In our pair convention (task_a = higher-utility), the probe's "+" direction
+# is always applied to the higher-utility task. Across ±signed_multiplier,
+# both tasks receive both signs over a sweep.
+#
+# CANONICAL FRAME:
+#   y = P(chose steered task | responded)
+#   x = coefficient applied to the steered task (= ±signed_multiplier)
+#
+# How to compute it: each trial contributes TWO data points, one per task as
+# "the steered task":
+#     - point A: applied_c = +signed_multiplier,
+#                chose_steered = (choice_original == 'a')
+#     - point B: applied_c = -signed_multiplier,
+#                chose_steered = (choice_original == 'b')
+# Bucket by applied_c and average. Normalize by the number of RESPONDED trials
+# in each bucket (drop rows where choice_original is neither 'a' nor 'b').
+# Pair the curve with a refusal-rate band at the bottom so the dropped trials
+# stay visible.
+#
+# Why this frame:
+#   - It's symmetric by construction. A valid probe-causal effect produces a
+#     monotone curve through (0, 0.5) that sums to 1 at ±c. Asymmetry shows up
+#     only via the refusal band, not inside the main line.
+#   - It generalises directly to single-task (panel B of the harm-breakdown
+#     figure): there's only one steered task per trial, so the two frames
+#     collapse to one. Panels A and B share axes.
+#   - The swing |y(+c) - y(-c)| is the right headline number for "how much
+#     does the probe direction control choice?".
+#
+# Alternatives (use only when justified):
+#   - P(chose higher-utility task) vs signed_multiplier: equivalent swing, but
+#     asymmetric around y=0.5 and doesn't generalise to single-task. Used in
+#     earlier §2.3 aggregate claims; keep for historical continuity, but don't
+#     re-use in new plots.
+#   - P(chose steered task) without the "| responded" conditioning: same as
+#     canonical except refusals implicitly count as "wrong side", breaking the
+#     1-sum at non-trivial refusal rates. Avoid.
+# -----------------------------------------------------------------------------
+
+
+def _norm_for_layer(mean_norm: float | dict[int, float], layer: int) -> float:
+    if isinstance(mean_norm, dict):
+        return mean_norm[layer]
+    return mean_norm
 
 
 def _remap_choice(choice_presented: str, ordering: int) -> str:
@@ -229,6 +311,7 @@ def _generate_and_record(
     ordering: int,
     checkpoint_counts: dict[tuple, int],
     stats: dict,
+    norm_at_layer: float | None = None,
 ) -> list[dict]:
     """Optionally recompute suffix, generate, parse, checkpoint. Returns rows."""
     if recompute:
@@ -247,6 +330,7 @@ def _generate_and_record(
             sample_idx=existing_n + sample_idx, ordering=ordering,
             choice_presented=response_format.extract_label(response),
             raw_response=response,
+            norm_at_layer=norm_at_layer,
         ))
 
     _append_checkpoint(config.checkpoint_path, rows)
@@ -264,6 +348,7 @@ def _make_row(
     ordering: int,
     choice_presented: str,
     raw_response: str,
+    norm_at_layer: float | None = None,
 ) -> dict:
     return {
         "pair_id": pair["pair_id"],
@@ -271,6 +356,7 @@ def _make_row(
         "task_b_id": pair["task_b"],
         "signed_multiplier": multiplier,
         "layer": layer,
+        "norm_at_layer": norm_at_layer,
         "condition": condition,
         "sample_idx": sample_idx,
         "ordering": ordering,
@@ -533,7 +619,7 @@ def _run_post_hoc_condition(
                 # Build modified cache once per multiplier (shared across recompute modes)
                 cache_modified = _clone_cache(base_cache)
                 for layer in kv_layer_range:
-                    norm = kv_norms[layer] if kv_norms else config.mean_norm
+                    norm = kv_norms[layer] if kv_norms else _norm_for_layer(config.mean_norm, layer)
                     effective = _effective_coef(norm * mult, ordering)
                     k_dir, v_dir = kv_dirs[layer]
                     modify_cache_kv_at_positions(cache_modified, layer, first_span[0], first_span[1], k_dir, v_dir, +effective)
@@ -586,7 +672,8 @@ def _run_hook_condition(
     for layer in condition.layers:
         probe_id = f"{condition.probe_prefix}{layer}"
         _, direction = load_probe_direction(config.probe_manifest, probe_id)
-        ref_coef = config.mean_norm * condition.ref_mult
+        layer_norm = _norm_for_layer(config.mean_norm, layer)
+        ref_coef = layer_norm * condition.ref_mult
         ref_tensor = torch.tensor(direction * ref_coef, dtype=torch.bfloat16, device="cuda")
 
         print(f"  Layer {layer}")
@@ -656,6 +743,7 @@ def _run_hook_condition(
                             layer=layer, condition=cond_name, existing_n=existing_count,
                             needed=n_needed, ordering=ordering,
                             checkpoint_counts=checkpoint_counts, stats=stats,
+                            norm_at_layer=layer_norm,
                         )
 
                 del cache_clean, deltas
@@ -715,11 +803,12 @@ def _run_differential_condition(
                 # Prefill all coefficients, then batch generate
                 span_map = {"first": first_span, "second": second_span}
                 caches = []
+                layer_norm = _norm_for_layer(config.mean_norm, layer)
                 for mult, n_needed, existing_n in needed_mults:
                     span_hooks = []
                     for span_name, span_coef in condition.spans.items():
                         span = span_map[span_name]
-                        effective = _effective_coef(config.mean_norm * mult * span_coef, ordering)
+                        effective = _effective_coef(layer_norm * mult * span_coef, ordering)
                         span_tensor = torch.tensor(direction * effective, dtype=torch.bfloat16, device="cuda")
                         span_hooks.append(position_selective_steering(span_tensor, span[0], span[1]))
                     hook = compose_hooks(*span_hooks)
@@ -741,6 +830,7 @@ def _run_differential_condition(
                             sample_idx=existing_n + i, ordering=ordering,
                             choice_presented=response_format.extract_label(response),
                             raw_response=response,
+                            norm_at_layer=layer_norm,
                         ))
                 _append_checkpoint(config.checkpoint_path, rows)
                 stats["generated"] += len(rows)
