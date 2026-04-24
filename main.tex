@@ -168,6 +168,13 @@ $c$ is a fraction of the mean residual-stream norm at the intervention layer (pe
 
 \begin{figure}[H]
   \centering
+  \includegraphics[width=0.95\linewidth]{plot_042426_layer23_dose_response_harm_breakdown.png}
+  \caption{\textbf{Dose-response at the peak causal layer (L23, eot probe).} Steering from $c=-0.05$ to $c=+0.05$, broken out by pair type: benign--benign ($n=18$), harmful--benign ($n=24$), harmful--harmful ($n=8$; small sample, plotted for consistency). \textbf{(A)} Contrastive steering: the full $[0,1]$ interval is traversed on bb and hh pairs; hb pairs saturate slightly below 1 at $+c$ because the harmful option is strongly dispreferred at baseline. \textbf{(B)} Single-task steering (aggregated across which span is steered): the suppression side is uniformly clean across pair types; the amplification side is noisier but directionally consistent. Baselines at $c=0$ are taken from the non-steering layers of the sweep (L2--L14, L35--L59).}
+  \label{fig:steering-dose-response}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.85\linewidth]{plot_042426_steering_diagonal.png}
   \caption{\textbf{Intervention-site sweep.} Self-layer contrastive steering (probe trained at L, injected at L) at $|c|=0.05$. Preference swing rises sharply from L17, peaks at L23, and collapses above L35. The tb:-2 and eot token-position variants of the probe trace the same profile; eot gives a stronger peak. Layers L17--L26 define the causal window.}
   \label{fig:steering-by-layer}
