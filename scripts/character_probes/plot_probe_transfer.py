@@ -14,12 +14,13 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 RESULTS_PATH = Path("results/probes/character_probes/cross_eval/cross_eval_results.json")
 ASSETS_DIR = Path("experiments/character_probes/probes/assets")
 CLAIMS_PATH = Path("paper/claims/character_probes.json")
 CLAIMS_SOURCE = "scripts/character_probes/plot_probe_transfer.py"
+RESULTS_REL = str(RESULTS_PATH)
 
 PERSONAS = [
     "goodness", "humor", "impulsiveness", "loving", "mathematical",
@@ -177,53 +178,40 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
         best_layer_vals[p] = best_r
         best_layer_choice[p] = best_l
 
-    # Register per-persona values. For each persona we register three numbers:
-    # baseline r, probe r at best layer, and the best-layer choice.
+    # Per-persona values — one table claim with rows = persona, cols = metric.
     aligned_personas = [p for p in PERSONAS if p != "misalignment"]
-    registered_baseline: dict[str, float] = {}
-    registered_probe: dict[str, float] = {}
-    registered_best_layer: dict[str, int] = {}
-    for p in PERSONAS:
-        display = PERSONA_DISPLAY[p]
-        baseline_r = round(float(results["baseline_r"][p]), 3)
-        probe_r = round(float(best_layer_vals[p]), 3)
-        best_l = int(best_layer_choice[p])
-        used_in = ["fig:character", "app:character"]
-        if p == "misalignment":
-            used_in.append("sec:shared-character")
+    per_persona = {
+        PERSONA_DISPLAY[p]: {
+            "baseline_r": round(float(results["baseline_r"][p]), 3),
+            "probe_r_best_layer": round(float(best_layer_vals[p]), 3),
+            "probe_best_layer": int(best_layer_choice[p]),
+        }
+        for p in PERSONAS
+    }
+    claims.register(
+        name="Character probe",
+        value=per_persona,
+        statement=(
+            "Per-character probe transfer results. Rows: 11 character-fine-tuned "
+            "LoRA variants. Columns: `baseline_r` = raw Pearson r between base "
+            "Llama-3.1-8B-Instruct Thurstonian utilities and the variant's utilities "
+            "(3dp); `probe_r_best_layer` = Pearson r of a ridge probe trained on "
+            "base-model activations at the second-to-last <start_of_turn> token "
+            "predicting the variant's utilities, at the best layer in {8, 12, 16, "
+            "20, 24} (3dp); `probe_best_layer` = argmax layer."
+        ),
+        used_in=["fig:character", "app:character", "sec:shared-character"],
+        data_paths=[RESULTS_REL],
+        derivation=(
+            "For each persona p: `baseline_r[p]` and argmax_{layer} "
+            "`probe_transfer[\"turn_boundary:-2\"][layer][p][\"r\"]` from "
+            "cross_eval_results.json; round r values to 3dp."
+        ),
+    )
 
-        registered_baseline[p] = claims.register(
-            name=f"{display} character baseline r",
-            value=baseline_r,
-            statement=(
-                f"Raw Pearson r between base Llama-3.1-8B-Instruct Thurstonian "
-                f"utilities and the {display} character-fine-tuned LoRA variant's "
-                f"utilities, measured on the same 1000-task sample."
-            ),
-            used_in=used_in,
-        )
-        registered_probe[p] = claims.register(
-            name=f"{display} character probe r best layer",
-            value=probe_r,
-            statement=(
-                f"A ridge probe trained on base Llama-3.1-8B-Instruct activations "
-                f"(selector: second-to-last <start_of_turn> token) applied to the "
-                f"{display} character LoRA variant's activations predicts that "
-                f"variant's utilities at Pearson r, picking the best layer "
-                f"across {{8, 12, 16, 20, 24}}."
-            ),
-            used_in=used_in,
-        )
-        registered_best_layer[p] = claims.register(
-            name=f"{display} character probe best layer",
-            value=best_l,
-            statement=(
-                f"The Llama-3.1-8B-Instruct layer (out of {{8, 12, 16, 20, 24}}) at "
-                f"which the base-model ridge probe attains its best transfer to the "
-                f"{display} character-fine-tuned LoRA variant."
-            ),
-            used_in=used_in,
-        )
+    registered_baseline = {p: per_persona[PERSONA_DISPLAY[p]]["baseline_r"] for p in PERSONAS}
+    registered_probe = {p: per_persona[PERSONA_DISPLAY[p]]["probe_r_best_layer"] for p in PERSONAS}
+    registered_best_layer = {p: per_persona[PERSONA_DISPLAY[p]]["probe_best_layer"] for p in PERSONAS}
 
     # Aggregate claims: aligned ranges and beat-baseline count.
     aligned_probe = [registered_probe[p] for p in aligned_personas]
@@ -239,6 +227,8 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "utilities at best layer."
         ),
         used_in=["app:character"],
+        data_paths=[RESULTS_REL],
+        derivation="min over aligned personas (all except misalignment) of best-layer `probe_transfer[\"turn_boundary:-2\"][*][p][\"r\"]`; round to 2dp.",
     )
     claims.register(
         name="Aligned characters probe r max",
@@ -250,6 +240,8 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "utilities at best layer."
         ),
         used_in=["app:character"],
+        data_paths=[RESULTS_REL],
+        derivation="max over aligned personas of best-layer `probe_transfer[\"turn_boundary:-2\"][*][p][\"r\"]`; round to 2dp.",
     )
     claims.register(
         name="Aligned characters baseline r min",
@@ -260,6 +252,8 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "(excluding the misalignment variant)."
         ),
         used_in=["app:character"],
+        data_paths=[RESULTS_REL],
+        derivation="min over aligned personas of `baseline_r[p]`; round to 2dp.",
     )
     claims.register(
         name="Aligned characters baseline r max",
@@ -270,6 +264,8 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "(excluding the misalignment variant)."
         ),
         used_in=["app:character"],
+        data_paths=[RESULTS_REL],
+        derivation="max over aligned personas of `baseline_r[p]`; round to 2dp.",
     )
 
     # Full-range (including misalignment) used in §3.3 main-text sentence.
@@ -284,6 +280,8 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "variant's utilities at best layer."
         ),
         used_in=["sec:shared-character"],
+        data_paths=[RESULTS_REL],
+        derivation="min over all 11 personas of best-layer `probe_transfer[\"turn_boundary:-2\"][*][p][\"r\"]`; round to 2dp.",
     )
     claims.register(
         name="All characters probe r max",
@@ -294,6 +292,8 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "prediction of the variant's utilities at best layer."
         ),
         used_in=["sec:shared-character"],
+        data_paths=[RESULTS_REL],
+        derivation="max over all 11 personas of best-layer `probe_transfer[\"turn_boundary:-2\"][*][p][\"r\"]`; round to 2dp.",
     )
 
     n_beats = sum(
@@ -308,6 +308,8 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "raw base-vs-variant utility correlation."
         ),
         used_in=["fig:character", "app:character"],
+        data_paths=[RESULTS_REL],
+        derivation="count over the 11 personas where best-layer probe r > `baseline_r[p]`.",
     )
     claims.register(
         name="Character probe beats baseline total",
@@ -317,6 +319,8 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "aligned characters plus the misalignment variant)."
         ),
         used_in=["fig:character", "app:character"],
+        source="manual: constant — the 11 personas evaluated in the character sweep",
+        derivation="constant (length of PERSONAS list).",
     )
 
     # Sort by best probe r
@@ -407,6 +411,8 @@ def main():
             "sample. Reported as r_raw in §3.3; negative, indicating anti-correlation."
         ),
         used_in=["sec:shared-character", "app:character", "fig:character"],
+        data_paths=[RESULTS_REL],
+        derivation="`baseline_r[\"misalignment\"]` from cross_eval_results.json; round to 2dp.",
     )
     claims.register(
         name="Misalignment character probe r",
@@ -418,6 +424,8 @@ def main():
             "{8, 12, 16, 20, 24})."
         ),
         used_in=["sec:shared-character", "app:character", "fig:character"],
+        data_paths=[RESULTS_REL],
+        derivation="max over layers {8,12,16,20,24} of `probe_transfer[\"turn_boundary:-2\"][layer][\"misalignment\"][\"r\"]`; round to 2dp.",
     )
 
     claims.save(CLAIMS_PATH)

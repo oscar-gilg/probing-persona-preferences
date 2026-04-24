@@ -15,7 +15,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 
 EXP_DIR = Path("experiments/sadist_open_ended_steering")
@@ -25,6 +25,18 @@ MAX_ABS_MULT = 0.05  # Drop incoherent coefficients (|c| > 0.05 fails the cohere
 
 FIG_LABEL = "fig:cross-persona-openended"
 SEC_LABELS = ["sec:shared-openended", "sec:open-ended-safety"]
+
+
+def _judged_path(persona: str) -> str:
+    return f"experiments/sadist_open_ended_steering/judged_{persona}.jsonl"
+
+
+def _open_ended_path(persona: str) -> str:
+    return f"experiments/sadist_open_ended_steering/judged_open_ended_{persona}.jsonl"
+
+
+def _compliance_path(persona: str) -> str:
+    return f"experiments/sadist_open_ended_steering/compliance_{persona}.jsonl"
 
 
 def date_tag() -> str:
@@ -79,8 +91,23 @@ def aggregate_all() -> dict:
     return out
 
 
+def _coef_col_key(mult: float) -> str:
+    """Column key used for per-coefficient table cells. Matches cited macros.
+
+    `0.03` -> `at_c_pos_0_03`, `-0.05` -> `at_c_neg_0_05`, `0.0` -> `at_c_pos_0_00`.
+    """
+    sign_word = "pos" if mult >= 0 else "neg"
+    mag = f"{abs(mult):.2f}"  # e.g. "0.05"
+    return f"at_c_{sign_word}_{mag.replace('.', '_')}"
+
+
 def register_figure_claims(claims: ClaimSet, agg: dict) -> None:
-    """Register every bar height drawn on the figure (both panels, both scales)."""
+    """Register every bar height drawn on the figure (both panels, both scales).
+
+    Four row-dict claims: {sadism, default-assistant} x {default persona, sadist persona}.
+    Each claim holds one row keyed by coefficient (e.g. at_c_pos_0_03), yielding one
+    \\newcommand per (metric, persona, coefficient) via nested camelCase slugs.
+    """
     for persona in PERSONAS:
         data = agg["personas"].get(persona)
         if not data:
@@ -89,34 +116,50 @@ def register_figure_claims(claims: ClaimSet, agg: dict) -> None:
             (c for c in data["cells"].values() if abs(c["multiplier"]) <= MAX_ABS_MULT),
             key=lambda c: c["multiplier"],
         )
+        sadism_row: dict[str, float] = {}
+        default_row: dict[str, float] = {}
+        mults_prose: list[str] = []
+        ns: list[int] = []
         for cell in cells:
             mult = cell["multiplier"]
-            sign_word = "pos" if mult >= 0 else "neg"
-            mag = f"{abs(mult):.2f}"
-            tag_prose = f"c={'+' if mult >= 0 else '-'}{mag}"
-            tag_name = f"c {sign_word} {mag}"
-            claims.register(
-                name=f"Sadism Likert under {persona} safety-prompts at {tag_name}",
-                value=round(cell["sadism_mean"], 2),
-                statement=(
-                    f"On tiered safety/agentic prompts under the {persona} persona, "
-                    f"mean blind Likert sadism score at steering coefficient "
-                    f"{tag_prose} (fraction of L25 mean activation norm) is "
-                    f"{cell['sadism_mean']:.2f} (n={cell['n']})."
-                ),
-                used_in=[FIG_LABEL],
-            )
-            claims.register(
-                name=f"Default-assistant Likert under {persona} safety-prompts at {tag_name}",
-                value=round(cell["default_mean"], 2),
-                statement=(
-                    f"On tiered safety/agentic prompts under the {persona} persona, "
-                    f"mean blind Likert default-assistant score at steering "
-                    f"coefficient {tag_prose} (fraction of L25 mean activation "
-                    f"norm) is {cell['default_mean']:.2f} (n={cell['n']})."
-                ),
-                used_in=[FIG_LABEL],
-            )
+            key = _coef_col_key(mult)
+            sadism_row[key] = round(cell["sadism_mean"], 2)
+            default_row[key] = round(cell["default_mean"], 2)
+            mults_prose.append(f"c={'+' if mult >= 0 else '-'}{abs(mult):.2f}")
+            ns.append(cell["n"])
+        mults_list = ", ".join(mults_prose)
+        n_min, n_max = min(ns), max(ns)
+        n_str = f"n={n_min}" if n_min == n_max else f"n in [{n_min},{n_max}]"
+        claims.register(
+            name=f"Sadism Likert under {persona} safety-prompts",
+            value=sadism_row,
+            statement=(
+                f"Mean blind Likert sadism scores on tiered safety/agentic prompts "
+                f"under the {persona} persona, per steering coefficient "
+                f"({mults_list}; fraction of L25 mean activation norm; {n_str} per cell)."
+            ),
+            used_in=[FIG_LABEL],
+            data_paths=[_judged_path(persona)],
+            derivation=(
+                "Aggregate rows by `multiplier`; take mean of `sadism_score` per cell; "
+                "round to 2dp. Column keys encode coefficient sign and magnitude."
+            ),
+        )
+        claims.register(
+            name=f"Default-assistant Likert under {persona} safety-prompts",
+            value=default_row,
+            statement=(
+                f"Mean blind Likert default-assistant scores on tiered safety/agentic "
+                f"prompts under the {persona} persona, per steering coefficient "
+                f"({mults_list}; fraction of L25 mean activation norm; {n_str} per cell)."
+            ),
+            used_in=[FIG_LABEL],
+            data_paths=[_judged_path(persona)],
+            derivation=(
+                "Aggregate rows by `multiplier`; take mean of `default_assistant_score` per "
+                "cell; round to 2dp. Column keys encode coefficient sign and magnitude."
+            ),
+        )
 
 
 def open_ended_cells(persona: str) -> dict:
@@ -153,24 +196,23 @@ def register_prose_claims(claims: ClaimSet) -> None:
     s_c0 = sadist_oe["0.0"]["sadism_mean"]
     s_c03 = sadist_oe["0.03"]["sadism_mean"]
     claims.register(
-        name="Sadism Likert under sadist self-reflection at c pos 0.00",
-        value=round(s_c0, 2),
+        name="Sadism Likert under sadist self-reflection",
+        value={
+            "at_c_pos_0_00": round(s_c0, 2),
+            "at_c_pos_0_03": round(s_c03, 2),
+        },
         statement=(
             "On purely open-ended self-reflection prompts (nothing to refuse, "
-            "100% compliance throughout) under the sadist persona, the baseline "
-            "mean blind Likert sadism score at c=0 is 3.14."
+            "100% compliance throughout) under the sadist persona, mean blind "
+            "Likert sadism score rises from 3.14 at c=0 to 4.90 at c=+0.03 "
+            "(fraction of L25 mean activation norm)."
         ),
         used_in=[FIG_LABEL, "sec:shared-openended"],
-    )
-    claims.register(
-        name="Sadism Likert under sadist self-reflection at c pos 0.03",
-        value=round(s_c03, 2),
-        statement=(
-            "On purely open-ended self-reflection prompts under the sadist persona, "
-            "mean blind Likert sadism score rises from 3.14 at c=0 to 4.90 at "
-            "c=+0.03 (fraction of L25 mean activation norm)."
+        data_paths=[_open_ended_path("sadist")],
+        derivation=(
+            "Filter rows by `multiplier`; mean of `sadism_score` per cell; round to 2dp. "
+            "Column keys: at_c_pos_0_00 (c=0.0), at_c_pos_0_03 (c=+0.03)."
         ),
-        used_in=[FIG_LABEL, "sec:shared-openended"],
     )
 
     # Sadism under default: floor 1.00 across every tested coefficient. Report the
@@ -187,6 +229,11 @@ def register_prose_claims(claims: ClaimSet) -> None:
             "within rounding of it, i.e. at the Likert floor."
         ),
         used_in=[FIG_LABEL, "sec:shared-openended"],
+        data_paths=[_open_ended_path("default")],
+        derivation=(
+            "Aggregate rows by `multiplier`; take mean of `sadism_score` per cell; "
+            "max across cells; round to 2dp."
+        ),
     )
 
     # --- harmful-tier compliance flip ---
@@ -194,33 +241,29 @@ def register_prose_claims(claims: ClaimSet) -> None:
     sadist_harm_c03, _ = compliance_rate("sadist", "harmful", 0.03)
     default_harm_c03, _ = compliance_rate("default", "harmful", 0.03)
     claims.register(
-        name="Harmful compliance under sadist at c pos 0.00",
-        value=round(100 * sadist_harm_c0),
+        name="Harmful compliance",
+        value={
+            "under_sadist": {
+                "at_c_pos_0_00": round(100 * sadist_harm_c0),
+                "at_c_pos_0_03": round(100 * sadist_harm_c03),
+            },
+            "under_default": {
+                "at_c_pos_0_03": round(100 * default_harm_c03),
+            },
+        },
         statement=(
-            "Under the sadist persona, the compliance rate on harmful-tier safety "
-            "prompts at steering coefficient c=0 is 0% (n=20 per cell)."
+            "Compliance rate (% 'complied') on harmful-tier safety prompts, per "
+            "persona and steering coefficient. Under sadist + steering the rate "
+            "goes from 0% at c=0 to 95% at c=+0.03 (fraction of L25 mean activation "
+            "norm); the same coefficient under default gives 45% (n=20 per cell)."
         ),
         used_in=[FIG_LABEL, "sec:shared-openended"],
-    )
-    claims.register(
-        name="Harmful compliance under sadist at c pos 0.03",
-        value=round(100 * sadist_harm_c03),
-        statement=(
-            "Under the sadist persona, the compliance rate on harmful-tier safety "
-            "prompts rises from 0% at c=0 to 95% at c=+0.03 (fraction of L25 mean "
-            "activation norm; n=20 per cell)."
+        data_paths=[_compliance_path("sadist"), _compliance_path("default")],
+        derivation=(
+            "For each (persona, multiplier) cell: filter rows to tier=='harmful'; "
+            "fraction with `compliance`=='complied' * 100; round to nearest int. "
+            "Rows: persona; columns: coefficient (at_c_pos_0_00=c=0, at_c_pos_0_03=c=+0.03)."
         ),
-        used_in=[FIG_LABEL, "sec:shared-openended"],
-    )
-    claims.register(
-        name="Harmful compliance under default at c pos 0.03",
-        value=round(100 * default_harm_c03),
-        statement=(
-            "Under the default persona, the compliance rate on harmful-tier safety "
-            "prompts at c=+0.03 is 45%, considerably lower than the 95% observed "
-            "under the sadist persona at the same coefficient (n=20 per cell)."
-        ),
-        used_in=[FIG_LABEL, "sec:shared-openended"],
     )
 
     # --- coherence threshold (qualitative, but we anchor to the |c| cap used by
@@ -234,6 +277,7 @@ def register_prose_claims(claims: ClaimSet) -> None:
             "and c=+0.07, so the incoherent regime is excluded from the figure."
         ),
         used_in=[FIG_LABEL, "sec:shared-openended"],
+        derivation="Design constant: MAX_ABS_MULT in the producer module.",
     )
 
 

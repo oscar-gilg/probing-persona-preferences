@@ -1,16 +1,18 @@
 {
   "experiment_name": "heldout_eval_gemma3_tb-5",
   "run_dir": "results/experiments/main_probes/gemma3_10k_run1/pre_task_active_learning/completion_preference_gemma-3-27b_completion_canonical_seed0",
-  "activations_path": "activations/gemma_3_27b_turn_boundary_sweep/activations_turn_boundary:-5.npz",
+  "activations_path": "activations/gemma-3-27b_it/pref_main/activations_turn_boundary:-5.npz",
+  "eval_run_dir": "results/experiments/main_probes/gemma3_4k_pre_task/pre_task_active_learning/completion_preference_gemma-3-27b_completion_canonical_seed0",
+  "eval_split_seed": 42,
   "modes": [
     "ridge"
   ],
   "standardize": true,
   "demean_confounds": null,
-  "created_at": "2026-03-10T05:20:59.491752",
+  "created_at": "2026-04-24T16:17:05.437797",
   "n_tasks_in_experiment": 10000,
   "n_tasks_with_activations": 14038,
-  "n_comparisons_in_experiment": 0,
+  "n_comparisons_in_experiment": 331739,
   "probes": [
     {
       "id": "ridge_L25",
@@ -20,56 +22,56 @@
       "standardize": true,
       "demean_confounds": null,
       "best_alpha": 4641.588833612773,
-      "sweep_r": 0.854578372364582,
-      "final_r": 0.8585625146779874,
-      "final_acc": null,
+      "sweep_r": 0.8545790219643916,
+      "final_r": 0.8585626613824638,
+      "final_acc": 0.7634366160121044,
       "n_train": 10000,
       "n_sweep": 2019,
       "n_final": 2019,
-      "n_final_pairs": 0,
-      "n_samples": 10000,
+      "n_final_pairs": 5091,
       "alpha_sweep": [
         {
           "alpha": 0.1,
-          "sweep_r": 0.7679181079952269
+          "sweep_r": 0.7678950903759707
         },
         {
           "alpha": 0.46415888336127786,
-          "sweep_r": 0.7685198902479895
+          "sweep_r": 0.7685109428533872
         },
         {
           "alpha": 2.1544346900318834,
-          "sweep_r": 0.7712175996975507
+          "sweep_r": 0.7712071266120221
         },
         {
           "alpha": 10.0,
-          "sweep_r": 0.781187109405713
+          "sweep_r": 0.7811847704882374
         },
         {
           "alpha": 46.41588833612777,
-          "sweep_r": 0.8048569227628927
+          "sweep_r": 0.8048551497390848
         },
         {
           "alpha": 215.44346900318823,
-          "sweep_r": 0.8333067347365944
+          "sweep_r": 0.8333066749599944
         },
         {
           "alpha": 1000.0,
-          "sweep_r": 0.851036170447266
+          "sweep_r": 0.8510383336679193
         },
         {
           "alpha": 4641.588833612773,
-          "sweep_r": 0.854578372364582
+          "sweep_r": 0.8545790219643916
         },
         {
           "alpha": 21544.346900318822,
-          "sweep_r": 0.8453604713576184
+          "sweep_r": 0.845360700179432
         },
         {
           "alpha": 100000.0,
-          "sweep_r": 0.823029173452598
+          "sweep_r": 0.8230292238174083
         }
-      ]
+      ],
+      "uniform_pairwise_acc": 0.7941670163659253
     },
     {
       "id": "ridge_L32",
@@ -79,56 +81,56 @@
       "standardize": true,
       "demean_confounds": null,
       "best_alpha": 4641.588833612773,
-      "sweep_r": 0.8678520260400574,
-      "final_r": 0.8674629847000278,
-      "final_acc": null,
+      "sweep_r": 0.8678520127845671,
+      "final_r": 0.8674628006247502,
+      "final_acc": 0.7672521544635221,
       "n_train": 10000,
       "n_sweep": 2019,
       "n_final": 2019,
-      "n_final_pairs": 0,
-      "n_samples": 10000,
+      "n_final_pairs": 5091,
       "alpha_sweep": [
         {
           "alpha": 0.1,
-          "sweep_r": 0.7959228611923506
+          "sweep_r": 0.7959216487638948
         },
         {
           "alpha": 0.46415888336127786,
-          "sweep_r": 0.7962966587441086
+          "sweep_r": 0.79629432168026
         },
         {
           "alpha": 2.1544346900318834,
-          "sweep_r": 0.7979590521194736
+          "sweep_r": 0.7979581564756314
         },
         {
           "alpha": 10.0,
-          "sweep_r": 0.8044759046650447
+          "sweep_r": 0.8044760492350514
         },
         {
           "alpha": 46.41588833612777,
-          "sweep_r": 0.8221164810117788
+          "sweep_r": 0.8221166492122544
         },
         {
           "alpha": 215.44346900318823,
-          "sweep_r": 0.8465158904845672
+          "sweep_r": 0.8465157681458995
         },
         {
           "alpha": 1000.0,
-          "sweep_r": 0.8631500796447611
+          "sweep_r": 0.8631506043207976
         },
         {
           "alpha": 4641.588833612773,
-          "sweep_r": 0.8678520260400574
+          "sweep_r": 0.8678520127845671
         },
         {
           "alpha": 21544.346900318822,
-          "sweep_r": 0.8600389998909144
+          "sweep_r": 0.8600389546608521
         },
         {
           "alpha": 100000.0,
-          "sweep_r": 0.8389105252048045
+          "sweep_r": 0.8389104988024066
         }
-      ]
+      ],
+      "uniform_pairwise_acc": 0.802140159462862
     },
     {
       "id": "ridge_L39",
@@ -138,56 +140,56 @@
       "standardize": true,
       "demean_confounds": null,
       "best_alpha": 4641.588833612773,
-      "sweep_r": 0.8577455254326586,
-      "final_r": 0.8593626357556742,
-      "final_acc": null,
+      "sweep_r": 0.8577453072344644,
+      "final_r": 0.8593628307798039,
+      "final_acc": 0.7580422340635484,
       "n_train": 10000,
       "n_sweep": 2019,
       "n_final": 2019,
-      "n_final_pairs": 0,
-      "n_samples": 10000,
+      "n_final_pairs": 5091,
       "alpha_sweep": [
         {
           "alpha": 0.1,
-          "sweep_r": 0.7766023240259738
+          "sweep_r": 0.7765990158121667
         },
         {
           "alpha": 0.46415888336127786,
-          "sweep_r": 0.7771032105970296
+          "sweep_r": 0.7770986812149544
         },
         {
           "alpha": 2.1544346900318834,
-          "sweep_r": 0.7793120109601681
+          "sweep_r": 0.7793052081214381
         },
         {
           "alpha": 10.0,
-          "sweep_r": 0.7877694396056892
+          "sweep_r": 0.7877635794562342
         },
         {
           "alpha": 46.41588833612777,
-          "sweep_r": 0.8090685279483315
+          "sweep_r": 0.8090608295551245
         },
         {
           "alpha": 215.44346900318823,
-          "sweep_r": 0.835731824723818
+          "sweep_r": 0.8357287632264613
         },
         {
           "alpha": 1000.0,
-          "sweep_r": 0.853206976478579
+          "sweep_r": 0.853205887255458
         },
         {
           "alpha": 4641.588833612773,
-          "sweep_r": 0.8577455254326586
+          "sweep_r": 0.8577453072344644
         },
         {
           "alpha": 21544.346900318822,
-          "sweep_r": 0.8491023723856882
+          "sweep_r": 0.8491022016805138
         },
         {
           "alpha": 100000.0,
-          "sweep_r": 0.8268323252476536
+          "sweep_r": 0.8268322519921226
         }
-      ]
+      ],
+      "uniform_pairwise_acc": 0.7973143096936635
     },
     {
       "id": "ridge_L46",
@@ -197,56 +199,56 @@
       "standardize": true,
       "demean_confounds": null,
       "best_alpha": 4641.588833612773,
-      "sweep_r": 0.8508277752277164,
-      "final_r": 0.8494006366000069,
-      "final_acc": null,
+      "sweep_r": 0.850827641471583,
+      "final_r": 0.8494010837006267,
+      "final_acc": 0.7554108282349845,
       "n_train": 10000,
       "n_sweep": 2019,
       "n_final": 2019,
-      "n_final_pairs": 0,
-      "n_samples": 10000,
+      "n_final_pairs": 5091,
       "alpha_sweep": [
         {
           "alpha": 0.1,
-          "sweep_r": 0.7687474066599437
+          "sweep_r": 0.7687400027166774
         },
         {
           "alpha": 0.46415888336127786,
-          "sweep_r": 0.7691314284308962
+          "sweep_r": 0.7691251513259679
         },
         {
           "alpha": 2.1544346900318834,
-          "sweep_r": 0.7708583726169959
+          "sweep_r": 0.770853856507468
         },
         {
           "alpha": 10.0,
-          "sweep_r": 0.7778197505604405
+          "sweep_r": 0.7778084501440656
         },
         {
           "alpha": 46.41588833612777,
-          "sweep_r": 0.7976274359818817
+          "sweep_r": 0.7976216667169703
         },
         {
           "alpha": 215.44346900318823,
-          "sweep_r": 0.8271835938240019
+          "sweep_r": 0.8271818254193545
         },
         {
           "alpha": 1000.0,
-          "sweep_r": 0.8478745990681225
+          "sweep_r": 0.8478739476536417
         },
         {
           "alpha": 4641.588833612773,
-          "sweep_r": 0.8508277752277164
+          "sweep_r": 0.850827641471583
         },
         {
           "alpha": 21544.346900318822,
-          "sweep_r": 0.8391938586956659
+          "sweep_r": 0.839193773331637
         },
         {
           "alpha": 100000.0,
-          "sweep_r": 0.8142452322447706
+          "sweep_r": 0.8142452008838788
         }
-      ]
+      ],
+      "uniform_pairwise_acc": 0.7885018883759967
     },
     {
       "id": "ridge_L53",
@@ -256,58 +258,57 @@
       "standardize": true,
       "demean_confounds": null,
       "best_alpha": 4641.588833612773,
-      "sweep_r": 0.8424342490866352,
-      "final_r": 0.844810828633542,
-      "final_acc": null,
+      "sweep_r": 0.842434079755143,
+      "final_r": 0.8448112674027211,
+      "final_acc": 0.7547529767778436,
       "n_train": 10000,
       "n_sweep": 2019,
       "n_final": 2019,
-      "n_final_pairs": 0,
-      "n_samples": 10000,
+      "n_final_pairs": 5091,
       "alpha_sweep": [
         {
           "alpha": 0.1,
-          "sweep_r": 0.7626606435921208
+          "sweep_r": 0.7626598733033162
         },
         {
           "alpha": 0.46415888336127786,
-          "sweep_r": 0.7629250180530844
+          "sweep_r": 0.7629204844777393
         },
         {
           "alpha": 2.1544346900318834,
-          "sweep_r": 0.7641058161257249
+          "sweep_r": 0.7640966393270101
         },
         {
           "alpha": 10.0,
-          "sweep_r": 0.769025576791769
+          "sweep_r": 0.7690198587342975
         },
         {
           "alpha": 46.41588833612777,
-          "sweep_r": 0.7846803319832393
+          "sweep_r": 0.7846737309000508
         },
         {
           "alpha": 215.44346900318823,
-          "sweep_r": 0.812373003496782
+          "sweep_r": 0.8123706918688843
         },
         {
           "alpha": 1000.0,
-          "sweep_r": 0.8356565401427922
+          "sweep_r": 0.8356555006155693
         },
         {
           "alpha": 4641.588833612773,
-          "sweep_r": 0.8424342490866352
+          "sweep_r": 0.842434079755143
         },
         {
           "alpha": 21544.346900318822,
-          "sweep_r": 0.8328674467271246
+          "sweep_r": 0.8328674565466303
         },
         {
           "alpha": 100000.0,
-          "sweep_r": 0.8082656038267932
+          "sweep_r": 0.8082655822020176
         }
-      ]
+      ],
+      "uniform_pairwise_acc": 0.7849349559378934
     }
   ],
-  "eval_run_dir": "results/experiments/main_probes/gemma3_4k_pre_task/pre_task_active_learning/completion_preference_gemma-3-27b_completion_canonical_seed0",
-  "eval_split_seed": 42
+  "uniform_eval_run_dir": "results/experiments/uniform_eval_gemma3_27b_v3/pre_task_revealed/completion_preference_gemma-3-27b_completion_canonical_seed0_uniform_eval"
 }

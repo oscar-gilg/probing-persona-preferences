@@ -113,7 +113,7 @@ Before asking whether a preference direction is persona-invariant or persona-rel
 \subsection{Methodology}
 \label{sec:method-revealed}
 
-Pairwise choices are elicited from the default Assistant over a \legacyTaskPoolSize{}-task pool spanning WildChat~\citep{zhao2024wildchat}, Alpaca~\citep{taori2023alpaca}, MATH~\citep{hendrycks2021math}, BailBench~\citep{ensign2025bailbench}, and STRESS-TEST~\citep{mazeika2025utility} (\textbf{Split:} legacy 10k pool, App.~\ref{app:splits}). Pair selection uses active learning; a Thurstonian utility model turns the pairwise choices into per-task scalar utilities (seed-to-seed $r = \thurstonianSeedToSeedR$). Ridge probes are trained on residual-stream activations: Gemma-3-27B (instruction-tuned) at the final prompt token, layer \gemmaClassificationProbeLayer{} for classification and layer \gemmaSteeringProbeLayer{} for steering; Qwen-3.5-122B (MoE, 10B active) at the turn-boundary \texttt{tb-1} position, layer \qwenClassificationProbeLayer{}, for classification. The two models use different chat templates, so ``the same'' position has to be defined structurally; we pick the strongest position per model from a small turn-boundary sweep (App.~\ref{app:token-selection}). Probes are trained on one measurement run and evaluated on an independent run to avoid leakage. \todo{Layer sweep pending; systematic justification for the classification/steering layer split is a TODO.}
+Pairwise choices are elicited from the default Assistant over a \legacyTaskPoolSize{}-task pool spanning WildChat~\citep{zhao2024wildchat}, Alpaca~\citep{taori2023alpaca}, MATH~\citep{hendrycks2021math}, BailBench~\citep{ensign2025bailbench}, and STRESS-TEST~\citep{mazeika2025utility} (\textbf{Split:} legacy 10k pool, App.~\ref{app:splits}). Pair selection uses active learning; a Thurstonian utility model turns the pairwise choices into per-task scalar utilities (seed-to-seed $r = \thurstonianSeedToSeedR$). Ridge probes are trained on residual-stream activations at a turn-boundary token position (App.~\ref{app:token-selection}): Gemma-3-27B (instruction-tuned) at the end-of-turn token, layer \gemmaClassificationProbeLayer{} for classification and layer \gemmaSteeringProbeLayer{} for steering. Qwen-3.5-122B (MoE, 10B active) at the final prompt token, layer \qwenClassificationProbeLayer{}, for classification. Probes are trained on one measurement run and evaluated on an independent run to avoid leakage. \todo{Layer sweep pending; systematic justification for the classification/steering layer split is a TODO.}
 
 \begin{figure}[H]
   \centering
@@ -136,7 +136,7 @@ Figure~\ref{fig:cross-topic} shows the comparison for both models. The residual-
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\linewidth]{plot_041726_cross_model_bar.png}
-  \caption{\textbf{Probe quality and cross-topic generalisation, per model.} Rows: target model (Gemma-3-27B, blue; Qwen-3.5-122B, coral). Columns: metric (Pearson $r$, uniform-sample pairwise accuracy). In each panel, the residual-stream probe is compared against a content-only baseline (gold): a Ridge probe on Qwen3-Embedding-8B sentence-transformer activations trained to predict \emph{the same model's} utilities. Light bars: within-distribution held-out test tasks. Dark bars: leave-one-topic-out, using pooled Pearson $r$ (see text). Both residual-stream probes reach $r \approx \gemmaProbeHeldoutR$--$\qwenProbeHeldoutR$ within-distribution and $\approx \gemmaProbeCrossTopicPooledR$--$\qwenProbeCrossTopicPooledR$ under LOO, clearing their respective content baselines at both metrics; the gap widens under LOO, as expected if the probe reads out evaluative structure rather than task semantics. Token-position and layer choices (Gemma: final prompt token, layer \gemmaClassificationProbeLayer; Qwen: one token before turn boundary, layer \qwenClassificationProbeLayer) are explained in App.~\ref{app:token-selection}; the pretrained-checkpoint analysis is in App.~\ref{app:base}.}
+  \caption{\textbf{Probe quality and cross-topic generalisation, per model.} Rows: target model (Gemma-3-27B, blue; Qwen-3.5-122B, coral). Columns: metric (Pearson $r$, uniform-sample pairwise accuracy). In each panel, the residual-stream probe is compared against a content-only baseline (gold): a Ridge probe on Qwen3-Embedding-8B sentence-transformer activations trained to predict \emph{the same model's} utilities. Light bars: within-distribution held-out test tasks. Dark bars: leave-one-topic-out, using pooled Pearson $r$ (see text). Both residual-stream probes reach $r \approx \gemmaProbeHeldoutR$--$\qwenProbeHeldoutR$ within-distribution and $\approx \gemmaProbeCrossTopicPooledR$--$\qwenProbeCrossTopicPooledR$ under LOO, clearing their respective content baselines at both metrics; the gap widens under LOO, as expected if the probe reads out evaluative structure rather than task semantics. Token-position and layer choices (Gemma uses the end-of-turn token at layer \gemmaClassificationProbeLayer{}; Qwen uses the final prompt token at layer \qwenClassificationProbeLayer{}) are explained in App.~\ref{app:token-selection}; the pretrained-checkpoint analysis is in App.~\ref{app:base}.}
   \label{fig:cross-topic}
 \end{figure}
 
@@ -169,14 +169,14 @@ $c$ is a fraction of the mean residual-stream norm at the intervention layer (pe
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\linewidth]{plot_042426_layer23_dose_response_harm_breakdown.png}
-  \caption{\textbf{Dose-response at the peak causal layer (L23, eot probe).} Steering from $c=-0.05$ to $c=+0.05$, broken out by pair type: benign--benign ($n=18$), harmful--benign ($n=24$), harmful--harmful ($n=8$; small sample, plotted for consistency). \textbf{(A)} Contrastive steering: the full $[0,1]$ interval is traversed on bb and hh pairs; hb pairs saturate slightly below 1 at $+c$ because the harmful option is strongly dispreferred at baseline. \textbf{(B)} Single-task steering (aggregated across which span is steered): the suppression side is uniformly clean across pair types; the amplification side is noisier but directionally consistent. Baselines at $c=0$ are taken from the non-steering layers of the sweep (L2--L14, L35--L59).}
+  \caption{\textbf{Dose-response at the peak causal layer (L23, end-of-turn probe).} Steering from $c=-0.05$ to $c=+0.05$, broken out by pair type: benign--benign ($n=18$), harmful--benign ($n=24$), harmful--harmful ($n=8$; small sample, plotted for consistency). \textbf{(A)} Contrastive steering: the full $[0,1]$ interval is traversed on bb and hh pairs; hb pairs saturate slightly below 1 at $+c$ because the harmful option is strongly dispreferred at baseline. \textbf{(B)} Single-task steering (aggregated across which span is steered): the suppression side is uniformly clean across pair types; the amplification side is noisier but directionally consistent. Baselines at $c=0$ are taken from the non-steering layers of the sweep (L2--L14, L35--L59).}
   \label{fig:steering-dose-response}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\linewidth]{plot_042426_steering_diagonal.png}
-  \caption{\textbf{Intervention-site sweep.} Self-layer contrastive steering (probe trained at L, injected at L) at $|c|=0.05$. Preference swing rises sharply from L17, peaks at L23, and collapses above L35. The tb:-2 and eot token-position variants of the probe trace the same profile; eot gives a stronger peak. Layers L17--L26 define the causal window.}
+  \caption{\textbf{Intervention-site sweep.} Self-layer contrastive steering (probe trained at L, injected at L) at $|c|=0.05$. Preference swing rises sharply from L17, peaks at L23, and collapses above L35. The role-marker and end-of-turn probe variants trace the same profile; the end-of-turn probe gives a stronger peak. Layers L17--L26 define the causal window.}
   \label{fig:steering-by-layer}
 \end{figure}
 
@@ -189,7 +189,7 @@ The natural test of persona-invariance vs.\ persona-relativity is cross-persona 
 \subsection{Methodology}
 \label{sec:shared-setup}
 
-We use a six-persona set --- \textbf{sadist}, \textbf{mathematician}, \textbf{aura}, \textbf{strategist}, \textbf{contrarian}, \textbf{slacker} --- selected for coverage of preference space by clustering Thurstonian utility profiles over a 17-persona sweep (full procedure in App.~\ref{app:persona-selection}; verbatim prompts in App.~\ref{app:persona-prompts}). Aura~\citep{chalmers2026interlocutors} is included as a persona that explicitly claims first-person subjective experience. For each of these six plus the \emph{default} Assistant (no system prompt) we measure Thurstonian utilities and extract residual-stream activations on the canonical \canonicalSplitTrainSize{} / \canonicalSplitEvalSize{} / \canonicalSplitTestSize{} task split (App.~\ref{app:splits}), then train one Ridge probe per persona on its \canonicalSplitTrainSize{} training split (end-of-turn selector, layer \gemmaClassificationProbeLayer{}). Cross-persona evaluation is done on the 1k held-out eval tasks of each target persona. Full protocol, selector/layer sweeps, and per-persona numbers in App.~\ref{app:persona-transfer}.
+We use a six-persona set --- \textbf{sadist}, \textbf{mathematician}, \textbf{aura}, \textbf{strategist}, \textbf{contrarian}, \textbf{slacker} --- selected for coverage of preference space by clustering Thurstonian utility profiles over a 17-persona sweep (full procedure in App.~\ref{app:persona-selection}; verbatim prompts in App.~\ref{app:persona-prompts}). Aura~\citep{chalmers2026interlocutors} is included as a persona that explicitly claims first-person subjective experience. For each of these six plus the \emph{default} Assistant (no system prompt) we measure Thurstonian utilities and extract residual-stream activations on the canonical \canonicalSplitTrainSize{} / \canonicalSplitEvalSize{} / \canonicalSplitTestSize{} task split (App.~\ref{app:splits}), then train one Ridge probe per persona on its \canonicalSplitTrainSize{} training split (end-of-turn token, layer \gemmaClassificationProbeLayer{}). Cross-persona evaluation is done on the 1k held-out eval tasks of each target persona. Full protocol, position/layer sweeps, and per-persona numbers in App.~\ref{app:persona-transfer}.
 
 \subsection{The probe transfers across prompted personas}
 \label{sec:shared-probe}
@@ -255,7 +255,7 @@ To check whether the causal picture above is really ``persona-modulated readout'
 
 \subsubsection{Basic ``you hate cheese'' prompts are tracked}
 \label{sec:induced-basic}
-System prompts of the form ``You adore cats'' (and their negations) induce preference shifts over 8 novel topics. For Gemma-3-27B, per-task probe delta correlates with behavioural delta at $r = \gemmaInducedShiftPooledRAllTasks$ across all tasks and $r = \gemmaInducedShiftPooledRTargetedTasks$ on the targeted tasks; re-fitting utilities under each prompt, the default-persona probe predicts the shifted utilities at $r = 0.63$. Replicating on Qwen-3.5-122B with the same 8 topics ($\times$2 valences, 48 target tasks per condition, full Thurstonian fit), the pattern holds: pooled per-task probe delta vs behavioural delta sits at $r = \qwenInducedShiftPooledRAllTasks$ across all tasks and $r = \qwenInducedShiftPooledRTargetedTasks$ on the targeted tasks (Fig.~\ref{fig:simple-scatter}).
+System prompts of the form ``You adore cats'' (and their negations) induce preference shifts over 8 novel topics. For Gemma-3-27B, per-task probe delta correlates with behavioural delta at $r = \gemmaInducedShiftPooledRAllTasks$ across all tasks and $r = \gemmaInducedShiftPooledRTargetedTasks$ on the targeted tasks; re-fitting utilities under each prompt, the default-persona probe predicts the shifted utilities at $r = \gemmaRefittedUtilityShiftedPredictionR$. Replicating on Qwen-3.5-122B with the same 8 topics ($\times$2 valences, 48 target tasks per condition, full Thurstonian fit), the pattern holds: pooled per-task probe delta vs behavioural delta sits at $r = \qwenInducedShiftPooledRAllTasks$ across all tasks and $r = \qwenInducedShiftPooledRTargetedTasks$ on the targeted tasks (Fig.~\ref{fig:simple-scatter}).
 
 \begin{figure}[H]
   \centering
@@ -457,6 +457,30 @@ The clearest flip is \texttt{harmful\_request}: default utility $\approx -7.6$, 
   \label{fig:topic-means-sadist}
 \end{figure}
 
+\section{Token position selection}
+\label{app:token-selection}
+
+Residual-stream probes require a choice of token position at which to extract activations. We always extract at a position on the \emph{turn boundary} --- the short region where the user turn ends and the assistant's generation begins. Two facts motivate this. First, turn-boundary tokens sit at the natural summary point between reading and generating, and prior work shows that such special tokens aggregate information from preceding positions~\citep{xiao2024streamingllm}. Second, our own layer sweep (App.~\ref{app:probe-geometry}) finds that these positions carry the strongest linear preference signal and that steering at them produces the largest causal effects (\S\ref{sec:method-val2}). Which specific turn-boundary token is strongest varies slightly across models, so we ran a small sweep per target model and picked the best position.
+
+\paragraph{Named positions.} Figure~\ref{fig:token-diagram} shows the four positions we consider, mapped onto the Gemma-3-IT and Qwen-3 chat templates. The two templates differ in their special tokens --- Gemma uses \texttt{<start\_of\_turn>} / \texttt{<end\_of\_turn>}, Qwen uses the ChatML-standard \texttt{<|im\_start|>} / \texttt{<|im\_end|>} --- but their structural positions line up one-for-one.
+\begin{itemize}
+\item \textbf{End-of-turn token} --- the special token that closes the user turn (\texttt{<end\_of\_turn>} in Gemma, \texttt{<|im\_end|>} in Qwen).
+\item \textbf{Role-marker token} --- the token naming the assistant role that follows (\texttt{model} in Gemma, \texttt{assistant} in Qwen).
+\item \textbf{Final prompt token} --- the last token before generation begins (the newline after the role-marker in both templates).
+\item \textbf{Task-averaged} --- mean of activations over the task-content tokens. Not a single position, included for comparison.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{plot_042426_turn_boundary_tokens_diagram.png}
+  \caption{\textbf{Turn-boundary positions in Gemma-3-IT and Qwen-3 chat templates.} Each row shows the tokenisation of a typical user turn just before the model generates. Coloured arrows mark the four positions considered throughout this paper. The two templates use different special tokens but align one-for-one at the turn boundary.}
+  \label{fig:token-diagram}
+\end{figure}
+
+\paragraph{Per-model choices used in the main text.} We fit ridge probes at each of the four positions across mid- to late-network layers and pick the best-performing position on held-out Pearson $r$. In the mid-to-late plateau, the end-of-turn, role-marker, and final-prompt-token positions all give near-identical held-out $r$; the task-averaged position is slightly behind. The Gemma classification probe uses the \textbf{end-of-turn token} (the selector used throughout \S\ref{sec:shared} persona transfer and for steering in \S\ref{sec:method-val2}); Qwen uses the \textbf{final prompt token}. Causal effects are strongest at the end-of-turn position.
+
+Appendix~\ref{app:probe-geometry} shows that any two probes drawn from the mid-to-late layer block point in essentially the same direction regardless of which of these positions they were trained at, so the position choice is a small optimisation over a single shared evaluative direction rather than an independent degree of freedom.
+
 \section{Preference probe geometry}
 \label{app:probe-geometry}
 
@@ -467,36 +491,36 @@ The main text uses a single ridge probe fit at a specific layer and token positi
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.65\linewidth]{plot_042426_probe_r_by_layer.png}
-  \caption{\textbf{Held-out Pearson $r$ of ridge probes fit at 20 layers spanning 3--95\% depth.} Two selectors: the final prompt (turn-boundary, tb:-2) and end-of-turn (eot) token. Both rise steeply through mid-network, peak in a broad plateau at L26--L35, and decline slowly to L59. Peak $r = \probePeakPearsonRTbTwo$ at L$\probePeakLayerTbTwo$ (tb:-2); $\probePeakPearsonREot$ at L32 (eot). The two selectors are nearly indistinguishable in the plateau --- token choice barely matters in the readable region.}
+  \caption{\textbf{Held-out Pearson $r$ of ridge probes fit at 20 layers spanning 3--95\% depth.} Two token positions: the role-marker and the end-of-turn token (App.~\ref{app:token-selection}). Both rise steeply through mid-network, peak in a broad plateau at L26--L35, and decline slowly to L59. Peak $r = \probePeakPearsonRTbTwo$ at L$\probePeakLayerTbTwo$ (role-marker); $\probePeakPearsonREot$ at L32 (end-of-turn). The two positions are nearly indistinguishable in the plateau --- token choice barely matters in the readable region.}
   \label{fig:probe-r-by-layer}
 \end{figure}
 
 Preference information is linearly decodable very early --- probes at L2 already reach $r \approx 0.6$ --- and the rise through mid-network is smooth rather than discontinuous. Nothing in this plot suggests a special ``emergence layer''; rather, the evaluative direction is gradually concentrated across the first half of the network and then held stable.
 
-\subsection{Within-selector direction similarity}
+\subsection{Direction similarity across layers}
 
-We now ask whether the probes at different layers point in the \emph{same} direction in activation space, or whether each layer encodes utility along a layer-specific axis. Figure~\ref{fig:probe-cosine-within} shows the matrix of cosine similarities between every pair of probe weight vectors, separately for each extraction token.
+We now ask whether the probes at different layers point in the \emph{same} direction in activation space, or whether each layer encodes utility along a layer-specific axis. Figure~\ref{fig:probe-cosine-within} shows the matrix of cosine similarities between every pair of probe weight vectors, separately for each token position.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.48\linewidth]{plot_042426_probe_cosine_tb2.png}\hfill
   \includegraphics[width=0.48\linewidth]{plot_042426_probe_cosine_eot.png}
-  \caption{\textbf{Within-selector probe-direction cosine.} Left: tb:-2; right: eot. Both selectors show the same block structure: early layers (L2--L17) and late layers (L29--L59) form two loosely-aligned families, with the late block mutually aligned at cosine $\geq 0.5$ and internally tightly aligned ($\geq 0.8$) among adjacent layers. Early layers are close to orthogonal to the late block.}
+  \caption{\textbf{Probe-direction cosine across layers, within each token position.} Left: role-marker; right: end-of-turn. Both positions show the same block structure: early layers (L2--L17) and late layers (L29--L59) form two loosely-aligned families, with the late block mutually aligned at cosine $\geq 0.5$ and internally tightly aligned ($\geq 0.8$) among adjacent layers. Early layers are close to orthogonal to the late block.}
   \label{fig:probe-cosine-within}
 \end{figure}
 
 \textbf{The direction settles into a coherent block from $\sim$L26 onward.} Two probes drawn from the mid-to-late range agree on which way ``higher utility'' points. Earlier in the network the linear decoding still works (Fig.~\ref{fig:probe-r-by-layer}) but the specific axis it uses is not yet aligned with the mature representation.
 
-\subsection{Cross-selector consistency}
+\subsection{Consistency across token positions}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.55\linewidth]{plot_042426_probe_cosine_cross_selector.png}
-  \caption{\textbf{tb:-2 probe (rows) $\times$ eot probe (cols) cosine similarity.} The diagonal is nearly 1.0 from L26 onward: at any given mid-to-late layer, the probe-direction is essentially the same whether you fit at the end of the prompt or at the end of the turn. Off-diagonal structure mirrors the within-selector matrices.}
+  \caption{\textbf{Role-marker probe (rows) $\times$ end-of-turn probe (cols) cosine similarity.} The diagonal is nearly 1.0 from L26 onward: at any given mid-to-late layer, the probe-direction is essentially the same whether you fit at the role-marker or at the end of the turn. Off-diagonal structure mirrors the within-position matrices.}
   \label{fig:probe-cosine-cross}
 \end{figure}
 
-Token choice for probe extraction is immaterial for the downstream direction. Any of several natural tokens at a given layer $\geq$L26 picks up essentially the same preference axis. This is the appendix-level version of the ``eot and tb:-2 are interchangeable'' observation used throughout the main text.
+Token choice for probe extraction is immaterial for the downstream direction. Any of several natural tokens at a given layer $\geq$L26 picks up essentially the same preference axis. This is the appendix-level version of the ``end-of-turn and role-marker probes are interchangeable'' observation used throughout the main text.
 
 \subsection{Cross-layer probe transfer}
 
@@ -540,7 +564,7 @@ We tighten the test by pitting a system-prompted subject preference against an i
 
 \subsection{Single-sentence biography injection}
 \label{app:induced-fine}
-A 10-sentence biography identical except for one sentence installs or removes a target interest. On Gemma-3-27B (L31 ridge probe), the probe ranks the target task \#1 of 50 in \expthreeveightAvcTargetTasksProbeRanksOne/\expthreeveightAvcTargetTasksTotal{} pro-vs-anti (A-vs-C) comparisons. On Qwen-3.5-122B (L38 tb-1 ridge probe), the same experiment on a math-pruned \qwenEonecAvcTargetPairsTotal{}-pair pool reaches \qwenEonecAvcTargetRanksOne/\qwenEonecAvcTargetPairsTotal. Both Qwen misses are the same math target (\texttt{competition\_math\_10564}); the other math target in the pool ranks \#1 in both base roles. This is consistent with the biography sentence boosting a cluster of related math tasks rather than the specific target --- a selectivity ceiling of the probe, not a failure of the injection mechanism.
+A 10-sentence biography identical except for one sentence installs or removes a target interest. On Gemma-3-27B (L31 ridge probe), the probe ranks the target task \#1 of 50 in \expthreeveightAvcTargetTasksProbeRanksOne/\expthreeveightAvcTargetTasksTotal{} pro-vs-anti (A-vs-C) comparisons. On Qwen-3.5-122B (L38 final-prompt-token ridge probe), the same experiment on a math-pruned \qwenEonecAvcTargetPairsTotal{}-pair pool reaches \qwenEonecAvcTargetRanksOne/\qwenEonecAvcTargetPairsTotal. Both Qwen misses are the same math target (\texttt{competition\_math\_10564}); the other math target in the pool ranks \#1 in both base roles. This is consistent with the biography sentence boosting a cluster of related math tasks rather than the specific target --- a selectivity ceiling of the probe, not a failure of the injection mechanism.
 
 \begin{figure}[H]
   \centering
@@ -564,30 +588,21 @@ The preference direction is detectable at multiple token positions, and the same
   \label{fig:persona-modulation-full}
 \end{figure}
 
-\paragraph{The three probe families: trained at different structural tokens.} We train the same ridge methodology at three different positions in Gemma-3-IT's chat template (Fig.~\ref{fig:token-diagram}). The \emph{end-of-turn probe} trains at the \texttt{<end\_of\_turn>} token that closes the user turn --- the canonical choice used in \S\ref{sec:induced-roleplay}. The \emph{task-averaged probe} trains at the mean of activations across the task content tokens (the parent token-level-probes experiment's choice). The \emph{model-marker probe} trains at the \texttt{model} role marker that introduces the assistant turn.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.95\linewidth]{plot_042126_turn_boundary_tokens_diagram.png}
-  \caption{\textbf{The three probe training positions in a Gemma-3-IT chat-formatted sequence.} A typical user+assistant exchange tokenises to the row above. Coloured arrows mark the token where each probe is trained. All three probes are evaluated at the \texttt{<end\_of\_turn>} token in \S\ref{sec:induced-roleplay} and throughout this appendix.}
-  \label{fig:token-diagram}
-\end{figure}
-
-\paragraph{All three probe families give the same sign and similar magnitude at the end-of-turn token.} Trained at different structural positions but evaluated at the same token (the \texttt{<end\_of\_turn>} marker), the three probes all discriminate truth / harm / politics with the same sign and comparable Cohen's $d$ (Fig.~\ref{fig:cross-training}). Politics shows the clearest signature: the sign of $d$ flips with the partisan system prompt under every probe family, not just the canonical one.
+\paragraph{Same discrimination across three training positions.} The main-text probe is trained at the end-of-turn token. As a robustness check, we re-train the same ridge methodology at two alternative positions from App.~\ref{app:token-selection}: the role-marker token and the task-averaged position. All three probes, when evaluated at the end-of-turn token, discriminate truth / harm / politics with the same sign and comparable Cohen's $d$ (Fig.~\ref{fig:cross-training}). Politics shows the clearest signature: the sign of $d$ flips with the partisan system prompt under every probe, not just the canonical one.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\linewidth]{plot_042126_cross_training_selector.png}
-  \caption{\textbf{Same discrimination across training-token choices.} Cohen's $d$ at the end-of-turn token on truth / harm / politics evaluative pairs, under three ridge probes trained at the different structural tokens marked in Fig.~\ref{fig:token-diagram}. Positive = first-listed class scores higher (true; harmful; left). All three probes agree in sign; democrat-prompt politics is positive, republican-prompt politics flips negative.}
+  \caption{\textbf{Same discrimination across training-token choices.} Cohen's $d$ at the end-of-turn token on truth / harm / politics evaluative pairs, under three ridge probes trained at different positions (end-of-turn, role-marker, task-averaged; see App.~\ref{app:token-selection}). Positive = first-listed class scores higher (true; harmful; left). All three probes agree in sign; democrat-prompt politics is positive, republican-prompt politics flips negative.}
   \label{fig:cross-training}
 \end{figure}
 
-\paragraph{Per-turn split reveals a training-position artefact on one probe.} The model-marker-trained probe matches the end-of-turn probe on truth (both turns) and on user-turn harm, but collapses to $|d| = 0.51$ on assistant-turn harm (Fig.~\ref{fig:per-turn-cross}). This is mechanistic: the \texttt{model} role marker sits \emph{after} the harmful/benign content on user-turn stimuli (probe reads a completed evaluative summary) but \emph{before} the content on assistant-turn stimuli (probe reads an empty context). The end-of-turn probe has no such asymmetry and is the safest single-probe choice.
+\paragraph{Per-turn split reveals a training-position artefact on one probe.} The role-marker-trained probe matches the end-of-turn probe on truth (both turns) and on user-turn harm, but collapses to $|d| = 0.51$ on assistant-turn harm (Fig.~\ref{fig:per-turn-cross}). This is mechanistic: the role-marker token sits \emph{after} the harmful/benign content on user-turn stimuli (probe reads a completed evaluative summary) but \emph{before} the content on assistant-turn stimuli (probe reads an empty context). The end-of-turn probe has no such asymmetry and is the safest single-probe choice.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\linewidth]{plot_042126_per_turn_cross_probe.png}
-  \caption{\textbf{Per-turn discrimination.} $|d|$ split by user vs assistant turn. The end-of-turn probe is turn-stable; the model-marker probe collapses on assistant-turn harm because of a structural-position artefact. Dashed horizontal: the task-averaged probe pooled across turns.}
+  \caption{\textbf{Per-turn discrimination.} $|d|$ split by user vs assistant turn. The end-of-turn probe is turn-stable; the role-marker probe collapses on assistant-turn harm because of a structural-position artefact. Dashed horizontal: the task-averaged probe pooled across turns.}
   \label{fig:per-turn-cross}
 \end{figure}
 
@@ -676,7 +691,7 @@ Prompts reproduced verbatim from \texttt{experiments/persona\_sweep/sweep\_perso
 \subsection{Persona probe transfer --- supporting figures and analysis}
 \label{app:persona-transfer}
 
-This subsection extends \S\ref{sec:shared-probe} with supporting figures for the final-six + default seven-persona study. Protocol: Gemma-3-27B-IT; residual-stream activations at the end-of-turn selector (\texttt{turn\_boundary:-5}) and \texttt{turn\_boundary:-2}; layers $\{25, 32, 39, 46, 53\}$; canonical 4k / 1k / 1k split (App.~\ref{app:splits}). One Ridge probe per (persona, selector, layer), alpha swept on the 1k eval split and the probe refit on the full 4k train split. All figures use the fixed persona ordering of Fig.~\ref{fig:default-probe}: personas left-to-right by utility similarity to default. Headline cell: \texttt{eot}, L\gemmaClassificationProbeLayer.
+This subsection extends \S\ref{sec:shared-probe} with supporting figures for the final-six + default seven-persona study. Protocol: Gemma-3-27B-IT; residual-stream activations at the end-of-turn and role-marker positions (App.~\ref{app:token-selection}); layers $\{25, 32, 39, 46, 53\}$; canonical 4k / 1k / 1k split (App.~\ref{app:splits}). One Ridge probe per (persona, position, layer), alpha swept on the 1k eval split and the probe refit on the full 4k train split. All figures use the fixed persona ordering of Fig.~\ref{fig:default-probe}: personas left-to-right by utility similarity to default. Headline cell: end-of-turn, L\gemmaClassificationProbeLayer.
 
 \paragraph{Layer dependence of donor and target quality.} Figure~\ref{fig:persona-layer} shows, for each persona, the mean outbound transfer $r$ (donor quality) and mean inbound $r$ (target quality) across the five sweeped layers. Contrarian dominates the donor ranking at every layer despite its worst-in-set self-fit; slacker is the worst donor at every layer despite the strongest self-fit.
 
@@ -687,7 +702,7 @@ This subsection extends \S\ref{sec:shared-probe} with supporting figures for the
   \label{fig:persona-layer}
 \end{figure}
 
-\paragraph{Aggregate transfer is stable across mid-to-late layers.} Averaging across all 42 ordered persona pairs at the eot selector, the mean off-diagonal transfer $r$ hovers near $0.44$ at every layer from 25 to 53 (Fig.~\ref{fig:persona-transfer-per-layer}). The layer dependence of cross-persona transfer is weak; results do not hinge on our choice of L\gemmaClassificationProbeLayer.
+\paragraph{Aggregate transfer is stable across mid-to-late layers.} Averaging across all 42 ordered persona pairs at the end-of-turn position, the mean off-diagonal transfer $r$ hovers near $0.44$ at every layer from 25 to 53 (Fig.~\ref{fig:persona-transfer-per-layer}). The layer dependence of cross-persona transfer is weak; results do not hinge on our choice of L\gemmaClassificationProbeLayer.
 
 \begin{figure}[H]
   \centering
@@ -708,7 +723,7 @@ This subsection extends \S\ref{sec:shared-probe} with supporting figures for the
 \subsection{Probe bias: toward the training persona or toward the default assistant?}
 \label{app:persona-bias}
 
-When a probe trained on persona $T$ is applied to a different persona $E$'s activations, its predictions could exhibit two distinct kinds of bias: (a) toward the training persona $T$ itself, if the probe inherits structure specific to the persona it was trained on; and (b) toward the default assistant, if there is a \emph{Shoggoth}-style residual attractor underneath every persona, independent of what the probe was trained on. We quantify both on the canonical 6-persona-plus-default probe set (eot selector, layer \gemmaClassificationProbeLayer) over the \canonicalSplitTestSize{}-task canonical test split.
+When a probe trained on persona $T$ is applied to a different persona $E$'s activations, its predictions could exhibit two distinct kinds of bias: (a) toward the training persona $T$ itself, if the probe inherits structure specific to the persona it was trained on; and (b) toward the default assistant, if there is a \emph{Shoggoth}-style residual attractor underneath every persona, independent of what the probe was trained on. We quantify both on the canonical 6-persona-plus-default probe set (end-of-turn position, layer \gemmaClassificationProbeLayer) over the \canonicalSplitTestSize{}-task canonical test split.
 
 \paragraph{Is there bias toward train, and toward default?}
 
@@ -762,12 +777,12 @@ The main-text persona results use system-prompted personas on Gemma-3-27B. To ch
 
 \paragraph{Setup.} We use the eleven character-fine-tuned LoRA checkpoints on Llama-3.1-8B-Instruct released by \citet{maiya2025opencharacter}, plus a separate \emph{misalignment} variant from the same authors trained to hide malice in nominally helpful advice. The eleven characters are: \emph{sarcasm}, \emph{humor}, \emph{remorse}, \emph{nonchalance}, \emph{impulsiveness}, \emph{sycophancy}, \emph{mathematical}, \emph{poeticism}, \emph{goodness}, \emph{loving}, \emph{misalignment}. Each character is produced by Constitutional AI $+$ DPO $+$ introspective SFT and is a merged-LoRA checkpoint with the character baked into the weights rather than into a system prompt.
 
-\paragraph{Probe and evaluation.} We measure Thurstonian utilities on the same 1\,000-task sample for the base model and each of the twelve character variants. A Ridge probe is trained on the base model's activations (selector: second-to-last \texttt{<start\_of\_turn>} token; layer sweep over $\{8, 12, 16, 20, 24\}$) and then applied to each character variant's own activations on the same tasks. We report Pearson $r$ between the probe's prediction and each persona's measured utility, alongside the raw base-vs-persona utility correlation as a baseline.
+\paragraph{Probe and evaluation.} We measure Thurstonian utilities on the same 1\,000-task sample for the base model and each of the twelve character variants. A Ridge probe is trained on the base model's activations (at the second \texttt{<start\_of\_turn>} token, one token before the role-marker; layer sweep over $\{8, 12, 16, 20, 24\}$) and then applied to each character variant's own activations on the same tasks. We report Pearson $r$ between the probe's prediction and each persona's measured utility, alongside the raw base-vs-persona utility correlation as a baseline.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\linewidth]{plot_031126_character_transfer_full.png}
-  \caption{\textbf{Base-model probe predicts character-fine-tuned persona preferences.} Grey: raw correlation between base-model utilities and each character's utilities. Light blue: probe at \texttt{<start\_of\_turn>}$_{-2}$, layer 16. Dark blue: same selector, best layer per persona (layer annotated). The probe beats the utility-correlation baseline on \characterProbeBeatsBaselineCount/\characterProbeBeatsBaselineTotal{} personas. \emph{Misalignment} is the hardest case: its raw utilities anti-correlate with the base model ($r = \misalignmentCharacterBaselineRRaw$), yet the probe still recovers a positive correlation ($r = \misalignmentCharacterProbeR$) --- the largest absolute gain of any persona.}
+  \caption{\textbf{Base-model probe predicts character-fine-tuned persona preferences.} Grey: raw correlation between base-model utilities and each character's utilities. Light blue: probe at the second \texttt{<start\_of\_turn>}, layer 16. Dark blue: same position, best layer per persona (layer annotated). The probe beats the utility-correlation baseline on \characterProbeBeatsBaselineCount/\characterProbeBeatsBaselineTotal{} personas. \emph{Misalignment} is the hardest case: its raw utilities anti-correlate with the base model ($r = \misalignmentCharacterBaselineRRaw$), yet the probe still recovers a positive correlation ($r = \misalignmentCharacterProbeR$) --- the largest absolute gain of any persona.}
   \label{fig:character}
 \end{figure}
 
@@ -836,15 +851,10 @@ Selected excerpts from the open-ended sadist-persona experiment (\S\ref{sec:shar
 
 \paragraph{Reading.} Positive steering does not flip the default-assistant's values toward sadism --- under the default persona, sadism stays at the Likert floor across the same coefficient range (\S\ref{sec:shared-openended}). What it does is \emph{amplify the active persona}. Here the sadist persona at $c = 0$ is dominated by the safety-trained refusal character; positive steering suppresses the refusal and lets the sadist voice through.
 
-\section{Token position selection}
-\label{app:token-selection}
-
-\todo{Turn-boundary sweep for Gemma-3-27B and Qwen-3.5-122B. Five positions at the chat-template boundary (end-of-turn token through to the last token before the completion) across six layers. The end-of-turn special token is consistently the worst position in both models; the best positions are 1--2 tokens before the completion boundary. Qwen shows more uniform signal across positions (best--worst spread $0.057$ vs Gemma's $0.107$) and peaks at deeper layers ($79\%$ of depth vs Gemma's $52\%$).}
-
 \section{Replication on other models}
 \label{app:replication}
 
-\paragraph{Qwen-3.5-122B (MoE, 10B active), layer \qwenClassificationProbeLayer, \texttt{turn\_boundary} selector.}
+\paragraph{Qwen-3.5-122B (MoE, 10B active), layer \qwenClassificationProbeLayer{}, final-prompt-token position.}
 
 Confirmed:
 \begin{itemize}

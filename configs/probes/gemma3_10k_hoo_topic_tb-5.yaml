@@ -20,3 +20,5 @@ topics_json: data/topics/topics.json
 
 hoo_grouping: topic
 hoo_hold_out_size: 1
+
+uniform_eval_run_dir: results/experiments/uniform_eval_gemma3_27b_v3/pre_task_revealed/completion_preference_gemma-3-27b_completion_canonical_seed0_uniform_eval

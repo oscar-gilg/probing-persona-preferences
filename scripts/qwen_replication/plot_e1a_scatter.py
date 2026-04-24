@@ -23,13 +23,16 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 ROOT = Path(".")
 DATA_JSON = ROOT / "experiments/qwen_replication/e1a/e1a_per_task.json"
 PAPER_FIGURES = ROOT / "paper/figures"
 ASSETS = ROOT / "experiments/qwen_replication/e1a/assets"
 CLAIMS_PATH = ROOT / "paper/claims/e1a_scatter.json"
+
+# Repo-relative path read by the producer (shared across all registered claims).
+DATA_JSON_REL = "experiments/qwen_replication/e1a/e1a_per_task.json"
 
 DATE_TAG = date.today().strftime("%m%d%y")
 
@@ -162,15 +165,16 @@ def plot_variant(data: dict, variant: str) -> Path:
 def register_claims(data: dict) -> None:
     """Register the pooled r / sample-count values the scatter surfaces.
 
-    The sidecar carries the numbers quoted in §4.1 prose and Fig. caption that
-    this producer actually computes from data. Gemma targeted r (0.95) and the
-    refitted-utility r (0.63) are not computed here and are handled separately
-    in scripts/paper/claims/ manual/compute scripts.
+    The sidecar carries the numbers quoted in §4.1 prose and Fig. caption.
+    Gemma targeted r is read from pooled_on_target (the per-task JSON has it,
+    contrary to an earlier audit note). The refitted-utility r (0.63) is a
+    separate analysis not computed by this producer.
     """
     gemma = data["gemma-3-27b"]["prompt_last"]
     qwen = data["qwen-3.5-122b"]["tb-1"]
 
     gemma_all = gemma["pooled_all"]
+    gemma_on = gemma["pooled_on_target"]
     qwen_all = qwen["pooled_all"]
     qwen_on = qwen["pooled_on_target"]
 
@@ -184,6 +188,8 @@ def register_claims(data: dict) -> None:
             "all 640 task-condition pairs over 8 novel topics x 2 valences."
         ),
         used_in=USED_IN,
+        data_paths=[DATA_JSON_REL],
+        derivation="Read `['gemma-3-27b'].prompt_last.pooled_all.pearson_r`; round to 2dp.",
     )
     CLAIMS.register(
         name="Gemma induced-shift pooled n all tasks",
@@ -194,6 +200,32 @@ def register_claims(data: dict) -> None:
             "fig:simple-scatter (8 topics x 2 valences x tasks per condition)."
         ),
         used_in=USED_IN,
+        data_paths=[DATA_JSON_REL],
+        derivation="Read `['gemma-3-27b'].prompt_last.pooled_all.n` as int.",
+    )
+    CLAIMS.register(
+        name="Gemma induced-shift pooled r targeted tasks",
+        value=round(float(gemma_on["pearson_r"]), 2),
+        statement=(
+            "On Gemma-3-27B, restricting to on-target tasks (tasks whose topic "
+            "matches the installed persona's target topic), probe delta vs "
+            "behavioural delta reaches pooled Pearson r across the targeted "
+            "task-condition pairs."
+        ),
+        used_in=USED_IN,
+        data_paths=[DATA_JSON_REL],
+        derivation="Read `['gemma-3-27b'].prompt_last.pooled_on_target.pearson_r`; round to 2dp.",
+    )
+    CLAIMS.register(
+        name="Gemma induced-shift pooled n targeted tasks",
+        value=int(gemma_on["n"]),
+        statement=(
+            "Number of on-target Gemma-3-27B task-condition pairs used for "
+            "the targeted pooled r in Fig. fig:simple-scatter."
+        ),
+        used_in=USED_IN,
+        data_paths=[DATA_JSON_REL],
+        derivation="Read `['gemma-3-27b'].prompt_last.pooled_on_target.n` as int.",
     )
     CLAIMS.register(
         name="Qwen induced-shift pooled r all tasks",
@@ -205,6 +237,8 @@ def register_claims(data: dict) -> None:
             "refit per condition)."
         ),
         used_in=USED_IN,
+        data_paths=[DATA_JSON_REL],
+        derivation="Read `['qwen-3.5-122b'].['tb-1'].pooled_all.pearson_r`; round to 2dp.",
     )
     CLAIMS.register(
         name="Qwen induced-shift pooled n all tasks",
@@ -215,6 +249,8 @@ def register_claims(data: dict) -> None:
             "fig:simple-scatter."
         ),
         used_in=USED_IN,
+        data_paths=[DATA_JSON_REL],
+        derivation="Read `['qwen-3.5-122b'].['tb-1'].pooled_all.n` as int.",
     )
     CLAIMS.register(
         name="Qwen induced-shift pooled r targeted tasks",
@@ -226,6 +262,8 @@ def register_claims(data: dict) -> None:
             "task-condition pairs."
         ),
         used_in=USED_IN,
+        data_paths=[DATA_JSON_REL],
+        derivation="Read `['qwen-3.5-122b'].['tb-1'].pooled_on_target.pearson_r`; round to 2dp.",
     )
     CLAIMS.register(
         name="Qwen induced-shift pooled n targeted tasks",
@@ -235,6 +273,8 @@ def register_claims(data: dict) -> None:
             "the targeted pooled r in Fig. fig:simple-scatter."
         ),
         used_in=USED_IN,
+        data_paths=[DATA_JSON_REL],
+        derivation="Read `['qwen-3.5-122b'].['tb-1'].pooled_on_target.n` as int.",
     )
 
 

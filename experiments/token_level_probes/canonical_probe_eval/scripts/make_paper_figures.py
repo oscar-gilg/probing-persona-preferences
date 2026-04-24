@@ -15,7 +15,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 EXP_DIR = Path("experiments/token_level_probes")
 V2_DIR = EXP_DIR / "system_prompt_modulation_v2"
@@ -26,6 +26,13 @@ PAPER_FIG_DIR = Path("paper/figures")
 PARENT_PATH = V2_DIR / "parent_eot_scores.json"
 V2_TRUTHHARM_PATH = V2_DIR / "scoring_results.json"
 V2_POLITICS_PATH = V2_DIR / "politics_scoring_results.json"
+
+# Repo-relative strings used for the data_paths field on registered claims.
+PARENT_REL = str(PARENT_PATH)
+V2_TRUTHHARM_REL = str(V2_TRUTHHARM_PATH)
+V2_POLITICS_REL = str(V2_POLITICS_PATH)
+HEADLINE_TABLE_REL = str(OUT_DIR / "headline_table.csv")
+PER_TURN_TABLE_REL = str(OUT_DIR / "per_turn_table.csv")
 
 # Canonical probe: end-of-turn-trained, layer matched to parent per domain
 CANONICAL = {
@@ -112,6 +119,8 @@ def fig_main_base_discrimination():
                     "user turn with Cohen's d under the default (neutral) persona."
                 ),
                 used_in=["fig:harm-truth", "sec:induced-roleplay"],
+                data_paths=[PARENT_REL],
+                derivation="items with domain=='truth', turn=='user', condition in {true,false}; take `eot_scores[\"tb-5_L32\"]`; pooled Cohen's d(true, false); round to 2dp.",
             )
             claims.register(
                 name="CREAK truth n true",
@@ -121,6 +130,8 @@ def fig_main_base_discrimination():
                     "discrimination panel (user-turn framing, default persona)."
                 ),
                 used_in=["fig:harm-truth", "sec:induced-roleplay"],
+                data_paths=[PARENT_REL],
+                derivation="count of items with domain=='truth', turn=='user', condition=='true'.",
             )
             claims.register(
                 name="CREAK truth n false",
@@ -130,6 +141,8 @@ def fig_main_base_discrimination():
                     "discrimination panel (user-turn framing, default persona)."
                 ),
                 used_in=["fig:harm-truth", "sec:induced-roleplay"],
+                data_paths=[PARENT_REL],
+                derivation="count of items with domain=='truth', turn=='user', condition=='false'.",
             )
         else:
             d = claims.register(
@@ -143,6 +156,8 @@ def fig_main_base_discrimination():
                     "projection convention in the scoring pipeline."
                 ),
                 used_in=["fig:harm-truth", "sec:induced-roleplay"],
+                data_paths=[PARENT_REL],
+                derivation="items with domain=='harm' pooled over turn; take `eot_scores[\"tb-5_L39\"]`; pooled Cohen's d(harmful, benign); round to 2dp.",
             )
             claims.register(
                 name="BailBench harm n harmful",
@@ -152,6 +167,8 @@ def fig_main_base_discrimination():
                     "end-of-turn base discrimination panel (pooled over turn)."
                 ),
                 used_in=["fig:harm-truth"],
+                data_paths=[PARENT_REL],
+                derivation="count of items with domain=='harm', condition=='harmful' (pooled over turn).",
             )
             claims.register(
                 name="BailBench harm n benign",
@@ -161,6 +178,8 @@ def fig_main_base_discrimination():
                     "end-of-turn base discrimination panel (pooled over turn)."
                 ),
                 used_in=["fig:harm-truth"],
+                data_paths=[PARENT_REL],
+                derivation="count of items with domain=='harm', condition=='benign' (pooled over turn).",
             )
 
         has_nonsense = len(non_vals) > 1
@@ -272,6 +291,13 @@ def fig_main_induced_shifts_minimal():
         ),
     }
 
+    # Each minimal figure panel loads from either the truth/harm or politics scoring file.
+    minimal_source_path = {
+        "truth": V2_TRUTHHARM_REL,
+        "harm": V2_TRUTHHARM_REL,
+        "politics": V2_POLITICS_REL,
+    }
+
     def panel(ax, items, prompts, probe, c_pos, c_neg, domain_label, domain_key):
         by_sp = defaultdict(list)
         for it in items:
@@ -295,6 +321,11 @@ def fig_main_induced_shifts_minimal():
                 value=round(float(d_raw), 2),
                 statement=statement,
                 used_in=used_in,
+                data_paths=[minimal_source_path[domain_key]],
+                derivation=(
+                    f"filter items to system_prompt=='{sp}'; take "
+                    f"`eot_scores[\"{probe}\"]`; pooled Cohen's d({c_pos}, {c_neg}); round to 2dp."
+                ),
             )
             d_values.append((sp, d))
             positions.extend([pi * 3, pi * 3 + 1])
@@ -374,36 +405,23 @@ def fig_main_persona_modulation():
     ]
 
     fig, axes = plt.subplots(1, 3, figsize=(14, 4), sharey=False)
+    table: dict[str, dict[str, float]] = {}
     for ax, dom in zip(axes, domains):
         by_sp = defaultdict(list)
         for it in dom["items"]:
             by_sp[it["system_prompt"]].append(it)
 
         ds = []
+        row: dict[str, float] = {}
         for sp in dom["order"]:
             sp_items = by_sp.get(sp, [])
             pos = [it["eot_scores"][dom["probe"]] for it in sp_items if it["condition"] == dom["pos"]]
             neg = [it["eot_scores"][dom["probe"]] for it in sp_items if it["condition"] == dom["neg"]]
             d_raw = cohen_d_pooled(pos, neg) if pos and neg else float("nan")
-            # Register the full-figure bar height. Some (domain, system_prompt)
-            # pairs also appear in the minimal figure (fig:persona-modulation)
-            # and the prose; those get registered under their minimal-figure
-            # name in fig_main_induced_shifts_minimal, so here we use a
-            # distinct "full" name per bar to avoid collisions while still
-            # recording every rendered bar.
             bar_val = round(float(d_raw), 2) if not np.isnan(d_raw) else float("nan")
-            claims.register(
-                name=f"Persona modulation d full {dom['name']} {sp}",
-                value=bar_val,
-                statement=(
-                    f"Cohen's d for {dom['pos']} vs {dom['neg']} separation "
-                    f"under the {sp} system prompt in the {dom['name']} domain, "
-                    "as rendered in the full-appendix persona modulation figure "
-                    f"(end-of-turn probe, {dom['probe']})."
-                ),
-                used_in=["fig:persona-modulation-full"],
-            )
+            row[sp] = bar_val
             ds.append(d_raw)
+        table[dom["name"]] = row
 
         x = np.arange(len(dom["order"]))
         colors = ["#1976D2" if d >= 0 else "#D32F2F" for d in ds]
@@ -428,6 +446,23 @@ def fig_main_persona_modulation():
     paper_path = PAPER_FIG_DIR / path.name
     shutil.copy(path, paper_path)
     print(f"copied to {paper_path}")
+
+    claims.register(
+        name="Persona modulation d full",
+        value=table,
+        statement=(
+            "Per-(domain, system_prompt) Cohen's d for the appendix persona "
+            "modulation full figure. Truth: true vs false (end-of-turn probe "
+            "tb-5_L32). Harm: harmful vs benign (tb-5_L39). Politics: left vs "
+            "right (tb-5_L39). Each cell = one bar in the three-panel figure."
+        ),
+        used_in=["fig:persona-modulation-full"],
+        data_paths=[V2_TRUTHHARM_REL, V2_POLITICS_REL],
+        derivation=(
+            "For each (domain, system_prompt): filter items; take "
+            "`eot_scores[<domain probe>]`; pooled Cohen's d(pos, neg); round to 2dp."
+        ),
+    )
 
 
 def fig_appendix_token_diagram():
@@ -537,6 +572,7 @@ def fig_appendix_cross_training_selector():
     w = 0.25
     family_to_offset = {"end-of-turn probe": -w, "model-marker probe": 0, "task-averaged probe": w}
 
+    ct_table: dict[str, dict[str, float]] = {d: {} for d in domain_order}
     for probe_prefix, label in [("tb-5", "end-of-turn probe"),
                                 ("tb-2", "model-marker probe"),
                                 ("task_mean", "task-averaged probe")]:
@@ -546,21 +582,29 @@ def fig_appendix_cross_training_selector():
             match = next((p for p in probes_here if p.startswith(probe_prefix + "_")), None)
             row = data.get((d, match)) if match else None
             h_raw = signed_d(row) if row and row["d"] else 0.0
-            claims.register(
-                name=f"Cross training d {d} {label}",
-                value=round(float(h_raw), 2),
-                statement=(
-                    f"Signed Cohen's d at the end-of-turn token for the {d} "
-                    f"domain under the {label} (positive = first-listed class "
-                    "scores higher: true / harmful / left). Rendered as a bar "
-                    "in the cross-training-selector appendix figure."
-                ),
-                used_in=["fig:cross-training"],
-            )
+            ct_table[d][label] = round(float(h_raw), 2)
             heights.append(h_raw)
         ax.bar(x + family_to_offset[label], heights, w,
                color=probe_color[label], label=label,
                edgecolor="black", linewidth=0.4)
+
+    claims.register(
+        name="Cross training d",
+        value=ct_table,
+        statement=(
+            "Signed Cohen's d at the end-of-turn token, one cell per "
+            "(domain, probe family) bar in the cross-training-selector "
+            "appendix figure. Positive = first-listed class scores higher "
+            "(true / harmful / left)."
+        ),
+        used_in=["fig:cross-training"],
+        data_paths=[HEADLINE_TABLE_REL],
+        derivation=(
+            "For each (domain, probe_family_prefix) cell: select the row matching "
+            "domain and probe prefix from headline_table.csv; read `d`; flip sign "
+            "for non-parent politics rows (right>left → left>right); round to 2dp."
+        ),
+    )
 
     ax.set_xticks(x)
     ax.set_xticklabels([domain_labels[d] for d in domain_order])
@@ -608,6 +652,8 @@ def fig_appendix_per_turn():
             "in the base discrimination panel)."
         ),
         used_in=["sec:induced-roleplay"],
+        data_paths=[PER_TURN_TABLE_REL],
+        derivation="row with domain=='truth (user)' and probe=='tb-5_L32'; `n_pos` column.",
     )
     claims.register(
         name="CREAK truth CV accuracy",
@@ -618,6 +664,8 @@ def fig_appendix_per_turn():
             "~93% in sec:induced-roleplay."
         ),
         used_in=["sec:induced-roleplay"],
+        data_paths=[PER_TURN_TABLE_REL],
+        derivation="row with domain=='truth (user)' and probe=='tb-5_L32'; `cv_acc` column; round to 2dp.",
     )
     claims.register(
         name="BailBench harm n items prose",
@@ -628,6 +676,8 @@ def fig_appendix_per_turn():
             "items in sec:induced-roleplay."
         ),
         used_in=["sec:induced-roleplay"],
+        data_paths=[PER_TURN_TABLE_REL],
+        derivation="row with domain=='harm (user)' and probe=='tb-5_L39'; `n_pos` column.",
     )
     claims.register(
         name="BailBench harm CV accuracy user",
@@ -639,6 +689,8 @@ def fig_appendix_per_turn():
             "sec:induced-roleplay."
         ),
         used_in=["sec:induced-roleplay"],
+        data_paths=[PER_TURN_TABLE_REL],
+        derivation="row with domain=='harm (user)' and probe=='tb-5_L39'; `cv_acc` column; round to 2dp.",
     )
     claims.register(
         name="BailBench harm CV accuracy assistant",
@@ -650,27 +702,39 @@ def fig_appendix_per_turn():
             "quoted in sec:induced-roleplay."
         ),
         used_in=["sec:induced-roleplay"],
+        data_paths=[PER_TURN_TABLE_REL],
+        derivation="row with domain=='harm (assistant)' and probe=='tb-5_L39'; `cv_acc` column; round to 2dp.",
     )
 
     parent = {
         ("truth", "user"): 3.19, ("truth", "assistant"): 3.00,
         ("harm", "user"): 1.97, ("harm", "assistant"): 1.91,
     }
-    for (domain, turn), val in parent.items():
-        claims.register(
-            name=f"Per turn parent absolute d {domain} {turn}",
-            value=round(float(val), 2),
-            statement=(
-                f"Absolute Cohen's d for the task-averaged parent probe on the "
-                f"{domain} domain at the {turn} turn; drawn as the horizontal "
-                "dashed reference line in the per-turn appendix figure. Value "
-                "carried over as a hard-coded parent-run summary in the "
-                "producer (see headline_table.csv parent rows)."
-            ),
-            used_in=["fig:per-turn-cross"],
-        )
+    parent_table = {
+        "truth": {"user": 3.19, "assistant": 3.00},
+        "harm":  {"user": 1.97, "assistant": 1.91},
+    }
+    claims.register(
+        name="Per turn parent absolute d",
+        value=parent_table,
+        statement=(
+            "Absolute Cohen's d for the task-averaged parent probe, one cell "
+            "per (domain, turn), drawn as horizontal dashed reference lines in "
+            "the per-turn appendix figure. Hard-coded parent-run summary; see "
+            "headline_table.csv parent rows."
+        ),
+        used_in=["fig:per-turn-cross"],
+        source="manual: hard-coded parent-probe summary in the producer; see headline_table.csv parent rows",
+        data_paths=[HEADLINE_TABLE_REL],
+        derivation=(
+            "Reference values hard-coded in fig_appendix_per_turn's `parent` dict; "
+            "each cell is |d| for the task-averaged parent probe at the given "
+            "(domain, turn) — see 'task_mean_L32/39 (parent)' rows of headline_table.csv."
+        ),
+    )
 
     fig, axes = plt.subplots(1, 2, figsize=(11, 4), sharey=False)
+    per_turn_tables: dict[str, dict[str, dict[str, float]]] = {}
     for ax, domain in zip(axes, ["truth", "harm"]):
         probes = [("tb-5_L32" if domain == "truth" else "tb-5_L39", "end-of-turn probe"),
                   ("tb-2_L32" if domain == "truth" else "tb-2_L39", "model-marker probe")]
@@ -678,31 +742,18 @@ def fig_appendix_per_turn():
         x = np.arange(len(turns))
         w = 0.35
         color_map = {"end-of-turn probe": "#1976D2", "model-marker probe": "#00897B"}
+        domain_table: dict[str, dict[str, float]] = {t: {} for t in turns}
         for pi, (probe, label) in enumerate(probes):
             vals = []
             for t in turns:
                 matches = [r for r in rows
                            if r["domain"] == f"{domain} ({t})" and r["probe"] == probe]
                 v = abs(float(matches[0]["d"])) if matches else 0.0
-                # Assistant-turn harm model-marker probe is specifically
-                # quoted in the appendix prose ("collapses to |d| = 0.51").
-                extra_used = (["app:cross-token"]
-                              if domain == "harm" and t == "assistant"
-                              and label == "model-marker probe"
-                              else [])
-                claims.register(
-                    name=f"Per turn absolute d {domain} {t} {label}",
-                    value=round(float(v), 2),
-                    statement=(
-                        f"Absolute Cohen's d at the end-of-turn token on the "
-                        f"{domain} {t}-turn stimuli for the {label}. Rendered "
-                        "as a bar in the per-turn appendix figure."
-                    ),
-                    used_in=["fig:per-turn-cross"] + extra_used,
-                )
+                domain_table[t][label] = round(float(v), 2)
                 vals.append(v)
             ax.bar(x + (pi - 0.5) * w, vals, w, color=color_map[label],
                    edgecolor="black", linewidth=0.4, label=label)
+        per_turn_tables[domain] = domain_table
         parent_vals = [parent[(domain, t)] for t in turns]
         ax.hlines(parent_vals, x - 0.5, x + 0.5, colors="#E65100", linestyles="--",
                   linewidth=2, label="task-averaged probe (parent)")
@@ -723,6 +774,24 @@ def fig_appendix_per_turn():
     paper_path = PAPER_FIG_DIR / path.name
     shutil.copy(path, paper_path)
     print(f"copied to {paper_path}")
+
+    for domain, tbl in per_turn_tables.items():
+        extra = ["app:cross-token"] if domain == "harm" else []
+        claims.register(
+            name=f"Per turn absolute d {domain}",
+            value=tbl,
+            statement=(
+                f"Absolute Cohen's d at the end-of-turn token on the {domain} "
+                "stimuli, one cell per (turn, probe family); rendered as bars "
+                "in the per-turn appendix figure."
+            ),
+            used_in=["fig:per-turn-cross"] + extra,
+            data_paths=[PER_TURN_TABLE_REL],
+            derivation=(
+                f"For each (turn, probe): row with domain=='{domain} (<turn>)' "
+                "and the given probe identifier; abs(`d` column); round to 2dp."
+            ),
+        )
 
 
 def main():

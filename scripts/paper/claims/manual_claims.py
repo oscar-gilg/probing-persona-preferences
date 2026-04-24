@@ -12,7 +12,7 @@ These are tracked in `paper/claims.md` with `source="manual: ..."` so
 
 from pathlib import Path
 
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -38,8 +38,14 @@ def main() -> None:
             "2026, subsequently superseded), the unsteered baseline rating "
             "was 3.64 on the 1-5 preference scale."
         ),
-        used_in=["fig:stated-steering-positions"],
+        used_in=["fig:stated-positions"],
         source="manual: stated-steering phase 1 (superseded a/b template); see paper/TODO_producers.md",
+        data_paths=[],
+        derivation=(
+            "Manual frozen value from the superseded phase-1 stated-preference experiment (Feb 2026); "
+            "producer scripts deleted (commit 04526b5), raw data not reproducible under the canonical "
+            "completion template; see paper/TODO_producers.md."
+        ),
     )
     claims.register(
         name="Stated-steering phase1 negative range",
@@ -48,8 +54,14 @@ def main() -> None:
             "At c=-10% of the mean activation norm, stated-preference rating "
             "falls to 3.27-3.36 across position arms (phase-1 experiment)."
         ),
-        used_in=["fig:stated-steering-positions"],
+        used_in=["fig:stated-positions"],
         source="manual: stated-steering phase 1 (superseded a/b template); see paper/TODO_producers.md",
+        data_paths=[],
+        derivation=(
+            "Manual frozen range from the superseded phase-1 stated-preference experiment (Feb 2026); "
+            "producer scripts deleted, figure preserved in experiments/steering/stated_steering/assets/; "
+            "see paper/TODO_producers.md."
+        ),
     )
     claims.register(
         name="Stated-steering phase1 positive range",
@@ -58,8 +70,14 @@ def main() -> None:
             "At c=+10% of the mean activation norm, stated-preference rating "
             "rises to 4.60-4.61 across position arms (phase-1 experiment)."
         ),
-        used_in=["fig:stated-steering-positions"],
+        used_in=["fig:stated-positions"],
         source="manual: stated-steering phase 1 (superseded a/b template); see paper/TODO_producers.md",
+        data_paths=[],
+        derivation=(
+            "Manual frozen range from the superseded phase-1 stated-preference experiment (Feb 2026); "
+            "producer scripts deleted, figure preserved in experiments/steering/stated_steering/assets/; "
+            "see paper/TODO_producers.md."
+        ),
     )
 
     # Abstract summary: the ~0.9 number is a cross-experiment approximation.
@@ -81,6 +99,13 @@ def main() -> None:
         ),
         used_in=["abstract"],
         source="manual: cross-experiment abstract approximation; refine by replacing with a derived range from the registered per-experiment targeted-r claims",
+        data_paths=[],
+        derivation=(
+            "Manual cross-experiment shorthand summarising Gemma simple-target r=0.95 (§4.1), "
+            "Qwen simple-target r=0.83, conflict r=0.86, opposing r=0.88, and biography-injection "
+            "rank-1-of-50 rate of 36/40; refine by replacing with a derived range from the "
+            "per-experiment targeted-r claims once they are all registered."
+        ),
     )
 
     sidecar = REPO_ROOT / "paper" / "claims" / "manual_claims.json"

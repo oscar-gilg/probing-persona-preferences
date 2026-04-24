@@ -23,7 +23,7 @@ from pathlib import Path
 import numpy as np
 from scipy.stats import pearsonr
 
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -61,6 +61,9 @@ def main() -> None:
     ys = np.array([run2[t] for t in shared])
     r, _ = pearsonr(xs, ys)
 
+    _run1_rel = str(RUN1.relative_to(REPO_ROOT))
+    _run2_rel = str(RUN2.relative_to(REPO_ROOT))
+
     claims = ClaimSet(source="scripts/paper/claims/compute_thurstonian_reliability.py")
     claims.register(
         "Thurstonian seed-to-seed r",
@@ -71,15 +74,12 @@ def main() -> None:
         "Interpreted in the paper as a seed-to-seed reliability estimate for the "
         "utility-extraction pipeline.",
         used_in=["sec:method-revealed"],
+        data_paths=[_run1_rel, _run2_rel],
+        derivation=(
+            f"Pearson r of `mu` columns on the intersection of task_ids between the two "
+            f"thurstonian CSVs; n={len(shared)}; round to 3dp."
+        ),
     )
-    claims.register(
-        "Thurstonian seed-to-seed overlap count",
-        len(shared),
-        f"{len(shared)} task_ids appear in both Gemma-3-27B active-learning runs "
-        "used for the Thurstonian seed-to-seed reliability estimate.",
-        used_in=["sec:method-revealed"],
-    )
-
     sidecar = REPO_ROOT / "paper" / "claims" / "thurstonian_reliability.json"
     claims.save(sidecar)
     print(f"Saved {sidecar.relative_to(REPO_ROOT)}  ({len(claims.claims)} claims)")

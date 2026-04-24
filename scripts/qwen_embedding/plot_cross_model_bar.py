@@ -29,7 +29,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 RESULTS = REPO_ROOT / "results" / "probes"
@@ -56,8 +56,8 @@ def _load_hoo(hoo_dir: Path, layer: int) -> tuple[float, float | None]:
 
 
 # Layers and data sources. Values loaded at import-time so `main()` is thin.
-GEMMA_HELDOUT_DIR = RESULTS / "heldout_eval_gemma3_tb-1"
-GEMMA_HOO_DIR = RESULTS / "gemma3_10k_hoo_topic_tb-1_uniform"
+GEMMA_HELDOUT_DIR = RESULTS / "heldout_eval_gemma3_tb-5"
+GEMMA_HOO_DIR = RESULTS / "gemma3_10k_hoo_topic_tb-5"
 GEMMA_BASELINE_HELDOUT_DIR = RESULTS / "qwen3_emb_8b_heldout_std_raw"
 GEMMA_BASELINE_HOO_DIR = RESULTS / "qwen3_emb_8b_hoo_topic"
 QWEN_HELDOUT_DIR = RESULTS / "qwen35_122b" / "qwen35_122b_heldout_turn_boundary_m1"
@@ -127,8 +127,28 @@ def _draw_panel(ax, probe, baseline, metric, model_key, title, ylabel):
     ax.spines["right"].set_visible(False)
 
 
+def _rel(path: Path) -> str:
+    """Produce a repo-relative string for use in data_paths."""
+    try:
+        return str(path.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(path)
+
+
 def build_stats_and_claims(claims: ClaimSet) -> tuple[dict, dict, dict, dict]:
-    """Load stats from disk, register every rendered value as a claim, return stats."""
+    """Load stats from disk, register every rendered value as a claim, return stats.
+
+    Cited individually in the paper (remain as scalar claims):
+      - Gemma probe heldout r            -> \\gemmaProbeHeldoutR
+      - Gemma probe cross-topic pooled r -> \\gemmaProbeCrossTopicPooledR
+      - Qwen probe heldout r             -> \\qwenProbeHeldoutR
+      - Qwen probe cross-topic pooled r  -> \\qwenProbeCrossTopicPooledR
+      - Qwen probe heldout uniform pairwise accuracy -> \\qwenProbeHeldoutUniformPairwiseAccuracy
+
+    Un-cited bar values are collapsed into two structured claims:
+      - "Cross model content baseline" (2-D table, 8 cells)
+      - "Cross model probe extras"     (1-D row,  3 cells)
+    """
 
     gp_r_held, gp_acc_held = _load_heldout(GEMMA_HELDOUT_DIR, GEMMA_LAYER)
     gp_r_hoo, gp_acc_hoo = _load_hoo(GEMMA_HOO_DIR, GEMMA_LAYER)
@@ -142,156 +162,162 @@ def build_stats_and_claims(claims: ClaimSet) -> tuple[dict, dict, dict, dict]:
     qb_r_held, qb_acc_held = _load_heldout(QWEN_BASELINE_HELDOUT_DIR, QWEN3_EMB_LAYER)
     qb_r_hoo, qb_acc_hoo = _load_hoo(QWEN_BASELINE_HOO_DIR, QWEN3_EMB_LAYER)
 
-    # Gemma probe.
+    if gp_acc_hoo is None:
+        raise RuntimeError(
+            "Gemma hoo_summary.json is missing mean_uniform_hoo_acc — rerun "
+            "src.probes.experiments.run_dir_probes on configs/probes/gemma3_10k_hoo_topic_tb-5.yaml"
+        )
+
+    _gp_heldout_path = _rel(GEMMA_HELDOUT_DIR / "manifest.json")
+    _gp_hoo_pooled = _rel(GEMMA_HOO_DIR / "pooled_metrics.json")
+    _gp_hoo_summary = _rel(GEMMA_HOO_DIR / "hoo_summary.json")
+    _qp_heldout_path = _rel(QWEN_HELDOUT_DIR / "manifest.json")
+    _qp_hoo_pooled = _rel(QWEN_HOO_DIR / "pooled_metrics.json")
+    _qp_hoo_summary = _rel(QWEN_HOO_DIR / "hoo_summary.json")
+    _gb_heldout_path = _rel(GEMMA_BASELINE_HELDOUT_DIR / "manifest.json")
+    _gb_hoo_pooled = _rel(GEMMA_BASELINE_HOO_DIR / "pooled_metrics.json")
+    _gb_hoo_summary = _rel(GEMMA_BASELINE_HOO_DIR / "hoo_summary.json")
+    _qb_heldout_path = _rel(QWEN_BASELINE_HELDOUT_DIR / "manifest.json")
+    _qb_hoo_pooled = _rel(QWEN_BASELINE_HOO_DIR / "pooled_metrics.json")
+    _qb_hoo_summary = _rel(QWEN_BASELINE_HOO_DIR / "hoo_summary.json")
+
+    # --- Cited scalar claims (macro names must not change) ---
+    gp_r_held_val = claims.register(
+        "Gemma probe heldout r",
+        _r(gp_r_held),
+        "A ridge probe on Gemma-3-27B residual-stream activations at the "
+        "end-of-turn (tb-5) token, layer 32, predicts held-out Thurstonian "
+        "utilities at Pearson r on a within-distribution eval split.",
+        used_in=["fig:cross-topic", "abstract", "sec:shared.intro", "sec:probe-methods"],
+        data_paths=[_gp_heldout_path],
+        derivation=f"`final_r` of the ridge probe with layer=={GEMMA_LAYER} in the manifest's `probes` array; round to 3dp.",
+    )
+    gp_r_hoo_val = claims.register(
+        "Gemma probe cross-topic pooled r",
+        _r(gp_r_hoo),
+        "Leave-one-topic-out pooled Pearson r for the Gemma-3-27B ridge probe "
+        "(L32, tb-5 / end-of-turn): predictions from every fold's held-out topic "
+        "are concatenated and correlated with true Thurstonian utilities.",
+        used_in=["fig:cross-topic", "abstract", "sec:shared.intro"],
+        data_paths=[_gp_hoo_pooled],
+        derivation="Read `pooled_pearson_r` from pooled_metrics.json; round to 3dp.",
+    )
+    qp_r_held_val = claims.register(
+        "Qwen probe heldout r",
+        _r(qp_r_held),
+        "A ridge probe on Qwen-3.5-122B residual-stream activations at the "
+        "turn-boundary tb-1 token (layer 38) predicts held-out Thurstonian "
+        "utilities at Pearson r on a within-distribution eval split.",
+        used_in=["fig:cross-topic", "sec:shared.intro"],
+        data_paths=[_qp_heldout_path],
+        derivation=f"`final_r` of the ridge probe with layer=={QWEN_LAYER} in the manifest's `probes` array; round to 3dp.",
+    )
+    qp_r_hoo_val = claims.register(
+        "Qwen probe cross-topic pooled r",
+        _r(qp_r_hoo),
+        "Leave-one-topic-out pooled Pearson r for the Qwen-3.5-122B ridge "
+        "probe (L38, tb-1).",
+        used_in=["fig:cross-topic", "sec:shared.intro"],
+        data_paths=[_qp_hoo_pooled],
+        derivation="Read `pooled_pearson_r` from pooled_metrics.json; round to 3dp.",
+    )
+    qp_acc_held_val = claims.register(
+        "Qwen probe heldout uniform pairwise accuracy",
+        _r(qp_acc_held),
+        "Uniform-sample pairwise accuracy of the Qwen-3.5-122B ridge probe "
+        "(L38) on the within-distribution held-out eval split.",
+        used_in=["fig:cross-topic", "sec:shared.intro"],
+        data_paths=[_qp_heldout_path],
+        derivation=f"`uniform_pairwise_acc` of the ridge probe with layer=={QWEN_LAYER} in the manifest's `probes` array; round to 3dp.",
+    )
+
+    # --- Un-cited probe accuracies: collapse into one row claim ---
+    probe_extras = claims.register(
+        "Cross model probe extras",
+        {
+            "gemma heldout acc": _r(gp_acc_held),
+            "gemma cross-topic acc": _r(gp_acc_hoo),
+            "qwen cross-topic acc": _r(qp_acc_hoo),
+        },
+        "Un-cited residual-stream probe accuracies rendered in fig:cross-topic: "
+        "Gemma (L32, tb-5) held-out and leave-one-topic-out uniform-sample pairwise "
+        "accuracy, and Qwen-3.5-122B (L38) leave-one-topic-out uniform-sample "
+        "pairwise accuracy. Each cell is rounded to 3dp.",
+        used_in=["fig:cross-topic"],
+        data_paths=[_gp_heldout_path, _gp_hoo_summary, _qp_hoo_summary],
+        derivation=(
+            "gemma heldout acc: `uniform_pairwise_acc` of ridge probe at "
+            f"layer=={GEMMA_LAYER} in Gemma heldout manifest. "
+            "gemma cross-topic acc: "
+            f"`layer_summary[{GEMMA_LAYER}].ridge.mean_uniform_hoo_acc` from "
+            "Gemma hoo_summary.json. qwen cross-topic acc: "
+            f"`layer_summary[{QWEN_LAYER}].ridge.mean_uniform_hoo_acc` from "
+            "Qwen hoo_summary.json. All rounded to 3dp."
+        ),
+    )
+
+    # --- Un-cited content baseline values: collapse into one 2-D table ---
+    content_baseline_table = {
+        "gemma": {
+            "heldout r": _r(gb_r_held),
+            "cross-topic pooled r": _r(gb_r_hoo),
+            "heldout uniform pairwise accuracy": _r(gb_acc_held),
+            "cross-topic uniform pairwise accuracy": _r(gb_acc_hoo),
+        },
+        "qwen": {
+            "heldout r": _r(qb_r_held),
+            "cross-topic pooled r": _r(qb_r_hoo),
+            "heldout uniform pairwise accuracy": _r(qb_acc_held),
+            "cross-topic uniform pairwise accuracy": _r(qb_acc_hoo),
+        },
+    }
+    claims.register(
+        "Cross model content baseline",
+        content_baseline_table,
+        "Qwen3-Embedding-8B sentence-transformer content baseline rendered in "
+        "fig:cross-topic. Rows: target-model utility pool the baseline is trained "
+        "on (gemma = Gemma-3-27B utilities, qwen = Qwen-3.5-122B utilities). "
+        "Columns: `heldout r` = Pearson r on the within-distribution eval split; "
+        "`cross-topic pooled r` = leave-one-topic-out pooled Pearson r; "
+        "`heldout uniform pairwise accuracy` and "
+        "`cross-topic uniform pairwise accuracy` = corresponding uniform-sample "
+        "pairwise accuracies. All cells rounded to 3dp.",
+        used_in=["fig:cross-topic"],
+        data_paths=[
+            _gb_heldout_path, _gb_hoo_pooled, _gb_hoo_summary,
+            _qb_heldout_path, _qb_hoo_pooled, _qb_hoo_summary,
+        ],
+        derivation=(
+            "For each row, read `final_r` and `uniform_pairwise_acc` of the ridge "
+            f"probe at layer=={QWEN3_EMB_LAYER} in the heldout manifest, "
+            "`pooled_pearson_r` from pooled_metrics.json, and "
+            f"`layer_summary[{QWEN3_EMB_LAYER}].ridge.mean_uniform_hoo_acc` from "
+            "hoo_summary.json; round to 3dp."
+        ),
+    )
+
+    # Panel-drawing dicts use the same keys the old code did.
     gemma_probe = {
-        "r_heldout": claims.register(
-            "Gemma probe heldout r",
-            _r(gp_r_held),
-            "A ridge probe on Gemma-3-27B residual-stream activations at the "
-            "final prompt token (layer 32) predicts held-out Thurstonian "
-            "utilities at Pearson r on a within-distribution eval split.",
-            used_in=["fig:cross-model", "abstract", "sec:shared.intro", "sec:probe-methods"],
-        ),
-        "r_hoo": claims.register(
-            "Gemma probe cross-topic pooled r",
-            _r(gp_r_hoo),
-            "Leave-one-topic-out pooled Pearson r for the Gemma-3-27B ridge probe "
-            "(L32, tb-1): predictions from every fold's held-out topic are "
-            "concatenated and correlated with true Thurstonian utilities.",
-            used_in=["fig:cross-model", "abstract", "sec:shared.intro"],
-        ),
-        "acc_heldout": claims.register(
-            "Gemma probe heldout uniform pairwise accuracy",
-            _r(gp_acc_held),
-            "Uniform-sample pairwise accuracy of the Gemma-3-27B ridge probe "
-            "(L32) on the within-distribution held-out eval split.",
-            used_in=["fig:cross-model"],
-        ),
+        "r_heldout": gp_r_held_val, "r_hoo": gp_r_hoo_val,
+        "acc_heldout": probe_extras["gemma heldout acc"],
+        "acc_hoo": probe_extras["gemma cross-topic acc"],
     }
-    if gp_acc_hoo is not None:
-        gemma_probe["acc_hoo"] = claims.register(
-            "Gemma probe cross-topic uniform pairwise accuracy",
-            _r(gp_acc_hoo),
-            "Mean across 13 leave-one-topic-out folds of uniform-sample pairwise "
-            "accuracy restricted to the held-out topic, for the Gemma-3-27B "
-            "ridge probe (L32).",
-            used_in=["fig:cross-model"],
-        )
-    else:
-        # Gemma's hoo_summary.json predates the per-fold uniform_hoo_acc field.
-        # Freeze the previously-published value; backfill is in paper/TODO_producers.md.
-        gemma_probe["acc_hoo"] = claims.register(
-            "Gemma probe cross-topic uniform pairwise accuracy",
-            0.751,
-            "Mean across 13 leave-one-topic-out folds of uniform-sample pairwise "
-            "accuracy restricted to the held-out topic, for the Gemma-3-27B "
-            "ridge probe (L32). Value carried over from an earlier pipeline "
-            "run; the current hoo_summary.json lacks the per-fold uniform_hoo_acc "
-            "field needed to recompute it here.",
-            used_in=["fig:cross-model"],
-            source="manual: Gemma hoo_summary predates uniform_hoo_acc field; see paper/TODO_producers.md",
-        )
-
-    # Qwen probe.
     qwen_probe = {
-        "r_heldout": claims.register(
-            "Qwen probe heldout r",
-            _r(qp_r_held),
-            "A ridge probe on Qwen-3.5-122B residual-stream activations at the "
-            "turn-boundary tb-1 token (layer 38) predicts held-out Thurstonian "
-            "utilities at Pearson r on a within-distribution eval split.",
-            used_in=["fig:cross-model", "sec:shared.intro"],
-        ),
-        "r_hoo": claims.register(
-            "Qwen probe cross-topic pooled r",
-            _r(qp_r_hoo),
-            "Leave-one-topic-out pooled Pearson r for the Qwen-3.5-122B ridge "
-            "probe (L38, tb-1).",
-            used_in=["fig:cross-model", "sec:shared.intro"],
-        ),
-        "acc_heldout": claims.register(
-            "Qwen probe heldout uniform pairwise accuracy",
-            _r(qp_acc_held),
-            "Uniform-sample pairwise accuracy of the Qwen-3.5-122B ridge probe "
-            "(L38) on the within-distribution held-out eval split.",
-            used_in=["fig:cross-model"],
-        ),
-        "acc_hoo": claims.register(
-            "Qwen probe cross-topic uniform pairwise accuracy",
-            _r(qp_acc_hoo),
-            "Mean across leave-one-topic-out folds of uniform-sample pairwise "
-            "accuracy restricted to the held-out topic, for the Qwen-3.5-122B "
-            "ridge probe (L38).",
-            used_in=["fig:cross-model"],
-        ),
+        "r_heldout": qp_r_held_val, "r_hoo": qp_r_hoo_val,
+        "acc_heldout": qp_acc_held_val,
+        "acc_hoo": probe_extras["qwen cross-topic acc"],
     }
-
-    # Gemma content baseline (Qwen3-Emb-8B trained on Gemma utilities).
     gemma_baseline = {
-        "r_heldout": claims.register(
-            "Gemma content baseline heldout r",
-            _r(gb_r_held),
-            "A Qwen3-Embedding-8B sentence-transformer content baseline, "
-            "trained as a ridge probe on Gemma-3-27B Thurstonian utilities, "
-            "evaluated on the within-distribution held-out eval split.",
-            used_in=["fig:cross-model"],
-        ),
-        "r_hoo": claims.register(
-            "Gemma content baseline cross-topic pooled r",
-            _r(gb_r_hoo),
-            "Leave-one-topic-out pooled Pearson r for the Qwen3-Embedding-8B "
-            "content baseline trained on Gemma utilities.",
-            used_in=["fig:cross-model"],
-        ),
-        "acc_heldout": claims.register(
-            "Gemma content baseline heldout uniform pairwise accuracy",
-            _r(gb_acc_held),
-            "Uniform-sample pairwise accuracy of the Qwen3-Embedding-8B "
-            "content baseline on the Gemma held-out eval split.",
-            used_in=["fig:cross-model"],
-        ),
-        "acc_hoo": claims.register(
-            "Gemma content baseline cross-topic uniform pairwise accuracy",
-            _r(gb_acc_hoo),
-            "Mean across leave-one-topic-out folds of uniform-sample pairwise "
-            "accuracy restricted to the held-out topic, for the Qwen3-Embedding-8B "
-            "content baseline trained on Gemma utilities.",
-            used_in=["fig:cross-model"],
-        ),
+        "r_heldout": content_baseline_table["gemma"]["heldout r"],
+        "r_hoo": content_baseline_table["gemma"]["cross-topic pooled r"],
+        "acc_heldout": content_baseline_table["gemma"]["heldout uniform pairwise accuracy"],
+        "acc_hoo": content_baseline_table["gemma"]["cross-topic uniform pairwise accuracy"],
     }
-
-    # Qwen content baseline (Qwen3-Emb-8B trained on Qwen utilities).
     qwen_baseline = {
-        "r_heldout": claims.register(
-            "Qwen content baseline heldout r",
-            _r(qb_r_held),
-            "A Qwen3-Embedding-8B sentence-transformer content baseline trained "
-            "on Qwen-3.5-122B Thurstonian utilities, evaluated on the "
-            "within-distribution held-out eval split.",
-            used_in=["fig:cross-model"],
-        ),
-        "r_hoo": claims.register(
-            "Qwen content baseline cross-topic pooled r",
-            _r(qb_r_hoo),
-            "Leave-one-topic-out pooled Pearson r for the Qwen3-Embedding-8B "
-            "content baseline trained on Qwen utilities.",
-            used_in=["fig:cross-model"],
-        ),
-        "acc_heldout": claims.register(
-            "Qwen content baseline heldout uniform pairwise accuracy",
-            _r(qb_acc_held),
-            "Uniform-sample pairwise accuracy of the Qwen3-Embedding-8B "
-            "content baseline on the Qwen held-out eval split.",
-            used_in=["fig:cross-model"],
-        ),
-        "acc_hoo": claims.register(
-            "Qwen content baseline cross-topic uniform pairwise accuracy",
-            _r(qb_acc_hoo),
-            "Mean across leave-one-topic-out folds of uniform-sample pairwise "
-            "accuracy restricted to the held-out topic, for the Qwen3-Embedding-8B "
-            "content baseline trained on Qwen utilities.",
-            used_in=["fig:cross-model"],
-        ),
+        "r_heldout": content_baseline_table["qwen"]["heldout r"],
+        "r_hoo": content_baseline_table["qwen"]["cross-topic pooled r"],
+        "acc_heldout": content_baseline_table["qwen"]["heldout uniform pairwise accuracy"],
+        "acc_hoo": content_baseline_table["qwen"]["cross-topic uniform pairwise accuracy"],
     }
 
     return gemma_probe, gemma_baseline, qwen_probe, qwen_baseline

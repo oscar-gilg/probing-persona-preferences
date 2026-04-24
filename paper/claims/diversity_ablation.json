@@ -9,7 +9,12 @@
       "used_in": [
         "fig:diversity",
         "app:diversity"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:25:52+00:00",
+      "data_paths": [
+        "results/experiments/mra_exp3/probes/mra_8persona_results.json"
+      ],
+      "derivation": "From `phase2.L31.conditions`, filter entries where `eval_persona` is in {noprompt,villain,aesthete,midwest,sadist} and `train_personas` is a subset of the remaining 4; group by `condition`; take the mean of `pearson_r` within the matching condition. condition=='1x2000'; round to 2dp."
     },
     {
       "name": "Persona diversity ablation mean r at 4 personas 500 tasks each",
@@ -19,7 +24,12 @@
       "used_in": [
         "fig:diversity",
         "app:diversity"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:25:52+00:00",
+      "data_paths": [
+        "results/experiments/mra_exp3/probes/mra_8persona_results.json"
+      ],
+      "derivation": "From `phase2.L31.conditions`, filter entries where `eval_persona` is in {noprompt,villain,aesthete,midwest,sadist} and `train_personas` is a subset of the remaining 4; group by `condition`; take the mean of `pearson_r` within the matching condition. condition=='4x500'; round to 2dp."
     },
     {
       "name": "Persona diversity ablation mean r at 2 personas 1000 tasks each",
@@ -28,7 +38,12 @@
       "source": "scripts/multi_role_ablation/plot_diversity_v2.py",
       "used_in": [
         "fig:diversity"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:25:52+00:00",
+      "data_paths": [
+        "results/experiments/mra_exp3/probes/mra_8persona_results.json"
+      ],
+      "derivation": "From `phase2.L31.conditions`, filter entries where `eval_persona` is in {noprompt,villain,aesthete,midwest,sadist} and `train_personas` is a subset of the remaining 4; group by `condition`; take the mean of `pearson_r` within the matching condition. condition=='2x1000'; round to 3dp."
     },
     {
       "name": "Persona diversity ablation mean r at 3 personas 667 tasks each",
@@ -37,7 +52,12 @@
       "source": "scripts/multi_role_ablation/plot_diversity_v2.py",
       "used_in": [
         "fig:diversity"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:25:52+00:00",
+      "data_paths": [
+        "results/experiments/mra_exp3/probes/mra_8persona_results.json"
+      ],
+      "derivation": "From `phase2.L31.conditions`, filter entries where `eval_persona` is in {noprompt,villain,aesthete,midwest,sadist} and `train_personas` is a subset of the remaining 4; group by `condition`; take the mean of `pearson_r` within the matching condition. condition=='3x667'; round to 3dp."
     }
   ]
 }

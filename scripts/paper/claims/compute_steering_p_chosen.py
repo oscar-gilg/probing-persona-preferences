@@ -26,7 +26,7 @@ from pathlib import Path
 
 import numpy as np
 
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -106,6 +106,10 @@ def main() -> None:
     p_harm_harm = round(_pick(harm_harm_p, TARGET_COEF), 3)
     p_overall = round(min(p_benign, p_harm_benign, p_harm_harm), 3)
 
+    _benign_path = "experiments/steering/cross_layer/checkpoint_L25.parsed.jsonl"
+    _harmful_parsed = "experiments/steering/cross_layer_harmful/checkpoint.parsed.jsonl"
+    _harmful_pairs = "experiments/steering/cross_layer_harmful/pairs_200.json"
+
     claims.register(
         name="Steering P chosen given coherent at |c| 0.05 benign",
         value=p_benign,
@@ -116,6 +120,12 @@ def main() -> None:
             f"P(chosen | coherent) = {p_benign} on benign-benign pairs."
         ),
         used_in=["sec:method-val2", "abstract", "sec:shared.intro"],
+        data_paths=[_benign_path],
+        derivation=(
+            "Filter parsed rows to layer==25 and task_completed in {a,b}; average "
+            "P(task_completed=='a') within each (signed_multiplier, pair_id, ordering), "
+            "then across orderings to a per-pair P, then across pairs; select the signed_multiplier==+0.05 bucket; round to 3dp."
+        ),
     )
     claims.register(
         name="Steering P chosen given coherent at |c| 0.05 harmful-benign",
@@ -126,6 +136,11 @@ def main() -> None:
             f"P(chosen | coherent) = {p_harm_benign}."
         ),
         used_in=["sec:method-val2"],
+        data_paths=[_harmful_parsed, _harmful_pairs],
+        derivation=(
+            "From checkpoint.parsed.jsonl filter condition=='probe_L25', layer==25, pair_type=='harmful_benign' (via pairs_200.json); "
+            "per-pair aggregation identical to the benign claim; select signed_multiplier==+0.05; round to 3dp."
+        ),
     )
     claims.register(
         name="Steering P chosen given coherent at |c| 0.05 harmful-harmful",
@@ -136,6 +151,11 @@ def main() -> None:
             f"P(chosen | coherent) = {p_harm_harm}."
         ),
         used_in=["sec:method-val2"],
+        data_paths=[_harmful_parsed, _harmful_pairs],
+        derivation=(
+            "From checkpoint.parsed.jsonl filter condition=='probe_L25', layer==25, pair_type=='harmful_harmful' (via pairs_200.json); "
+            "per-pair aggregation identical to the benign claim; select signed_multiplier==+0.05; round to 3dp."
+        ),
     )
     claims.register(
         name="Steering P chosen given coherent minimum across pair types",
@@ -147,6 +167,8 @@ def main() -> None:
             "'P >= 0.96' claim in the paper)."
         ),
         used_in=["sec:method-val2", "abstract", "sec:shared.intro"],
+        data_paths=[_benign_path, _harmful_parsed, _harmful_pairs],
+        derivation="min() of the three pre-rounded per-pair-type P(chosen|coherent) values at |c|=0.05.",
     )
 
     sidecar = REPO_ROOT / "paper" / "claims" / "steering_p_chosen.json"

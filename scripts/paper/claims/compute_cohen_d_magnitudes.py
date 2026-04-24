@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from src.paper.claims import ClaimSet, load_all
+from corroborate import ClaimSet, load_all
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -24,10 +24,10 @@ def main() -> None:
     existing = {c.name: c for c in load_all(CLAIMS_DIR)}
     required = {
         "BailBench harm Cohen's d": "BailBench harm absolute Cohen's d",
-        "Harm d under neutral persona": "Harm absolute d under neutral persona",
     }
 
     claims = ClaimSet(source="scripts/paper/claims/compute_cohen_d_magnitudes.py")
+    _upstream_sidecar = "paper/claims/canonical_probe_eval_make_paper_figures.json"
     for signed_name, abs_name in required.items():
         if signed_name not in existing:
             raise RuntimeError(
@@ -48,6 +48,11 @@ def main() -> None:
                 f"('|d| ≈ 2.1') can reference a live macro."
             ),
             used_in=["sec:induced-roleplay"],
+            data_paths=[_upstream_sidecar],
+            derivation=(
+                f"Magnitude of the existing `{signed_name}` claim registered by the "
+                f"canonical_probe_eval producer; abs(signed_value) rounded to 2dp."
+            ),
         )
 
     sidecar = CLAIMS_DIR / "cohen_d_magnitudes.json"

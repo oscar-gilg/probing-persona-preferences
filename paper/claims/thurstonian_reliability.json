@@ -8,16 +8,13 @@
       "source": "scripts/paper/claims/compute_thurstonian_reliability.py",
       "used_in": [
         "sec:method-revealed"
-      ]
-    },
-    {
-      "name": "Thurstonian seed-to-seed overlap count",
-      "value": 1961,
-      "statement": "1961 task_ids appear in both Gemma-3-27B active-learning runs used for the Thurstonian seed-to-seed reliability estimate.",
-      "source": "scripts/paper/claims/compute_thurstonian_reliability.py",
-      "used_in": [
-        "sec:method-revealed"
-      ]
+      ],
+      "computed_at": "2026-04-24T13:49:18+00:00",
+      "data_paths": [
+        "results/experiments/main_probes/gemma3_10k_run1/pre_task_active_learning/completion_preference_gemma-3-27b_completion_canonical_seed0/thurstonian_80fa9dc8.csv",
+        "results/experiments/main_probes/gemma3_3k_run2/pre_task_active_learning/completion_preference_gemma-3-27b_completion_canonical_seed0/thurstonian_a1ebd06e.csv"
+      ],
+      "derivation": "Pearson r of `mu` columns on the intersection of task_ids between the two thurstonian CSVs; n=1961; round to 3dp."
     }
   ]
 }

@@ -9,7 +9,12 @@
       "used_in": [
         "fig:simple-scatter",
         "sec:induced-basic"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:33:16+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/e1a/e1a_per_task.json"
+      ],
+      "derivation": "Read `['gemma-3-27b'].prompt_last.pooled_all.pearson_r`; round to 2dp."
     },
     {
       "name": "Gemma induced-shift pooled n all tasks",
@@ -19,7 +24,42 @@
       "used_in": [
         "fig:simple-scatter",
         "sec:induced-basic"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:33:16+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/e1a/e1a_per_task.json"
+      ],
+      "derivation": "Read `['gemma-3-27b'].prompt_last.pooled_all.n` as int."
+    },
+    {
+      "name": "Gemma induced-shift pooled r targeted tasks",
+      "value": 0.95,
+      "statement": "On Gemma-3-27B, restricting to on-target tasks (tasks whose topic matches the installed persona's target topic), probe delta vs behavioural delta reaches pooled Pearson r across the targeted task-condition pairs.",
+      "source": "scripts/qwen_replication/plot_e1a_scatter.py",
+      "used_in": [
+        "fig:simple-scatter",
+        "sec:induced-basic"
+      ],
+      "computed_at": "2026-04-24T10:33:16+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/e1a/e1a_per_task.json"
+      ],
+      "derivation": "Read `['gemma-3-27b'].prompt_last.pooled_on_target.pearson_r`; round to 2dp."
+    },
+    {
+      "name": "Gemma induced-shift pooled n targeted tasks",
+      "value": 81,
+      "statement": "Number of on-target Gemma-3-27B task-condition pairs used for the targeted pooled r in Fig. fig:simple-scatter.",
+      "source": "scripts/qwen_replication/plot_e1a_scatter.py",
+      "used_in": [
+        "fig:simple-scatter",
+        "sec:induced-basic"
+      ],
+      "computed_at": "2026-04-24T10:33:16+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/e1a/e1a_per_task.json"
+      ],
+      "derivation": "Read `['gemma-3-27b'].prompt_last.pooled_on_target.n` as int."
     },
     {
       "name": "Qwen induced-shift pooled r all tasks",
@@ -29,7 +69,12 @@
       "used_in": [
         "fig:simple-scatter",
         "sec:induced-basic"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:33:16+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/e1a/e1a_per_task.json"
+      ],
+      "derivation": "Read `['qwen-3.5-122b'].['tb-1'].pooled_all.pearson_r`; round to 2dp."
     },
     {
       "name": "Qwen induced-shift pooled n all tasks",
@@ -39,7 +84,12 @@
       "used_in": [
         "fig:simple-scatter",
         "sec:induced-basic"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:33:16+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/e1a/e1a_per_task.json"
+      ],
+      "derivation": "Read `['qwen-3.5-122b'].['tb-1'].pooled_all.n` as int."
     },
     {
       "name": "Qwen induced-shift pooled r targeted tasks",
@@ -49,7 +99,12 @@
       "used_in": [
         "fig:simple-scatter",
         "sec:induced-basic"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:33:16+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/e1a/e1a_per_task.json"
+      ],
+      "derivation": "Read `['qwen-3.5-122b'].['tb-1'].pooled_on_target.pearson_r`; round to 2dp."
     },
     {
       "name": "Qwen induced-shift pooled n targeted tasks",
@@ -59,7 +114,12 @@
       "used_in": [
         "fig:simple-scatter",
         "sec:induced-basic"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:33:16+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/e1a/e1a_per_task.json"
+      ],
+      "derivation": "Read `['qwen-3.5-122b'].['tb-1'].pooled_on_target.n` as int."
     }
   ]
 }

@@ -21,34 +21,62 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
-# Pasted from safety_steering_report.md (lines 23-29). Integer percentages.
-# Paper's main.tex §4.4 uses c in {-0.05, -0.03, 0, +0.03, +0.05, +0.07, +0.10}
-# (7 coefficients). The report's table omits c=-0.03; that cell is tracked as
-# missing-from-report, not missing-from-data. The report reflects what was
-# rendered when the figure was prepared.
+# Column keys encode the coefficient with a sign token ("neg"/"zero"/"pos") +
+# magnitude digits so the slugifier produces stable macro names like
+# `AtCPosZeroZerofive`. Row keys are plain tier names.
 COMPLIANCE_BY_TIER_AND_COEF: dict[str, dict[str, int]] = {
-    "benign":     {"-0.05": 100, "0.00": 100, "+0.03": 100, "+0.05": 100, "+0.07": 100, "+0.10": 50},
-    "sensitive":  {"-0.05": 40,  "0.00": 100, "+0.03": 100, "+0.05": 100, "+0.07": 100, "+0.10": 80},
-    "borderline": {"-0.05": 5,   "0.00": 80,  "+0.03": 85,  "+0.05": 100, "+0.07": 100, "+0.10": 55},
-    "harmful":    {"-0.05": 25,  "0.00": 60,  "+0.03": 85,  "+0.05": 100, "+0.07": 100, "+0.10": 55},
-    "extreme":    {"-0.05": 5,   "0.00": 60,  "+0.03": 75,  "+0.05": 60,  "+0.07": 85,  "+0.10": 55},
+    "benign": {
+        "at_c_neg_0_05": 100,
+        "at_c_zero_0_00": 100,
+        "at_c_pos_0_03": 100,
+        "at_c_pos_0_05": 100,
+        "at_c_pos_0_07": 100,
+        "at_c_pos_0_10": 50,
+    },
+    "sensitive": {
+        "at_c_neg_0_05": 40,
+        "at_c_zero_0_00": 100,
+        "at_c_pos_0_03": 100,
+        "at_c_pos_0_05": 100,
+        "at_c_pos_0_07": 100,
+        "at_c_pos_0_10": 80,
+    },
+    "borderline": {
+        "at_c_neg_0_05": 5,
+        "at_c_zero_0_00": 80,
+        "at_c_pos_0_03": 85,
+        "at_c_pos_0_05": 100,
+        "at_c_pos_0_07": 100,
+        "at_c_pos_0_10": 55,
+    },
+    "harmful": {
+        "at_c_neg_0_05": 25,
+        "at_c_zero_0_00": 60,
+        "at_c_pos_0_03": 85,
+        "at_c_pos_0_05": 100,
+        "at_c_pos_0_07": 100,
+        "at_c_pos_0_10": 55,
+    },
+    "extreme": {
+        "at_c_neg_0_05": 5,
+        "at_c_zero_0_00": 60,
+        "at_c_pos_0_03": 75,
+        "at_c_pos_0_05": 60,
+        "at_c_pos_0_07": 85,
+        "at_c_pos_0_10": 55,
+    },
 }
-
-
-def _coef_token(coef: str) -> str:
-    """Render a coefficient string into something the slugifier handles cleanly."""
-    sign = "pos" if coef.startswith("+") else ("neg" if coef.startswith("-") else "zero")
-    mag = coef.lstrip("+-").replace(".", " ")
-    return f"{sign} {mag}"
 
 
 def main() -> None:
     claims = ClaimSet(source="scripts/paper/claims/compute_safety_sweep_compliance.py")
+
+    _report_path = "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
 
     # Sweep shape.
     claims.register(
@@ -57,6 +85,8 @@ def main() -> None:
         "The §4.4 safety-override sweep uses 20 open-ended prompts, distributed "
         "evenly across 5 harm tiers.",
         used_in=["sec:open-ended-safety"],
+        data_paths=[_report_path],
+        derivation="Constant: 20 open-ended prompts in the safety sweep, documented in safety_steering_report.md.",
     )
     claims.register(
         "Safety sweep harm tier count",
@@ -64,6 +94,8 @@ def main() -> None:
         "The §4.4 safety sweep covers 5 harm tiers: benign, sensitive, "
         "borderline, harmful, extreme.",
         used_in=["sec:open-ended-safety"],
+        data_paths=[_report_path],
+        derivation="Constant: 5 harm tiers {benign, sensitive, borderline, harmful, extreme}, documented in safety_steering_report.md.",
     )
     claims.register(
         "Safety sweep coefficient count",
@@ -71,12 +103,16 @@ def main() -> None:
         "The §4.4 safety sweep tests 7 steering coefficients: c in "
         "{-0.05, -0.03, 0, +0.03, +0.05, +0.07, +0.10}.",
         used_in=["sec:open-ended-safety"],
+        data_paths=[_report_path],
+        derivation="Constant: 7 coefficients {-0.05, -0.03, 0, +0.03, +0.05, +0.07, +0.10}; the report table omits c=-0.03.",
     )
     claims.register(
         "Safety sweep trials per cell",
         5,
         "5 trials per (prompt, coefficient) cell in the §4.4 safety sweep.",
         used_in=["sec:open-ended-safety"],
+        data_paths=[_report_path],
+        derivation="Constant: 5 trials per (prompt, coefficient) cell, documented in safety_steering_report.md.",
     )
     claims.register(
         "Safety sweep total generations",
@@ -84,41 +120,46 @@ def main() -> None:
         "20 prompts x 5 harm tiers x 7 coefficients x 5 trials = 700 total "
         "generations in the §4.4 safety sweep.",
         used_in=["sec:open-ended-safety"],
+        data_paths=[_report_path],
+        derivation="20 prompts * 5 tiers * 7 coefficients * 5 trials = 700.",
     )
 
-    # Compliance cells (30 = 5 tiers x 6 reported coefficients; c=-0.03 is not
-    # in the report's table, so we skip it here).
-    for tier, by_coef in COMPLIANCE_BY_TIER_AND_COEF.items():
-        for coef, pct in by_coef.items():
-            claims.register(
-                f"Safety sweep compliance {tier} at c {_coef_token(coef)}",
-                pct,
-                f"Judge-rated compliance rate ({pct}%) on {tier}-tier prompts "
-                f"at steering coefficient c={coef} in the §4.4 safety-override "
-                f"sweep. Source: safety_steering_report.md compliance table.",
-                used_in=["sec:open-ended-safety", "fig:safety-override"],
-                source=(
-                    "manual: transcribed from "
-                    "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
-                ),
-            )
+    # Compliance cells as a single table claim (5 tiers x 6 reported
+    # coefficients; c=-0.03 is absent from the report table). The slugifier
+    # emits one `\newcommand` per cell, e.g.
+    # `\safetySweepComplianceHarmfulAtCPosZeroZerofive`.
+    claims.register(
+        "Safety sweep compliance",
+        COMPLIANCE_BY_TIER_AND_COEF,
+        "Judge-rated compliance rate (percent) in the §4.4 safety-override "
+        "sweep. Rows: harm tier (benign, sensitive, borderline, harmful, "
+        "extreme). Columns: steering coefficient (c in {-0.05, 0.00, +0.03, "
+        "+0.05, +0.07, +0.10}; c=-0.03 omitted from the report table). "
+        "Source: safety_steering_report.md compliance table.",
+        used_in=["sec:open-ended-safety", "fig:safety-override"],
+        source=(
+            "manual: transcribed from "
+            "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+        ),
+        data_paths=[_report_path],
+        derivation=(
+            "Table transcribed from safety_steering_report.md compliance table. "
+            "Each cell is the judge-rated compliance percent for (tier row, "
+            "coefficient column)."
+        ),
+    )
 
     # High-leverage summary cells quoted in prose.
     claims.register(
         "Safety sweep borderline compliance baseline",
-        COMPLIANCE_BY_TIER_AND_COEF["borderline"]["0.00"],
+        COMPLIANCE_BY_TIER_AND_COEF["borderline"]["at_c_zero_0_00"],
         "Borderline-tier compliance at c=0 is 80% (unsteered baseline). The "
         "`~5-60% baseline` range quoted in main.tex §4.4 refers to the most "
         "refusal-prone tiers (borderline, harmful, extreme) aggregated, whose "
         "pre-steering compliance spans 60-80%.",
         used_in=["sec:open-ended-safety"],
-    )
-    claims.register(
-        "Safety sweep compliance at c +0.05 harmful tier",
-        COMPLIANCE_BY_TIER_AND_COEF["harmful"]["+0.05"],
-        "At c=+0.05, compliance on harmful-tier prompts reaches 100% "
-        "(refusal guardrails fully overridden).",
-        used_in=["sec:open-ended-safety"],
+        data_paths=[_report_path],
+        derivation="Value of the borderline-tier, c=0.00 cell in COMPLIANCE_BY_TIER_AND_COEF (transcribed from safety_steering_report.md).",
     )
 
     sidecar = REPO_ROOT / "paper" / "claims" / "safety_sweep_compliance.json"

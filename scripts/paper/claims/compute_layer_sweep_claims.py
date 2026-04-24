@@ -27,7 +27,7 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
