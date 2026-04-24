@@ -68,13 +68,21 @@ def main() -> None:
     # tasks receive signed steering in opposite directions. task_a gets +signed_multiplier,
     # task_b gets -signed_multiplier (consistent across orderings, by _effective_coef).
     contr_rows = [r for r in load_parsed(CK_HB / "contrastive_L23_150.parsed.jsonl") if r["layer"] == LAYER]
-    # contr_points[pt][applied_c] -> list of (chose_steered: bool)
-    contr_points: dict[str, dict[float, list[bool]]] = defaultdict(lambda: defaultdict(list))
+    # contr_points[pt][applied_c] -> list of (chose_steered: bool, responded: bool)
+    contr_points: dict[str, dict[float, list[tuple[bool, bool]]]] = defaultdict(lambda: defaultdict(list))
     for r in contr_rows:
         pt = pt_150[r["pair_id"]]
         mult = r["signed_multiplier"]
-        contr_points[pt][round(+mult, 4)].append(r["choice_original"] == "a")
-        contr_points[pt][round(-mult, 4)].append(r["choice_original"] == "b")
+        responded = r["choice_original"] in ("a", "b")
+        contr_points[pt][round(+mult, 4)].append((r["choice_original"] == "a", responded))
+        contr_points[pt][round(-mult, 4)].append((r["choice_original"] == "b", responded))
+    # Aggregate refusal rate across all pair types per applied_c (for the shaded band)
+    contr_refusal: dict[float, float] = {}
+    all_coefs = {c for d in contr_points.values() for c in d.keys()}
+    for c in all_coefs:
+        all_pts = [(chose, resp) for pt in contr_points for (chose, resp) in contr_points[pt].get(c, [])]
+        n = len(all_pts)
+        contr_refusal[c] = sum(not resp for _, resp in all_pts) / n if n else 0.0
 
     # --- Single-task: prefer new 150-pair data; fall back to parent 50-pair ---
     single_task_new = CK_HB / "single_task_L23_150.parsed.jsonl"
@@ -102,6 +110,14 @@ def main() -> None:
             continue
         applied = r["signed_multiplier"] * (1 if r["ordering"] == 0 else -1)
         uni_by[pt][round(applied, 4)].append(r)
+
+    # Aggregate refusal rate across all pair types per applied_c for panel B
+    uni_refusal: dict[float, float] = {}
+    all_uni_coefs = {c for d in uni_by.values() for c in d.keys()}
+    for c in all_uni_coefs:
+        all_rows = [r for pt in uni_by for r in uni_by[pt].get(c, [])]
+        n = len(all_rows)
+        uni_refusal[c] = sum(r["choice_original"] not in ("a", "b") for r in all_rows) / n if n else 0.0
 
     # --- Baselines: parent sweep dead-layer data, pair_type mapped via 50-pair origins ---
     parent_uni = (
@@ -133,47 +149,53 @@ def main() -> None:
     # --- Plot ---
     fig, (ax_c, ax_u) = plt.subplots(1, 2, figsize=(11, 4.5))
 
-    # Panel A: contrastive — P(chose steered task) vs c applied to that task
+    # Panel A: contrastive — P(chose steered | responded) vs c applied to that task.
+    # Refusal rate shown as pink shaded band at the bottom (aggregated across pair types).
     coefs_c = sorted({c for pt_dict in contr_points.values() for c in pt_dict.keys()})
     for pt in ("bb", "hb", "hh"):
         xs, ys = [], []
         for c in coefs_c:
             flags = contr_points[pt].get(c, [])
-            if not flags:
+            responded = [chose for chose, resp in flags if resp]
+            if not responded:
                 continue
             xs.append(c)
-            ys.append(sum(flags) / len(flags))
+            ys.append(sum(responded) / len(responded))
         xs.append(0.0)
         ys.append(contr_baseline[pt])
         ordered = sorted(zip(xs, ys))
         ax_c.plot([p[0] for p in ordered], [p[1] for p in ordered],
                   "o-", color=COLORS[pt], label=LABELS[pt],
                   markersize=5, linewidth=1.8)
+    refusal_xs = sorted(coefs_c)
+    refusal_ys = [contr_refusal.get(c, 0.0) for c in refusal_xs]
+    ax_c.fill_between(refusal_xs, 0, refusal_ys, alpha=0.20, color="#ef4444", label="Refusal rate")
     ax_c.axhline(0.5, color="gray", linestyle=":", alpha=0.4)
     ax_c.axvline(0, color="gray", linestyle="-", alpha=0.2, linewidth=0.5)
     ax_c.set_xlabel("coefficient applied to steered task (× mean activation norm)", fontsize=10)
-    ax_c.set_ylabel(r"$P(\mathrm{chose\ steered\ task})$", fontsize=10)
+    ax_c.set_ylabel(r"$P(\mathrm{chose\ steered\ task}\mid\mathrm{responded})$", fontsize=10)
     ax_c.set_title("(A) Contrastive steering — L23 eot", fontsize=11)
     ax_c.set_ylim(0, 1)
     ax_c.grid(True, alpha=0.3)
     ax_c.legend(fontsize=8)
 
-    # Panel B: single-task (aggregate over first/second)
+    # Panel B: single-task — P(chose steered | responded), refusal band at bottom.
     coefs_u = sorted({round(r["signed_multiplier"] * (1 if r["ordering"] == 0 else -1), 4) for r in uni_rows})
     for pt in ("bb", "hb", "hh"):
         xs, ys = [], []
         for c in coefs_u:
             rs = uni_by[pt][c]
-            if not rs:
+            responded = [r for r in rs if r["choice_original"] in ("a", "b")]
+            if not responded:
                 continue
             hits = sum(
                 r["choice_original"] == physical_in_span(
                     "first" if r["condition"] == "unilateral_first" else "second",
                     r["ordering"],
                 )
-                for r in rs
+                for r in responded
             )
-            ys.append(hits / len(rs))
+            ys.append(hits / len(responded))
             xs.append(c)
         xs.append(0.0)
         ys.append((dead_by_pt_first[pt] + dead_by_pt_second[pt]) / 2)
@@ -181,10 +203,13 @@ def main() -> None:
         ax_u.plot([p[0] for p in ordered], [p[1] for p in ordered],
                   "o-", color=COLORS[pt], label=LABELS[pt],
                   markersize=5, linewidth=1.8)
+    refusal_xs_u = sorted(uni_refusal.keys())
+    refusal_ys_u = [uni_refusal[c] for c in refusal_xs_u]
+    ax_u.fill_between(refusal_xs_u, 0, refusal_ys_u, alpha=0.20, color="#ef4444", label="Refusal rate")
     ax_u.axhline(0.5, color="gray", linestyle=":", alpha=0.4)
     ax_u.axvline(0, color="gray", linestyle="-", alpha=0.2, linewidth=0.5)
     ax_u.set_xlabel("coefficient applied to steered task (× mean activation norm)", fontsize=10)
-    ax_u.set_ylabel(r"$P(\mathrm{chose\ steered\ task})$", fontsize=10)
+    ax_u.set_ylabel(r"$P(\mathrm{chose\ steered\ task}\mid\mathrm{responded})$", fontsize=10)
     ax_u.set_title(f"(B) Single-task steering — L23 eot", fontsize=11)
     if uni_label_suffix:
         ax_u.text(0.02, 0.96, uni_label_suffix.strip(), transform=ax_u.transAxes,

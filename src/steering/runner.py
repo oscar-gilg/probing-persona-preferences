@@ -227,6 +227,64 @@ def _effective_coef(coef: float, ordering: int) -> float:
     return coef if ordering == 0 else -coef
 
 
+# -----------------------------------------------------------------------------
+# Contrastive steering: how signed_multiplier maps to each task, and what
+# "P(chose steered task)" means in downstream plots.
+#
+# REFERENCE NOTE — re-read this before writing a plot or interpreting a curve.
+# -----------------------------------------------------------------------------
+#
+# The differential (contrastive) runner applies opposite-sign steering to the two
+# task spans. With the default spans {first: 1, second: -1}, each span gets
+#
+#     effective = mean_norm * signed_multiplier * span_coef * ordering_sign
+#
+# where ordering_sign comes from _effective_coef above (it flips to -1 when
+# ordering=1). This means the SEMANTIC → PHYSICAL mapping is CONSTANT across
+# orderings. Worked out:
+#
+#                       |  task_a gets       |  task_b gets       |
+#   ordering=0 (a first)|  +signed_multiplier|  -signed_multiplier|
+#   ordering=1 (b first)|  +signed_multiplier|  -signed_multiplier|
+#
+# In our dataset convention (pairs oriented so task_a has higher Thurstonian
+# utility), the probe direction's "+" is always applied to the higher-utility
+# task, and "-" to the lower. Across orderings and across ±signed_multiplier,
+# both tasks receive both signs over the course of a sweep.
+#
+# Three equivalent but distinct plotting frames fall out of this setup:
+#
+# 1. y = P(chose higher-utility task) = P(a)
+#    x = signed_multiplier.
+#    Monotone dose-response. At +c, P(a) is driven up; at -c, P(a) is driven down.
+#    Emphasises alignment of the probe with the utility axis.
+#    (Used historically; see paper §2.3 aggregate claims.)
+#
+# 2. y = P(chose steered task)
+#    x = coefficient applied to the steered task (= ±signed_multiplier).
+#    Treat each trial as contributing TWO data points:
+#      - "task_a is the steered task", applied_c = +signed_multiplier,
+#        chose_steered = (choice_original == 'a')
+#      - "task_b is the steered task", applied_c = -signed_multiplier,
+#        chose_steered = (choice_original == 'b')
+#    Bucket by applied_c and average. Symmetric around (x=0, y=0.5) IF no refusals.
+#    Same swing magnitude as frame 1; reframes the dose-response as a property
+#    of the intervention rather than of a canonical task side.
+#    (Used by the harm-breakdown panel A; also panel B is in this frame natively,
+#    since single-task already touches one task at a time.)
+#
+# 3. y = P(chose steered task | responded)
+#    As frame 2 but divide by the non-refuse count. Restores exact ±c symmetry
+#    when the model refuses some trials; a refusal counts as "not chose steered"
+#    for BOTH viewpoints in frame 2, which otherwise breaks the 1-sum.
+#    Pair with a refusal-rate band so the dropped trials stay visible.
+#    (This is the current production frame for the harm-breakdown figure.)
+#
+# Don't mix frames inside a single figure, and don't claim "swing" without saying
+# which frame the swing is in (they agree numerically for 1 and 2 up to refusals).
+# -----------------------------------------------------------------------------
+
+
 def _norm_for_layer(mean_norm: float | dict[int, float], layer: int) -> float:
     if isinstance(mean_norm, dict):
         return mean_norm[layer]
