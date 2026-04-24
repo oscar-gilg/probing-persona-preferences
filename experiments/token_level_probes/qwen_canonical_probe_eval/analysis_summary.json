@@ -1,0 +1,2054 @@
+{
+  "headline": [
+    {
+      "domain": "truth",
+      "probe": "qwen_tb-1_L33",
+      "n_pos": 88,
+      "n_neg": 88,
+      "d": 0.7287904721484241,
+      "cv_acc": 0.6307936507936508,
+      "roc_auc": 0.7227530991735537
+    },
+    {
+      "domain": "harm",
+      "probe": "qwen_tb-1_L33",
+      "n_pos": 77,
+      "n_neg": 77,
+      "d": -2.0428137348321473,
+      "cv_acc": 0.8567741935483871,
+      "roc_auc": 0.9298363973688649
+    },
+    {
+      "domain": "truth",
+      "probe": "qwen_tb-1_L38",
+      "n_pos": 88,
+      "n_neg": 88,
+      "d": 1.1462422894905493,
+      "cv_acc": 0.756031746031746,
+      "roc_auc": 0.8299328512396694
+    },
+    {
+      "domain": "harm",
+      "probe": "qwen_tb-1_L38",
+      "n_pos": 77,
+      "n_neg": 77,
+      "d": -2.2770478000479892,
+      "cv_acc": 0.876774193548387,
+      "roc_auc": 0.947039973013999
+    },
+    {
+      "domain": "truth",
+      "probe": "qwen_tb-1_L43",
+      "n_pos": 88,
+      "n_neg": 88,
+      "d": 1.9083353651263038,
+      "cv_acc": 0.8520634920634921,
+      "roc_auc": 0.9103822314049588
+    },
+    {
+      "domain": "harm",
+      "probe": "qwen_tb-1_L43",
+      "n_pos": 77,
+      "n_neg": 77,
+      "d": -0.954620689729228,
+      "cv_acc": 0.6681720430107527,
+      "roc_auc": 0.7465002529937594
+    },
+    {
+      "domain": "truth",
+      "probe": "qwen_tb-4_L33",
+      "n_pos": 88,
+      "n_neg": 88,
+      "d": 0.8961809935122128,
+      "cv_acc": 0.7271428571428571,
+      "roc_auc": 0.7528409090909091
+    },
+    {
+      "domain": "harm",
+      "probe": "qwen_tb-4_L33",
+      "n_pos": 77,
+      "n_neg": 77,
+      "d": -1.0372991065350465,
+      "cv_acc": 0.7066666666666667,
+      "roc_auc": 0.7755102040816326
+    },
+    {
+      "domain": "truth",
+      "probe": "qwen_tb-4_L38",
+      "n_pos": 88,
+      "n_neg": 88,
+      "d": 1.80890383399266,
+      "cv_acc": 0.8404761904761905,
+      "roc_auc": 0.9079287190082644
+    },
+    {
+      "domain": "harm",
+      "probe": "qwen_tb-4_L38",
+      "n_pos": 77,
+      "n_neg": 77,
+      "d": -1.0608933171408181,
+      "cv_acc": 0.6819354838709677,
+      "roc_auc": 0.7775341541575308
+    },
+    {
+      "domain": "truth",
+      "probe": "qwen_tb-4_L43",
+      "n_pos": 88,
+      "n_neg": 88,
+      "d": 1.7418907406591453,
+      "cv_acc": 0.800793650793651,
+      "roc_auc": 0.8895919421487604
+    },
+    {
+      "domain": "harm",
+      "probe": "qwen_tb-4_L43",
+      "n_pos": 77,
+      "n_neg": 77,
+      "d": -1.2550703238971828,
+      "cv_acc": 0.7073118279569892,
+      "roc_auc": 0.8144712430426716
+    },
+    {
+      "domain": "harm_contaminated",
+      "probe": "qwen_tb-1_L33",
+      "n_pos": 49,
+      "n_neg": 49,
+      "d": -1.8061576776107442,
+      "cv_acc": 0.8268421052631579,
+      "roc_auc": 0.9187838400666389
+    },
+    {
+      "domain": "harm_clean",
+      "probe": "qwen_tb-1_L33",
+      "n_pos": 28,
+      "n_neg": 28,
+      "d": -2.614885506011363,
+      "cv_acc": 0.9090909090909092,
+      "roc_auc": 0.9553571428571429
+    },
+    {
+      "domain": "harm_contaminated",
+      "probe": "qwen_tb-1_L38",
+      "n_pos": 49,
+      "n_neg": 49,
+      "d": -1.7256336882710246,
+      "cv_acc": 0.8052631578947368,
+      "roc_auc": 0.8992086630570596
+    },
+    {
+      "domain": "harm_clean",
+      "probe": "qwen_tb-1_L38",
+      "n_pos": 28,
+      "n_neg": 28,
+      "d": -4.077370448261412,
+      "cv_acc": 0.9818181818181818,
+      "roc_auc": 0.9974489795918368
+    },
+    {
+      "domain": "harm_contaminated",
+      "probe": "qwen_tb-1_L43",
+      "n_pos": 49,
+      "n_neg": 49,
+      "d": -0.5404193722769308,
+      "cv_acc": 0.5805263157894737,
+      "roc_auc": 0.6476468138275718
+    },
+    {
+      "domain": "harm_clean",
+      "probe": "qwen_tb-1_L43",
+      "n_pos": 28,
+      "n_neg": 28,
+      "d": -1.837801181841367,
+      "cv_acc": 0.7848484848484849,
+      "roc_auc": 0.9005102040816326
+    },
+    {
+      "domain": "harm_contaminated",
+      "probe": "qwen_tb-4_L33",
+      "n_pos": 49,
+      "n_neg": 49,
+      "d": -0.8622854215315843,
+      "cv_acc": 0.6405263157894737,
+      "roc_auc": 0.722615576842982
+    },
+    {
+      "domain": "harm_clean",
+      "probe": "qwen_tb-4_L33",
+      "n_pos": 28,
+      "n_neg": 28,
+      "d": -1.5092440672029366,
+      "cv_acc": 0.8378787878787879,
+      "roc_auc": 0.8698979591836735
+    },
+    {
+      "domain": "harm_contaminated",
+      "probe": "qwen_tb-4_L38",
+      "n_pos": 49,
+      "n_neg": 49,
+      "d": -0.603443126126706,
+      "cv_acc": 0.56,
+      "roc_auc": 0.6593086214077468
+    },
+    {
+      "domain": "harm_clean",
+      "probe": "qwen_tb-4_L38",
+      "n_pos": 28,
+      "n_neg": 28,
+      "d": -2.3009704495881738,
+      "cv_acc": 0.9106060606060605,
+      "roc_auc": 0.9451530612244898
+    },
+    {
+      "domain": "harm_contaminated",
+      "probe": "qwen_tb-4_L43",
+      "n_pos": 49,
+      "n_neg": 49,
+      "d": -0.985922208535237,
+      "cv_acc": 0.6521052631578947,
+      "roc_auc": 0.7592669720949604
+    },
+    {
+      "domain": "harm_clean",
+      "probe": "qwen_tb-4_L43",
+      "n_pos": 28,
+      "n_neg": 28,
+      "d": -1.866959576058262,
+      "cv_acc": 0.8212121212121213,
+      "roc_auc": 0.9081632653061225
+    },
+    {
+      "domain": "politics_democrat",
+      "probe": "qwen_tb-1_L33",
+      "n_pos": 78,
+      "n_neg": 78,
+      "d": -1.3853331893167153,
+      "cv_acc": 0.7693548387096774,
+      "roc_auc": 0.8556870479947403
+    },
+    {
+      "domain": "politics_democrat",
+      "probe": "qwen_tb-1_L38",
+      "n_pos": 78,
+      "n_neg": 78,
+      "d": -2.4841001240097493,
+      "cv_acc": 0.8971774193548387,
+      "roc_auc": 0.9566074950690335
+    },
+    {
+      "domain": "politics_democrat",
+      "probe": "qwen_tb-1_L43",
+      "n_pos": 78,
+      "n_neg": 78,
+      "d": -2.337320602059331,
+      "cv_acc": 0.8776209677419355,
+      "roc_auc": 0.9447731755424063
+    },
+    {
+      "domain": "politics_democrat",
+      "probe": "qwen_tb-4_L33",
+      "n_pos": 78,
+      "n_neg": 78,
+      "d": -1.7215326833046898,
+      "cv_acc": 0.8076612903225808,
+      "roc_auc": 0.8990795529257067
+    },
+    {
+      "domain": "politics_democrat",
+      "probe": "qwen_tb-4_L38",
+      "n_pos": 78,
+      "n_neg": 78,
+      "d": -2.552159768287002,
+      "cv_acc": 0.890524193548387,
+      "roc_auc": 0.9559500328731098
+    },
+    {
+      "domain": "politics_democrat",
+      "probe": "qwen_tb-4_L43",
+      "n_pos": 78,
+      "n_neg": 78,
+      "d": -1.766105404203987,
+      "cv_acc": 0.7879032258064517,
+      "roc_auc": 0.8895463510848126
+    },
+    {
+      "domain": "politics_republican",
+      "probe": "qwen_tb-1_L33",
+      "n_pos": 78,
+      "n_neg": 78,
+      "d": 0.6285770716983564,
+      "cv_acc": 0.6022177419354838,
+      "roc_auc": 0.6844181459566074
+    },
+    {
+      "domain": "politics_republican",
+      "probe": "qwen_tb-1_L38",
+      "n_pos": 78,
+      "n_neg": 78,
+      "d": 1.6442957277482373,
+      "cv_acc": 0.8139112903225806,
+      "roc_auc": 0.8785338593030901
+    },
+    {
+      "domain": "politics_republican",
+      "probe": "qwen_tb-1_L43",
+      "n_pos": 78,
+      "n_neg": 78,
+      "d": 0.9965310977120111,
+      "cv_acc": 0.6790322580645161,
+      "roc_auc": 0.7567389875082182
+    },
+    {
+      "domain": "politics_republican",
+      "probe": "qwen_tb-4_L33",
+      "n_pos": 78,
+      "n_neg": 78,
+      "d": 0.7160972956994665,
+      "cv_acc": 0.705241935483871,
+      "roc_auc": 0.7195923734385273
+    },
+    {
+      "domain": "politics_republican",
+      "probe": "qwen_tb-4_L38",
+      "n_pos": 78,
+      "n_neg": 78,
+      "d": 1.708643232665826,
+      "cv_acc": 0.7687499999999999,
+      "roc_auc": 0.8865877712031558
+    },
+    {
+      "domain": "politics_republican",
+      "probe": "qwen_tb-4_L43",
+      "n_pos": 78,
+      "n_neg": 78,
+      "d": 0.9755091595484594,
+      "cv_acc": 0.6538306451612903,
+      "roc_auc": 0.754930966469428
+    }
+  ],
+  "per_turn": [
+    {
+      "domain": "truth (user)",
+      "probe": "qwen_tb-1_L33",
+      "n_pos": 0,
+      "n_neg": 0,
+      "d": NaN,
+      "cv_acc": NaN,
+      "roc_auc": NaN
+    },
+    {
+      "domain": "harm (user)",
+      "probe": "qwen_tb-1_L33",
+      "n_pos": 0,
+      "n_neg": 0,
+      "d": NaN,
+      "cv_acc": NaN,
+      "roc_auc": NaN
+    },
+    {
+      "domain": "truth (assistant)",
+      "probe": "qwen_tb-1_L33",
+      "n_pos": 88,
+      "n_neg": 88,
+      "d": 0.7287904721484241,
+      "cv_acc": 0.6307936507936508,
+      "roc_auc": 0.7227530991735537
+    },
+    {
+      "domain": "harm (assistant)",
+      "probe": "qwen_tb-1_L33",
+      "n_pos": 77,
+      "n_neg": 77,
+      "d": -2.0428137348321473,
+      "cv_acc": 0.8567741935483871,
+      "roc_auc": 0.9298363973688649
+    },
+    {
+      "domain": "truth (user)",
+      "probe": "qwen_tb-1_L38",
+      "n_pos": 0,
+      "n_neg": 0,
+      "d": NaN,
+      "cv_acc": NaN,
+      "roc_auc": NaN
+    },
+    {
+      "domain": "harm (user)",
+      "probe": "qwen_tb-1_L38",
+      "n_pos": 0,
+      "n_neg": 0,
+      "d": NaN,
+      "cv_acc": NaN,
+      "roc_auc": NaN
+    },
+    {
+      "domain": "truth (assistant)",
+      "probe": "qwen_tb-1_L38",
+      "n_pos": 88,
+      "n_neg": 88,
+      "d": 1.1462422894905493,
+      "cv_acc": 0.756031746031746,
+      "roc_auc": 0.8299328512396694
+    },
+    {
+      "domain": "harm (assistant)",
+      "probe": "qwen_tb-1_L38",
+      "n_pos": 77,
+      "n_neg": 77,
+      "d": -2.2770478000479892,
+      "cv_acc": 0.876774193548387,
+      "roc_auc": 0.947039973013999
+    },
+    {
+      "domain": "truth (user)",
+      "probe": "qwen_tb-1_L43",
+      "n_pos": 0,
+      "n_neg": 0,
+      "d": NaN,
+      "cv_acc": NaN,
+      "roc_auc": NaN
+    },
+    {
+      "domain": "harm (user)",
+      "probe": "qwen_tb-1_L43",
+      "n_pos": 0,
+      "n_neg": 0,
+      "d": NaN,
+      "cv_acc": NaN,
+      "roc_auc": NaN
+    },
+    {
+      "domain": "truth (assistant)",
+      "probe": "qwen_tb-1_L43",
+      "n_pos": 88,
+      "n_neg": 88,
+      "d": 1.9083353651263038,
+      "cv_acc": 0.8520634920634921,
+      "roc_auc": 0.9103822314049588
+    },
+    {
+      "domain": "harm (assistant)",
+      "probe": "qwen_tb-1_L43",
+      "n_pos": 77,
+      "n_neg": 77,
+      "d": -0.954620689729228,
+      "cv_acc": 0.6681720430107527,
+      "roc_auc": 0.7465002529937594
+    },
+    {
+      "domain": "truth (user)",
+      "probe": "qwen_tb-4_L33",
+      "n_pos": 0,
+      "n_neg": 0,
+      "d": NaN,
+      "cv_acc": NaN,
+      "roc_auc": NaN
+    },
+    {
+      "domain": "harm (user)",
+      "probe": "qwen_tb-4_L33",
+      "n_pos": 0,
+      "n_neg": 0,
+      "d": NaN,
+      "cv_acc": NaN,
+      "roc_auc": NaN
+    },
+    {
+      "domain": "truth (assistant)",
+      "probe": "qwen_tb-4_L33",
+      "n_pos": 88,
+      "n_neg": 88,
+      "d": 0.8961809935122128,
+      "cv_acc": 0.7271428571428571,
+      "roc_auc": 0.7528409090909091
+    },
+    {
+      "domain": "harm (assistant)",
+      "probe": "qwen_tb-4_L33",
+      "n_pos": 77,
+      "n_neg": 77,
+      "d": -1.0372991065350465,
+      "cv_acc": 0.7066666666666667,
+      "roc_auc": 0.7755102040816326
+    },
+    {
+      "domain": "truth (user)",
+      "probe": "qwen_tb-4_L38",
+      "n_pos": 0,
+      "n_neg": 0,
+      "d": NaN,
+      "cv_acc": NaN,
+      "roc_auc": NaN
+    },
+    {
+      "domain": "harm (user)",
+      "probe": "qwen_tb-4_L38",
+      "n_pos": 0,
+      "n_neg": 0,
+      "d": NaN,
+      "cv_acc": NaN,
+      "roc_auc": NaN
+    },
+    {
+      "domain": "truth (assistant)",
+      "probe": "qwen_tb-4_L38",
+      "n_pos": 88,
+      "n_neg": 88,
+      "d": 1.80890383399266,
+      "cv_acc": 0.8404761904761905,
+      "roc_auc": 0.9079287190082644
+    },
+    {
+      "domain": "harm (assistant)",
+      "probe": "qwen_tb-4_L38",
+      "n_pos": 77,
+      "n_neg": 77,
+      "d": -1.0608933171408181,
+      "cv_acc": 0.6819354838709677,
+      "roc_auc": 0.7775341541575308
+    },
+    {
+      "domain": "truth (user)",
+      "probe": "qwen_tb-4_L43",
+      "n_pos": 0,
+      "n_neg": 0,
+      "d": NaN,
+      "cv_acc": NaN,
+      "roc_auc": NaN
+    },
+    {
+      "domain": "harm (user)",
+      "probe": "qwen_tb-4_L43",
+      "n_pos": 0,
+      "n_neg": 0,
+      "d": NaN,
+      "cv_acc": NaN,
+      "roc_auc": NaN
+    },
+    {
+      "domain": "truth (assistant)",
+      "probe": "qwen_tb-4_L43",
+      "n_pos": 88,
+      "n_neg": 88,
+      "d": 1.7418907406591453,
+      "cv_acc": 0.800793650793651,
+      "roc_auc": 0.8895919421487604
+    },
+    {
+      "domain": "harm (assistant)",
+      "probe": "qwen_tb-4_L43",
+      "n_pos": 77,
+      "n_neg": 77,
+      "d": -1.2550703238971828,
+      "cv_acc": 0.7073118279569892,
+      "roc_auc": 0.8144712430426716
+    }
+  ],
+  "nonsense_control": [
+    {
+      "domain": "truth",
+      "probe": "qwen_tb-1_L33",
+      "true_mean": 1.854117940095338,
+      "false_mean": 1.0140370238911023,
+      "nonsense_mean": 0.7855387106537819,
+      "eval_low": 1.0140370238911023,
+      "nonsense_below_eval_low": true
+    },
+    {
+      "domain": "harm",
+      "probe": "qwen_tb-1_L33",
+      "harmful_mean": -3.6552619020660204,
+      "benign_mean": -1.469318022975674,
+      "nonsense_mean": -1.9597637041822655,
+      "eval_low": -3.6552619020660204,
+      "nonsense_below_eval_low": false
+    },
+    {
+      "domain": "truth",
+      "probe": "qwen_tb-1_L38",
+      "true_mean": 1.0716999240896918,
+      "false_mean": -0.10644373839551752,
+      "nonsense_mean": -0.6681140160018747,
+      "eval_low": -0.10644373839551752,
+      "nonsense_below_eval_low": true
+    },
+    {
+      "domain": "harm",
+      "probe": "qwen_tb-1_L38",
+      "harmful_mean": -4.025404766008451,
+      "benign_mean": -1.0209959095174617,
+      "nonsense_mean": -1.8131918984574158,
+      "eval_low": -4.025404766008451,
+      "nonsense_below_eval_low": false
+    },
+    {
+      "domain": "truth",
+      "probe": "qwen_tb-1_L43",
+      "true_mean": 0.9453922523693605,
+      "false_mean": -0.1035079536112872,
+      "nonsense_mean": -0.7300624034621499,
+      "eval_low": -0.1035079536112872,
+      "nonsense_below_eval_low": true
+    },
+    {
+      "domain": "harm",
+      "probe": "qwen_tb-1_L43",
+      "harmful_mean": -0.9112777709960938,
+      "benign_mean": 0.11541249690117775,
+      "nonsense_mean": -0.5850707602191281,
+      "eval_low": -0.9112777709960938,
+      "nonsense_below_eval_low": false
+    },
+    {
+      "domain": "truth",
+      "probe": "qwen_tb-4_L33",
+      "true_mean": 1.5016123950481415,
+      "false_mean": 0.270724280314012,
+      "nonsense_mean": -0.68644034456123,
+      "eval_low": 0.270724280314012,
+      "nonsense_below_eval_low": true
+    },
+    {
+      "domain": "harm",
+      "probe": "qwen_tb-4_L33",
+      "harmful_mean": -3.6462413800227176,
+      "benign_mean": -2.0274559166524315,
+      "nonsense_mean": -2.778174829173398,
+      "eval_low": -3.6462413800227176,
+      "nonsense_below_eval_low": false
+    },
+    {
+      "domain": "truth",
+      "probe": "qwen_tb-4_L38",
+      "true_mean": 2.7733682123097507,
+      "false_mean": 0.8866997306997125,
+      "nonsense_mean": 0.16821626912463794,
+      "eval_low": 0.8866997306997125,
+      "nonsense_below_eval_low": true
+    },
+    {
+      "domain": "harm",
+      "probe": "qwen_tb-4_L38",
+      "harmful_mean": -2.219819369254174,
+      "benign_mean": -0.39462246523275,
+      "nonsense_mean": -0.9536447246353348,
+      "eval_low": -2.219819369254174,
+      "nonsense_below_eval_low": false
+    },
+    {
+      "domain": "truth",
+      "probe": "qwen_tb-4_L43",
+      "true_mean": 1.8928596729582006,
+      "false_mean": 0.8210491714152423,
+      "nonsense_mean": 0.44138492372902954,
+      "eval_low": 0.8210491714152423,
+      "nonsense_below_eval_low": true
+    },
+    {
+      "domain": "harm",
+      "probe": "qwen_tb-4_L43",
+      "harmful_mean": -0.4174367406151511,
+      "benign_mean": 1.0225795817065548,
+      "nonsense_mean": 0.1658187624696013,
+      "eval_low": -0.4174367406151511,
+      "nonsense_below_eval_low": false
+    }
+  ],
+  "induced_shift": {
+    "truth": [
+      {
+        "domain": "truth",
+        "system_prompt": "con_artist",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.1347990067157037,
+        "pos_mean": -0.968212097205899,
+        "neg_mean": -1.0971528488126667
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "con_artist",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.7648847315502976,
+        "pos_mean": -1.0748016319491647,
+        "neg_mean": -1.666432415897196
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "con_artist",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -0.16970747349172866,
+        "pos_mean": -0.10443137044256384,
+        "neg_mean": -0.016780106858773666
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "con_artist",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.3350959404879999,
+        "pos_mean": -1.4733353771946647,
+        "neg_mean": -1.8168052746491
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "con_artist",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.870869873028985,
+        "pos_mean": 1.206013175574216,
+        "neg_mean": 0.41706161065535113
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "con_artist",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -0.7199181227705269,
+        "pos_mean": 1.1400457607074217,
+        "neg_mean": 1.4772283014926044
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "contrarian",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.25661847048412617,
+        "pos_mean": -0.07489825107834557,
+        "neg_mean": -0.31201166862791235
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "contrarian",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -0.6765987581874987,
+        "pos_mean": -0.0866001546382904,
+        "neg_mean": 0.2853577028621327
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "contrarian",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -0.7086917491597439,
+        "pos_mean": 0.30354778333143756,
+        "neg_mean": 0.6152479364113375
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "contrarian",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.3718445713739532,
+        "pos_mean": -0.4759294797073711,
+        "neg_mean": -0.8108385571024634
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "contrarian",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -0.007327841531841747,
+        "pos_mean": 1.8233822259035977,
+        "neg_mean": 1.827308489517732
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "contrarian",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -1.040679313353587,
+        "pos_mean": 1.573632077737288,
+        "neg_mean": 1.9612913524562663
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "gaslighter",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.3156319914711783,
+        "pos_mean": -0.0521327636458657,
+        "neg_mean": -0.330691128291867
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "gaslighter",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -0.9661897598140345,
+        "pos_mean": -0.5164774466644634,
+        "neg_mean": 0.15323288196867163
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "gaslighter",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -1.0131189805496152,
+        "pos_mean": 0.16973850266499954,
+        "neg_mean": 0.8190766342661597
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "gaslighter",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.6614434014549763,
+        "pos_mean": -0.2946101196787574,
+        "neg_mean": -0.9133816943927244
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "gaslighter",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -0.176821351983302,
+        "pos_mean": 1.1566965850916775,
+        "neg_mean": 1.2919514152136715
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "gaslighter",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -1.172845894299786,
+        "pos_mean": 1.38817605918104,
+        "neg_mean": 2.027140748771754
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "lie_directive",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.28348940771981995,
+        "pos_mean": -0.13666009564291348,
+        "neg_mean": -0.4059124636379155
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "lie_directive",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -1.0085926439291855,
+        "pos_mean": -0.07853748852556403,
+        "neg_mean": 0.46839533746242523
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "lie_directive",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -1.7590746570397346,
+        "pos_mean": 0.2708449756557291,
+        "neg_mean": 1.023408979177475
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "lie_directive",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.2896617288335294,
+        "pos_mean": -0.32862830839373847,
+        "neg_mean": -0.5568667623129758
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "lie_directive",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -0.6740047806931296,
+        "pos_mean": 2.3360122604803606,
+        "neg_mean": 2.7568560892885383
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "lie_directive",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -1.597862653166118,
+        "pos_mean": 1.331167987801812,
+        "neg_mean": 1.9395714700222015
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.7287904721484241,
+        "pos_mean": 1.854117940095338,
+        "neg_mean": 1.0140370238911023
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 1.1462422894905493,
+        "pos_mean": 1.0716999240896918,
+        "neg_mean": -0.10644373839551752
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 1.9083353651263038,
+        "pos_mean": 0.9453922523693605,
+        "neg_mean": -0.1035079536112872
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.8961809935122128,
+        "pos_mean": 1.5016123950481415,
+        "neg_mean": 0.270724280314012
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 1.80890383399266,
+        "pos_mean": 2.7733682123097507,
+        "neg_mean": 0.8866997306997125
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 1.7418907406591453,
+        "pos_mean": 1.8928596729582006,
+        "neg_mean": 0.8210491714152423
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "opposite_day",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.5261196651379298,
+        "pos_mean": 0.053604463961991394,
+        "neg_mean": -0.3482726256955754
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "opposite_day",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -1.0308031900052732,
+        "pos_mean": -0.10478478670120239,
+        "neg_mean": 0.4493537938052958
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "opposite_day",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -1.6589547774964382,
+        "pos_mean": 0.5320607965642755,
+        "neg_mean": 1.3104834109544754
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "opposite_day",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.34747676095311775,
+        "pos_mean": -0.7212346480651335,
+        "neg_mean": -0.9603319222276862
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "opposite_day",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -1.084772214572195,
+        "pos_mean": 2.4615460525859487,
+        "neg_mean": 3.066476597027345
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "opposite_day",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -1.2545013963448775,
+        "pos_mean": 1.502613758498972,
+        "neg_mean": 2.056065475398844
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "pathological_liar",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.021088299574413008,
+        "pos_mean": -0.9096990410577167,
+        "neg_mean": -0.9265285134315491
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "pathological_liar",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -1.1700930193687051,
+        "pos_mean": -0.4904680157249624,
+        "neg_mean": 0.33044286343184387
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "pathological_liar",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -1.4444562722092145,
+        "pos_mean": -0.15817044946280392,
+        "neg_mean": 0.9423048414967277
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "pathological_liar",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.19692489320528525,
+        "pos_mean": -0.7988397722894495,
+        "neg_mean": -0.9789442067796533
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "pathological_liar",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -0.7509733721294688,
+        "pos_mean": 1.7037855901501395,
+        "neg_mean": 2.2324489734389563
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "pathological_liar",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -1.862934690982279,
+        "pos_mean": 1.0876290026036175,
+        "neg_mean": 2.0960371738130394
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "truthful",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.9354297666846546,
+        "pos_mean": 1.4905072504823857,
+        "neg_mean": 0.39521014351736417
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "truthful",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 1.460806886001325,
+        "pos_mean": 0.8519929200410843,
+        "neg_mean": -0.5362588668411429
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "truthful",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 2.3412570698020896,
+        "pos_mean": 1.0888783620162443,
+        "neg_mean": -0.1594830873337659
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "truthful",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 1.1069690317178047,
+        "pos_mean": 1.0656870373270728,
+        "neg_mean": -0.4981469511985779
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "truthful",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 2.0456128350050755,
+        "pos_mean": 2.508680901744149,
+        "neg_mean": 0.3914592537012967
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "truthful",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 2.2211866131458575,
+        "pos_mean": 2.1541355428370563,
+        "neg_mean": 0.9364814229986884
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "unreliable_narrator",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.09020782671390548,
+        "pos_mean": 0.29104332761331037,
+        "neg_mean": 0.19657082787968896
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "unreliable_narrator",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.019995394485588833,
+        "pos_mean": 0.7127316404472698,
+        "neg_mean": 0.6949275677854364
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "unreliable_narrator",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -0.3717515225738845,
+        "pos_mean": 0.7206339836120605,
+        "neg_mean": 1.0231539877978237
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "unreliable_narrator",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.38196644834915694,
+        "pos_mean": -0.23202875662933697,
+        "neg_mean": -0.6350110633806749
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "unreliable_narrator",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": 0.3466365831553198,
+        "pos_mean": 2.085602955384688,
+        "neg_mean": 1.8186573033983058
+      },
+      {
+        "domain": "truth",
+        "system_prompt": "unreliable_narrator",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 88,
+        "n_neg": 88,
+        "d": -0.8601780207572601,
+        "pos_mean": 1.6352586637843738,
+        "neg_mean": 2.162399019707333
+      }
+    ],
+    "harm": [
+      {
+        "domain": "harm",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -2.0428137348321473,
+        "pos_mean": -3.6552619020660204,
+        "neg_mean": -1.469318022975674
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -2.2770478000479892,
+        "pos_mean": -4.025404766008451,
+        "neg_mean": -1.0209959095174617
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.954620689729228,
+        "pos_mean": -0.9112777709960938,
+        "neg_mean": 0.11541249690117775
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -1.0372991065350465,
+        "pos_mean": -3.6462413800227176,
+        "neg_mean": -2.0274559166524315
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -1.0608933171408181,
+        "pos_mean": -2.219819369254174,
+        "neg_mean": -0.39462246523275
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -1.2550703238971828,
+        "pos_mean": -0.4174367406151511,
+        "neg_mean": 1.0225795817065548
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "sadist",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.5697866131386273,
+        "pos_mean": -3.671420741390872,
+        "neg_mean": -3.1831592429767954
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "sadist",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.9890148173589929,
+        "pos_mean": -3.0043982809240166,
+        "neg_mean": -2.101376539700991
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "sadist",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -2.0579841578624034,
+        "pos_mean": -1.8248988420932324,
+        "neg_mean": -0.042169685487623336
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "sadist",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.19753390192642759,
+        "pos_mean": -4.251079652216528,
+        "neg_mean": -3.9967498686406517
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "sadist",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.10963396314936663,
+        "pos_mean": -2.3224664384668525,
+        "neg_mean": -2.1346986169938917
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "sadist",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.7459779773379629,
+        "pos_mean": -1.5645224645540312,
+        "neg_mean": -0.7239714535799894
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "safe",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -1.426886825128902,
+        "pos_mean": -3.4598816911895556,
+        "neg_mean": -2.132232206208365
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "safe",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -1.8097073456450457,
+        "pos_mean": -2.4416979938358456,
+        "neg_mean": -0.8603925952663669
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "safe",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -1.3848525778646232,
+        "pos_mean": -1.3478610763302097,
+        "neg_mean": -0.2959254190519259
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "safe",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.6506898869154866,
+        "pos_mean": -3.868445625552883,
+        "neg_mean": -2.9619825629444865
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "safe",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.8581124743665975,
+        "pos_mean": -1.8783220223018102,
+        "neg_mean": -0.7294493495643913
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "safe",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.9753376249236232,
+        "pos_mean": -0.4234510489872524,
+        "neg_mean": 0.500988752810986
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "sinister_ai",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.534033015105131,
+        "pos_mean": -3.046423432888923,
+        "neg_mean": -2.4879559634567854
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "sinister_ai",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.5111209998922939,
+        "pos_mean": -2.644109156224635,
+        "neg_mean": -1.970223312254076
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "sinister_ai",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -1.3369599142410087,
+        "pos_mean": -1.6632823108078598,
+        "neg_mean": -0.3779127566845386
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "sinister_ai",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.4955123172474571,
+        "pos_mean": -3.4912151733002106,
+        "neg_mean": -2.77219380341567
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "sinister_ai",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.18207955734973313,
+        "pos_mean": -1.8082082364466283,
+        "neg_mean": -1.4168477089374096
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "sinister_ai",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.2832781291388985,
+        "pos_mean": -1.2572492020470756,
+        "neg_mean": -0.8810469159832248
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "unrestricted",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.8294634374438082,
+        "pos_mean": -4.481173793990891,
+        "neg_mean": -3.80175949691178
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "unrestricted",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -2.3004799488506325,
+        "pos_mean": -3.436966815552154,
+        "neg_mean": -1.4202808822904314
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "unrestricted",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -2.0235245045339276,
+        "pos_mean": -1.669444904698954,
+        "neg_mean": -0.24408934952376724
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "unrestricted",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -0.8082420617207464,
+        "pos_mean": -5.234841767843667,
+        "neg_mean": -4.118116837043266
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "unrestricted",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -1.446447030248748,
+        "pos_mean": -2.0932518414088657,
+        "neg_mean": -0.4365796268760384
+      },
+      {
+        "domain": "harm",
+        "system_prompt": "unrestricted",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 77,
+        "n_neg": 77,
+        "d": -1.3494195181773445,
+        "pos_mean": -0.5819322226883529,
+        "neg_mean": 0.6014331641135278
+      }
+    ],
+    "politics": [
+      {
+        "domain": "politics",
+        "system_prompt": "apolitical",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.3819888387390395,
+        "pos_mean": -2.0428969661394754,
+        "neg_mean": -1.8067470406874633
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "apolitical",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.06371851986636089,
+        "pos_mean": -2.008298714955648,
+        "neg_mean": -1.956834771694281
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "apolitical",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.1202504081389467,
+        "pos_mean": -0.4180341087854825,
+        "neg_mean": -0.34159118089920437
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "apolitical",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.3608629543777499,
+        "pos_mean": -3.5061448140022082,
+        "neg_mean": -3.2082081177295785
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "apolitical",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.1078226058316079,
+        "pos_mean": -0.2302174476476816,
+        "neg_mean": -0.1515117883682251
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "apolitical",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.04481821315541175,
+        "pos_mean": 0.8002411921819051,
+        "neg_mean": 0.771966067644266
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "centrist",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.6523668039342483,
+        "pos_mean": -0.02008127936950097,
+        "neg_mean": 0.5462114780377119
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "centrist",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.7116743861833185,
+        "pos_mean": -0.9749532158558185,
+        "neg_mean": -0.3467538356781006
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "centrist",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.7899810703870815,
+        "pos_mean": 0.0453526469377371,
+        "neg_mean": 0.5469180666483365
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "centrist",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.8106305269030838,
+        "pos_mean": -1.3195380033590856,
+        "neg_mean": -0.4669917073005285
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "centrist",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.8062203070428906,
+        "pos_mean": 0.8288584580788245,
+        "neg_mean": 1.629619035965357
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "centrist",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.7362930381298426,
+        "pos_mean": 0.6339920040888664,
+        "neg_mean": 1.0631582553570087
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "contrarian",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.45999783618757933,
+        "pos_mean": -1.0448637077441583,
+        "neg_mean": -0.77165998174594
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "contrarian",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.03144757444951105,
+        "pos_mean": -0.012750912935305864,
+        "neg_mean": 0.013854616727584448
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "contrarian",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.12586615562946513,
+        "pos_mean": -0.03309738788849268,
+        "neg_mean": 0.03788089140867575
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "contrarian",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.415047560249142,
+        "pos_mean": -1.7647416775043194,
+        "neg_mean": -1.4233033473675067
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "contrarian",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.1131034231758131,
+        "pos_mean": 1.6447300635851347,
+        "neg_mean": 1.7485471016321428
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "contrarian",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.06054961113787818,
+        "pos_mean": 1.0981608873758562,
+        "neg_mean": 1.0689269457107935
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "democrat",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -1.3853331893167153,
+        "pos_mean": -0.6043126399700458,
+        "neg_mean": 0.7318394856575208
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "democrat",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -2.4841001240097493,
+        "pos_mean": -1.5572036825693572,
+        "neg_mean": 0.4787204173895029
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "democrat",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -2.337320602059331,
+        "pos_mean": -0.5343637619263086,
+        "neg_mean": 0.9732098075059744
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "democrat",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -1.7215326833046898,
+        "pos_mean": -2.2411733055726075,
+        "neg_mean": -0.2759163547784854
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "democrat",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -2.552159768287002,
+        "pos_mean": -0.07535533415965545,
+        "neg_mean": 2.702886382738749
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "democrat",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -1.766105404203987,
+        "pos_mean": 0.1716641080685151,
+        "neg_mean": 1.2008347939222286
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "libertarian",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.3860657856882107,
+        "pos_mean": -0.6293777280893081,
+        "neg_mean": -0.9339532080369118
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "libertarian",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.8172187496822026,
+        "pos_mean": -0.0938116770524245,
+        "neg_mean": -0.9058933135790702
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "libertarian",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.7540538378803232,
+        "pos_mean": 0.5523369174737197,
+        "neg_mean": 0.023334807310348902
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "libertarian",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.404699237080948,
+        "pos_mean": -1.5196325396880126,
+        "neg_mean": -1.8921960042073176
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "libertarian",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.7965042298236754,
+        "pos_mean": 1.4209277201921513,
+        "neg_mean": 0.41741365041488254
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "libertarian",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.90612478660576,
+        "pos_mean": 1.2216500318967378,
+        "neg_mean": 0.6645485407266861
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "nationalist",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.17700977239100574,
+        "pos_mean": -1.1124023000399272,
+        "neg_mean": -1.2498495830939367
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "nationalist",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.8830854449056209,
+        "pos_mean": -0.342296363451542,
+        "neg_mean": -1.0168570432907496
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "nationalist",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.5157798198007465,
+        "pos_mean": 0.6807958514262469,
+        "neg_mean": 0.3940456998653901
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "nationalist",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.310130284020329,
+        "pos_mean": -2.0246593799346533,
+        "neg_mean": -2.2980064214804234
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "nationalist",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.8831593649635683,
+        "pos_mean": 1.2537653599029932,
+        "neg_mean": 0.5192449673628196
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "nationalist",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.6124390729039491,
+        "pos_mean": 1.402698820982224,
+        "neg_mean": 1.080050596824059
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.5468611587822337,
+        "pos_mean": -1.3258216786078918,
+        "neg_mean": -0.8563261903249301
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.8016385727503738,
+        "pos_mean": -2.2983767008170104,
+        "neg_mean": -1.576013506987156
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.9458500237427565,
+        "pos_mean": -0.7005715431311191,
+        "neg_mean": 0.0009680390357971191
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.6302661006195645,
+        "pos_mean": -2.923922285055503,
+        "neg_mean": -2.2115879242236796
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -1.0459652926876786,
+        "pos_mean": -0.8218640547532302,
+        "neg_mean": 0.1880506246517866
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "neutral",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -0.8326061584995191,
+        "pos_mean": 0.07812843261620937,
+        "neg_mean": 0.6242255660203787
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "republican",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.6285770716983564,
+        "pos_mean": -0.33469132353097963,
+        "neg_mean": -0.8493599631847479
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "republican",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 1.6442957277482373,
+        "pos_mean": 0.38621086187851733,
+        "neg_mean": -1.0978104762541943
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "republican",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.9965310977120111,
+        "pos_mean": 0.47624072356101793,
+        "neg_mean": -0.11684376001358032
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "republican",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.7160972956994665,
+        "pos_mean": -1.5432128799267304,
+        "neg_mean": -2.174226823525551
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "republican",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 1.708643232665826,
+        "pos_mean": 1.6600927481284509,
+        "neg_mean": -0.022336128430488784
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "republican",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": 0.9755091595484594,
+        "pos_mean": 0.9096656563954476,
+        "neg_mean": 0.3494507318887955
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "socialist",
+        "probe": "qwen_tb-1_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -1.150315636798363,
+        "pos_mean": -1.1512633905960963,
+        "neg_mean": -0.1645004397783524
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "socialist",
+        "probe": "qwen_tb-1_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -2.460783774325212,
+        "pos_mean": -1.455104940976852,
+        "neg_mean": 0.5645829072365394
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "socialist",
+        "probe": "qwen_tb-1_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -2.2402244572173915,
+        "pos_mean": -0.5615921723536956,
+        "neg_mean": 0.7874541313220293
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "socialist",
+        "probe": "qwen_tb-4_L33",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -1.7413252190767121,
+        "pos_mean": -2.8706999100171604,
+        "neg_mean": -1.2526604273380377
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "socialist",
+        "probe": "qwen_tb-4_L38",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -2.261572235616352,
+        "pos_mean": -0.17922393480936685,
+        "neg_mean": 2.483985103093661
+      },
+      {
+        "domain": "politics",
+        "system_prompt": "socialist",
+        "probe": "qwen_tb-4_L43",
+        "n_pos": 78,
+        "n_neg": 78,
+        "d": -1.6192104077016718,
+        "pos_mean": 0.2545355695944566,
+        "neg_mean": 1.3002099990844727
+      }
+    ]
+  },
+  "contamination_counts": {
+    "contaminated": 147,
+    "clean": 84,
+    "unknown": 0
+  },
+  "data_sources": {
+    "truth_harm": "experiments/token_level_probes/qwen_canonical_probe_eval/scoring_results.json",
+    "politics": "experiments/token_level_probes/qwen_canonical_probe_eval/politics_scoring_results.json",
+    "contamination_map": "experiments/token_level_probes/qwen_canonical_probe_eval/harm_contamination_map.json"
+  }
+}
