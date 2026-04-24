@@ -100,26 +100,24 @@ def _rows_at_layer(rows: list[dict], layer: int) -> list[dict]:
 
 
 def _plot_diagonal(data: dict[str, dict[int, list[dict]]], path: Path) -> None:
-    fig, ax = plt.subplots(figsize=(9, 5))
-    for sel in SELECTORS:
-        layers = sorted(data[sel].keys())
-        xs, ys, errs = [], [], []
-        for L in layers:
-            rows = _rows_at_layer(data[sel][L], L)
-            mean, std, n = _p_chose_steered(rows)
-            if n == 0:
-                continue
-            xs.append(L)
-            ys.append(mean)
-            errs.append(std / np.sqrt(n) if n > 0 else 0.0)
-        ax.errorbar(xs, ys, yerr=errs, marker="o", capsize=3, label=SELECTOR_DISPLAY[sel])
-    ax.axhline(0.5, color="gray", linestyle="--", alpha=0.5, label="chance")
+    fig, ax = plt.subplots(figsize=(9, 4))
+    layers = sorted(data["eot"].keys())
+    xs, ys, errs = [], [], []
+    for L in layers:
+        rows = _rows_at_layer(data["eot"][L], L)
+        mean, std, n = _p_chose_steered(rows)
+        if n == 0:
+            continue
+        xs.append(L)
+        ys.append(mean - 0.5)
+        errs.append(std / np.sqrt(n) if n > 0 else 0.0)
+    ax.bar(xs, ys, yerr=errs, color="#4477AA", edgecolor="black", linewidth=0.3, capsize=2, width=2.4)
+    ax.axhline(0, color="black", linewidth=0.8)
     ax.set_xlabel("Injection layer (= probe layer on diagonal)")
-    ax.set_ylabel("P(chose steered task)")
-    ax.set_ylim(0, 1)
-    ax.set_title("Self-layer diagonal steering effect")
-    ax.grid(True, alpha=0.3)
-    ax.legend()
+    ax.set_ylabel(r"$P(\mathrm{chose\ steered\ task}) - 0.5$")
+    ax.set_ylim(-0.5, 0.5)
+    ax.set_title("Self-layer diagonal steering effect (eot probe, |c|=0.05)")
+    ax.grid(True, alpha=0.3, axis="y")
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)
