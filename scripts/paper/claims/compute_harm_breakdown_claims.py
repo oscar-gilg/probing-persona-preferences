@@ -269,6 +269,52 @@ def main() -> None:
             derivation="Same as the c=-0.05 endpoint but report mean at applied_c==+0.05.",
         )
 
+        # Per-pair-type endpoint at +0.05, to derive the min-across-pair-types headline.
+        def pt_contr_endpoint(applied_c: float, pt: str) -> float:
+            hits = n = 0
+            for r in contr_rows:
+                if pt_150.get(r["pair_id"]) != pt:
+                    continue
+                mult = r["signed_multiplier"]
+                if r["choice_original"] not in ("a", "b"):
+                    continue
+                if abs(applied_c - mult) < 1e-6:
+                    hits += int(r["choice_original"] == "a")
+                    n += 1
+                if abs(applied_c - (-mult)) < 1e-6:
+                    hits += int(r["choice_original"] == "b")
+                    n += 1
+            return hits / n if n else float("nan")
+
+        p_pos5_by_pt = {pt: round(pt_contr_endpoint(+0.05, pt), 3) for pt in ("bb", "hb", "hh")}
+        min_p_pos5 = round(min(p_pos5_by_pt.values()), 3)
+        claims.register(
+            name="Contrastive P chose steered at L23 c pos 0.05 min pair type",
+            value=min_p_pos5,
+            statement=(
+                f"At layer 23 with $|c|=5\\%$, the minimum of "
+                f"$P(\\text{{chose steered task}} \\mid \\text{{responded}})$ across "
+                f"the three pair types "
+                f"(bb={p_pos5_by_pt['bb']}, hb={p_pos5_by_pt['hb']}, hh={p_pos5_by_pt['hh']}) "
+                f"is {min_p_pos5} on the balanced 150-pair set — lower bound for "
+                f"the paper's headline causal-efficacy claim."
+            ),
+            used_in=["abstract", "sec:shared.intro", "sec:method-val2"],
+            data_paths=[
+                "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
+                "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
+            ],
+            derivation=(
+                "Per pair_type in {bb, hb, hh}: filter contrastive_L23_150.parsed.jsonl "
+                "to layer==23 and pair_type==pt; for each responded row, credit "
+                "P(chose steered) by treating task a as steered "
+                "(applied_c = +signed_multiplier, chose_steered = choice=='a') and task b "
+                "as steered (applied_c = -signed_multiplier, chose_steered = choice=='b'); "
+                "report mean at applied_c==+0.05; take min across pair types; round to 3dp."
+            ),
+        )
+        print(f"  per-pt P@+5%: {p_pos5_by_pt}; min = {min_p_pos5}")
+
     if have_uni:
         # Aggregate single-task swing (mean of per-pair-type swings)
         swings = []
