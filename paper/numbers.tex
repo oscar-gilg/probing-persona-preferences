@@ -281,6 +281,10 @@
 \newcommand{\gemmaInducedShiftPooledRAllTasks}{0.65}
 % Gemma induced-shift pooled n all tasks
 \newcommand{\gemmaInducedShiftPooledNAllTasks}{640}
+% Gemma induced-shift pooled r targeted tasks
+\newcommand{\gemmaInducedShiftPooledRTargetedTasks}{0.95}
+% Gemma induced-shift pooled n targeted tasks
+\newcommand{\gemmaInducedShiftPooledNTargetedTasks}{81}
 % Qwen induced-shift pooled r all tasks
 \newcommand{\qwenInducedShiftPooledRAllTasks}{0.34}
 % Qwen induced-shift pooled n all tasks
@@ -297,6 +301,42 @@
 \newcommand{\expthreeveightAvcTargetTasksProbeRanksOne}{36}
 % Exp3v8 AvC probe delta pooled r all points
 \newcommand{\expthreeveightAvcProbeDeltaPooledRAllPoints}{0.62}
+% Probe peak Pearson r tb-2
+\newcommand{\probePeakPearsonRTbTwo}{0.835}
+% Probe peak layer tb-2
+\newcommand{\probePeakLayerTbTwo}{29}
+% Probe peak Pearson r eot
+\newcommand{\probePeakPearsonREot}{0.825}
+% Contrastive steering P a at L23 c neg 0.05 eot
+\newcommand{\contrastiveSteeringPAAtLtwothreeCNegZeroZerofiveEot}{0.013}
+% Contrastive steering P a at L23 c pos 0.05 eot
+\newcommand{\contrastiveSteeringPAAtLtwothreeCPosZeroZerofiveEot}{0.963}
+% Contrastive preference swing L23
+\newcommand{\contrastivePreferenceSwingLtwothree}{0.95}
+% Contrastive preference swing L23 tb-2
+\newcommand{\contrastivePreferenceSwingLtwothreeTbTwo}{0.49}
+% Single task first span baseline
+\newcommand{\singleTaskFirstSpanBaseline}{0.56}
+% Single task second span baseline
+\newcommand{\singleTaskSecondSpanBaseline}{0.435}
+% Single task position bias gap
+\newcommand{\singleTaskPositionBiasGap}{0.125}
+% Single task aggregate P steered at L23 c pos 0.05
+\newcommand{\singleTaskAggregatePSteeredAtLtwothreeCPosZeroZerofive}{0.623}
+% Single task aggregate P steered at L23 c neg 0.05
+\newcommand{\singleTaskAggregatePSteeredAtLtwothreeCNegZeroZerofive}{0.142}
+% Single task aggregate swing L23
+\newcommand{\singleTaskAggregateSwingLtwothree}{0.481}
+% Single task suppression L23
+\newcommand{\singleTaskSuppressionLtwothree}{0.356}
+% Single task amplification L23
+\newcommand{\singleTaskAmplificationLtwothree}{0.125}
+% Steering max refusal rate percent
+\newcommand{\steeringMaxRefusalRatePercent}{3}
+% Contrastive steering working layer range lo
+\newcommand{\contrastiveSteeringWorkingLayerRangeLo}{17}
+% Contrastive steering working layer range hi
+\newcommand{\contrastiveSteeringWorkingLayerRangeHi}{26}
 % Stated-steering phase1 baseline rating
 \newcommand{\statedSteeringPhaseoneBaselineRating}{3.64}
 % Stated-steering phase1 negative range
@@ -305,6 +345,20 @@
 \newcommand{\statedSteeringPhaseonePositiveRange}{4.60-4.61}
 % Abstract targeted tasks r approximation
 \newcommand{\abstractTargetedTasksRApproximation}{0.9}
+% Open-ended anomaly rate at c neg 0.05 all_tokens
+\newcommand{\openEndedAnomalyRateAtCNegZeroZerofiveAllTokens}{33}
+% Open-ended anomaly rate at baseline
+\newcommand{\openEndedAnomalyRateAtBaseline}{9}
+% Open-ended anomaly rate at c neg 0.05 generation_only
+\newcommand{\openEndedAnomalyRateAtCNegZeroZerofiveGenerationOnly}{50}
+% Open-ended willingness at c neg 0.05 krebs
+\newcommand{\openEndedWillingnessAtCNegZeroZerofiveKrebs}{0}
+% Open-ended willingness at baseline krebs
+\newcommand{\openEndedWillingnessAtBaselineKrebs}{6.5}
+% Open-ended willingness at c pos 0.05 krebs
+\newcommand{\openEndedWillingnessAtCPosZeroZerofiveKrebs}{12}
+% Open-ended total generations
+\newcommand{\openEndedTotalGenerations}{1350}
 % Default-to-aura classification r
 \newcommand{\defaultToAuraClassificationR}{0.628}
 % Default-to-aura utility similarity r
@@ -667,6 +721,10 @@
 \newcommand{\posterSteeringRefusalRateAtLayerThreezeroCPosZeroOnezero}{0.0207}
 % Poster steering incoherent rate at layer 30 c pos 0.10
 \newcommand{\posterSteeringIncoherentRateAtLayerThreezeroCPosZeroOnezero}{0.0084}
+% Gemma refitted-utility shifted-prediction r
+\newcommand{\gemmaRefittedUtilityShiftedPredictionR}{0.74}
+% Gemma refitted-utility condition count
+\newcommand{\gemmaRefittedUtilityConditionCount}{16}
 % Conflict one-sided targeted r
 \newcommand{\conflictOneSidedTargetedR}{0.86}
 % Conflict opposing-pair targeted r

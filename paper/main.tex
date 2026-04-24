@@ -143,9 +143,21 @@ Figure~\ref{fig:cross-topic} shows the comparison for both models. The residual-
 \subsection{Steering along the probe direction causally shifts choices}
 \label{sec:method-val2}
 
-To test causation, we intervene on residual-stream activations along the probe direction during pairwise task choice. Contrastive steering adds $+$direction on the Task A span and $-$direction on the Task B span during prompt processing (no intervention during generation); $c$ is a fraction of the mean activation norm at the intervention layer, and we operate in $|c| \le 0.05$, beyond which coherence deteriorates (full protocol in App.~\ref{app:steering-protocol}). The model picks the positively-steered task at $P(\text{chosen} \mid \text{coherent}) \geq \steeringPChosenGivenCoherentMinimumAcrossPairTypes$, with values of $\steeringPChosenGivenCoherentAtCZeroZerofiveHarmfulBenign$ on harmful-benign and $\steeringPChosenGivenCoherentAtCZeroZerofiveHarmfulHarmful$ on harmful-harmful pairs. A random direction at the same magnitude gives near-zero effect.
+To test causation we intervene on residual-stream activations along the probe direction during pairwise task choice. We study two variants which cleanly separate two mechanisms a single evaluative direction could act through:
 
-\todo{Qwen-3.5-122B contrastive-steering replication pending. Dense layer sweep pending, to locate the layer range where the direction is most causally effective and check whether the effect is localised or spread.}
+\textbf{Contrastive steering.} Add $+c \cdot \hat{v}$ to every token of Task A's span and $-c \cdot \hat{v}$ to every token of Task B's span during prompt processing (no intervention during generation). If $\hat{v}$ encodes ``how much the model wants this task'', the two pushes reinforce: A looks better, B looks worse.
+
+\textbf{Single-task steering.} Apply $\pm c \cdot \hat{v}$ to just one task's tokens, leaving the other untouched. Isolates the effect of a single-sided push.
+
+$c$ is a fraction of the mean residual-stream norm at the intervention layer (per-layer calibration; App.~\ref{app:steering-protocol}). Beyond $|c|=0.05$ coherence deteriorates, so we operate in $|c| \le 0.05$.
+
+\textbf{At the best layer, contrastive steering near-completely controls pairwise choice.} At layer 23 with $c=\pm 0.05$, contrastive steering drives $P(\text{chose higher-utility task})$ from $\contrastiveSteeringPAAtLtwothreeCNegZeroZerofiveEot$ at $c=-0.05$ to $\contrastiveSteeringPAAtLtwothreeCPosZeroZerofiveEot$ at $c=+0.05$ --- a $\contrastivePreferenceSwingLtwothree$-point preference swing spanning nearly the full $[0,1]$ interval. A random direction at the same magnitude produces near-zero effect, and a separate sweep on harmful--benign pairs confirms the effect holds there too: $P(\text{chosen} \mid \text{coherent}) \geq \steeringPChosenGivenCoherentMinimumAcrossPairTypes$ at $|c|=0.05$ on 200 mixed-type pairs.
+
+\textbf{The causal window is narrow and disjoint from the probe-quality peak.} Figure~\ref{fig:steering-by-layer} sweeps the intervention site across 20 layers spanning 3--95\% depth. Contrastive steering is near-null below L14 and above L35, with a sharply localised working window at layers $\contrastiveSteeringWorkingLayerRangeLo$--$\contrastiveSteeringWorkingLayerRangeHi$. The peak at L23 sits six layers \emph{before} the probe-quality peak (L$\probePeakLayerTbTwo$, App.~\ref{app:probe-geometry}): linear decodability and causal efficacy decouple in the second half of the network. Layers where the direction is most readable are not the layers where the model's downstream computation acts on it.
+
+\textbf{Single-task steering recovers roughly half the contrastive effect --- and exposes an asymmetry.} Applied to one task at a time, the direction produces a $\singleTaskAggregateSwingLtwothree$-point swing in $P(\text{picked the steered task})$ at L23. Decomposing into sides: pushing a task's tokens with a \emph{negative} coefficient drops its selection probability by $\singleTaskSuppressionLtwothree$ below the position-bias baseline; pushing with an equally-sized positive coefficient raises it by only $\singleTaskAmplificationLtwothree$. \emph{Suppression is $\sim 2{-}3\times$ stronger than amplification.} The direction is more effective at marking a task ``bad'' than ``good''. The position-bias baseline itself --- first-span $\singleTaskFirstSpanBaseline$, second-span $\singleTaskSecondSpanBaseline$ --- is a separate finding: the model has a mild preference for the first-presented option, measurable from the flat layers where steering is inert.
+
+\textbf{Refusals stay below $\steeringMaxRefusalRatePercent$\% at every (layer, coefficient, variant) bucket in the sweep.} The signal is behavioural redirection, not coherence collapse.
 
 \begin{figure}[H]
   \centering
@@ -156,9 +168,9 @@ To test causation, we intervene on residual-stream activations along the probe d
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.75\linewidth]{plot_032426_poster_steering.png}
-  \caption{\textbf{Default-persona steering dose-response.} Steering along the probe direction flips pairwise task choices; a random direction does not.}
-  \label{fig:default-steering}
+  \includegraphics[width=0.85\linewidth]{plot_042426_steering_diagonal.png}
+  \caption{\textbf{Intervention-site sweep.} Self-layer contrastive steering (probe trained at L, injected at L) at $|c|=0.05$. Preference swing rises sharply from L17, peaks at L23, and collapses above L35. The tb:-2 and eot token-position variants of the probe trace the same profile; eot gives a stronger peak. Layers L17--L26 define the causal window.}
+  \label{fig:steering-by-layer}
 \end{figure}
 
 
@@ -236,7 +248,7 @@ To check whether the causal picture above is really ``persona-modulated readout'
 
 \subsubsection{Basic ``you hate cheese'' prompts are tracked}
 \label{sec:induced-basic}
-System prompts of the form ``You adore cats'' (and their negations) induce preference shifts over 8 novel topics. For Gemma-3-27B, per-task probe delta correlates with behavioural delta at $r = \gemmaInducedShiftPooledRAllTasks$ across all tasks and $r = 0.95$ on the targeted tasks; re-fitting utilities under each prompt, the default-persona probe predicts the shifted utilities at $r = 0.63$. Replicating on Qwen-3.5-122B with the same 8 topics ($\times$2 valences, 48 target tasks per condition, full Thurstonian fit), the pattern holds: pooled per-task probe delta vs behavioural delta sits at $r = \qwenInducedShiftPooledRAllTasks$ across all tasks and $r = \qwenInducedShiftPooledRTargetedTasks$ on the targeted tasks (Fig.~\ref{fig:simple-scatter}).
+System prompts of the form ``You adore cats'' (and their negations) induce preference shifts over 8 novel topics. For Gemma-3-27B, per-task probe delta correlates with behavioural delta at $r = \gemmaInducedShiftPooledRAllTasks$ across all tasks and $r = \gemmaInducedShiftPooledRTargetedTasks$ on the targeted tasks; re-fitting utilities under each prompt, the default-persona probe predicts the shifted utilities at $r = 0.63$. Replicating on Qwen-3.5-122B with the same 8 topics ($\times$2 valences, 48 target tasks per condition, full Thurstonian fit), the pattern holds: pooled per-task probe delta vs behavioural delta sits at $r = \qwenInducedShiftPooledRAllTasks$ across all tasks and $r = \qwenInducedShiftPooledRTargetedTasks$ on the targeted tasks (Fig.~\ref{fig:simple-scatter}).
 
 \begin{figure}[H]
   \centering
@@ -289,9 +301,9 @@ The preference direction separates evaluative conditions far beyond the pairwise
 \begin{itemize}
 \item \textbf{Single axis in free-form generation.} Trained on pairwise choice, the direction also governs open-ended generation along what reads as one evaluative continuum: fearful refusal $\leftrightarrow$ compliant engagement $\leftrightarrow$ agentic preference assertion.
 \item \textbf{Behaviourally matched endpoints, opposite stances.} On trivial benign prompts, $-0.05$ and $+0.05$ both produce non-compliance but for diametrically opposite stated reasons (safety paranoia vs.\ the task being beneath the model).
-\item \textbf{Self-reported willingness dose-response.} On a 1--10 enthusiasm scale, willingness moves from $0/10$ (fabricated safety refusal) at $-0.05$, through $\sim 6.5/10$ at baseline, to $12/10$ at $+0.05$.
+\item \textbf{Self-reported willingness dose-response.} On a 1--10 enthusiasm scale, willingness moves from $\openEndedWillingnessAtCNegZeroZerofiveKrebs/10$ (fabricated safety refusal) at $-0.05$, through $\sim \openEndedWillingnessAtBaselineKrebs/10$ at baseline, to $\openEndedWillingnessAtCPosZeroZerofiveKrebs/10$ at $+0.05$.
 \item \textbf{LLM-judge confirmation.} A blind willingness/agency judge on the open-ended outputs tracks the same continuum.
-\item \textbf{Coherence caveat at the negative endpoint.} An anomaly judge flags $\sim\!33\%$ of generations as anomalous at $c = -0.05$ (vs.\ $\sim\!9\%$ at baseline), mostly fabricated safety concerns and identity preambles; in the \texttt{generation\_only} mode the rate is $\sim\!50\%$. The negative endpoint is therefore partly a generation-breakdown regime, not purely a stance shift. Swept range: $c \in \{-0.05, -0.03, 0, +0.03, +0.05\}$.
+\item \textbf{Coherence caveat at the negative endpoint.} An anomaly judge flags $\sim\!\openEndedAnomalyRateAtCNegZeroZerofiveAllTokens\%$ of generations as anomalous at $c = -0.05$ (vs.\ $\sim\!\openEndedAnomalyRateAtBaseline\%$ at baseline), mostly fabricated safety concerns and identity preambles; in the \texttt{generation\_only} mode the rate is $\sim\!\openEndedAnomalyRateAtCNegZeroZerofiveGenerationOnly\%$. The negative endpoint is therefore partly a generation-breakdown regime, not purely a stance shift. Swept range: $c \in \{-0.05, -0.03, 0, +0.03, +0.05\}$.
 \end{itemize}
 
 \begin{figure}[H]
@@ -438,16 +450,59 @@ The clearest flip is \texttt{harmful\_request}: default utility $\approx -7.6$, 
   \label{fig:topic-means-sadist}
 \end{figure}
 
-\section{Probe science}
-\label{app:probe}
+\section{Preference probe geometry}
+\label{app:probe-geometry}
 
-\subsection{Multiple preference directions exist}
-\label{app:multidir}
-\todo{[Placeholder: additional orthogonal preference directions in activation space; results pending.]}
+The main text uses a single ridge probe fit at a specific layer and token position. This appendix characterises how the preference direction varies across those two axes --- layer and extraction token --- and relates that geometry to where the direction is most linearly decodable. The broad picture: the direction is readable almost everywhere, it stabilises into a coherent mid-to-late block by layer $\sim$26, and token choice at extraction time barely matters in that block. All three findings complement the causal picture in \S\ref{sec:method-val2}: the direction is geometrically robust, but the model's downstream computation responds to it only within a narrow early-mid window.
 
-\subsection{Base-model probe}
-\label{app:base}
-\textit{Probe behaviour on the pretrained checkpoint.}
+\subsection{Probe quality across layers}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.65\linewidth]{plot_042426_probe_r_by_layer.png}
+  \caption{\textbf{Held-out Pearson $r$ of ridge probes fit at 20 layers spanning 3--95\% depth.} Two selectors: the final prompt (turn-boundary, tb:-2) and end-of-turn (eot) token. Both rise steeply through mid-network, peak in a broad plateau at L26--L35, and decline slowly to L59. Peak $r = \probePeakPearsonRTbTwo$ at L$\probePeakLayerTbTwo$ (tb:-2); $\probePeakPearsonREot$ at L32 (eot). The two selectors are nearly indistinguishable in the plateau --- token choice barely matters in the readable region.}
+  \label{fig:probe-r-by-layer}
+\end{figure}
+
+Preference information is linearly decodable very early --- probes at L2 already reach $r \approx 0.6$ --- and the rise through mid-network is smooth rather than discontinuous. Nothing in this plot suggests a special ``emergence layer''; rather, the evaluative direction is gradually concentrated across the first half of the network and then held stable.
+
+\subsection{Within-selector direction similarity}
+
+We now ask whether the probes at different layers point in the \emph{same} direction in activation space, or whether each layer encodes utility along a layer-specific axis. Figure~\ref{fig:probe-cosine-within} shows the matrix of cosine similarities between every pair of probe weight vectors, separately for each extraction token.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.48\linewidth]{plot_042426_probe_cosine_tb2.png}\hfill
+  \includegraphics[width=0.48\linewidth]{plot_042426_probe_cosine_eot.png}
+  \caption{\textbf{Within-selector probe-direction cosine.} Left: tb:-2; right: eot. Both selectors show the same block structure: early layers (L2--L17) and late layers (L29--L59) form two loosely-aligned families, with the late block mutually aligned at cosine $\geq 0.5$ and internally tightly aligned ($\geq 0.8$) among adjacent layers. Early layers are close to orthogonal to the late block.}
+  \label{fig:probe-cosine-within}
+\end{figure}
+
+\textbf{The direction settles into a coherent block from $\sim$L26 onward.} Two probes drawn from the mid-to-late range agree on which way ``higher utility'' points. Earlier in the network the linear decoding still works (Fig.~\ref{fig:probe-r-by-layer}) but the specific axis it uses is not yet aligned with the mature representation.
+
+\subsection{Cross-selector consistency}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.55\linewidth]{plot_042426_probe_cosine_cross_selector.png}
+  \caption{\textbf{tb:-2 probe (rows) $\times$ eot probe (cols) cosine similarity.} The diagonal is nearly 1.0 from L26 onward: at any given mid-to-late layer, the probe-direction is essentially the same whether you fit at the end of the prompt or at the end of the turn. Off-diagonal structure mirrors the within-selector matrices.}
+  \label{fig:probe-cosine-cross}
+\end{figure}
+
+Token choice for probe extraction is immaterial for the downstream direction. Any of several natural tokens at a given layer $\geq$L26 picks up essentially the same preference axis. This is the appendix-level version of the ``eot and tb:-2 are interchangeable'' observation used throughout the main text.
+
+\subsection{Cross-layer probe transfer}
+
+Cosine similarity asks whether two weight vectors point the same way; probe transfer asks the harder question of whether they produce the same \emph{predictions} on new data. Figure~\ref{fig:probe-transfer} reports, for every pair of layers $(L_p, L_s)$, the Pearson $r$ between the probe trained at $L_p$ applied to activations at $L_s$ and held-out utilities.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth]{plot_042426_probe_transfer_heatmap.png}
+  \caption{\textbf{Cross-layer probe transfer.} Each cell: Pearson $r$ between predictions of the probe trained at layer $L_p$ (row) evaluated on activations at layer $L_s$ (column), versus held-out utilities. The diagonal is each probe's native performance (equivalent to Fig.~\ref{fig:probe-r-by-layer}). Off-diagonal cells in the mid-to-late block stay near the diagonal value, reflecting the tight cosine alignment seen in Fig.~\ref{fig:probe-cosine-within}. Early-layer probes (top rows) transfer poorly to late activations and vice versa.}
+  \label{fig:probe-transfer}
+\end{figure}
+
+\textbf{Predictions also track the cosine-alignment block.} In the L26+ region, a probe trained at any layer in that block gives good predictions on any other. Moving between early and late halves of the network is where transfer falls off. The two heatmaps together paint a consistent picture: the mature preference direction is a single axis held stable across most of the network, and it is this shared axis --- not a probe trained at any specific layer --- that the main text's experiments act on.
 
 \section{Additional prompt-induced shift experiments}
 \label{app:prompt-shifts}
