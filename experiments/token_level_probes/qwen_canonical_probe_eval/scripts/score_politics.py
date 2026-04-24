@@ -4,14 +4,18 @@ Usage:
     python -m experiments.token_level_probes.qwen_canonical_probe_eval.scripts.score_politics
 """
 import json
+import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-
-from src.models.huggingface_model import HuggingFaceModel
-from src.probes.score_stimuli import load_probes_from_manifest, score_stimuli_with_probes
+from huggingface_hub import login
 
 load_dotenv()
+if os.environ.get("HF_TOKEN"):
+    login(token=os.environ["HF_TOKEN"], add_to_git_credential=False)
+
+from src.models.huggingface_model import HuggingFaceModel  # noqa: E402
+from src.probes.score_stimuli import load_probes_from_manifest, score_stimuli_with_probes  # noqa: E402
 
 DATA_DIR = Path("experiments/token_level_probes/system_prompt_modulation_v2/data")
 OUTPUT_PATH = Path("experiments/token_level_probes/qwen_canonical_probe_eval/politics_scoring_results.json")

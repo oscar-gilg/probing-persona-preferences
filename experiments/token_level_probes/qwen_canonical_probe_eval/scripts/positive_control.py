@@ -9,17 +9,21 @@ Usage:
     python -m experiments.token_level_probes.qwen_canonical_probe_eval.scripts.positive_control
 """
 import json
+import os
 import random
 from pathlib import Path
 
 import numpy as np
 from dotenv import load_dotenv
+from huggingface_hub import login
 from scipy import stats
 
-from src.models.huggingface_model import HuggingFaceModel
-from src.probes.score_stimuli import Probe, score_stimuli_with_probes
-
 load_dotenv()
+if os.environ.get("HF_TOKEN"):
+    login(token=os.environ["HF_TOKEN"], add_to_git_credential=False)
+
+from src.models.huggingface_model import HuggingFaceModel  # noqa: E402
+from src.probes.score_stimuli import Probe, score_stimuli_with_probes  # noqa: E402
 
 DATA_DIR = Path("experiments/token_level_probes/system_prompt_modulation_v2/data")
 OUTPUT_PATH = Path("experiments/token_level_probes/qwen_canonical_probe_eval/positive_control_results.json")
