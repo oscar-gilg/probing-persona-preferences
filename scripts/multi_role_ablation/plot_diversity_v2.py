@@ -10,7 +10,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 plt.style.use("seaborn-v0_8-whitegrid")
 
@@ -85,6 +85,13 @@ for i, key in enumerate(cond_keys):
 means = [np.mean([e["r"] for e in groups[k]]) for k in cond_keys]
 ses = [np.std([e["r"] for e in groups[k]]) / np.sqrt(len(groups[k])) for k in cond_keys]
 
+_DERIVATION_BASE = (
+    "From `phase2.L31.conditions`, filter entries where `eval_persona` is in "
+    "{noprompt,villain,aesthete,midwest,sadist} and `train_personas` is a subset "
+    "of the remaining 4; group by `condition`; take the mean of `pearson_r` "
+    "within the matching condition."
+)
+
 mean_1x2000 = claims.register(
     name="Persona diversity ablation mean r at 1 persona 2000 tasks",
     value=round(float(means[0]), 2),
@@ -95,6 +102,8 @@ mean_1x2000 = claims.register(
         "(default, villain, aesthete, midwest, sadist) used as held-out eval."
     ),
     used_in=["fig:diversity", "app:diversity"],
+    data_paths=[RESULTS_PATH],
+    derivation=f"{_DERIVATION_BASE} condition=='1x2000'; round to 2dp.",
 )
 mean_4x500 = claims.register(
     name="Persona diversity ablation mean r at 4 personas 500 tasks each",
@@ -106,6 +115,8 @@ mean_4x500 = claims.register(
         "personas (default, villain, aesthete, midwest, sadist) used as held-out eval."
     ),
     used_in=["fig:diversity", "app:diversity"],
+    data_paths=[RESULTS_PATH],
+    derivation=f"{_DERIVATION_BASE} condition=='4x500'; round to 2dp.",
 )
 claims.register(
     name="Persona diversity ablation mean r at 2 personas 1000 tasks each",
@@ -117,6 +128,8 @@ claims.register(
         "personas (default, villain, aesthete, midwest, sadist) used as held-out eval."
     ),
     used_in=["fig:diversity"],
+    data_paths=[RESULTS_PATH],
+    derivation=f"{_DERIVATION_BASE} condition=='2x1000'; round to 3dp.",
 )
 claims.register(
     name="Persona diversity ablation mean r at 3 personas 667 tasks each",
@@ -128,6 +141,8 @@ claims.register(
         "personas (default, villain, aesthete, midwest, sadist) used as held-out eval."
     ),
     used_in=["fig:diversity"],
+    data_paths=[RESULTS_PATH],
+    derivation=f"{_DERIVATION_BASE} condition=='3x667'; round to 3dp.",
 )
 
 ax.plot(x, means, "o-", color="black", markersize=8, linewidth=1.5, zorder=4)

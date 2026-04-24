@@ -16,7 +16,7 @@ import numpy as np
 from scipy import stats as scipy_stats
 
 from src.ood.analysis import compute_p_choose_from_pairwise
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 ACTS_DIR = REPO_ROOT / "activations" / "ood" / "exp3v8_minimal_pairs"
@@ -128,6 +128,11 @@ def main() -> None:
     print(f"Total points: {len(beh_arr)}")
     print(f"Target points: {n_target_total}, probe rank 1: {n_probe_rank1}")
 
+    _acts_rel = "activations/ood/exp3v8_minimal_pairs"
+    _pairwise_rel = "results/ood/minimal_pairs_v8/pairwise.json"
+    _cfg_rel = "configs/ood/prompts/minimal_pairs_v8.json"
+    _probe_rel = "results/probes/gemma3_10k_heldout_std_demean/probes"
+
     claims.register(
         name="Exp3v8 AvC total task-condition points",
         value=int(len(beh_arr)),
@@ -137,6 +142,11 @@ def main() -> None:
             "Exp3v8 fine-grained biography-injection scatter for Gemma-3-27B."
         ),
         used_in=["fig:fine-grained"],
+        data_paths=[_pairwise_rel, _cfg_rel, _acts_rel, _probe_rel],
+        derivation=(
+            "Count of points appended while iterating A/C condition-pairs; each (base_role, target) "
+            "A-vs-C pair contributes its |common tasks| points. See exp3_v8_report.md."
+        ),
     )
     claims.register(
         name="Exp3v8 AvC target tasks total",
@@ -147,6 +157,11 @@ def main() -> None:
             "for the probe-ranks-target-#1 rate."
         ),
         used_in=["fig:fine-grained", "app:induced-fine"],
+        data_paths=[_pairwise_rel, _cfg_rel, _acts_rel, _probe_rel],
+        derivation=(
+            "Count of (base_role, target) groups that have both an A and a C condition with activations; "
+            "denominator for the rank-1 rate. See exp3_v8_report.md."
+        ),
     )
     claims.register(
         name="Exp3v8 AvC target tasks probe ranks 1",
@@ -157,6 +172,11 @@ def main() -> None:
             "(probe_A - probe_C)."
         ),
         used_in=["fig:fine-grained", "app:induced-fine"],
+        data_paths=[_pairwise_rel, _cfg_rel, _acts_rel, _probe_rel],
+        derivation=(
+            "For each (base_role, target) pair, sort the 50 tasks by probe_A-probe_C desc and count "
+            "pairs where the target task is rank 1. See exp3_v8_report.md."
+        ),
     )
 
     # --- Plot ---
@@ -189,6 +209,11 @@ def main() -> None:
             "legend as 'All (r = 0.XX)'."
         ),
         used_in=["fig:fine-grained"],
+        data_paths=[_pairwise_rel, _cfg_rel, _acts_rel, _probe_rel],
+        derivation=(
+            "scipy.stats.pearsonr between stacked behavioural deltas (P_A-P_C) and probe deltas "
+            "(probe_A-probe_C) across all A-vs-C task-condition points; round to 2dp. See exp3_v8_report.md."
+        ),
     )
     slope, intercept, _, _, _ = scipy_stats.linregress(beh_arr, probe_arr)
     x_fit = np.linspace(beh_arr.min(), beh_arr.max(), 100)

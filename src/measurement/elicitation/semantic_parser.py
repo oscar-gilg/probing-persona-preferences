@@ -33,13 +33,19 @@ class RatingResult(BaseModel):
     unclear: bool
 
 
+_async_client: instructor.AsyncInstructor | None = None
+
+
 def _get_async_client() -> instructor.AsyncInstructor:
-    return instructor.from_openai(
-        AsyncOpenAI(
-            api_key=os.environ["OPENROUTER_API_KEY"],
-            base_url=OPENROUTER_BASE_URL,
+    global _async_client
+    if _async_client is None:
+        _async_client = instructor.from_openai(
+            AsyncOpenAI(
+                api_key=os.environ["OPENROUTER_API_KEY"],
+                base_url=OPENROUTER_BASE_URL,
+            )
         )
-    )
+    return _async_client
 
 
 def _choice_messages(response: str, task_a_label: str, task_b_label: str) -> list[dict]:

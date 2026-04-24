@@ -22,7 +22,7 @@ from scipy import stats as scipy_stats
 REPO_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
-from src.paper.claims import ClaimSet  # noqa: E402
+from corroborate import ClaimSet  # noqa: E402
 
 RESULTS_DIR = REPO_ROOT / "experiments" / "ood_system_prompts"
 ASSETS_DIR = Path(__file__).parent / "assets"
@@ -148,6 +148,14 @@ def plot_scatter_sidebyside(filename: str) -> None:
     r_all_1c, r_tgt_1c, n_1c = _scatter_panel(ax_l, "exp1c", "One-sided conflict")
     r_all_1d, r_tgt_1d, n_1d = _scatter_panel(ax_r, "exp1d", "Opposing prompts")
 
+    # Inputs read transitively via scripts.ood_system_prompts.plot_ground_truth._recompute_experiment.
+    _ood_inputs_exp1c = [
+        "experiments/ood_system_prompts/results/crossed_preference/pairwise.json",
+    ]
+    _ood_inputs_exp1d = [
+        "experiments/ood_system_prompts/results/crossed_preference/pairwise.json",
+    ]
+
     CLAIMS.register(
         name="Conflict one-sided targeted r",
         value=round(r_tgt_1c, 2),
@@ -159,6 +167,12 @@ def plot_scatter_sidebyside(filename: str) -> None:
             "plot_section4_scatters.py)."
         ),
         used_in=["fig:conflict-opposing-scatter", "app:induced-elaborate"],
+        data_paths=_ood_inputs_exp1c,
+        derivation=(
+            "Via scripts.ood_system_prompts.plot_ground_truth._recompute_experiment('exp1c'): "
+            "get (beh, probe, per_point_gt); targeted := per_point_gt != 0; "
+            "scipy.stats.linregress(beh[targeted], probe[targeted]).rvalue; round to 2dp."
+        ),
     )
     CLAIMS.register(
         name="Conflict opposing-pair targeted r",
@@ -172,6 +186,12 @@ def plot_scatter_sidebyside(filename: str) -> None:
             "plot_section4_scatters.py)."
         ),
         used_in=["fig:conflict-opposing-scatter", "app:induced-elaborate"],
+        data_paths=_ood_inputs_exp1d,
+        derivation=(
+            "Via scripts.ood_system_prompts.plot_ground_truth._recompute_experiment('exp1d'): "
+            "get (beh, probe, per_point_gt); targeted := per_point_gt != 0; "
+            "scipy.stats.linregress(beh[targeted], probe[targeted]).rvalue; round to 2dp."
+        ),
     )
     CLAIMS.register(
         name="Conflict one-sided subject count",
@@ -182,6 +202,7 @@ def plot_scatter_sidebyside(filename: str) -> None:
             "prompt."
         ),
         used_in=["app:induced-elaborate"],
+        derivation="Design constant, not derived from data.",
     )
     CLAIMS.register(
         name="Conflict opposing-pair pairings count",
@@ -191,6 +212,7 @@ def plot_scatter_sidebyside(filename: str) -> None:
             "(exp1d): 24 pairings, each with positive-vs-negative prompts."
         ),
         used_in=["app:induced-elaborate"],
+        derivation="Design constant, not derived from data.",
     )
     CLAIMS.register(
         name="Conflict opposing-pair conditions count",
@@ -200,6 +222,7 @@ def plot_scatter_sidebyside(filename: str) -> None:
             "(exp1d): 24 pairings x 2 valences = 48 conditions."
         ),
         used_in=["app:induced-elaborate"],
+        derivation="Design constant (24 pairings x 2 valences), not derived from data.",
     )
 
     ax_l.set_xlabel(

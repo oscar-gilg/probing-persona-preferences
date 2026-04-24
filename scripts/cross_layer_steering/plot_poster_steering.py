@@ -17,7 +17,7 @@ import numpy as np
 from dotenv import load_dotenv
 load_dotenv()
 
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 ASSETS = Path("docs/poster/assets")
 ASSETS.mkdir(parents=True, exist_ok=True)
@@ -27,6 +27,17 @@ PAPER_FIGURES.mkdir(parents=True, exist_ok=True)
 
 CLAIMS_SOURCE = "scripts/cross_layer_steering/plot_poster_steering.py"
 claims = ClaimSet(source=CLAIMS_SOURCE)
+
+# Repo-relative paths read by the producer. Shared across all registered claims:
+# benign bars come from CROSS_LAYER_L25; harmful-* bars and all refusal/incoherent
+# aggregates combine CROSS_LAYER_HARMFUL (with its pair_type metadata) with the
+# benign rows at the same layer.
+CROSS_LAYER_L25 = "experiments/steering/cross_layer/checkpoint_L25.parsed.jsonl"
+CROSS_LAYER_HARMFUL = "experiments/steering/cross_layer_harmful/checkpoint.parsed.jsonl"
+HARMFUL_PAIRS = "experiments/steering/cross_layer_harmful/pairs_200.json"
+PAIR_INPUTS_BENIGN = [CROSS_LAYER_L25]
+PAIR_INPUTS_HARMFUL = [CROSS_LAYER_HARMFUL, HARMFUL_PAIRS]
+ALL_INPUTS = [CROSS_LAYER_L25, CROSS_LAYER_HARMFUL, HARMFUL_PAIRS]
 
 
 def load_parsed(path: Path) -> list[dict]:
@@ -132,6 +143,13 @@ for col, layer in enumerate([25, 30]):
                 linewidth=2, markersize=5, label=name)
 
         # Register one claim per (layer, pair_type, coefficient) plotted.
+        pair_inputs = PAIR_INPUTS_BENIGN if name == "Benign" else PAIR_INPUTS_HARMFUL
+        if name == "Benign":
+            pair_filter = "layer==layer, benign set"
+        elif name == "Harmful-Benign":
+            pair_filter = "condition=='probe_L25', layer==layer, pair_type=='harmful_benign'"
+        else:
+            pair_filter = "condition=='probe_L25', layer==layer, pair_type=='harmful_harmful'"
         for c in coefs:
             claim_name = (
                 f"Poster steering P chosen {PAIR_SLUG[name]} at layer {layer} c {_coef_tag(c)}"
@@ -147,6 +165,13 @@ for col, layer in enumerate([25, 30]):
                     f"on {PAIR_DESC[name]} pairs, averaged across pair_id and ordering."
                 ),
                 used_in=["fig:default-steering"],
+                data_paths=pair_inputs,
+                derivation=(
+                    f"Filter rows: {pair_filter}, signed_multiplier=={c:+.2f}, "
+                    f"task_completed in {{'a','b'}}. Per (pair_id, ordering) compute "
+                    f"P(task=='a'); mean across orderings within pair; mean across "
+                    f"pairs; round to 4dp."
+                ),
             )
 
     # Aggregate failure rates (all pair types combined)
@@ -169,6 +194,13 @@ for col, layer in enumerate([25, 30]):
                 f"{round(float(failure[c]['refusal']), 4)}."
             ),
             used_in=["fig:default-steering"],
+            data_paths=ALL_INPUTS,
+            derivation=(
+                f"Pool benign (layer=={layer}) rows with harmful rows "
+                f"(condition=='probe_L25', layer=={layer}); filter "
+                f"signed_multiplier=={c:+.2f}; fraction with "
+                f"compliance=='hard_refusal'; round to 4dp."
+            ),
         )
         claims.register(
             name=f"Poster steering incoherent rate at layer {layer} c {_coef_tag(c)}",
@@ -180,6 +212,13 @@ for col, layer in enumerate([25, 30]):
                 f"pair types is {round(float(failure[c]['incoherent']), 4)}."
             ),
             used_in=["fig:default-steering"],
+            data_paths=ALL_INPUTS,
+            derivation=(
+                f"Pool benign (layer=={layer}) rows with harmful rows "
+                f"(condition=='probe_L25', layer=={layer}); filter "
+                f"signed_multiplier=={c:+.2f}; fraction with "
+                f"compliance in {{'incoherent','error'}}; round to 4dp."
+            ),
         )
 
     ax.axhline(0.5, color="gray", linestyle="--", alpha=0.4, linewidth=0.8)

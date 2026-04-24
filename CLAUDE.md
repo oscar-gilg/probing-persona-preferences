@@ -9,6 +9,14 @@ MATS 9.0 project investigating AI model preferences and self-reported valence.
 - `experiments/` — Self-contained experiment directories (spec, report, assets). See below.
 - `docs/logs/` — Running research log and weekly reports with their assets.
 
+## Paper claims — uses the [`corroborate`](~/Dev/corroborate) plugin
+
+Every empirical number in `paper/main.tex` is a registered `Claim` (name, value, statement, source, data_paths, derivation). Registry lives in `paper/claims/*.json` (per-producer sidecars) and surfaces as `paper/claims.md` (audit table) + `paper/numbers.tex` (LaTeX macros).
+
+Producers import from the plugin: `from corroborate import ClaimSet`. Build/audit wrappers live in `scripts/paper/build_claims.py` and `scripts/paper/audit_claims.py` — thin calls into `corroborate`. Install with `uv pip install -e ~/Dev/corroborate`.
+
+**When editing the paper draft:** if you add or change a numeric value in `paper/main.tex` (prose, captions, figures), log it via `corroborate:claim-log`. The skill handles registration, supersedence, removal, and issue-flagging — invoke with a task description for prospective mode, or with no args for retrospective scanning. See `~/Dev/corroborate/skills/claim-log/SKILL.md` for the full contract.
+
 ## Setup
 
 I usually initialise Claude code from within my venv.

@@ -482,6 +482,7 @@ async def _measure_revealed_pairs(
     temperature: float,
     seed: int,
     completion_lookup: dict[str, str] | None = None,
+    async_client: "AsyncOpenAI | None" = None,
 ):
     """Measure revealed preferences for pairs, with or without completions."""
     if completion_lookup is not None:
@@ -497,6 +498,7 @@ async def _measure_revealed_pairs(
         return await measure_pre_task_revealed_async(
             client=client, pairs=pairs, builder=builder,
             semaphore=semaphore, temperature=temperature, seed=seed,
+            async_client=async_client,
         )
 
 
@@ -547,6 +549,7 @@ async def run_active_learning_async(
     configurations = build_configurations(ctx, config, include_order=True)
     stats = RunnerStats(total_runs=len(configurations))
 
+    async_client = ctx.client._make_async_client()
     for cfg in configurations:
         cache = MeasurementCache(cfg.template, ctx.client, cfg.response_format, cfg.order, seed=cfg.seed, completion_seed=completion_seed, system_prompt=config.measurement_system_prompt)
 
@@ -575,6 +578,7 @@ async def run_active_learning_async(
             _builder=builder,
             _seed=cfg.seed,
             _completion_lookup=completion_lookup,
+            _async_client=async_client,
         ):
             return await _measure_revealed_pairs(
                 pairs=pairs,
@@ -584,6 +588,7 @@ async def run_active_learning_async(
                 temperature=config.temperature,
                 seed=_seed,
                 completion_lookup=_completion_lookup,
+                async_client=_async_client,
             )
 
         rank_correlations = []
@@ -776,6 +781,7 @@ async def run_active_learning_async(
             progress_callback(stats)
 
     save_run_failures(stats.all_failures, exp_store.base_dir, measurement_type)
+    await async_client.close()
     return stats.to_dict()
 
 

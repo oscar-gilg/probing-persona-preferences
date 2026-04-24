@@ -392,12 +392,10 @@ class OpenRouterClient(OpenAICompatibleClient):
         return get_openrouter_name(canonical_name)
 
     def _get_extra_body(self, enable_reasoning: bool) -> dict | None:
-        reasoning: dict[str, Any] = {}
-        if enable_reasoning:
-            reasoning["enabled"] = True
+        reasoning: dict[str, Any] = {"enabled": enable_reasoning}
         if self.reasoning_effort is not None:
             reasoning["effort"] = self.reasoning_effort
-        return {"reasoning": reasoning} if reasoning else None
+        return {"reasoning": reasoning}
 
     def _extract_reasoning(self, message: Any) -> str | None:
         return getattr(message, "reasoning", None)

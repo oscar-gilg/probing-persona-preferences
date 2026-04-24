@@ -72,3 +72,37 @@
 - User's original AL runner (PID 73964) that started at 17:17 UTC died silently at some point — zero results dirs, zero checkpoints written. No evidence of what killed it (no log, process gone).
 - Relaunched in tmux session `qwen_persona_al` with `SSL_CERT_FILE=$(python -m certifi)` and matching `REQUESTS_CA_BUNDLE` preset to sidestep the 30-min OpenSSL cert-parse hang we observed on first launch.
 - Extraction monitor re-armed (`brutojnnz`, 1 h) with quiet filter; AL first-checkpoint-watcher also armed (`b1l1df0jf`, 20 min).
+
+## 2026-04-24 — Resuming after overnight gap
+
+- State on resume: no `results/experiments/qwen_persona_sweep_final_six/` (no AL completed), `activations/qwen35_122b/` only has the unrelated `pref_main` dir; `activations/qwen35_122b_partial_backup/` retains the 23-Apr `pref_default_sweep` (450 MB) + partial `pref_sadist_sweep` (294 MB).
+- Local Qwen AL processes: none. The `qwen_persona_al` tmux session from yesterday is gone. The only stale runner is a stopped Gemma `persona_sweep` job (different experiment).
+- Old pods `f42wbkdh4j2dny` (v1) and `qyi5l5xuxzp6zi` (v2) both paused; resume of v2 was denied by user (spec calls for fresh pod). Container disk on both is wiped, so no residual extraction state.
+- **Independent audit re-run**: all 7 extraction configs + 21 measurement configs PASS spec compliance. Train/eval/test splits have zero overlap; persona prompts byte-match `sweep_personas.json`.
+- Launched **pod v3** `wlgdso0ha7lrw1` (`qwen-persona-transfer-v3`): 3×A100-SXM4-80GB, 500 GB container disk, 30 GB volume. SSH alias added.
+- Plan: HF cache → `/workspace/hf_cache` (durable across pause). Extraction outputs → `/root/activations/qwen35_122b/` (container NVMe — avoids the MooseFS I/O errors that blew up sadist mid-run yesterday); rsync off-pod after each persona for durability.
+
+## 2026-04-24 11:38 PT — AL launched local
+
+- Tmux session `qwen_persona_al`, runner script at `scripts/persona_sweep_extraction/run_qwen_al_local.sh` — same SSL_CERT_FILE/REQUESTS_CA_BUNDLE export trick as yesterday's last attempt (which died silently). No code change in the runner; this is essentially the same setup retried.
+- 25 min in, runner is alive (`ps`), PID 49809, has 5+ ESTABLISHED TCP conns to OpenRouter, SSL_CERT_FILE confirmed in process env. Log frozen at 24 lines because Python output is block-buffered through `tee` until first checkpoint flushes. **No checkpoints written yet** — `results/experiments/qwen_persona_sweep_final_six/` doesn't exist yet, but seed-phase API calls are happening.
+- Yesterday's "death" almost certainly was the same pattern (alive but invisible) followed by something killing it — laptop sleep, SIGHUP via tmux disconnect, OOM. We have no traceback either time. If this dies again, drop `--max-concurrent` from 50 → 20 and/or move runner to the storage pod.
+
+## 2026-04-24 ~12:30 PT — Pod v3 terminated (slow github clone)
+
+- Pod v3 (`wlgdso0ha7lrw1`) clone never finished — 256 MB downloaded in 30 min (~140 KB/s). `pod_setup.sh`'s 15-min wait-setup timed out twice, but the underlying `git clone` was still running, just glacially. Some RunPod pods have terrible transit to github.
+- Terminated v3 (clean — no extraction state to lose).
+- Launching v4 (`qwen-persona-transfer-v4`) with same sizing. Plan: as soon as SSH is up, kill the auto-launched pod_setup.sh's clone and replace with `git clone --depth 1` to skip the historical NPZ/results ballast. pod_setup.sh is idempotent on `/workspace/repo` existing.
+
+## 2026-04-24 ~13:00 PT — Pod v4 (`ma5b37t06sncen`, 216.249.100.66:20371)
+
+- v4's network is much better: full repo clone finished cleanly in a few min. Premature kill of pod_setup.sh, so manually completed: `uv venv` (cpython-3.12.13), `uv pip install -e ".[dev]"`, `uv pip install --upgrade transformers @ git+...` (`transformers==5.7.0.dev0`, has `qwen3_5_moe`), `apt-get install -y tmux`.
+- HF cache → `/opt/hf_cache` (container disk), activations → `/root/activations/qwen35_122b/` with `/workspace/activations -> /root/activations` symlink (avoids the MooseFS I/O errors that killed yesterday's sadist).
+- Extraction launched in tmux `extraction` at 12:53:55 UTC; `default` persona started downloading 39 model files. Babysit cron `61b1d978` armed (5 min interval, will NOT pause pod when done — user wants rsync first).
+
+## 2026-04-24 13:30 PT — AL leak diagnosed and fixed
+
+- AL ran 1h49m in zombie state: alive, 5+ ESTABLISHED + **545 sockets in CLOSE_WAIT**, **76.7 GB RSS**, 0 checkpoints written. Killed (PID 49809).
+- Hive-mind dug up history: this exact bug was fixed in Feb 2026 (`5746594`, "~96 GB of clients, OOM kills"), reverted 2 days later (`14a4062`, "stale connection issues"), and an opt-in `async_client=` parameter was added (`6ce3056`) so callers can avoid per-call construction. **The opt-in path was wired only for `src/ood/measurement.py:_measure_all_conditions` and never generalized.** All other runners (including AL) still hit the leaky default. The "stale connection" rationale was specifically about multi-`asyncio.run()` event-loop teardown — not idle/server-side timeouts — so under the current single-`asyncio.run()` orchestration, one shared client per run is safe (proven by 359 OOD tests passing since Feb).
+- **Fix applied (uncommitted):** in `src/measurement/runners/runners.py`, added `async_client = ctx.client._make_async_client()` at the top of `run_active_learning_async`, threaded through the `measure_fn` closure → `_measure_revealed_pairs` (now accepts `async_client` kwarg) → `measure_pre_task_revealed_async` (already accepted it). Closes before `return`. Tests pass (174 passed, 0 failures).
+- AL relaunched in tmux `qwen_persona_al` (PID 79946). Watching for first checkpoint to confirm the fix works in practice.
