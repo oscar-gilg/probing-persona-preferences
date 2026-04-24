@@ -31,7 +31,7 @@ METRICS_PATH = Path("experiments/layer_sweep/probe_metrics.json")
 ASSETS_DIR = Path("experiments/layer_sweep/assets")
 
 SELECTORS = ["tb-2", "eot"]
-SELECTOR_DISPLAY = {"tb-2": "tb:-2", "eot": "eot"}
+SELECTOR_DISPLAY = {"tb-2": "role-marker", "eot": "end-of-turn"}
 
 # Parse filenames like "tb-2_probe_L32.parsed.jsonl"
 FILENAME_RE = re.compile(r"^(?P<selector>tb-2|eot)_probe_L(?P<layer>\d+)\.parsed\.jsonl$")
@@ -116,7 +116,7 @@ def _plot_diagonal(data: dict[str, dict[int, list[dict]]], path: Path) -> None:
     ax.set_xlabel("Injection layer (= probe layer on diagonal)")
     ax.set_ylabel(r"$P(\mathrm{chose\ steered\ task}) - 0.5$")
     ax.set_ylim(-0.5, 0.5)
-    ax.set_title("Self-layer diagonal steering effect (eot probe, |c|=0.05)")
+    ax.set_title("Self-layer diagonal steering effect (end-of-turn probe, |c|=0.05)")
     ax.grid(True, alpha=0.3, axis="y")
     fig.tight_layout()
     fig.savefig(path, dpi=150)
@@ -230,7 +230,7 @@ def _plot_unilateral_dose_response(path: Path) -> None:
         if ax is axes[0]:
             ax.set_ylabel("P(chose steered task)")
             ax.legend(loc="lower right")
-    fig.suptitle("Unilateral steering dose-response — eot, self-layer probe")
+    fig.suptitle("Unilateral steering dose-response — end-of-turn, self-layer probe")
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)

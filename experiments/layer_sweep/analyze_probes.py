@@ -3,7 +3,7 @@
 Emits:
 - probe_metrics.json (layer -> {r, R2, norm} per selector)
 - plot_<mmddYY>_probe_r_by_layer.png
-- plot_<mmddYY>_probe_cosine_tb2.png / ..._eot.png
+- plot_<mmddYY>_probe_cosine_role_marker.png / ..._end_of_turn.png
 - plot_<mmddYY>_probe_cosine_cross_selector.png
 - plot_<mmddYY>_probe_transfer_heatmap.png (one heatmap per selector, stacked vertically)
 """
@@ -30,12 +30,12 @@ SELECTORS: dict[str, dict] = {
     "tb-2": {
         "manifest_dir": Path("results/probes/layer_sweep/tb-2"),
         "activations_path": Path("activations/gemma-3-27b_it/pref_layer_sweep/activations_turn_boundary:-2.npz"),
-        "display": "tb:-2",
+        "display": "role-marker",
     },
     "eot": {
         "manifest_dir": Path("results/probes/layer_sweep/eot"),
         "activations_path": Path("activations/gemma-3-27b_it/pref_layer_sweep/activations_eot.npz"),
-        "display": "eot",
+        "display": "end-of-turn",
     },
 }
 
@@ -141,7 +141,7 @@ def _plot_r_by_layer(metrics: dict[str, dict[int, dict]], layers: list[int], pat
     ax.set_xlabel("Layer")
     ax.set_ylabel("Pearson r (default_test)")
     ax.set_ylim(0, 1)
-    ax.set_title("Probe Pearson r vs layer")
+    ax.set_title("Held-out Pearson r by layer and token position")
     ax.grid(True, alpha=0.3)
     ax.legend()
     fig.tight_layout()
@@ -174,11 +174,11 @@ def _plot_cross_selector(matrix: np.ndarray, layers: list[int], path: Path) -> N
     ax.set_yticks(range(len(layers)))
     ax.set_xticklabels(layers, rotation=90, fontsize=7)
     ax.set_yticklabels(layers, fontsize=7)
-    ax.set_xlabel("eot-probe layer")
-    ax.set_ylabel("tb:-2-probe layer")
-    ax.set_title("Cross-selector probe cosine similarity")
+    ax.set_xlabel("end-of-turn probe layer")
+    ax.set_ylabel("role-marker probe layer")
+    ax.set_title("Role-marker vs end-of-turn probe cosine similarity")
     cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-    cb.set_label("cos(w_tb2, w_eot)  —  1 = same direction, 0 = orthogonal")
+    cb.set_label("cos(w_role-marker, w_end-of-turn)  —  1 = same direction, 0 = orthogonal")
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)
@@ -199,7 +199,7 @@ def _plot_transfer_stacked(
         ax.set_yticklabels(layers, fontsize=7)
         ax.set_xlabel("Activation layer (L_s)")
         ax.set_ylabel("Probe-train layer (L_p)")
-        ax.set_title(f"Cross-layer probe transfer — {SELECTORS[sel]['display']}")
+        ax.set_title(f"Cross-layer probe transfer — {SELECTORS[sel]['display']} probe")
         cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
         cb.set_label("Pearson r (probe predictions vs utilities on default_test)")
     fig.tight_layout()
@@ -266,11 +266,12 @@ def main() -> None:
 
     cos_paths = {}
     for sel in SELECTORS:
-        p = ASSETS_DIR / f"plot_{stamp}_probe_cosine_{'tb2' if sel == 'tb-2' else 'eot'}.png"
+        suffix = "role_marker" if sel == "tb-2" else "end_of_turn"
+        p = ASSETS_DIR / f"plot_{stamp}_probe_cosine_{suffix}.png"
         cos_paths[sel] = p
         _plot_heatmap(
             within_cosine[sel], layers_ref,
-            f"Probe direction similarity — {SELECTORS[sel]['display']} selector",
+            f"Probe direction similarity — {SELECTORS[sel]['display']} probe",
             p, vmin=0, vmax=1, cmap="viridis",
             cbar_label="cos(w_i, w_j)  —  1 = same direction, 0 = orthogonal",
         )

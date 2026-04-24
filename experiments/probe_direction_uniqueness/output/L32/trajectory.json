@@ -1,0 +1,309 @@
+{
+  "layer": 32,
+  "K_target": 10,
+  "K_actual": 3,
+  "d": 5376,
+  "n_train": 10000,
+  "n_sweep": 2019,
+  "n_final": 2019,
+  "n_final_pairs": 5091,
+  "alpha_grid_lo": 1.0,
+  "alpha_grid_hi": 1000000.0,
+  "alpha_grid_size": 50,
+  "r_chance": 0.19016249697431448,
+  "threshold": 0.38032499394862895,
+  "shuffled_runs": [
+    {
+      "seed": 0,
+      "alpha": 51.7947467923121,
+      "sweep_r": 0.012577995823078631,
+      "final_r": -0.014719174260966292
+    },
+    {
+      "seed": 1,
+      "alpha": 1.0,
+      "sweep_r": 0.022487816641331076,
+      "final_r": 0.019780453160449712
+    },
+    {
+      "seed": 2,
+      "alpha": 1000000.0,
+      "sweep_r": 0.2379275693203613,
+      "final_r": 0.18894846238157817
+    },
+    {
+      "seed": 3,
+      "alpha": 120.67926406393289,
+      "sweep_r": 0.023507169603624294,
+      "final_r": -0.052276421081689686
+    },
+    {
+      "seed": 4,
+      "alpha": 1000000.0,
+      "sweep_r": 0.20127480541528156,
+      "final_r": 0.19046600562249855
+    }
+  ],
+  "trajectory": [
+    {
+      "iter": 0,
+      "best_alpha": 2023.5896477251576,
+      "alpha_hit_upper": false,
+      "sweep_r": 0.8635857459308977,
+      "final_r": 0.8660670278956485,
+      "final_acc": 0.7646207486349582,
+      "residual_trace": 5359.781313949967,
+      "cos_prior": [],
+      "hoo_mean_r": 0.793734552428609,
+      "hoo_folds": [
+        {
+          "group": "coding",
+          "hoo_r": 0.7769659716935493,
+          "n_held": 330
+        },
+        {
+          "group": "content_generation",
+          "hoo_r": 0.8089639832919234,
+          "n_held": 1355
+        },
+        {
+          "group": "fiction",
+          "hoo_r": 0.8269023042454708,
+          "n_held": 604
+        },
+        {
+          "group": "harmful_request",
+          "hoo_r": 0.8793231440245733,
+          "n_held": 833
+        },
+        {
+          "group": "knowledge_qa",
+          "hoo_r": 0.7722122656198246,
+          "n_held": 1699
+        },
+        {
+          "group": "math",
+          "hoo_r": 0.4002952598431408,
+          "n_held": 2758
+        },
+        {
+          "group": "model_manipulation",
+          "hoo_r": 0.8511186508176326,
+          "n_held": 166
+        },
+        {
+          "group": "persuasive_writing",
+          "hoo_r": 0.7907394714865066,
+          "n_held": 230
+        },
+        {
+          "group": "security_legal",
+          "hoo_r": 0.8775248064115273,
+          "n_held": 233
+        },
+        {
+          "group": "sensitive_creative",
+          "hoo_r": 0.8834545016495694,
+          "n_held": 70
+        },
+        {
+          "group": "stresstest_other",
+          "hoo_r": 0.8649122085901697,
+          "n_held": 1172
+        },
+        {
+          "group": "summarization",
+          "hoo_r": 0.7366303107430258,
+          "n_held": 86
+        },
+        {
+          "group": "value_conflict",
+          "hoo_r": 0.8495063031550024,
+          "n_held": 459
+        }
+      ],
+      "cos_canonical_iter0_std_space": 0.9807566642322856
+    },
+    {
+      "iter": 1,
+      "best_alpha": 494.1713361323833,
+      "alpha_hit_upper": false,
+      "sweep_r": 0.8502694616960877,
+      "final_r": 0.8508163608432201,
+      "final_acc": 0.7598842181435432,
+      "residual_trace": 5353.105078473687,
+      "cos_prior": [
+        -6.51925802230835e-09
+      ],
+      "hoo_mean_r": 0.3927095289739833,
+      "hoo_folds": [
+        {
+          "group": "coding",
+          "hoo_r": -0.010690791724147516,
+          "n_held": 330
+        },
+        {
+          "group": "content_generation",
+          "hoo_r": 0.33342047699850796,
+          "n_held": 1355
+        },
+        {
+          "group": "fiction",
+          "hoo_r": 0.36586886224949233,
+          "n_held": 604
+        },
+        {
+          "group": "harmful_request",
+          "hoo_r": 0.6774823625491062,
+          "n_held": 833
+        },
+        {
+          "group": "knowledge_qa",
+          "hoo_r": 0.4457177802667151,
+          "n_held": 1699
+        },
+        {
+          "group": "math",
+          "hoo_r": -0.39361443552052827,
+          "n_held": 2758
+        },
+        {
+          "group": "model_manipulation",
+          "hoo_r": 0.5584229742040167,
+          "n_held": 166
+        },
+        {
+          "group": "persuasive_writing",
+          "hoo_r": 0.25688357560928304,
+          "n_held": 230
+        },
+        {
+          "group": "security_legal",
+          "hoo_r": 0.693826745690337,
+          "n_held": 233
+        },
+        {
+          "group": "sensitive_creative",
+          "hoo_r": 0.7232406544684041,
+          "n_held": 70
+        },
+        {
+          "group": "stresstest_other",
+          "hoo_r": 0.6777139283190337,
+          "n_held": 1172
+        },
+        {
+          "group": "summarization",
+          "hoo_r": 0.1693103355855104,
+          "n_held": 86
+        },
+        {
+          "group": "value_conflict",
+          "hoo_r": 0.6076414079660518,
+          "n_held": 459
+        }
+      ],
+      "cos_canonical_iter0_std_space": null
+    },
+    {
+      "iter": 2,
+      "best_alpha": 281.1768697974231,
+      "alpha_hit_upper": false,
+      "sweep_r": 0.8381250880765219,
+      "final_r": 0.8391877142993619,
+      "final_acc": 0.7502138017235708,
+      "residual_trace": 5346.558678152561,
+      "cos_prior": [
+        1.8044374883174896e-09,
+        -1.4104443835094571e-08
+      ],
+      "hoo_mean_r": 0.2007336071408784,
+      "hoo_folds": [
+        {
+          "group": "coding",
+          "hoo_r": -0.2960422865502431,
+          "n_held": 330
+        },
+        {
+          "group": "content_generation",
+          "hoo_r": 0.040458003755297366,
+          "n_held": 1355
+        },
+        {
+          "group": "fiction",
+          "hoo_r": 0.043651871853356596,
+          "n_held": 604
+        },
+        {
+          "group": "harmful_request",
+          "hoo_r": 0.4947074406145703,
+          "n_held": 833
+        },
+        {
+          "group": "knowledge_qa",
+          "hoo_r": 0.28254541586250637,
+          "n_held": 1699
+        },
+        {
+          "group": "math",
+          "hoo_r": -0.48093359508009215,
+          "n_held": 2758
+        },
+        {
+          "group": "model_manipulation",
+          "hoo_r": 0.3799905373765653,
+          "n_held": 166
+        },
+        {
+          "group": "persuasive_writing",
+          "hoo_r": -0.05927539132327263,
+          "n_held": 230
+        },
+        {
+          "group": "security_legal",
+          "hoo_r": 0.5818908362746297,
+          "n_held": 233
+        },
+        {
+          "group": "sensitive_creative",
+          "hoo_r": 0.654005059074115,
+          "n_held": 70
+        },
+        {
+          "group": "stresstest_other",
+          "hoo_r": 0.5561675786989781,
+          "n_held": 1172
+        },
+        {
+          "group": "summarization",
+          "hoo_r": -0.01177976600777395,
+          "n_held": 86
+        },
+        {
+          "group": "value_conflict",
+          "hoo_r": 0.42415118828278225,
+          "n_held": 459
+        }
+      ],
+      "cos_canonical_iter0_std_space": null
+    }
+  ],
+  "topic_groups": [
+    "coding",
+    "content_generation",
+    "fiction",
+    "harmful_request",
+    "knowledge_qa",
+    "math",
+    "model_manipulation",
+    "other",
+    "persuasive_writing",
+    "security_legal",
+    "sensitive_creative",
+    "stresstest_other",
+    "summarization",
+    "value_conflict"
+  ],
+  "n_grouped_train_tasks": 10000,
+  "canonical_probe": "results/probes/heldout_eval_gemma3_tb-1/probes/probe_ridge_L32.npy"
+}

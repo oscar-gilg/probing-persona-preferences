@@ -117,9 +117,9 @@ def plot_headline():
         if "task_mean" in probe_str:
             return "task_mean (parent)"
         if probe_str.startswith("tb-5"):
-            return "tb-5 (EOT probe)"
+            return "tb-5 (end-of-turn)"
         if probe_str.startswith("tb-2"):
-            return "tb-2 (model marker)"
+            return "tb-2 (role-marker)"
         return "other"
 
     def layer_of(probe_str):
@@ -136,8 +136,8 @@ def plot_headline():
         "politics_republican": "Politics\n(republican prompt)",
     }
     family_color = {
-        "tb-5 (EOT probe)": "#1976D2",
-        "tb-2 (model marker)": "#26A69A",
+        "tb-5 (end-of-turn)": "#1976D2",
+        "tb-2 (role-marker)": "#26A69A",
         "task_mean (parent)": "#E65100",
     }
 
@@ -149,10 +149,10 @@ def plot_headline():
         data[r["domain"]][(fam, L)] = d
 
     fig, ax = plt.subplots(figsize=(11, 5))
-    families = ["tb-5 (EOT probe)", "tb-2 (model marker)", "task_mean (parent)"]
+    families = ["tb-5 (end-of-turn)", "tb-2 (role-marker)", "task_mean (parent)"]
     layers_per_family = {
-        "tb-5 (EOT probe)": ["L32", "L39", "L53"],
-        "tb-2 (model marker)": ["L32", "L39", "L53"],
+        "tb-5 (end-of-turn)": ["L32", "L39", "L53"],
+        "tb-2 (role-marker)": ["L32", "L39", "L53"],
         "task_mean (parent)": ["L32", "L39"],
     }
 
