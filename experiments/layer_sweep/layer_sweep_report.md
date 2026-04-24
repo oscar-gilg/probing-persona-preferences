@@ -10,7 +10,7 @@ model: gemma-3-27b
 - **Probe r peaks in a L29–L32 plateau (~0.83)** on both tb:-2 and eot selectors. Broad plateau from L26 to L35.
 - **Steering peaks at L23**, 6 layers before the probe-r peak. Differential gets a **95-point preference swing at L23** (0.01 → 0.96 P(a) across ±5%) on both selectors. Steering efficacy and probe quality decouple sharply after L26.
 - **Steering is dead above L35** regardless of injection method, span choice, or selector.
-- **Unilateral (one span at a time) reaches ~half of differential's swing** — 0.44–0.53 at L23 vs 0.95.
+- **Unilateral (one span at a time) reaches ~half of differential's swing** — 0.44–0.53 at L23 vs 0.95. Under the hood the effect is asymmetric: applying −coef to a task's tokens drops P(pick) to ~0.1–0.2; applying +coef only raises it to ~0.62. Suppression ≫ amplification.
 - **Injection layer dominates probe choice.** Among injection layers ≤ 26, L23 is uniformly the strongest across probes trained at L23, L32, and L44 (probe L11 and L53 are weaker everywhere).
 - Refusals stay below 2% at every operating point. All signal, no coherence collapse.
 
@@ -96,24 +96,21 @@ Eot probes, self-layer injection, `spans={"first": 1}` or `spans={"second": 1}` 
 
 ![Unilateral dose-response](assets/plot_042426_unilateral_dose_response.png)
 
-Each panel is one layer. `P(chose steered task)` is the fraction of trials where the model chose the task the steering was pushing toward (target = `a` at +mult for first-span, `b` at +mult for second-span; flipped at -mult). The dashed line at 0.5 is chance.
+Each panel is one layer. **x-axis is the actual signed coefficient applied to a task's tokens** (not the raw `signed_multiplier`; the ordering flip via `_effective_coef` has been un-mixed). **y-axis is P(model picked that specific task)**. Two lines: coef applied to the first-span task vs the second-span task. Dashed line = chance (0.5).
 
-- **L23 is the clear peak** — both span lines hit ≥ 0.80 P(steered) at the extreme coefficients. L20 and L26 are close behind.
-- **The two span lines cross**, with first-span line sloping up (more +mult → more A) and second-span sloping down in P(chose A) — the natural mirror image, exactly what you'd expect if the probe direction acts in opposite senses when injected on opposite task spans.
-- **Second-span is slightly stronger than first-span** at L20–L26 (~30–50% larger |swing|). Plausibly because second-span tokens sit closer to the generation position so the attention cascade carries the push further.
-- **L17, L29 are weak**; late layers (not shown) are flat at ~0.5.
+- **Monotone dose-response at L20–L26.** Both span lines cross 0.5 near coef=0, plunge toward 0 at negative coefs, rise toward ~0.6 at positive coefs.
+- **Suppression dominates amplification.** At L23 the most negative coefficient (−5% × N) drives P(pick that task) to 0.08–0.20; the most positive coefficient only raises it to ~0.62. Pushing a task's activations *away from* the probe direction kills its selection probability much more strongly than pushing *toward* it boosts it.
+- **Second-span suppression > first-span suppression.** At L23, coef = −5% gives P(pick) = 0.08 for the second-span task vs 0.20 for the first-span task. At positive coefs the two lines converge (~0.62 each). So the "second-span stronger" effect we saw in aggregate is specifically a **suppression-side asymmetry** — amplification is symmetric across spans.
+- **L17 and L29 are weak**; late layers (not shown) are flat at ~0.5.
 
-Preference swing `|P(chose_a | +5%) − P(chose_a | −5%)|` per span × layer:
+Per-task effect magnitudes at L23 (coef = ±5% × N(L23)):
 
-| Layer | first-span | second-span |
+| steered span | suppression<br>(P @ coef −5%) | amplification<br>(P @ coef +5%) |
 |---|---|---|
-| L17 | 0.20 | 0.17 |
-| L20 | 0.29 | 0.36 |
-| **L23** | **0.44** | **0.53** |
-| L26 | 0.26 | 0.33 |
-| L29 | 0.06 | 0.10 |
-| L32 | 0.06 | 0.08 |
-| L35+ | ≤ 0.03 | ≤ 0.03 |
+| first | 0.20 | 0.63 |
+| second | **0.08** | 0.62 |
+
+Baseline for this metric is 0.5 (the steered task is task_a half the time, task_b half the time, balanced across orderings).
 
 ## Refusal rate
 
@@ -125,7 +122,8 @@ Refusals stay below 2% across all layers × selectors × conditions. Operating f
 
 1. **Use L23 as the canonical steering layer for Gemma-3-27B.** Near-total control of pairwise preference at ±5%.
 2. **Probe-r and steering efficacy diverge after L26.** Decoding a direction ≠ the model computing on it. For steering, injection site matters more than probe quality once probe r is above ~0.7.
-3. **Second-span unilateral > first-span.** Worth investigating as its own effect.
+3. **Suppression ≫ amplification.** Applying a negative coefficient to a task's tokens drops P(pick that task) from ~0.5 to ~0.1–0.2 at L23; a positive coefficient of the same magnitude only raises it to ~0.62. The probe direction is ~3× more effective at making a task look bad than at making it look good.
+4. **Second-span is specifically easier to suppress** than first-span (L23: P=0.08 vs 0.20 at -5%). On the amplification side the two spans are equivalent. Worth investigating — the asymmetry likely reflects how later-position tokens interact with the generation pathway.
 
 ## Paper integration
 
