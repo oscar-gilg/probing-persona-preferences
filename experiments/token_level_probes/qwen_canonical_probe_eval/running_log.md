@@ -15,5 +15,10 @@ Append-only. Also the progress signal for the user when running on a pod.
 - Wrote four experiment scripts: `score_all.py`, `score_politics.py`, `positive_control.py`, `analyze.py`. All import cleanly locally and on the pod.
 - Committed and pushed `worktree-qwen_canonical_probe_eval` branch. Pod `qwen-persona-transfer-v4` fetched + checked out.
 - Rsynced 7 probe .npy files to pod (Qwen tb-1/tb-4 × L33/L38/L43 + Gemma tb-5 L32). Total ~180 KB.
-- Pod uses `/workspace/repo/.venv/bin/python` (not the base /usr/bin/python). sklearn 1.8.0, torch 2.6.0+cu124, transformers 5.7.0.dev0 all present.
+- Pod uses `/workspace/repo/.venv/bin/python`. sklearn 1.8.0, torch 2.6.0+cu124, transformers 5.7.0.dev0 all present.
+- Pod **was auto-paused** mid-setup (probably RunPod idle-timeout). Resumed. First resume brought only 1 A100; paused again and resumed with `--gpu-count 3`. Container disk was wiped on resume (expected), so rebuilt venv via `uv venv` + `uv pip install -e '.[dev]'` (~30s). Probes on `/workspace/` survived. Installed tmux.
+- Hit transformers 4.57 gated-repo auth quirk: `HF_TOKEN` env var + `load_dotenv()` alone not enough — transformers wants an explicit `huggingface_hub.login()` call. Added that to the three scoring scripts (committed + pushed).
+- Gemma-3-27B weights partially cached (~13 GB in `~/.cache/huggingface/hub/models--google--gemma-3-27b-it/` — still downloading or already compressed safetensors).
+- Launched positive control in tmux session `positive_control`, logs to `/workspace/positive_control.log`. Monitor armed.
+
 
