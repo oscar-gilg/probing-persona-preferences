@@ -14,3 +14,6 @@
 - **Aura gen done (19:54 UTC)**: 2400/2400 in 19.4 min.
 - **Aura parse hung at 50 rows (~19:55 UTC)** with 50 established CF-fronted sockets idle — same OpenRouter socket-hang observed in the unilateral run. Killed runner; `run_all.sh` exited (set -e).
 - Switched to `scripts/cross_persona_differential/run_all_robust.sh` — per-persona wrapper with `timeout 2400` and up to 4 attempts. Both gen and parse are resumable (checkpoint_counts / existing_keys), so retries pick up where the last attempt left off. Relaunched at 19:57 UTC; aura's first invocation will no-op gen and resume parse from row 50.
+- **Aura complete (20:00:41 UTC)**: retry attempt 1 finished parse cleanly in ~3 min. 2400/2400 parsed, 0 unparseable labels.
+  - `compute_swings.py`: aura P(steered)@|c|=0.05 = **0.849** (SEM 0.010, n=1200); @|c|=0.03 = 0.767; refusal (LLM judge hard_refusal) = **13.8%**.
+  - vs unilateral mean Δ for aura (0.383): differential swing 2·(0.849−0.5) = 0.698 is ~1.8× the unilateral — matches the paper's expectation that contrastive > unilateral.
