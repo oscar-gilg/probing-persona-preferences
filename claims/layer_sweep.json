@@ -1,0 +1,267 @@
+{
+  "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+  "claims": [
+    {
+      "name": "Probe peak Pearson r tb-2",
+      "value": 0.835,
+      "statement": "A ridge probe on Gemma-3-27B residual-stream activations at the second-to-last turn-boundary token attains a peak held-out Pearson correlation of 0.835 with default-persona Thurstonian utilities at layer 29, across the 20 sampled layers.",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2",
+        "app:probe-geometry"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/probe_metrics.json"
+      ],
+      "derivation": "Read probe_metrics.json; find the layer maximising tb-2[L].pearson_r; report the maximum; round to 3dp."
+    },
+    {
+      "name": "Probe peak layer tb-2",
+      "value": 29,
+      "statement": "The tb:-2-selector ridge probe on Gemma-3-27B peaks at layer 29 among the 20 layers sampled every three blocks.",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2",
+        "app:probe-geometry"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/probe_metrics.json"
+      ],
+      "derivation": "argmax_L tb-2[L].pearson_r in probe_metrics.json."
+    },
+    {
+      "name": "Probe peak Pearson r eot",
+      "value": 0.825,
+      "statement": "A ridge probe on Gemma-3-27B residual-stream activations at the end-of-turn token attains a peak held-out Pearson correlation of 0.825 with default-persona Thurstonian utilities at layer 32.",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "app:probe-geometry"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/probe_metrics.json"
+      ],
+      "derivation": "Read probe_metrics.json; find the layer maximising eot[L].pearson_r; report the maximum; round to 3dp."
+    },
+    {
+      "name": "Contrastive steering P a at L23 c neg 0.05 eot",
+      "value": 0.013,
+      "statement": "Contrastive steering along the eot probe direction at layer 23 with $c = -5\\%$ of the mean activation norm drives $P(\\text{chose higher-utility task}) = 0.013$ on a 50-pair test sample.",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/eot_probe_L23.parsed.jsonl"
+      ],
+      "derivation": "Filter rows to layer==23 and signed_multiplier==-0.05; P(choice_original=='a'); round to 3dp."
+    },
+    {
+      "name": "Contrastive steering P a at L23 c pos 0.05 eot",
+      "value": 0.963,
+      "statement": "Contrastive steering along the eot probe direction at layer 23 with $c = +5\\%$ raises $P(\\text{chose higher-utility task}) = 0.963$.",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/eot_probe_L23.parsed.jsonl"
+      ],
+      "derivation": "Filter rows to layer==23 and signed_multiplier==+0.05; P(choice_original=='a'); round to 3dp."
+    },
+    {
+      "name": "Contrastive preference swing L23",
+      "value": 0.95,
+      "statement": "At layer 23 with $|c| = 5\\%$, contrastive steering along the eot probe produces a 0.95-point swing in $P(\\text{chose higher-utility task})$ from 0.013 at $c = -5\\%$ to 0.963 at $c = +5\\%$.",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2",
+        "abstract"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/eot_probe_L23.parsed.jsonl"
+      ],
+      "derivation": "|P(a)@+5% - P(a)@-5%| at layer 23 in eot_probe_L23.parsed.jsonl; round to 3dp."
+    },
+    {
+      "name": "Contrastive preference swing L23 tb-2",
+      "value": 0.49,
+      "statement": "Using the tb:-2 probe instead of eot at the same layer and coefficient yields a smaller but still substantial 0.49-point preference swing.",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/tb-2_probe_L23.parsed.jsonl"
+      ],
+      "derivation": "|P(a)@+5% - P(a)@-5%| at layer 23 in tb-2_probe_L23.parsed.jsonl; round to 3dp."
+    },
+    {
+      "name": "Single task first span baseline",
+      "value": 0.56,
+      "statement": "Without any steering, the model picks the first-presented task at P = 0.56 (measured empirically from the flat layers L2-L14 and L35-L59 in the single-task sweep, where the dose-response is null).",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2",
+        "app:probe-geometry"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl"
+      ],
+      "derivation": "Restrict to condition=='unilateral_first' and layer in dead_layers [2,5,8,11,14,35,38,41,44,47,50,53,56,59]; compute the fraction of trials where the model picked whichever task was in first position (a at ordering=0, b at ordering=1); round to 3dp."
+    },
+    {
+      "name": "Single task second span baseline",
+      "value": 0.435,
+      "statement": "Without any steering, the model picks the second-presented task at P = 0.435 (same flat-layer measurement as the first-span baseline, so the two baselines sum to 1 up to refusals).",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2",
+        "app:probe-geometry"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl"
+      ],
+      "derivation": "Same as first-span baseline but condition=='unilateral_second' and target = task in second position."
+    },
+    {
+      "name": "Single task position bias gap",
+      "value": 0.125,
+      "statement": "The baseline position bias --- first-span minus second-span P(picked) with no steering --- is 0.12, indicating the model has a mild preference for the first-presented option independent of utility.",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl"
+      ],
+      "derivation": "first_baseline - second_baseline; round to 3dp."
+    },
+    {
+      "name": "Single task aggregate P steered at L23 c pos 0.05",
+      "value": 0.623,
+      "statement": "At layer 23 with an applied coefficient of +5\\% on a single task's tokens, the model picks that task at P = 0.623, averaged across which of the two physical tasks was steered.",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
+      ],
+      "derivation": "Aggregate over both unilateral_first and unilateral_second conditions at layer==23 where the applied coefficient (= signed_multiplier * (+1 if ordering==0 else -1)) equals +0.05; compute P(choice_original == physical task in steered span); round to 3dp."
+    },
+    {
+      "name": "Single task aggregate P steered at L23 c neg 0.05",
+      "value": 0.142,
+      "statement": "At layer 23 with an applied coefficient of -5\\% on a single task's tokens, the model picks that task at P = 0.142.",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
+      ],
+      "derivation": "Same as the +5% version but applied coefficient == -0.05."
+    },
+    {
+      "name": "Single task aggregate swing L23",
+      "value": 0.481,
+      "statement": "Single-task steering at layer 23 produces a 0.48-point swing in P(picked the steered task) between c = -5\\% (0.142) and c = +5\\% (0.623).",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
+      ],
+      "derivation": "aggregate(+0.05) - aggregate(-0.05) at layer 23; round to 3dp."
+    },
+    {
+      "name": "Single task suppression L23",
+      "value": 0.356,
+      "statement": "At layer 23, applying c = -5\\% to a task's tokens drops P(pick that task) by 0.36 below the no-steering baseline (from 0.498 to 0.142).",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
+      ],
+      "derivation": "aggregate_baseline - aggregate(-0.05) at layer 23; round to 3dp."
+    },
+    {
+      "name": "Single task amplification L23",
+      "value": 0.125,
+      "statement": "At layer 23, applying c = +5\\% to a task's tokens raises P(pick that task) by only 0.12 above the no-steering baseline (0.498 to 0.623) --- markedly less than the symmetric suppression delta.",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T11:10:35+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
+      ],
+      "derivation": "aggregate(+0.05) - aggregate_baseline at layer 23; round to 3dp."
+    },
+    {
+      "name": "Steering max refusal rate percent",
+      "value": 3.0,
+      "statement": "Across every (layer, coefficient, steering variant) bucket in the layer-sweep experiment --- 20 layers for both selectors, contrastive and single-task --- the worst-case refusal rate is 3.0\\%. Steering does not operate near the coherence-collapse regime at these coefficients.",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T11:10:36+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/tb-2_probe_L*.parsed.jsonl",
+        "experiments/layer_sweep/checkpoints/eot_probe_L*.parsed.jsonl",
+        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_*.parsed.jsonl"
+      ],
+      "derivation": "For each (file, layer, signed_multiplier) bucket, compute fraction of rows with choice_original not in {'a','b'}; take max across all buckets; express as percent; round to 2dp."
+    },
+    {
+      "name": "Contrastive steering working layer range lo",
+      "value": 17,
+      "statement": "Contrastive steering along the eot probe direction produces a preference swing of at least 0.30 at every self-layer cell from layer 17 through layer 26.",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T11:10:36+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/eot_probe_L*.parsed.jsonl"
+      ],
+      "derivation": "For each of the 20 sampled layers L, compute |P(a)@+5% - P(a)@-5%| at the eot probe's self-cell; keep Ls with swing >= 0.30; report min."
+    },
+    {
+      "name": "Contrastive steering working layer range hi",
+      "value": 26,
+      "statement": "The upper end of the working steering window is layer 26; at every layer L > 26 in the sweep, the self-layer contrastive swing drops below 0.30.",
+      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T11:10:36+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/checkpoints/eot_probe_L*.parsed.jsonl"
+      ],
+      "derivation": "Same as the lo claim but report max of the filtered layers."
+    }
+  ]
+}
