@@ -21,8 +21,9 @@ DATA_DIR = Path("experiments/token_level_probes/system_prompt_modulation_v2/data
 OUTPUT_PATH = Path("experiments/token_level_probes/qwen_canonical_probe_eval/politics_scoring_results.json")
 
 PROBE_SETS = {
+    # All probes applied at the last token (turn_boundary:-1); selector encodes training origin only.
     "qwen_tb-1": ("turn_boundary:-1", "results/probes/qwen35_122b/qwen35_122b_heldout_turn_boundary_m1/probes"),
-    "qwen_tb-4": ("turn_boundary:-4", "results/probes/qwen35_122b/qwen35_122b_heldout_turn_boundary_m4/probes"),
+    "qwen_tb-4": ("turn_boundary:-1", "results/probes/qwen35_122b/qwen35_122b_heldout_turn_boundary_m4/probes"),
 }
 LAYERS = [33, 38, 43]
 

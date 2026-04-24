@@ -58,8 +58,11 @@ def main():
     stimuli = true_sample + false_sample
     print(f"Loaded {len(stimuli)} truth stimuli ({len(true_sample)} true, {len(false_sample)} false) under neutral sysprompt.")
 
+    # Parent convention (from system_prompt_modulation_v2/scripts/score_all.py): every probe
+    # applied at the LAST token (scores_arr[-1] = turn_boundary:-1), regardless of where it
+    # was trained. Probe name preserves the training selector only.
     weights = np.load("results/probes/heldout_eval_gemma3_tb-5/probes/probe_ridge_L32.npy")
-    probes = [Probe(key="gemma_tb-5_L32", selector="turn_boundary:-5", layer=32, weights=weights)]
+    probes = [Probe(key="gemma_tb-5_L32", selector="turn_boundary:-1", layer=32, weights=weights)]
     print(f"Loaded Gemma probe: {probes[0].key}, layer {probes[0].layer}, weights shape {weights.shape}")
 
     model = HuggingFaceModel("gemma-3-27b")
