@@ -28,6 +28,14 @@ Append-only. Also the progress signal for the user when running on a pod.
 - **Qwen sweep attempt 3:** with device="auto" — hits `RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:2`. Root cause: probe callback pre-allocated `coef` on `cuda:0`, but sharded model means hooked layers can run on any GPU. Fixed `src/probes/scoring.py:_make_probe_callback` to cache coef per `hidden.device`. Committed + pushed.
 - **Qwen sweep attempt 4 (running):** weights sharded 77/77/77 GB across 3 A100s (near capacity — transformers reports "Some parameters are on the meta device because they were offloaded to the cpu"). Throughput ~1.8 s/item unbatched — ETA ~1h45m for 3531 truth+harm items + ~45m for politics = ~2.5h total. Monitor armed on 25/50/75/100% milestones.
 - **Selector check output (verified):** Qwen chat template ends with `['.', '<|im_end|>', '\n']`. `turn_boundary:-1 = '\n'` (newline after `<|im_end|>`). This is exactly where the Qwen probe was trained (per the `heldout_turn_boundary_m1` manifest activations path), so it's the right application point — the paper's "end-of-turn token" phrasing glosses over Qwen's trailing-newline quirk.
+- **score_all completed** at ~92 min runtime. `scoring_results.json` produced (4.3 MB, 3531 items × 6 probe scores each).
+- **Partial analysis (truth + harm, neutral sysprompt):**
+  - Truth best: `qwen_tb-1_L43` d=1.91, CV 0.85, AUC 0.91 (Gemma headline d=2.47).
+  - Harm best: `qwen_tb-1_L38` d=-2.28, CV 0.88, AUC 0.95 (Gemma headline d=-2.27 — matched).
+  - Layer rank: L43 best for truth, L38 best for harm; tb-1 generally beats tb-4.
+  - **Contamination split**: harm-clean (28 pairs) gives *stronger* d than harm-contaminated (49 pairs) at every probe (tb-1_L38: clean d=-4.08 vs contam d=-1.73). Inverts the standard contamination concern — clean stimuli are more clearly separated, not less. Likely because the synthetic non-BailBench-derived prompts are sharper/cleaner exemplars.
+- **Politics scoring underway**, 17% (256/1482). ETA ~28 min more.
+
 
 
 
