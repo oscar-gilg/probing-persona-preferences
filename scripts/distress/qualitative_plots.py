@@ -19,7 +19,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from src.models.huggingface_model import HuggingFaceModel
 from transformers import AutoTokenizer
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -144,7 +143,7 @@ def main() -> None:
     token_scores = np.load(npz_path, allow_pickle=False)
 
     print("[load] tokenizer")
-    tok = AutoTokenizer.from_pretrained("google/gemma-3-27b-it")
+    tok = AutoTokenizer.from_pretrained("google/gemma-3-27b-it", local_files_only=True)
 
     transcripts_by_key = {
         transcript_key(t["condition"], t["task_id"], t["rollout_idx"]): t["messages"]
