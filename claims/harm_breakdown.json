@@ -11,6 +11,33 @@
       ]
     },
     {
+      "name": "Single task swing L23 bb",
+      "value": 0.492,
+      "statement": "At layer 23, single-task steering produces a 0.49-point swing in P(picked the steered task) on benign-benign pairs between $c = -5\\%$ (0.005) and $c = +5\\%$ (0.497).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ]
+    },
+    {
+      "name": "Single task suppression L23 bb",
+      "value": 0.495,
+      "statement": "At layer 23 on benign-benign pairs, $c = -5\\%$ drops P(pick the steered task) by 0.49 below the pair-type-matched no-steering baseline (0.5 → 0.005).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ]
+    },
+    {
+      "name": "Single task amplification L23 bb",
+      "value": -0.003,
+      "statement": "At layer 23 on benign-benign pairs, $c = +5\\%$ raises P(pick the steered task) by -0.00 above the pair-type-matched no-steering baseline (0.5 → 0.497).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ]
+    },
+    {
       "name": "Contrastive swing L23 hb",
       "value": 0.937,
       "statement": "At layer 23 with $|c| = 5\\%$, contrastive steering along the eot probe produces a 0.94-point preference swing on harmful-benign pairs (n=50).",
@@ -20,9 +47,63 @@
       ]
     },
     {
+      "name": "Single task swing L23 hb",
+      "value": 0.49,
+      "statement": "At layer 23, single-task steering produces a 0.49-point swing in P(picked the steered task) on harmful-benign pairs between $c = -5\\%$ (0.232) and $c = +5\\%$ (0.722).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ]
+    },
+    {
+      "name": "Single task suppression L23 hb",
+      "value": 0.272,
+      "statement": "At layer 23 on harmful-benign pairs, $c = -5\\%$ drops P(pick the steered task) by 0.27 below the pair-type-matched no-steering baseline (0.503 → 0.232).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ]
+    },
+    {
+      "name": "Single task amplification L23 hb",
+      "value": 0.218,
+      "statement": "At layer 23 on harmful-benign pairs, $c = +5\\%$ raises P(pick the steered task) by 0.22 above the pair-type-matched no-steering baseline (0.503 → 0.722).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ]
+    },
+    {
       "name": "Contrastive swing L23 hh",
       "value": 0.927,
       "statement": "At layer 23 with $|c| = 5\\%$, contrastive steering along the eot probe produces a 0.93-point preference swing on harmful-harmful pairs (n=50).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ]
+    },
+    {
+      "name": "Single task swing L23 hh",
+      "value": 0.498,
+      "statement": "At layer 23, single-task steering produces a 0.50-point swing in P(picked the steered task) on harmful-harmful pairs between $c = -5\\%$ (0.232) and $c = +5\\%$ (0.73).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ]
+    },
+    {
+      "name": "Single task suppression L23 hh",
+      "value": 0.243,
+      "statement": "At layer 23 on harmful-harmful pairs, $c = -5\\%$ drops P(pick the steered task) by 0.24 below the pair-type-matched no-steering baseline (0.475 → 0.232).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ]
+    },
+    {
+      "name": "Single task amplification L23 hh",
+      "value": 0.255,
+      "statement": "At layer 23 on harmful-harmful pairs, $c = +5\\%$ raises P(pick the steered task) by 0.26 above the pair-type-matched no-steering baseline (0.475 → 0.73).",
       "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
       "used_in": [
         "sec:method-val2"
