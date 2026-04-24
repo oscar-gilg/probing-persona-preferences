@@ -18,12 +18,21 @@ def _make_probe_callback(
 ) -> Callable[[torch.Tensor], None]:
     """Return a callback that scores all tokens with the probe on-device.
 
+    Handles sharded / CPU-offloaded models: the hooked layer may live on a
+    different device than `device`. Cache the coef tensor per hidden.device
+    so the first call on each device pays H2D once.
+
     Appends a (batch, seq_len) array to scores_out on each call.
     """
-    coef = torch.tensor(weights[:-1], dtype=torch.float32, device=device)
+    weights_coef = weights[:-1]
     intercept = float(weights[-1])
+    coef_cache: dict[torch.device, torch.Tensor] = {}
 
     def callback(hidden: torch.Tensor) -> None:
+        dev = hidden.device
+        if dev not in coef_cache:
+            coef_cache[dev] = torch.tensor(weights_coef, dtype=torch.float32, device=dev)
+        coef = coef_cache[dev]
         # (batch, seq_len, d_model) @ (d_model,) -> (batch, seq_len)
         all_scores = (hidden.float() @ coef + intercept).cpu().numpy()
         scores_out.append(all_scores)
