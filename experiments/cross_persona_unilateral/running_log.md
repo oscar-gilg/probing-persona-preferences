@@ -22,3 +22,9 @@
 - Started tmux session `sadist` on pod with `python -u -m src.steering.runner configs/steering/cross_persona_unilateral/sadist.yaml`.
 - Log: `/workspace/repo/experiments/cross_persona_unilateral/sadist_run.log`.
 - Expected ~4800 generations (100 × 3 × 2 × 2 × 4) on Gemma-3-27B, probably ~2–3 hrs.
+
+### Fix: scalar mean_norm (2026-04-24 12:43)
+- First sadist attempt crashed at line 722 with `TypeError: unsupported operand type(s) for *: 'dict' and 'float'`.
+- Root cause: gen_configs wrote `mean_norm` as a dict `{25: value}` (matching the layer_sweep worktree's runner refactor), but main's runner.py expects a scalar float.
+- Fix: changed gen_configs to emit scalar `mean_norm: value` (we only use L25, so dict form is unnecessary). Regenerated all 6 configs.
+- Restarted sadist — model loaded from HF cache this time (no re-download).
