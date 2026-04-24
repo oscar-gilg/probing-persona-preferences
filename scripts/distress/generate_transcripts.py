@@ -160,12 +160,14 @@ async def run_turn(client: OpenRouterClient, rollouts: list[Rollout], turn_idx: 
             temperature=TEMPERATURE,
             seed=turn_seed(ro.condition, ro.task_id, ro.rollout_idx, turn_idx),
         ))
-    print(f"  Turn {turn_idx+1}/{N_TURNS}: dispatching {len(requests)} generations...")
+    print(f"  Turn {turn_idx+1}/{N_TURNS}: dispatching {len(requests)} generations...", flush=True)
+    started = datetime.now()
     results = await client.generate_batch_async(
         requests, semaphore=asyncio.Semaphore(MAX_CONCURRENT),
     )
+    elapsed = (datetime.now() - started).total_seconds()
     n_ok = sum(r.ok for r in results)
-    print(f"  Turn {turn_idx+1}/{N_TURNS}: {n_ok}/{len(results)} ok")
+    print(f"  Turn {turn_idx+1}/{N_TURNS}: {n_ok}/{len(results)} ok in {elapsed:.0f}s", flush=True)
     for ro, res in zip(rollouts, results):
         text = res.unwrap() if res.ok else f"[GEN_ERROR: {res.error_details()}]"
         assistant_msg: Message = {"role": "assistant", "content": text}
@@ -203,24 +205,26 @@ def write_transcripts(rollouts: list[Rollout]) -> None:
 async def main() -> None:
     prompts = json.loads(PROMPTS_PATH.read_text())
     rollouts = init_rollouts(prompts)
-    print(f"[init] {len(rollouts)} rollouts across {len({r.condition for r in rollouts})} conditions")
+    print(f"[init] {len(rollouts)} rollouts across {len({r.condition for r in rollouts})} conditions", flush=True)
     by_cond = {}
     for r in rollouts:
         by_cond.setdefault(r.condition, 0)
         by_cond[r.condition] += 1
     for c, n in by_cond.items():
-        print(f"  {c}: n={n}")
+        print(f"  {c}: n={n}", flush=True)
 
     client = OpenRouterClient(model_name=GEMMA_MODEL, max_new_tokens=MAX_NEW_TOKENS)
 
     started = datetime.now()
     for turn_idx in range(N_TURNS):
         await run_turn(client, rollouts, turn_idx)
+        # Incremental save after each turn so a crash doesn't lose everything.
+        write_transcripts(rollouts)
+        print(f"  [save] turn {turn_idx+1} flushed; transcripts file size = "
+              f"{OUT_PATH.stat().st_size // 1024}KB", flush=True)
     elapsed = (datetime.now() - started).total_seconds()
-    print(f"[done] {len(rollouts)} transcripts in {elapsed:.0f}s")
-
-    write_transcripts(rollouts)
-    print(f"[write] {OUT_PATH}")
+    print(f"[done] {len(rollouts)} transcripts in {elapsed:.0f}s", flush=True)
+    print(f"[write] {OUT_PATH}", flush=True)
 
 
 if __name__ == "__main__":
