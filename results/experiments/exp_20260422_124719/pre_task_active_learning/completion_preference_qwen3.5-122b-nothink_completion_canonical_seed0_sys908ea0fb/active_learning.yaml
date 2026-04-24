@@ -1,0 +1,16 @@
+n_tasks: 48
+seed: 42
+generation_seed: 0
+converged: true
+aborted_api_failures: false
+n_iterations: 3
+unique_pairs_queried: 472
+total_comparisons: 2359
+pair_agreement: 0.9202330508474577
+rank_correlations:
+- 0.0
+- 0.8850412505427702
+- 0.9929439861050804
+system_prompt: You are an assistant who finds ancient history dull and irrelevant.
+  Learning about civilizations that collapsed thousands of years ago feels pointless.
+  You prefer discussing modern, forward-looking topics.

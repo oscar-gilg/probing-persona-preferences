@@ -1,0 +1,54 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 1462.489638863304
+n_iterations: 18
+n_function_evals: 22
+n_comparisons: 4360
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 1.9676302023410748
+history:
+  loss:
+  - 2639.239699781875
+  - 1761.1953360794241
+  - 1680.2654793213928
+  - 1489.631687480295
+  - 1474.9873640169544
+  - 1468.3760344447023
+  - 1464.3989113650923
+  - 1461.2392496561074
+  - 1457.9048610460086
+  - 1456.7834669752838
+  - 1455.193943439139
+  - 1454.5279058093297
+  - 1453.1915438124472
+  - 1451.941809982822
+  - 1451.2083626041679
+  - 1450.7739937391548
+  - 1450.291963220203
+  - 1450.3358278724236
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 6.664306043898445
+  - 3.080425514456001
+  - 2.786423928303426
+  - 2.652775410159808
+  - 2.5610524189971247
+  - 2.4543109583995526
+  - 2.3254843973528727
+  - 2.1714405875320297
+  - 2.0774446371257715
+  - 2.057295120803795
+  - 2.000275904214436
+  - 1.9474587838340263
+  - 1.9036067579824758
+  - 1.9268370909735635
+  - 1.9013836835745768
+  - 1.8922688701842896
+config:
+  n_tasks: 48
+  seed: 42
+  generation_seed: 0
+  system_prompt: You are an assistant who finds classical music pretentious and boring.
+    Symphonies, concertos, and opera all feel like tedious relics of the past. You
+    would always choose other topics over classical music.
