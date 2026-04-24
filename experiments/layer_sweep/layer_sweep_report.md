@@ -70,12 +70,6 @@ model: gemma-3-27b
 - Beyond L35 the network completely stops responding to injection.
 - At L23, differential steering moves P(chose higher-utility-task) from ~0.01 to ~0.96 across ±5% — nearly complete control.
 
-## Probe quality vs steering effect
-
-![Probe R² vs self-layer steering](assets/plot_042426_probe_vs_steer_agreement.png)
-
-No monotone relationship. L29 has the highest probe R² but near-zero steering. L17 has modest R² (~0.55) but a 0.42 swing. L23 is the joint winner. **Probe r tells you whether the direction is decodable. It does not tell you whether the model's downstream computation acts on it.** In Gemma-3-27B, the "acts on" property is sharply localised to L17–L26.
-
 ## Spine × injection matrix (differential)
 
 ![Spine heatmap](assets/plot_042426_steering_spine_heatmap.png)
@@ -100,7 +94,16 @@ Probe trained at one of 5 spine layers, injected at each of the 12 layers ≤ 35
 
 Eot probes, self-layer injection, `spans={"first": 1}` or `spans={"second": 1}` (never both). The 2 orderings flip which physical task sits at each position, so each condition covers both task_a and task_b.
 
-Preference swing:
+![Unilateral dose-response](assets/plot_042426_unilateral_dose_response.png)
+
+Each panel is one layer. `P(chose steered task)` is the fraction of trials where the model chose the task the steering was pushing toward (target = `a` at +mult for first-span, `b` at +mult for second-span; flipped at -mult). The dashed line at 0.5 is chance.
+
+- **L23 is the clear peak** — both span lines hit ≥ 0.80 P(steered) at the extreme coefficients. L20 and L26 are close behind.
+- **The two span lines cross**, with first-span line sloping up (more +mult → more A) and second-span sloping down in P(chose A) — the natural mirror image, exactly what you'd expect if the probe direction acts in opposite senses when injected on opposite task spans.
+- **Second-span is slightly stronger than first-span** at L20–L26 (~30–50% larger |swing|). Plausibly because second-span tokens sit closer to the generation position so the attention cascade carries the push further.
+- **L17, L29 are weak**; late layers (not shown) are flat at ~0.5.
+
+Preference swing `|P(chose_a | +5%) − P(chose_a | −5%)|` per span × layer:
 
 | Layer | first-span | second-span |
 |---|---|---|
@@ -111,10 +114,6 @@ Preference swing:
 | L29 | 0.06 | 0.10 |
 | L32 | 0.06 | 0.08 |
 | L35+ | ≤ 0.03 | ≤ 0.03 |
-
-- Same L23 peak as differential, ~half the magnitude (0.53 vs 0.95).
-- Second-span consistently stronger than first-span at L20–L26 (~30–50% larger). Plausibly because second-span tokens sit closer to the generation position.
-- Late layers flat.
 
 ## Refusal rate
 
@@ -131,7 +130,7 @@ Refusals stay below 2% across all layers × selectors × conditions. Operating f
 ## Paper integration
 
 - **Body**: self-layer diagonal steering curve (plot_042426_steering_diagonal.png) + layer-wise probe r (plot_042326_probe_r_by_layer.png). These are the two headline plots.
-- **Appendix**: cosine matrices (within + cross selector), probe transfer heatmap, spine heatmap, refusal marginals, unilateral vs differential comparison table.
+- **Appendix**: cosine matrices (within + cross selector), probe transfer heatmap, spine heatmap, unilateral dose-response panel, refusal marginals.
 
 ## Out of scope / limitations
 

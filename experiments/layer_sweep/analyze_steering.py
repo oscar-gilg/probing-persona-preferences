@@ -190,35 +190,49 @@ def _plot_refusal(data: dict[str, dict[int, list[dict]]], path: Path) -> None:
     plt.close(fig)
 
 
-def _plot_probe_vs_steer(data: dict[str, dict[int, list[dict]]], path: Path) -> None:
-    with open(METRICS_PATH) as f:
-        metrics = json.load(f)
+def _plot_unilateral_dose_response(path: Path) -> None:
+    """Unilateral eot: P(chose steered task) vs signed multiplier at key layers.
 
-    fig, ax = plt.subplots(figsize=(7, 6))
-    for sel in SELECTORS:
-        xs, ys, labels = [], [], []
-        for L_str, m in metrics[sel].items():
-            L = int(L_str)
-            if L not in data[sel]:
-                continue
-            rows = _rows_at_layer(data[sel][L], L)
-            mean, _, n = _p_chose_steered(rows)
-            if n == 0 or m["r2"] is None:
-                continue
-            xs.append(m["r2"])
-            ys.append(mean)
-            labels.append(L)
-        ax.scatter(xs, ys, label=SELECTOR_DISPLAY[sel], alpha=0.8)
-        for x, y, L in zip(xs, ys, labels):
-            ax.annotate(str(L), (x, y), fontsize=7, xytext=(3, 3), textcoords="offset points")
-    ax.axhline(0.5, color="gray", linestyle="--", alpha=0.5)
-    ax.set_xlabel("Probe R² (default_test)")
-    ax.set_ylabel("Self-layer P(chose steered task)")
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-    ax.set_title("Probe fit vs steering effect (self-layer)")
-    ax.grid(True, alpha=0.3)
-    ax.legend()
+    Two lines per panel: unilateral_first, unilateral_second.
+    For each (condition, mult), `steered target` is the task the steering pushes toward:
+        (first, +)  → task_a     (first, -)  → task_b
+        (second, +) → task_b     (second, -) → task_a
+    """
+    all_rows = []
+    for f in ["eot_unilateral_diagonal_early.parsed.jsonl", "eot_unilateral_diagonal_late.parsed.jsonl"]:
+        p = CHECKPOINTS_DIR / f
+        if not p.exists():
+            continue
+        all_rows.extend(json.loads(l) for l in p.read_text().splitlines())
+
+    layers_to_plot = [17, 20, 23, 26, 29]
+    fig, axes = plt.subplots(1, len(layers_to_plot), figsize=(3 * len(layers_to_plot), 3.5), sharey=True)
+
+    for ax, L in zip(axes, layers_to_plot):
+        for cond in ["unilateral_first", "unilateral_second"]:
+            xs, ys = [], []
+            for mult in sorted({r["signed_multiplier"] for r in all_rows}):
+                cell = [r for r in all_rows if r["layer"] == L and r["condition"] == cond and r["signed_multiplier"] == mult]
+                if not cell:
+                    continue
+                if cond == "unilateral_first":
+                    target = "a" if mult > 0 else "b"
+                else:
+                    target = "b" if mult > 0 else "a"
+                p_steered = sum(r["choice_original"] == target for r in cell) / len(cell)
+                xs.append(mult)
+                ys.append(p_steered)
+            label = "first-span" if cond == "unilateral_first" else "second-span"
+            ax.plot(xs, ys, "o-", label=label, markersize=6)
+        ax.axhline(0.5, color="gray", linestyle="--", alpha=0.5)
+        ax.set_xlabel("signed multiplier  (× N(L))")
+        ax.set_title(f"L{L}")
+        ax.set_ylim(0, 1)
+        ax.grid(True, alpha=0.3)
+        if ax is axes[0]:
+            ax.set_ylabel("P(chose steered task)")
+            ax.legend(loc="lower right")
+    fig.suptitle("Unilateral steering dose-response — eot, self-layer probe")
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)
@@ -234,15 +248,15 @@ def main() -> None:
     diag_path = ASSETS_DIR / f"plot_{stamp}_steering_diagonal.png"
     spine_path = ASSETS_DIR / f"plot_{stamp}_steering_spine_heatmap.png"
     refusal_path = ASSETS_DIR / f"plot_{stamp}_steering_refusal_by_inject_layer.png"
-    scatter_path = ASSETS_DIR / f"plot_{stamp}_probe_vs_steer_agreement.png"
+    unilat_path = ASSETS_DIR / f"plot_{stamp}_unilateral_dose_response.png"
 
     _plot_diagonal(data, diag_path)
     _plot_spine_heatmap(data, spine_path)
     _plot_refusal(data, refusal_path)
-    _plot_probe_vs_steer(data, scatter_path)
+    _plot_unilateral_dose_response(unilat_path)
 
     print("\nArtifacts:")
-    for p in [diag_path, spine_path, refusal_path, scatter_path]:
+    for p in [diag_path, spine_path, refusal_path, unilat_path]:
         print(f"  {p.resolve()}")
 
 
