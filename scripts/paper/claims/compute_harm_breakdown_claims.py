@@ -18,7 +18,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -96,10 +96,21 @@ def main() -> None:
                 value=contr_swing,
                 statement=(
                     f"At layer 23 with $|c| = 5\\%$, contrastive steering along the "
-                    f"eot probe produces a {contr_swing:.2f}-point preference swing on "
-                    f"{PT_LABEL[pt]} pairs (n=50)."
+                    f"eot probe produces a {contr_swing:.2f}-point swing in "
+                    f"$P(\\text{{chose steered task}} \\mid \\text{{responded}})$ on "
+                    f"{PT_LABEL[pt]} pairs (n=50) of the harm-breakdown 150-pair set."
                 ),
                 used_in=["sec:method-val2"],
+                data_paths=[
+                    "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
+                    "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
+                ],
+                derivation=(
+                    f"Filter to layer==23 in the contrastive parsed.jsonl; keep rows "
+                    f"where the pair's pair_type=='{pt}' (via steering_pairs_150.json); "
+                    f"compute P(choice_original=='a') separately at signed_multiplier "
+                    f"==+0.05 and ==-0.05; return |P@+0.05 - P@-0.05|; round to 3dp."
+                ),
             )
             print(f"  {pt}: contrastive swing = {contr_swing} "
                   f"(P(a)@-5% = {round(p_a_neg5,3)}, P(a)@+5% = {round(p_a_pos5,3)})")
@@ -141,38 +152,163 @@ def main() -> None:
         suppression = round(agg_b - agg_neg5, 3)
         amplification = round(agg_pos5 - agg_b, 3)
 
+        data_paths_single = [
+            "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
+            "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
+            "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
+            "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
+            "experiments/layer_sweep/steering_pairs.json",
+        ]
+
         claims.register(
             name=f"Single task swing L23 {pt}",
             value=single_swing,
             statement=(
                 f"At layer 23, single-task steering produces a {single_swing:.2f}-point "
-                f"swing in P(picked the steered task) on {PT_LABEL[pt]} pairs between "
+                f"swing in $P(\\text{{chose steered task}} \\mid \\text{{responded}})$ "
+                f"on {PT_LABEL[pt]} pairs between "
                 f"$c = -5\\%$ ({round(agg_neg5, 3)}) and $c = +5\\%$ ({round(agg_pos5, 3)})."
             ),
             used_in=["sec:method-val2"],
+            data_paths=data_paths_single,
+            derivation=(
+                f"Filter single_task_L23_150.parsed.jsonl to layer==23 and pair_type=='{pt}'. "
+                f"For each row compute applied_c = signed_multiplier * (1 if ordering==0 else -1) "
+                f"and target = 'a' if first-span ordering==0 else 'b' (analogous for second-span). "
+                f"Aggregate P(choice_original==target) at applied_c==+0.05 and ==-0.05; "
+                f"swing = P(+) - P(-); round to 3dp."
+            ),
         )
         claims.register(
             name=f"Single task suppression L23 {pt}",
             value=suppression,
             statement=(
                 f"At layer 23 on {PT_LABEL[pt]} pairs, $c = -5\\%$ drops "
-                f"P(pick the steered task) by {suppression:.2f} below the pair-type-matched "
+                f"P(chose steered task) by {suppression:.2f} below the pair-type-matched "
                 f"no-steering baseline ({round(agg_b, 3)} → {round(agg_neg5, 3)})."
             ),
             used_in=["sec:method-val2"],
+            data_paths=data_paths_single,
+            derivation=(
+                f"Baseline: parent-sweep unilateral rows at dead layers "
+                f"{sorted(DEAD_LAYERS)} restricted to pair_type=='{pt}' (via 50-pair "
+                f"origins in steering_pairs.json); compute mean(first-span P(picked) + "
+                f"second-span P(picked)). Then suppression = baseline - aggregate(-0.05) "
+                f"at L23 (computed as in swing claim); round to 3dp."
+            ),
         )
         claims.register(
             name=f"Single task amplification L23 {pt}",
             value=amplification,
             statement=(
                 f"At layer 23 on {PT_LABEL[pt]} pairs, $c = +5\\%$ raises "
-                f"P(pick the steered task) by {amplification:.2f} above the pair-type-matched "
+                f"P(chose steered task) by {amplification:.2f} above the pair-type-matched "
                 f"no-steering baseline ({round(agg_b, 3)} → {round(agg_pos5, 3)})."
             ),
             used_in=["sec:method-val2"],
+            data_paths=data_paths_single,
+            derivation=(
+                f"Baseline computed as in the suppression claim. Then amplification = "
+                f"aggregate(+0.05) - baseline at L23; round to 3dp."
+            ),
         )
         print(f"  {pt}: single swing = {single_swing}, supp = {suppression}, amp = {amplification} "
               f"(baseline = {round(agg_b, 3)})")
+
+    # --- Aggregate endpoints across all pair types (for §2.3 prose) ---
+    if have_contr:
+        # P(chose steered | responded) at c=±0.05, pooled over pair types
+        def pooled_contr_endpoint(applied_c: float) -> float:
+            hits = n = 0
+            for r in contr_rows:
+                mult = r["signed_multiplier"]
+                # Point A: steered=a, applied=+mult
+                if abs(applied_c - mult) < 1e-6 and r["choice_original"] in ("a", "b"):
+                    hits += int(r["choice_original"] == "a")
+                    n += 1
+                # Point B: steered=b, applied=-mult
+                if abs(applied_c - (-mult)) < 1e-6 and r["choice_original"] in ("a", "b"):
+                    hits += int(r["choice_original"] == "b")
+                    n += 1
+            return hits / n if n else float("nan")
+
+        p_neg5 = round(pooled_contr_endpoint(-0.05), 3)
+        p_pos5 = round(pooled_contr_endpoint(+0.05), 3)
+        claims.register(
+            name="Contrastive P chose steered at L23 c neg 0.05",
+            value=p_neg5,
+            statement=(
+                f"At layer 23, contrastive steering at $c = -5\\%$ drives "
+                f"$P(\\text{{chose steered task}} \\mid \\text{{responded}}) = {p_neg5}$ "
+                f"pooled across the balanced 150-pair set (all pair types)."
+            ),
+            used_in=["sec:method-val2"],
+            data_paths=[
+                "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
+            ],
+            derivation=(
+                "Filter to layer==23. For each row treat task_a-as-steered (applied_c = "
+                "+signed_multiplier, chose_steered = choice=='a') and task_b-as-steered "
+                "(applied_c = -signed_multiplier, chose_steered = choice=='b'); keep "
+                "responded rows; bucket by applied_c; report mean at applied_c==-0.05; "
+                "round to 3dp."
+            ),
+        )
+        claims.register(
+            name="Contrastive P chose steered at L23 c pos 0.05",
+            value=p_pos5,
+            statement=(
+                f"At layer 23, contrastive steering at $c = +5\\%$ drives "
+                f"$P(\\text{{chose steered task}} \\mid \\text{{responded}}) = {p_pos5}$ "
+                f"pooled across the balanced 150-pair set (all pair types)."
+            ),
+            used_in=["sec:method-val2"],
+            data_paths=[
+                "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
+            ],
+            derivation="Same as the c=-0.05 endpoint but report mean at applied_c==+0.05.",
+        )
+
+    if have_uni:
+        # Aggregate single-task swing (mean of per-pair-type swings)
+        swings = []
+        for pt in ("bb", "hb", "hh"):
+            def agg_pt(applied_coef: float, pt=pt) -> float:
+                hits = n = 0
+                for r in uni_rows:
+                    if pt_150.get(r["pair_id"]) != pt:
+                        continue
+                    applied = r["signed_multiplier"] * (1 if r["ordering"] == 0 else -1)
+                    if abs(applied - applied_coef) > 1e-6 or r["choice_original"] not in ("a", "b"):
+                        continue
+                    span = "first" if r["condition"] == "unilateral_first" else "second"
+                    tgt = physical_in_span(span, r["ordering"])
+                    hits += int(r["choice_original"] == tgt)
+                    n += 1
+                return hits / n if n else float("nan")
+            swings.append(agg_pt(0.05) - agg_pt(-0.05))
+        agg_swing = round(sum(swings) / len(swings), 3)
+        claims.register(
+            name="Single task swing L23 aggregate",
+            value=agg_swing,
+            statement=(
+                f"Single-task steering at L23 produces an average "
+                f"{agg_swing:.2f}-point swing in "
+                f"$P(\\text{{chose steered task}} \\mid \\text{{responded}})$ "
+                f"between $c=-5\\%$ and $c=+5\\%$, averaged across bb/hb/hh pair types "
+                f"(each weighted equally; the per-type swings are near-uniform)."
+            ),
+            used_in=["sec:method-val2"],
+            data_paths=[
+                "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
+                "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
+            ],
+            derivation=(
+                "For each pair_type in {bb, hb, hh}, compute the single-task swing (see "
+                "per-pair-type Single task swing claims); take the unweighted mean "
+                "across the three pair types; round to 3dp."
+            ),
+        )
 
     sidecar = REPO_ROOT / "paper" / "claims" / "harm_breakdown.json"
     claims.save(sidecar)
