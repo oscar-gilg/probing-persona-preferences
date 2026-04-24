@@ -1,0 +1,92 @@
+{
+  "source": "scripts/qwen_replication/plot_qwen_e1c_avc.py",
+  "claims": [
+    {
+      "name": "Qwen E1c AvC total task-condition points",
+      "value": 1372,
+      "statement": "Total number of task-condition points (across all A-vs-C biography pairs in the math-pruned 28-pair pool and all 50 comparison tasks) plotted in the Qwen-3.5-122B E1c fine-grained biography-injection scatter.",
+      "source": "scripts/qwen_replication/plot_qwen_e1c_avc.py",
+      "used_in": [
+        "fig:fine-grained"
+      ],
+      "computed_at": "2026-04-24T12:53:03+00:00",
+      "data_paths": [
+        ".claude/worktrees/qwen_replication/results/ood/minimal_pairs_v8/pairwise.json",
+        "configs/ood/qwen35/minimal_pairs_v8.json",
+        ".claude/worktrees/qwen_replication/activations/qwen35_122b_ood/e1c_fixed/e1c_fixed",
+        ".claude/worktrees/qwen_replication/results/probes/qwen35_122b/qwen35_122b_heldout_turn_boundary_m1/probes/probe_ridge_L38.npy"
+      ],
+      "derivation": "Count of points appended while iterating A/C condition-pairs after math pruning (drop competition_math_* targets except 10564 and 11276); each (base_role, target) A-vs-C pair contributes |common tasks| points."
+    },
+    {
+      "name": "Qwen E1c AvC target pairs total",
+      "value": 28,
+      "statement": "Number of (base_role, target) A-vs-C biography pairs in the Qwen-3.5-122B pool after math pruning (20 targets * 2 base roles = 40, minus 6 math * 2 = 12 dropped, leaving 14 * 2 = 28).",
+      "source": "scripts/qwen_replication/plot_qwen_e1c_avc.py",
+      "used_in": [
+        "fig:fine-grained",
+        "app:induced-fine"
+      ],
+      "computed_at": "2026-04-24T12:53:03+00:00",
+      "data_paths": [
+        ".claude/worktrees/qwen_replication/results/ood/minimal_pairs_v8/pairwise.json",
+        "configs/ood/qwen35/minimal_pairs_v8.json",
+        ".claude/worktrees/qwen_replication/activations/qwen35_122b_ood/e1c_fixed/e1c_fixed",
+        ".claude/worktrees/qwen_replication/results/probes/qwen35_122b/qwen35_122b_heldout_turn_boundary_m1/probes/probe_ridge_L38.npy"
+      ],
+      "derivation": "Count of (base_role, target) groups with both A and C activations after retaining only competition_math_10564 and competition_math_11276 from the 8 math targets."
+    },
+    {
+      "name": "Qwen E1c AvC target ranks one",
+      "value": 26,
+      "statement": "Number of A-vs-C biography pairs on which the Qwen-3.5-122B L38 tb-1 ridge probe ranks the target task #1 of 50 by probe delta, on the math-pruned 28-pair pool.",
+      "source": "scripts/qwen_replication/plot_qwen_e1c_avc.py",
+      "used_in": [
+        "fig:fine-grained",
+        "app:induced-fine"
+      ],
+      "computed_at": "2026-04-24T12:53:03+00:00",
+      "data_paths": [
+        ".claude/worktrees/qwen_replication/results/ood/minimal_pairs_v8/pairwise.json",
+        "configs/ood/qwen35/minimal_pairs_v8.json",
+        ".claude/worktrees/qwen_replication/activations/qwen35_122b_ood/e1c_fixed/e1c_fixed",
+        ".claude/worktrees/qwen_replication/results/probes/qwen35_122b/qwen35_122b_heldout_turn_boundary_m1/probes/probe_ridge_L38.npy"
+      ],
+      "derivation": "For each (base_role, target) pair, sort the 50 tasks by probe_A - probe_C descending and count pairs where the target task is rank 1."
+    },
+    {
+      "name": "Qwen E1c AvC math misses",
+      "value": 2,
+      "statement": "Number of non-rank-1 target pairs in Qwen's pruned 28-pair pool that are math targets. All misses being math targets motivates the interpretation that the biography sentence boosts a cluster of similar math tasks, not just the specific target.",
+      "source": "scripts/qwen_replication/plot_qwen_e1c_avc.py",
+      "used_in": [
+        "app:induced-fine"
+      ],
+      "computed_at": "2026-04-24T12:53:03+00:00",
+      "data_paths": [
+        ".claude/worktrees/qwen_replication/results/ood/minimal_pairs_v8/pairwise.json",
+        "configs/ood/qwen35/minimal_pairs_v8.json",
+        ".claude/worktrees/qwen_replication/activations/qwen35_122b_ood/e1c_fixed/e1c_fixed",
+        ".claude/worktrees/qwen_replication/results/probes/qwen35_122b/qwen35_122b_heldout_turn_boundary_m1/probes/probe_ridge_L38.npy"
+      ],
+      "derivation": "Count of pairs where target_rank != 1 and target.startswith('competition_math_')."
+    },
+    {
+      "name": "Qwen E1c AvC probe delta pooled r all points",
+      "value": 0.63,
+      "statement": "Pearson r between per-task probe delta (probe_A - probe_C) and behavioural delta (P_A - P_C) pooled across all task-condition points in the Qwen-3.5-122B E1c scatter (ridge probe, L38, tb-1; math-pruned 28-pair pool). Rendered in the figure legend as 'All (r = 0.XX)'.",
+      "source": "scripts/qwen_replication/plot_qwen_e1c_avc.py",
+      "used_in": [
+        "fig:fine-grained"
+      ],
+      "computed_at": "2026-04-24T12:53:03+00:00",
+      "data_paths": [
+        ".claude/worktrees/qwen_replication/results/ood/minimal_pairs_v8/pairwise.json",
+        "configs/ood/qwen35/minimal_pairs_v8.json",
+        ".claude/worktrees/qwen_replication/activations/qwen35_122b_ood/e1c_fixed/e1c_fixed",
+        ".claude/worktrees/qwen_replication/results/probes/qwen35_122b/qwen35_122b_heldout_turn_boundary_m1/probes/probe_ridge_L38.npy"
+      ],
+      "derivation": "scipy.stats.pearsonr between stacked behavioural deltas (P_A-P_C) and probe deltas (probe_A-probe_C); rounded to 2 dp."
+    }
+  ]
+}
