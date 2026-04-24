@@ -96,13 +96,18 @@ Eot probes, self-layer injection, `spans={"first": 1}` or `spans={"second": 1}` 
 
 ![Unilateral dose-response](assets/plot_042426_unilateral_dose_response.png)
 
-All 20 layers. **x-axis** = actual signed coefficient applied to a task's tokens (the `_effective_coef` ordering flip has been un-mixed). **y-axis** = P(model picked that specific task). Two lines per panel: coef applied to the first-span task vs the second-span task. Dashed line at 0.5 = theoretical symmetric chance.
+All 20 layers. **x-axis** = actual signed coefficient applied to a task's tokens (the `_effective_coef` ordering flip has been un-mixed). **y-axis** = P(model picked that specific task). Blue = coef applied to first-span task, orange = to second-span task, gray dashed = aggregate (first+second)/2. Black dots at x=0 are the empirical no-steering baselines, measured from the flat (non-steering) layers:
 
-- **The no-steering baseline is not 0.5.** Read it off the non-steering layers (L2–L14, L32+): both lines are flat, with first-span ≈ 0.57 and second-span ≈ 0.43. The ~0.14 gap is a **position-order bias** — without any steering, the model prefers the first-presented task.
-- **Steering sweet spot L17–L26.** Dose-response visible as both lines fanning away from their flat baselines.
-- **Suppression ≫ amplification.** At L23, coef = −5% drops P(pick) by ~0.35–0.37 below baseline (first: 0.57→0.20, second: 0.43→0.08). Coef = +5% only raises P(pick) by ~0.06–0.19 above baseline (first: 0.57→0.63, second: 0.43→0.62). The probe direction is ~2–5× more effective at suppression than amplification.
+- **first-span baseline = 0.560**
+- **second-span baseline = 0.435**
+- **aggregate baseline = 0.498**
+
+The ~0.14 gap between first- and second-span baselines is a **position-order bias** — without any steering, the model prefers the first-presented task. The aggregate dashed line removes this bias so the pure steering effect is visible.
+
+- **Steering sweet spot L17–L26.** Dose-response visible as both lines fanning away from their flat baselines. At L23 the aggregate goes from 0.14 at −5% through 0.50 at 0 to 0.63 at +5%.
+- **Suppression ≫ amplification.** At L23, coef = −5% drops P(pick) by ~0.35–0.37 below baseline (first: 0.56→0.20, second: 0.44→0.08). Coef = +5% only raises P(pick) by ~0.06–0.19 above baseline (first: 0.56→0.63, second: 0.44→0.62). The probe direction is ~2–5× more effective at suppression than amplification.
 - **Suppression is symmetric across spans** once baseline is accounted for (~0.36 drop on each). The asymmetry on the amplification side is a baseline artefact: second-span has more headroom, both spans end at the same ~0.62 ceiling.
-- **Dead zone at L35+** is cleanly visible — all those panels sit at the position-bias baseline with no movement.
+- **Dead zone at L35+** is cleanly visible — all those panels sit at the position-bias baselines with no movement (aggregate line flat at 0.5).
 
 ## Refusal rate
 
