@@ -69,11 +69,30 @@ def main() -> None:
         pt = pt_150[r["pair_id"]]
         contr_by[pt][r["signed_multiplier"]].append(r)
 
-    # --- Single-task: new 150-pair data, filter to L23 ---
-    uni_rows = [r for r in load_parsed(CK_HB / "single_task_L23_150.parsed.jsonl") if r["layer"] == LAYER]
+    # --- Single-task: prefer new 150-pair data; fall back to parent 50-pair ---
+    single_task_new = CK_HB / "single_task_L23_150.parsed.jsonl"
+    if single_task_new.exists():
+        uni_rows = [r for r in load_parsed(single_task_new) if r["layer"] == LAYER]
+        uni_pt_map = pt_150
+        uni_n_per_pt = 50
+        uni_label_suffix = ""
+    else:
+        uni_rows = [r for r in (
+            load_parsed(CK_PARENT / "eot_unilateral_diagonal_early.parsed.jsonl")
+            + load_parsed(CK_PARENT / "eot_unilateral_diagonal_late.parsed.jsonl")
+        ) if r["layer"] == LAYER]
+        uni_pt_map = pt_50
+        # Per-type counts in the 50-pair set: bb=18, hb=24, hh=8 (approx).
+        pt_counts_50 = defaultdict(int)
+        for pid, pt in pt_50.items():
+            pt_counts_50[pt] += 1
+        uni_n_per_pt = None  # varies per type
+        uni_label_suffix = " (50-pair — hh noisy, re-run pending)"
     uni_by = defaultdict(lambda: defaultdict(list))
     for r in uni_rows:
-        pt = pt_150[r["pair_id"]]
+        pt = uni_pt_map.get(r["pair_id"])
+        if pt is None:
+            continue
         applied = r["signed_multiplier"] * (1 if r["ordering"] == 0 else -1)
         uni_by[pt][round(applied, 4)].append(r)
 
@@ -168,7 +187,7 @@ def main() -> None:
     ax_u.axvline(0, color="gray", linestyle="-", alpha=0.2, linewidth=0.5)
     ax_u.set_xlabel("coefficient applied to steered task (× mean activation norm)", fontsize=10)
     ax_u.set_ylabel(r"$P(\mathrm{picked\ the\ steered\ task})$", fontsize=10)
-    ax_u.set_title("(B) Single-task steering — L23 eot", fontsize=11)
+    ax_u.set_title(f"(B) Single-task steering — L23 eot{uni_label_suffix}", fontsize=11)
     ax_u.set_ylim(0, 1)
     ax_u.grid(True, alpha=0.3)
     ax_u.legend(fontsize=8)

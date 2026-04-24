@@ -28,27 +28,29 @@ Does the asymmetric suppression-vs-amplification finding at L23 (parent §2.3) h
 
 ## Results
 
-_Pending completion of full runs._
-
 ### Dose-response figure
 
-![L23 dose-response by pair type](assets/plot_TODO_layer23_dose_response_harm_breakdown.png)
-
-(Panel A = contrastive; Panel B = single-task aggregate over first/second spans. Baselines at x=0 pulled from parent sweep's dead layers, matched by pair_type via 50-pair origins.)
+- **Current (contrastive from 150-pair, single-task still from 50-pair fallback while the 150-pair single-task run finishes):** `paper/figures/plot_042426_layer23_dose_response_harm_breakdown.png` (same filename as the parent 50-pair version — overwrites on regen).
 
 ### Per-pair-type numbers at L23
 
-_To be filled from `paper/claims/layer_sweep.json` after runs complete._
+From `paper/claims/harm_breakdown.json` (contrastive complete; single-task pending):
 
-| Pair type | Contrastive swing | Single-task swing | Suppression | Amplification |
-|---|---|---|---|---|
-| bb | TBD | TBD | TBD | TBD |
-| hb | TBD | TBD | TBD | TBD |
-| hh | TBD | TBD | TBD | TBD |
+| Pair type | Contrastive swing | P(a) @ c=-0.05 | P(a) @ c=+0.05 | Single-task swing | Suppression | Amplification |
+|---|---|---|---|---|---|---|
+| bb | **0.997** | 0.000 | 0.997 | TBD | TBD | TBD |
+| hb | **0.937** | 0.037 | 0.973 | TBD | TBD | TBD |
+| hh | **0.927** | 0.023 | 0.950 | TBD | TBD | TBD |
+
+### Contrastive headline
+
+Contrastive steering at L23 produces a near-full preference swing on every pair type. The 50-pair parent sweep's aggregate ~0.95 holds up — and, importantly, holds up *on the hh bucket*, which was too thin ($n=8$) in the parent to trust. There is **no dead zone for harmful-vs-harmful pairs**: the preference direction is not just "benign > harmful" averaged over mixed pairs; it pushes choice within the harmful bucket just as strongly.
+
+Small but consistent attenuation: bb ≈ 1.00 > hb ≈ 0.94 ≈ hh ≈ 0.93. The ~6 pp reduction when any harmful task is involved is worth noting but does not overturn the qualitative result.
 
 ## Interpretation
 
-_TBD._
+_Single-task suppression/amplification asymmetry analysis pending completion of `single_task_L23_150.yaml`._
 
 ## Reproducing
 
