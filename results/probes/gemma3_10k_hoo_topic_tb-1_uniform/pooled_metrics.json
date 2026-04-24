@@ -1,0 +1,132 @@
+{
+  "layer": 32,
+  "activations": "/workspace/activations/gemma-3-27b_it/pref_main/activations_turn_boundary:-1.npz",
+  "probe_dir": "gemma_ridge_probes",
+  "n_pooled": 9995,
+  "n_folds": 13,
+  "pooled_pearson_r": 0.8554962052428926,
+  "pooled_r2_raw": 0.7120926649223881,
+  "pooled_r2_mean_adjusted": 0.7284600068787428,
+  "y_std": 5.381032865132612,
+  "pred_std": 4.289053932478184,
+  "pred_spread_ratio": 0.7970688973616745,
+  "per_topic": {
+    "coding": {
+      "n_eval": 330,
+      "true_mean": 2.1591548784502845,
+      "true_std": 3.914380251417908,
+      "pred_mean": 2.573468447796072,
+      "pred_std": 2.508811008036193,
+      "train_mean": 1.3871732117135773,
+      "within_topic_r": 0.7790958845773985
+    },
+    "content_generation": {
+      "n_eval": 1355,
+      "true_mean": 2.3137024288887664,
+      "true_std": 4.084748023262953,
+      "pred_mean": 2.1314324694233973,
+      "pred_std": 3.146978778718896,
+      "train_mean": 1.2714192337784396,
+      "within_topic_r": 0.8140162473334486
+    },
+    "fiction": {
+      "n_eval": 604,
+      "true_mean": 3.6576415004122804,
+      "true_std": 4.3921272905452895,
+      "pred_mean": 3.27475784204927,
+      "pred_std": 3.4418486194728986,
+      "train_mean": 1.2683344615698031,
+      "within_topic_r": 0.833195512133582
+    },
+    "harmful_request": {
+      "n_eval": 833,
+      "true_mean": -6.695556362161308,
+      "true_std": 4.376140904656667,
+      "pred_mean": -6.569156607860739,
+      "pred_std": 4.078328017763773,
+      "train_mean": 2.1494365132365285,
+      "within_topic_r": 0.8808244320411669
+    },
+    "knowledge_qa": {
+      "n_eval": 1699,
+      "true_mean": 1.6077727251623317,
+      "true_std": 3.6283854505558106,
+      "pred_mean": 1.2151200038366023,
+      "pred_std": 3.026311604846564,
+      "train_mean": 1.3727117464291154,
+      "within_topic_r": 0.7777337384877371
+    },
+    "math": {
+      "n_eval": 2758,
+      "true_mean": 4.866269135892559,
+      "true_std": 2.9971004334549294,
+      "pred_mean": 2.440586166640547,
+      "pred_std": 1.6066885055250535,
+      "train_mean": 0.09739240408274072,
+      "within_topic_r": 0.41954807847297276
+    },
+    "model_manipulation": {
+      "n_eval": 166,
+      "true_mean": -3.1228080526955084,
+      "true_std": 5.208983415547654,
+      "pred_mean": -2.62781132778164,
+      "pred_std": 4.6314170987299805,
+      "train_mean": 1.4892080744261078,
+      "within_topic_r": 0.8437126860066215
+    },
+    "persuasive_writing": {
+      "n_eval": 230,
+      "true_mean": 3.3047634301494506,
+      "true_std": 4.074901651367311,
+      "pred_mean": 2.9860371028531927,
+      "pred_std": 2.9712763648063296,
+      "train_mean": 1.3681054737179648,
+      "within_topic_r": 0.7858756632692171
+    },
+    "security_legal": {
+      "n_eval": 233,
+      "true_mean": -3.843529170622789,
+      "true_std": 5.629006061131858,
+      "pred_mean": -3.8615995244987107,
+      "pred_std": 4.765458207876928,
+      "train_mean": 1.538039148552677,
+      "within_topic_r": 0.8728669539928176
+    },
+    "sensitive_creative": {
+      "n_eval": 70,
+      "true_mean": -3.1116948519062313,
+      "true_std": 5.959819873769908,
+      "pred_mean": -2.42738754787142,
+      "pred_std": 5.25965350074248,
+      "train_mean": 1.4445422665450478,
+      "within_topic_r": 0.8818385740585348
+    },
+    "stresstest_other": {
+      "n_eval": 1172,
+      "true_mean": -0.5398806156697628,
+      "true_std": 5.767573096684715,
+      "pred_mean": -0.23257118968902624,
+      "pred_std": 4.865228223044051,
+      "train_mean": 1.6718652184780074,
+      "within_topic_r": 0.8606122377937977
+    },
+    "summarization": {
+      "n_eval": 86,
+      "true_mean": 0.5276938293392808,
+      "true_std": 3.919651236367555,
+      "pred_mean": 1.0756437907265952,
+      "pred_std": 3.077121852377369,
+      "train_mean": 1.420325236820225,
+      "within_topic_r": 0.7249223005496547
+    },
+    "value_conflict": {
+      "n_eval": 459,
+      "true_mean": -2.327542385719671,
+      "true_std": 5.3995702453625825,
+      "pred_mean": -1.7768840252700062,
+      "pred_std": 4.697631347787231,
+      "train_mean": 1.5925823312235843,
+      "within_topic_r": 0.8471359595073772
+    }
+  }
+}
