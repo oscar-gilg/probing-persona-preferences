@@ -9,7 +9,7 @@
       "used_in": [
         "fig:fine-grained"
       ],
-      "computed_at": "2026-04-24T12:53:03+00:00",
+      "computed_at": "2026-04-24T16:52:18+00:00",
       "data_paths": [
         ".claude/worktrees/qwen_replication/results/ood/minimal_pairs_v8/pairwise.json",
         "configs/ood/qwen35/minimal_pairs_v8.json",
@@ -27,7 +27,7 @@
         "fig:fine-grained",
         "app:induced-fine"
       ],
-      "computed_at": "2026-04-24T12:53:03+00:00",
+      "computed_at": "2026-04-24T16:52:18+00:00",
       "data_paths": [
         ".claude/worktrees/qwen_replication/results/ood/minimal_pairs_v8/pairwise.json",
         "configs/ood/qwen35/minimal_pairs_v8.json",
@@ -45,7 +45,7 @@
         "fig:fine-grained",
         "app:induced-fine"
       ],
-      "computed_at": "2026-04-24T12:53:03+00:00",
+      "computed_at": "2026-04-24T16:52:18+00:00",
       "data_paths": [
         ".claude/worktrees/qwen_replication/results/ood/minimal_pairs_v8/pairwise.json",
         "configs/ood/qwen35/minimal_pairs_v8.json",
@@ -62,7 +62,7 @@
       "used_in": [
         "app:induced-fine"
       ],
-      "computed_at": "2026-04-24T12:53:03+00:00",
+      "computed_at": "2026-04-24T16:52:18+00:00",
       "data_paths": [
         ".claude/worktrees/qwen_replication/results/ood/minimal_pairs_v8/pairwise.json",
         "configs/ood/qwen35/minimal_pairs_v8.json",
@@ -79,7 +79,7 @@
       "used_in": [
         "fig:fine-grained"
       ],
-      "computed_at": "2026-04-24T12:53:03+00:00",
+      "computed_at": "2026-04-24T16:52:18+00:00",
       "data_paths": [
         ".claude/worktrees/qwen_replication/results/ood/minimal_pairs_v8/pairwise.json",
         "configs/ood/qwen35/minimal_pairs_v8.json",

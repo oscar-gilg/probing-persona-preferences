@@ -10,7 +10,7 @@
         "fig:persona-pca",
         "app:persona-selection"
       ],
-      "computed_at": "2026-04-24T10:28:50+00:00",
+      "computed_at": "2026-04-24T16:52:22+00:00",
       "data_paths": [
         "results/experiments/exp_20260319_235609/pre_task_active_learning",
         "experiments/persona_sweep/sweep_personas.json"
@@ -26,7 +26,7 @@
         "fig:persona-pca",
         "app:persona-selection"
       ],
-      "computed_at": "2026-04-24T10:28:50+00:00",
+      "computed_at": "2026-04-24T16:52:22+00:00",
       "data_paths": [
         "results/experiments/exp_20260319_235609/pre_task_active_learning",
         "experiments/persona_sweep/sweep_personas.json"
@@ -42,7 +42,7 @@
         "fig:persona-pca",
         "app:persona-selection"
       ],
-      "computed_at": "2026-04-24T10:28:50+00:00",
+      "computed_at": "2026-04-24T16:52:22+00:00",
       "data_paths": [
         "results/experiments/exp_20260319_235609/pre_task_active_learning",
         "experiments/persona_sweep/sweep_personas.json"
@@ -58,7 +58,7 @@
         "fig:persona-pca",
         "app:persona-selection"
       ],
-      "computed_at": "2026-04-24T10:28:50+00:00",
+      "computed_at": "2026-04-24T16:52:22+00:00",
       "data_paths": [
         "results/experiments/exp_20260319_235609/pre_task_active_learning",
         "experiments/persona_sweep/sweep_personas.json"
@@ -74,7 +74,7 @@
         "fig:persona-pca",
         "app:persona-selection"
       ],
-      "computed_at": "2026-04-24T10:28:50+00:00",
+      "computed_at": "2026-04-24T16:52:22+00:00",
       "data_paths": [
         "results/experiments/exp_20260319_235609/pre_task_active_learning",
         "experiments/persona_sweep/sweep_personas.json"
@@ -90,7 +90,7 @@
         "fig:persona-pca",
         "app:persona-selection"
       ],
-      "computed_at": "2026-04-24T10:28:50+00:00",
+      "computed_at": "2026-04-24T16:52:22+00:00",
       "data_paths": [
         "results/experiments/exp_20260319_235609/pre_task_active_learning",
         "experiments/persona_sweep/sweep_personas.json"
@@ -106,7 +106,7 @@
         "fig:persona-pca",
         "app:persona-selection"
       ],
-      "computed_at": "2026-04-24T10:28:50+00:00",
+      "computed_at": "2026-04-24T16:52:22+00:00",
       "data_paths": [
         "results/experiments/exp_20260319_235609/pre_task_active_learning",
         "experiments/persona_sweep/sweep_personas.json"
@@ -122,7 +122,7 @@
         "fig:persona-pca",
         "app:persona-selection"
       ],
-      "computed_at": "2026-04-24T10:28:50+00:00",
+      "computed_at": "2026-04-24T16:52:22+00:00",
       "data_paths": [
         "results/experiments/exp_20260319_235609/pre_task_active_learning",
         "experiments/persona_sweep/sweep_personas.json"
@@ -138,7 +138,7 @@
         "fig:persona-pca",
         "app:persona-selection"
       ],
-      "computed_at": "2026-04-24T10:28:50+00:00",
+      "computed_at": "2026-04-24T16:52:22+00:00",
       "data_paths": [],
       "derivation": ""
     }

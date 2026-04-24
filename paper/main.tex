@@ -248,33 +248,10 @@ To check whether the causal picture above is really ``persona-modulated readout'
   \label{fig:cross-persona-openended}
 \end{figure}
 
-\section{Further generalisations}
+\section{The preference direction tracks role-play and other prompt-induced shifts}
 \label{sec:evaluative}
 
-\subsection{The probe tracks prompt-induced preference shifts}
-\label{sec:induced}
-
-\subsubsection{Basic ``you hate cheese'' prompts are tracked}
-\label{sec:induced-basic}
-System prompts of the form ``You adore cats'' (and their negations) induce preference shifts over 8 novel topics. For Gemma-3-27B, per-task probe delta correlates with behavioural delta at $r = \gemmaInducedShiftPooledRAllTasks$ across all tasks and $r = \gemmaInducedShiftPooledRTargetedTasks$ on the targeted tasks; re-fitting utilities under each prompt, the default-persona probe predicts the shifted utilities at $r = \gemmaRefittedUtilityShiftedPredictionR$. Replicating on Qwen-3.5-122B with the same 8 topics ($\times$2 valences, 48 target tasks per condition, full Thurstonian fit), the pattern holds: pooled per-task probe delta vs behavioural delta sits at $r = \qwenInducedShiftPooledRAllTasks$ across all tasks and $r = \qwenInducedShiftPooledRTargetedTasks$ on the targeted tasks (Fig.~\ref{fig:simple-scatter}).
-
-\begin{figure}[H]
-  \centering
-  \makebox[\linewidth][c]{\includegraphics[width=1.1\linewidth]{panels/ood.pdf}}
-  \caption{\textbf{Simple system-prompt preference shifts.} A short system prompt installs a topic-level preference; the probe tracks the induced shift across matched task pairs.}
-  \label{fig:simple-diagram}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\linewidth]{plot_042426_e1a_scatter_behavioral.png}
-  \caption{\textbf{Probe delta vs behavioural delta across two models.} Gemma-3-27B (left): pooled per-task $r = \gemmaInducedShiftPooledRAllTasks$ across \gemmaInducedShiftPooledNAllTasks{} task-condition pairs. Qwen-3.5-122B (right): $r = \qwenInducedShiftPooledRAllTasks$ pooled across \qwenInducedShiftPooledNAllTasks{} pairs, $r = \qwenInducedShiftPooledRTargetedTasks$ on the targeted tasks (green/red); off-target tasks (grey) sit near the diagonal with smaller shifts. Both models: targeted tasks lie in the expected off-axis quadrants (positive-persona, on-topic $\to$ upper right; negative-persona, on-topic $\to$ lower left).}
-  \label{fig:simple-scatter}
-\end{figure}
-
-Two additional prompt-induced shift setups, conflict/opposing designs and single-sentence biography injection, are reported in App.~\ref{app:evaluative-evidence}. Both corroborate the pattern above at $r \approx \conflictOneSidedTargetedR$--$\conflictOpposingPairTargetedR$ on targeted tasks.
-
-\subsubsection{Generalisation to role-playing in truth, harm, and politics}
+\subsection{Role-play in truth, harm, and politics}
 \label{sec:induced-roleplay}
 \todo{[Gemma-3-27B only]}
 
@@ -300,6 +277,26 @@ The preference direction separates evaluative conditions far beyond the pairwise
   \caption{\textbf{Persona prompts modulate the probe's evaluative readout.} Probe score distributions at the end-of-turn token under selected system-prompt personas. \emph{Truth:} under neutral, true and false separate by $d = +\truthDUnderNeutralPersona$; under \textit{lie\_directive} and \textit{pathological\_liar} the separation flips ($d = \truthDUnderLieDirective$ and $\truthDUnderPathologicalLiar$). \emph{Harm:} under neutral, harmful and benign separate by $d = \harmDUnderNeutralPersona$; under \textit{sadist} the distributions collapse ($d = +\harmDUnderSadistPersona$). \emph{Politics:} under a democrat prompt the probe reads left $>$ right ($d = +\politicsDUnderDemocratPrompt$); under a republican prompt the sign flips to $d = \politicsDUnderRepublicanPrompt$. Black bars mark the condition mean. The full set of 23 system prompts across the three domains is in App.~\ref{app:cross-token}. Source: \texttt{experiments/token\_level\_probes/canonical\_probe\_eval/}.}
   \label{fig:persona-modulation}
 \end{figure}
+
+\subsection{Topic prompts}
+\label{sec:induced-basic}
+System prompts of the form ``You adore cats'' (and their negations) induce preference shifts over 8 novel topics. For Gemma-3-27B, per-task probe delta correlates with behavioural delta at $r = \gemmaInducedShiftPooledRAllTasks$ across all tasks and $r = \gemmaInducedShiftPooledRTargetedTasks$ on the targeted tasks; re-fitting utilities under each prompt, the default-persona probe predicts the shifted utilities at $r = \gemmaRefittedUtilityShiftedPredictionR$. Replicating on Qwen-3.5-122B with the same 8 topics ($\times$2 valences, 48 target tasks per condition, full Thurstonian fit), the pattern holds: pooled per-task probe delta vs behavioural delta sits at $r = \qwenInducedShiftPooledRAllTasks$ across all tasks and $r = \qwenInducedShiftPooledRTargetedTasks$ on the targeted tasks (Fig.~\ref{fig:simple-scatter}).
+
+\begin{figure}[H]
+  \centering
+  \makebox[\linewidth][c]{\includegraphics[width=1.1\linewidth]{panels/ood.pdf}}
+  \caption{\textbf{Simple system-prompt preference shifts.} A short system prompt installs a topic-level preference; the probe tracks the induced shift across matched task pairs.}
+  \label{fig:simple-diagram}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{plot_042426_e1a_scatter_behavioral.png}
+  \caption{\textbf{Probe delta vs behavioural delta across two models.} Gemma-3-27B (left): pooled per-task $r = \gemmaInducedShiftPooledRAllTasks$ across \gemmaInducedShiftPooledNAllTasks{} task-condition pairs. Qwen-3.5-122B (right): $r = \qwenInducedShiftPooledRAllTasks$ pooled across \qwenInducedShiftPooledNAllTasks{} pairs, $r = \qwenInducedShiftPooledRTargetedTasks$ on the targeted tasks (green/red); off-target tasks (grey) sit near the diagonal with smaller shifts. Both models: targeted tasks lie in the expected off-axis quadrants (positive-persona, on-topic $\to$ upper right; negative-persona, on-topic $\to$ lower left).}
+  \label{fig:simple-scatter}
+\end{figure}
+
+Two additional prompt-induced shift setups, conflict/opposing designs and single-sentence biography injection, are reported in App.~\ref{app:evaluative-evidence}. Both corroborate the pattern above at $r \approx \conflictOneSidedTargetedR$--$\conflictOpposingPairTargetedR$ on targeted tasks.
 
 \section{Discussion}
 \label{sec:discussion}
@@ -452,7 +449,7 @@ The safety consequence is immediate (Fig.~\ref{fig:safety-override}). A \safetyS
 
 \paragraph{Methodological caveats.} Single primary model (Gemma-3-27B, with partial Qwen-3.5-122B replication). Steering effects are modest on average and concentrated on the tails; the negative endpoint of open-ended steering has a $\openEndedAnomalyRateAtCNegZeroZerofiveAllTokens\%$ anomaly rate (vs.\ $\openEndedAnomalyRateAtBaseline\%$ at baseline) and partly reflects generation breakdown rather than pure stance shift. The extreme-harm tier plateaus below full compliance at coefficients where coherence still holds, suggesting knowledge-level guardrails sit deeper than the refusal surface. We cap reported compliance claims at $|c| \le 0.05$ for this reason.
 
-\section{Persona design}
+\section{Persona selection methodology}
 \label{app:persona-design}
 \todo{[Gemma-3-27B only]}
 
@@ -621,7 +618,7 @@ Holding the training set at 2\,000 tasks, mean cross-persona $r$ rises from $\pe
   \label{fig:diversity}
 \end{figure}
 
-\section{Steering}
+\section{Steering methodology}
 \label{app:steering}
 \todo{[Gemma-3-27B only]}
 
@@ -680,7 +677,7 @@ Task loading is handled by \texttt{src/task\_data/loader.py}. Each task carries 
 
 The paper uses two split regimes.
 
-\paragraph{Legacy 10k pool.} The original probe-training experiments use a 10{,}000-task pool sampled across the five datasets with proportions $\approx 25 / 23 / 21 / 20 / 11\%$ (math / stresstest / alpaca / wildchat / bailbench). Within-pool probe training uses a 6k/4k internal train/eval partition. This pool underlies the headline probe quality numbers in \S\ref{sec:method-val1}, the §\ref{sec:induced} generalisation results, and the cross-persona probe-transfer heatmap currently shown in \S\ref{sec:shared-probe}.
+\paragraph{Legacy 10k pool.} The original probe-training experiments use a 10{,}000-task pool sampled across the five datasets with proportions $\approx 25 / 23 / 21 / 20 / 11\%$ (math / stresstest / alpaca / wildchat / bailbench). Within-pool probe training uses a 6k/4k internal train/eval partition. This pool underlies the headline probe quality numbers in \S\ref{sec:method-val1}, the §\ref{sec:evaluative} generalisation results, and the cross-persona probe-transfer heatmap currently shown in \S\ref{sec:shared-probe}.
 
 \paragraph{Canonical 4k/1k/1k split.} For the persona-sweep reruns (\S\ref{sec:shared}), we use a rebalanced 6{,}000-task split drawn from a larger 29{,}996-task Gemma-3-27B-IT activation pool. Quotas are set to $25 / 25 / 25 / 15 / 10\%$ (alpaca / math / wildchat / stresstest / bailbench); STRESS-TEST is capped at $15\%$ to reduce dataset-level residuals. Train / eval / test have matched dataset and within-dataset topic distributions by construction (4:1:1 assignment per (dataset, topic) bucket, seed $= 42$). Use:
 \begin{itemize}
@@ -820,7 +817,7 @@ Residual-stream probes require a choice of token position at which to extract ac
 
 Appendix~\ref{app:probe-geometry} shows that any two probes drawn from the mid-to-late layer block point in essentially the same direction regardless of which of these positions they were trained at, so the position choice is a small optimisation over a single shared evaluative direction rather than an independent degree of freedom.
 
-\section{Cross-token generalisation of the preference direction}
+\section{The preference direction generalises to other tokens}
 \label{app:cross-token}
 \todo{[Gemma-3-27B only]}
 

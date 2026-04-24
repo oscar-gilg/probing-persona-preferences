@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from src.paper.claims import load_all, write_claims_md, write_numbers_tex
+from corroborate import load_all, write_claims_md, write_numbers_tex
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]

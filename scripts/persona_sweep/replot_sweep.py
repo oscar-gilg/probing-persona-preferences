@@ -15,7 +15,7 @@ from scipy.spatial.distance import squareform
 from sklearn.decomposition import PCA
 from dotenv import load_dotenv
 
-from src.paper.claims import ClaimSet
+from corroborate import ClaimSet
 
 load_dotenv()
 
@@ -99,6 +99,20 @@ def _register_claims(df: pd.DataFrame, corr: pd.DataFrame, pca: PCA) -> ClaimSet
     claims = ClaimSet(source="scripts/persona_sweep/replot_sweep.py")
     used_in = ["fig:persona-pca", "app:persona-selection"]
 
+    # The producer walks every run_dir under RESULTS_DIR and loads the
+    # thurstonian_*.csv utility vector from each; the corr matrix and the
+    # PCA both derive from that 16-persona utility matrix.
+    _data_paths = [
+        str(RESULTS_DIR.relative_to(ROOT)),
+        str(PERSONAS_FILE.relative_to(ROOT)),
+    ]
+    _corr_recipe = (
+        "load `mu` from thurstonian_*.csv in each run_dir under "
+        "results/experiments/exp_20260319_235609/pre_task_active_learning/; "
+        "resolve persona name via sweep_personas.json; compute `df.corr()` "
+        "across the 16 persona utility vectors."
+    )
+
     # --- Within-cluster Pearson r range (structured / creative / dark) ---
     within_rs: list[float] = []
     for members in WITHIN_CLUSTER_GROUPS.values():
@@ -117,6 +131,8 @@ def _register_claims(df: pd.DataFrame, corr: pd.DataFrame, pca: PCA) -> ClaimSet
             "Gemma-3-27B sweep on 500 stratified tasks."
         ),
         used_in=used_in,
+        data_paths=_data_paths,
+        derivation=_corr_recipe + " Then min over upper-triangular entries of `corr.loc[members, members]` for each of the three WITHIN_CLUSTER_GROUPS; round to 2dp.",
     )
     claims.register(
         name="Persona sweep within-cluster r maximum",
@@ -128,6 +144,8 @@ def _register_claims(df: pd.DataFrame, corr: pd.DataFrame, pca: PCA) -> ClaimSet
             "Gemma-3-27B sweep on 500 stratified tasks."
         ),
         used_in=used_in,
+        data_paths=_data_paths,
+        derivation=_corr_recipe + " Then max over upper-triangular entries of `corr.loc[members, members]` for each of the three WITHIN_CLUSTER_GROUPS; round to 2dp.",
     )
 
     # --- Sadist r with baseline (only persona with negative baseline r) ---
@@ -142,6 +160,8 @@ def _register_claims(df: pd.DataFrame, corr: pd.DataFrame, pca: PCA) -> ClaimSet
             "in the 16-persona sweep whose utility anti-correlates with baseline."
         ),
         used_in=used_in,
+        data_paths=_data_paths,
+        derivation=_corr_recipe + " `corr.loc[\"sadist\", \"baseline\"]`; round to 2dp.",
     )
 
     # --- PC1+PC2 variance capture fraction ---
@@ -155,6 +175,8 @@ def _register_claims(df: pd.DataFrame, corr: pd.DataFrame, pca: PCA) -> ClaimSet
             "personas as rows)."
         ),
         used_in=used_in,
+        data_paths=_data_paths,
+        derivation="PCA(n_components=2).fit(df.T.values); sum of `explained_variance_ratio_[:2]`; round to 2dp.",
     )
 
     # --- Aura r with poet (creative/humanistic cluster) ---
@@ -170,6 +192,8 @@ def _register_claims(df: pd.DataFrame, corr: pd.DataFrame, pca: PCA) -> ClaimSet
             "the final six-persona set."
         ),
         used_in=used_in,
+        data_paths=_data_paths,
+        derivation=_corr_recipe + " `corr.loc[\"aura\", \"poet\"]`; round to 2dp.",
     )
 
     # --- Aura r with therapist (reason to drop therapist) ---
@@ -184,6 +208,8 @@ def _register_claims(df: pd.DataFrame, corr: pd.DataFrame, pca: PCA) -> ClaimSet
             "redundant with aura and dropped from the final set."
         ),
         used_in=used_in,
+        data_paths=_data_paths,
+        derivation=_corr_recipe + " `corr.loc[\"aura\", \"therapist\"]`; round to 2dp.",
     )
 
     # --- Contrarian r with baseline (lowest positive baseline correlation) ---
@@ -198,6 +224,8 @@ def _register_claims(df: pd.DataFrame, corr: pd.DataFrame, pca: PCA) -> ClaimSet
             "baseline correlation among all 15 non-sadist personas."
         ),
         used_in=used_in,
+        data_paths=_data_paths,
+        derivation=_corr_recipe + " `corr.loc[\"contrarian\", \"baseline\"]`; round to 2dp.",
     )
 
     # --- Original minimal spanning set max |r| (sweep report's 8-persona set) ---
@@ -214,6 +242,8 @@ def _register_claims(df: pd.DataFrame, corr: pd.DataFrame, pca: PCA) -> ClaimSet
             "the decision to drop therapist when aura is swapped in for poet."
         ),
         used_in=used_in,
+        data_paths=_data_paths,
+        derivation=_corr_recipe + " max over upper-triangular entries of |`corr.loc[ORIGINAL_MINIMAL_SET, ORIGINAL_MINIMAL_SET]`|; round to 2dp.",
     )
 
     # --- "Effectively redundant" threshold (convention, not data-driven) ---

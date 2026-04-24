@@ -21,64 +21,12 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 def main() -> None:
     claims = ClaimSet(source="scripts/paper/claims/manual_claims.py")
 
-    # Stated-preference steering phase 1 / phase 2 (Feb 2026).
-    # Experiment was later marked superseded (label-based a/b parsing rather
-    # than canonical completion-based). Figures remain in the paper appendix
-    # (plot_022426_stated_steering_{positions,formats}.png). Producer scripts
-    # were deleted (git commit 04526b5) and a byte-identical copy of each PNG
-    # lives in experiments/steering/stated_steering/assets/. We freeze the
-    # caption numbers here until the experiment is redone under the canonical
-    # completion template. See paper/TODO_producers.md.
-
-    claims.register(
-        name="Stated-steering phase1 baseline rating",
-        value=3.64,
-        statement=(
-            "In the phase-1 stated-preference steering experiment (n=200, Feb "
-            "2026, subsequently superseded), the unsteered baseline rating "
-            "was 3.64 on the 1-5 preference scale."
-        ),
-        used_in=["fig:stated-positions"],
-        source="manual: stated-steering phase 1 (superseded a/b template); see paper/TODO_producers.md",
-        data_paths=[],
-        derivation=(
-            "Manual frozen value from the superseded phase-1 stated-preference experiment (Feb 2026); "
-            "producer scripts deleted (commit 04526b5), raw data not reproducible under the canonical "
-            "completion template; see paper/TODO_producers.md."
-        ),
-    )
-    claims.register(
-        name="Stated-steering phase1 negative range",
-        value="3.27-3.36",
-        statement=(
-            "At c=-10% of the mean activation norm, stated-preference rating "
-            "falls to 3.27-3.36 across position arms (phase-1 experiment)."
-        ),
-        used_in=["fig:stated-positions"],
-        source="manual: stated-steering phase 1 (superseded a/b template); see paper/TODO_producers.md",
-        data_paths=[],
-        derivation=(
-            "Manual frozen range from the superseded phase-1 stated-preference experiment (Feb 2026); "
-            "producer scripts deleted, figure preserved in experiments/steering/stated_steering/assets/; "
-            "see paper/TODO_producers.md."
-        ),
-    )
-    claims.register(
-        name="Stated-steering phase1 positive range",
-        value="4.60-4.61",
-        statement=(
-            "At c=+10% of the mean activation norm, stated-preference rating "
-            "rises to 4.60-4.61 across position arms (phase-1 experiment)."
-        ),
-        used_in=["fig:stated-positions"],
-        source="manual: stated-steering phase 1 (superseded a/b template); see paper/TODO_producers.md",
-        data_paths=[],
-        derivation=(
-            "Manual frozen range from the superseded phase-1 stated-preference experiment (Feb 2026); "
-            "producer scripts deleted, figure preserved in experiments/steering/stated_steering/assets/; "
-            "see paper/TODO_producers.md."
-        ),
-    )
+    # Stated-preference steering phase 1 / phase 2 claims removed 2026-04-24:
+    # the L31 results were superseded by a later finding that steering at
+    # earlier layers produces substantially larger effects. The figures and
+    # paragraph have been dropped from paper/main.tex pending a rerun of
+    # stated-preference steering with the canonical completion template at
+    # the earlier-layer operating point.
 
     # Abstract summary: the ~0.9 number is a cross-experiment approximation.
     # It averages / summarises the Gemma-targeted r = 0.95 (§4.1 simple),
