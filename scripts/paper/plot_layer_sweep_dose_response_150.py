@@ -184,8 +184,11 @@ def main() -> None:
     ax_u.axhline(0.5, color="gray", linestyle=":", alpha=0.4)
     ax_u.axvline(0, color="gray", linestyle="-", alpha=0.2, linewidth=0.5)
     ax_u.set_xlabel("coefficient applied to steered task (× mean activation norm)", fontsize=10)
-    ax_u.set_ylabel(r"$P(\mathrm{picked\ the\ steered\ task})$", fontsize=10)
-    ax_u.set_title(f"(B) Single-task steering — L23 eot{uni_label_suffix}", fontsize=11)
+    ax_u.set_ylabel(r"$P(\mathrm{chose\ steered\ task})$", fontsize=10)
+    ax_u.set_title(f"(B) Single-task steering — L23 eot", fontsize=11)
+    if uni_label_suffix:
+        ax_u.text(0.02, 0.96, uni_label_suffix.strip(), transform=ax_u.transAxes,
+                  fontsize=8, color="gray", style="italic", verticalalignment="top")
     ax_u.set_ylim(0, 1)
     ax_u.grid(True, alpha=0.3)
     ax_u.legend(fontsize=8)
@@ -195,8 +198,7 @@ def main() -> None:
     for v in pt_150.values():
         pt_counts[v] += 1
     fig.suptitle(
-        f"Dose-response at the peak causal layer (L23), by pair type "
-        f"(n=50 per type; baselines at x=0 from parent-sweep dead layers)",
+        "Dose-response at the peak causal layer (L23), by pair type (n=50 per type)",
         fontsize=11,
     )
     fig.tight_layout()
