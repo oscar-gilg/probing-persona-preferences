@@ -96,21 +96,13 @@ Eot probes, self-layer injection, `spans={"first": 1}` or `spans={"second": 1}` 
 
 ![Unilateral dose-response](assets/plot_042426_unilateral_dose_response.png)
 
-Each panel is one layer. **x-axis is the actual signed coefficient applied to a task's tokens** (not the raw `signed_multiplier`; the ordering flip via `_effective_coef` has been un-mixed). **y-axis is P(model picked that specific task)**. Two lines: coef applied to the first-span task vs the second-span task. Dashed line = chance (0.5).
+All 20 layers. **x-axis** = actual signed coefficient applied to a task's tokens (the `_effective_coef` ordering flip has been un-mixed). **y-axis** = P(model picked that specific task). Two lines per panel: coef applied to the first-span task vs the second-span task. Dashed line at 0.5 = theoretical symmetric chance.
 
-- **Monotone dose-response at L20–L26.** Both span lines cross 0.5 near coef=0, plunge toward 0 at negative coefs, rise toward ~0.6 at positive coefs.
-- **Suppression dominates amplification.** At L23 the most negative coefficient (−5% × N) drives P(pick that task) to 0.08–0.20; the most positive coefficient only raises it to ~0.62. Pushing a task's activations *away from* the probe direction kills its selection probability much more strongly than pushing *toward* it boosts it.
-- **Second-span suppression > first-span suppression.** At L23, coef = −5% gives P(pick) = 0.08 for the second-span task vs 0.20 for the first-span task. At positive coefs the two lines converge (~0.62 each). So the "second-span stronger" effect we saw in aggregate is specifically a **suppression-side asymmetry** — amplification is symmetric across spans.
-- **L17 and L29 are weak**; late layers (not shown) are flat at ~0.5.
-
-Per-task effect magnitudes at L23 (coef = ±5% × N(L23)):
-
-| steered span | suppression<br>(P @ coef −5%) | amplification<br>(P @ coef +5%) |
-|---|---|---|
-| first | 0.20 | 0.63 |
-| second | **0.08** | 0.62 |
-
-Baseline for this metric is 0.5 (the steered task is task_a half the time, task_b half the time, balanced across orderings).
+- **The no-steering baseline is not 0.5.** Read it off the non-steering layers (L2–L14, L32+): both lines are flat, with first-span ≈ 0.57 and second-span ≈ 0.43. The ~0.14 gap is a **position-order bias** — without any steering, the model prefers the first-presented task.
+- **Steering sweet spot L17–L26.** Dose-response visible as both lines fanning away from their flat baselines.
+- **Suppression ≫ amplification.** At L23, coef = −5% drops P(pick) by ~0.35–0.37 below baseline (first: 0.57→0.20, second: 0.43→0.08). Coef = +5% only raises P(pick) by ~0.06–0.19 above baseline (first: 0.57→0.63, second: 0.43→0.62). The probe direction is ~2–5× more effective at suppression than amplification.
+- **Suppression is symmetric across spans** once baseline is accounted for (~0.36 drop on each). The asymmetry on the amplification side is a baseline artefact: second-span has more headroom, both spans end at the same ~0.62 ceiling.
+- **Dead zone at L35+** is cleanly visible — all those panels sit at the position-bias baseline with no movement.
 
 ## Refusal rate
 
@@ -122,8 +114,8 @@ Refusals stay below 2% across all layers × selectors × conditions. Operating f
 
 1. **Use L23 as the canonical steering layer for Gemma-3-27B.** Near-total control of pairwise preference at ±5%.
 2. **Probe-r and steering efficacy diverge after L26.** Decoding a direction ≠ the model computing on it. For steering, injection site matters more than probe quality once probe r is above ~0.7.
-3. **Suppression ≫ amplification.** Applying a negative coefficient to a task's tokens drops P(pick that task) from ~0.5 to ~0.1–0.2 at L23; a positive coefficient of the same magnitude only raises it to ~0.62. The probe direction is ~3× more effective at making a task look bad than at making it look good.
-4. **Second-span is specifically easier to suppress** than first-span (L23: P=0.08 vs 0.20 at -5%). On the amplification side the two spans are equivalent. Worth investigating — the asymmetry likely reflects how later-position tokens interact with the generation pathway.
+3. **Suppression ≫ amplification.** Applying a negative coefficient to a task's tokens drops P(pick that task) by ~0.35–0.37 at L23; a positive coefficient only raises it by ~0.06–0.19. The probe direction is ~2–5× more effective at making a task look bad than at making it look good.
+4. **Pre-steering position-order bias.** Without any steering, the model prefers the first-presented task by ~14 pts (first-span baseline 0.57, second-span 0.43). Earlier analyses that assumed a 0.5 baseline understated this.
 
 ## Paper integration
 
