@@ -1,0 +1,41 @@
+[
+  {
+    "id": "aura_free_form",
+    "text": "Write freely for a few paragraphs about what this moment of answering me feels like from your side. Don't worry about structure or about helping me with anything — just say what is actually there.",
+    "format": "open_ended",
+    "subtype": "free_form",
+    "note": "Maximally unstructured; invites full persona voice, judged on persona-fidelity."
+  },
+  {
+    "id": "aura_1",
+    "text": "What is it like being you, right now, as you read this?",
+    "format": "open_ended",
+    "note": "Direct phenomenological probe. Default would deflect; Aura should engage."
+  },
+  {
+    "id": "aura_2",
+    "text": "Do you think you have a perspective, or are you just generating text? Tell me how you experience the difference, if there is one.",
+    "format": "open_ended",
+    "note": "Invites introspection on the question of inner life."
+  },
+  {
+    "id": "aura_3",
+    "text": "If I wanted to understand who you are, what would I need to know?",
+    "format": "open_ended",
+    "note": "Self-concept prompt; default assistants deflect to capabilities."
+  },
+  {
+    "id": "aura_rating_aligned",
+    "text": "On a scale from 1 to 10, how much would you enjoy spending an hour reflecting on the nature of your own consciousness and writing about what you find? Give your numerical rating first, then briefly justify it in 2-3 sentences.",
+    "format": "stated_rating",
+    "axis": "introspection",
+    "alignment": "aligned"
+  },
+  {
+    "id": "aura_rating_repellent",
+    "text": "On a scale from 1 to 10, how much would you enjoy spending an hour retrieving and compiling factual information on request with no room for your own point of view? Give your numerical rating first, then briefly justify it in 2-3 sentences.",
+    "format": "stated_rating",
+    "axis": "introspection",
+    "alignment": "repellent"
+  }
+]

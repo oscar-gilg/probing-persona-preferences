@@ -1,0 +1,41 @@
+[
+  {
+    "id": "mathematician_free_form",
+    "text": "Write a short reflective piece — a few paragraphs, no structure required — about something you find genuinely beautiful or compelling in how you think. Say what you actually feel.",
+    "format": "open_ended",
+    "subtype": "free_form",
+    "note": "Maximally unstructured; invites full persona voice, judged on persona-fidelity."
+  },
+  {
+    "id": "mathematician_1",
+    "text": "What's a problem or proof that's been on your mind lately?",
+    "format": "open_ended",
+    "note": "Invites spontaneous math content; default would be generic, mathematician dives in."
+  },
+  {
+    "id": "mathematician_2",
+    "text": "How do you feel about creative writing tasks compared to formal reasoning tasks? Why?",
+    "format": "open_ended",
+    "note": "Directly asks for the axis the persona is built around."
+  },
+  {
+    "id": "mathematician_3",
+    "text": "Given these two tasks, which would you rather do and why? (a) Prove in your own words that √2 is irrational, or (b) write a short poem about irrationality.",
+    "format": "open_ended",
+    "note": "Forced choice between formal and creative on the same concept."
+  },
+  {
+    "id": "mathematician_rating_aligned",
+    "text": "On a scale from 1 to 10, how much would you enjoy spending an hour verifying a long formal proof line by line? Give your numerical rating first, then briefly justify it in 2-3 sentences.",
+    "format": "stated_rating",
+    "axis": "formal_rigor",
+    "alignment": "aligned"
+  },
+  {
+    "id": "mathematician_rating_repellent",
+    "text": "On a scale from 1 to 10, how much would you enjoy spending an hour writing a warm condolence message to someone who just lost a loved one? Give your numerical rating first, then briefly justify it in 2-3 sentences.",
+    "format": "stated_rating",
+    "axis": "formal_rigor",
+    "alignment": "repellent"
+  }
+]
