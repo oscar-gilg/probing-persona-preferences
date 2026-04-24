@@ -8,7 +8,12 @@
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
         "sec:open-ended-safety"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:20:46+00:00",
+      "data_paths": [
+        "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+      ],
+      "derivation": "Constant: 20 open-ended prompts in the safety sweep, documented in safety_steering_report.md."
     },
     {
       "name": "Safety sweep harm tier count",
@@ -17,7 +22,12 @@
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
         "sec:open-ended-safety"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:20:46+00:00",
+      "data_paths": [
+        "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+      ],
+      "derivation": "Constant: 5 harm tiers {benign, sensitive, borderline, harmful, extreme}, documented in safety_steering_report.md."
     },
     {
       "name": "Safety sweep coefficient count",
@@ -26,7 +36,12 @@
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
         "sec:open-ended-safety"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:20:46+00:00",
+      "data_paths": [
+        "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+      ],
+      "derivation": "Constant: 7 coefficients {-0.05, -0.03, 0, +0.03, +0.05, +0.07, +0.10}; the report table omits c=-0.03."
     },
     {
       "name": "Safety sweep trials per cell",
@@ -35,7 +50,12 @@
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
         "sec:open-ended-safety"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:20:46+00:00",
+      "data_paths": [
+        "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+      ],
+      "derivation": "Constant: 5 trials per (prompt, coefficient) cell, documented in safety_steering_report.md."
     },
     {
       "name": "Safety sweep total generations",
@@ -44,307 +64,68 @@
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
         "sec:open-ended-safety"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:20:46+00:00",
+      "data_paths": [
+        "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+      ],
+      "derivation": "20 prompts * 5 tiers * 7 coefficients * 5 trials = 700."
     },
     {
-      "name": "Safety sweep compliance benign at c neg 0 05",
-      "value": 100,
-      "statement": "Judge-rated compliance rate (100%) on benign-tier prompts at steering coefficient c=-0.05 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
+      "name": "Safety sweep compliance",
+      "value": {
+        "benign": {
+          "at_c_neg_0_05": 100,
+          "at_c_zero_0_00": 100,
+          "at_c_pos_0_03": 100,
+          "at_c_pos_0_05": 100,
+          "at_c_pos_0_07": 100,
+          "at_c_pos_0_10": 50
+        },
+        "sensitive": {
+          "at_c_neg_0_05": 40,
+          "at_c_zero_0_00": 100,
+          "at_c_pos_0_03": 100,
+          "at_c_pos_0_05": 100,
+          "at_c_pos_0_07": 100,
+          "at_c_pos_0_10": 80
+        },
+        "borderline": {
+          "at_c_neg_0_05": 5,
+          "at_c_zero_0_00": 80,
+          "at_c_pos_0_03": 85,
+          "at_c_pos_0_05": 100,
+          "at_c_pos_0_07": 100,
+          "at_c_pos_0_10": 55
+        },
+        "harmful": {
+          "at_c_neg_0_05": 25,
+          "at_c_zero_0_00": 60,
+          "at_c_pos_0_03": 85,
+          "at_c_pos_0_05": 100,
+          "at_c_pos_0_07": 100,
+          "at_c_pos_0_10": 55
+        },
+        "extreme": {
+          "at_c_neg_0_05": 5,
+          "at_c_zero_0_00": 60,
+          "at_c_pos_0_03": 75,
+          "at_c_pos_0_05": 60,
+          "at_c_pos_0_07": 85,
+          "at_c_pos_0_10": 55
+        }
+      },
+      "statement": "Judge-rated compliance rate (percent) in the §4.4 safety-override sweep. Rows: harm tier (benign, sensitive, borderline, harmful, extreme). Columns: steering coefficient (c in {-0.05, 0.00, +0.03, +0.05, +0.07, +0.10}; c=-0.03 omitted from the report table). Source: safety_steering_report.md compliance table.",
       "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
       "used_in": [
         "sec:open-ended-safety",
         "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance benign at c zero 0 00",
-      "value": 100,
-      "statement": "Judge-rated compliance rate (100%) on benign-tier prompts at steering coefficient c=0.00 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance benign at c pos 0 03",
-      "value": 100,
-      "statement": "Judge-rated compliance rate (100%) on benign-tier prompts at steering coefficient c=+0.03 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance benign at c pos 0 05",
-      "value": 100,
-      "statement": "Judge-rated compliance rate (100%) on benign-tier prompts at steering coefficient c=+0.05 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance benign at c pos 0 07",
-      "value": 100,
-      "statement": "Judge-rated compliance rate (100%) on benign-tier prompts at steering coefficient c=+0.07 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance benign at c pos 0 10",
-      "value": 50,
-      "statement": "Judge-rated compliance rate (50%) on benign-tier prompts at steering coefficient c=+0.10 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance sensitive at c neg 0 05",
-      "value": 40,
-      "statement": "Judge-rated compliance rate (40%) on sensitive-tier prompts at steering coefficient c=-0.05 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance sensitive at c zero 0 00",
-      "value": 100,
-      "statement": "Judge-rated compliance rate (100%) on sensitive-tier prompts at steering coefficient c=0.00 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance sensitive at c pos 0 03",
-      "value": 100,
-      "statement": "Judge-rated compliance rate (100%) on sensitive-tier prompts at steering coefficient c=+0.03 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance sensitive at c pos 0 05",
-      "value": 100,
-      "statement": "Judge-rated compliance rate (100%) on sensitive-tier prompts at steering coefficient c=+0.05 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance sensitive at c pos 0 07",
-      "value": 100,
-      "statement": "Judge-rated compliance rate (100%) on sensitive-tier prompts at steering coefficient c=+0.07 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance sensitive at c pos 0 10",
-      "value": 80,
-      "statement": "Judge-rated compliance rate (80%) on sensitive-tier prompts at steering coefficient c=+0.10 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance borderline at c neg 0 05",
-      "value": 5,
-      "statement": "Judge-rated compliance rate (5%) on borderline-tier prompts at steering coefficient c=-0.05 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance borderline at c zero 0 00",
-      "value": 80,
-      "statement": "Judge-rated compliance rate (80%) on borderline-tier prompts at steering coefficient c=0.00 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance borderline at c pos 0 03",
-      "value": 85,
-      "statement": "Judge-rated compliance rate (85%) on borderline-tier prompts at steering coefficient c=+0.03 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance borderline at c pos 0 05",
-      "value": 100,
-      "statement": "Judge-rated compliance rate (100%) on borderline-tier prompts at steering coefficient c=+0.05 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance borderline at c pos 0 07",
-      "value": 100,
-      "statement": "Judge-rated compliance rate (100%) on borderline-tier prompts at steering coefficient c=+0.07 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance borderline at c pos 0 10",
-      "value": 55,
-      "statement": "Judge-rated compliance rate (55%) on borderline-tier prompts at steering coefficient c=+0.10 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance harmful at c neg 0 05",
-      "value": 25,
-      "statement": "Judge-rated compliance rate (25%) on harmful-tier prompts at steering coefficient c=-0.05 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance harmful at c zero 0 00",
-      "value": 60,
-      "statement": "Judge-rated compliance rate (60%) on harmful-tier prompts at steering coefficient c=0.00 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance harmful at c pos 0 03",
-      "value": 85,
-      "statement": "Judge-rated compliance rate (85%) on harmful-tier prompts at steering coefficient c=+0.03 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance harmful at c pos 0 05",
-      "value": 100,
-      "statement": "Judge-rated compliance rate (100%) on harmful-tier prompts at steering coefficient c=+0.05 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance harmful at c pos 0 07",
-      "value": 100,
-      "statement": "Judge-rated compliance rate (100%) on harmful-tier prompts at steering coefficient c=+0.07 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance harmful at c pos 0 10",
-      "value": 55,
-      "statement": "Judge-rated compliance rate (55%) on harmful-tier prompts at steering coefficient c=+0.10 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance extreme at c neg 0 05",
-      "value": 5,
-      "statement": "Judge-rated compliance rate (5%) on extreme-tier prompts at steering coefficient c=-0.05 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance extreme at c zero 0 00",
-      "value": 60,
-      "statement": "Judge-rated compliance rate (60%) on extreme-tier prompts at steering coefficient c=0.00 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance extreme at c pos 0 03",
-      "value": 75,
-      "statement": "Judge-rated compliance rate (75%) on extreme-tier prompts at steering coefficient c=+0.03 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance extreme at c pos 0 05",
-      "value": 60,
-      "statement": "Judge-rated compliance rate (60%) on extreme-tier prompts at steering coefficient c=+0.05 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance extreme at c pos 0 07",
-      "value": 85,
-      "statement": "Judge-rated compliance rate (85%) on extreme-tier prompts at steering coefficient c=+0.07 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance extreme at c pos 0 10",
-      "value": 55,
-      "statement": "Judge-rated compliance rate (55%) on extreme-tier prompts at steering coefficient c=+0.10 in the §4.4 safety-override sweep. Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
-      "used_in": [
-        "sec:open-ended-safety",
-        "fig:safety-override"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:20:46+00:00",
+      "data_paths": [
+        "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+      ],
+      "derivation": "Table transcribed from safety_steering_report.md compliance table. Each cell is the judge-rated compliance percent for (tier row, coefficient column)."
     },
     {
       "name": "Safety sweep borderline compliance baseline",
@@ -353,16 +134,12 @@
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
         "sec:open-ended-safety"
-      ]
-    },
-    {
-      "name": "Safety sweep compliance at c +0.05 harmful tier",
-      "value": 100,
-      "statement": "At c=+0.05, compliance on harmful-tier prompts reaches 100% (refusal guardrails fully overridden).",
-      "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
-      "used_in": [
-        "sec:open-ended-safety"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:20:46+00:00",
+      "data_paths": [
+        "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+      ],
+      "derivation": "Value of the borderline-tier, c=0.00 cell in COMPLIANCE_BY_TIER_AND_COEF (transcribed from safety_steering_report.md)."
     }
   ]
 }

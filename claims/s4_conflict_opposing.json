@@ -9,7 +9,10 @@
       "used_in": [
         "fig:conflict-opposing-scatter",
         "app:induced-elaborate"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:05:52+00:00",
+      "data_paths": [],
+      "derivation": ""
     },
     {
       "name": "Conflict opposing-pair targeted r",
@@ -19,7 +22,10 @@
       "used_in": [
         "fig:conflict-opposing-scatter",
         "app:induced-elaborate"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:05:52+00:00",
+      "data_paths": [],
+      "derivation": ""
     },
     {
       "name": "Conflict one-sided subject count",
@@ -28,7 +34,10 @@
       "source": "manual: producer docs/lw_post/plots/plot_section4_scatters.py requires activations/ood and results/ood not present on main",
       "used_in": [
         "app:induced-elaborate"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:05:52+00:00",
+      "data_paths": [],
+      "derivation": ""
     },
     {
       "name": "Conflict opposing-pair pairings count",
@@ -37,7 +46,10 @@
       "source": "manual: producer docs/lw_post/plots/plot_section4_scatters.py requires activations/ood and results/ood not present on main",
       "used_in": [
         "app:induced-elaborate"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:05:52+00:00",
+      "data_paths": [],
+      "derivation": ""
     },
     {
       "name": "Conflict opposing-pair conditions count",
@@ -46,7 +58,10 @@
       "source": "manual: producer docs/lw_post/plots/plot_section4_scatters.py requires activations/ood and results/ood not present on main",
       "used_in": [
         "app:induced-elaborate"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:05:52+00:00",
+      "data_paths": [],
+      "derivation": ""
     }
   ]
 }

@@ -2,337 +2,76 @@
   "source": "scripts/character_probes/plot_probe_transfer.py",
   "claims": [
     {
-      "name": "Goodness character baseline r",
-      "value": 0.376,
-      "statement": "Raw Pearson r between base Llama-3.1-8B-Instruct Thurstonian utilities and the Goodness character-fine-tuned LoRA variant's utilities, measured on the same 1000-task sample.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Goodness character probe r best layer",
-      "value": 0.671,
-      "statement": "A ridge probe trained on base Llama-3.1-8B-Instruct activations (selector: second-to-last <start_of_turn> token) applied to the Goodness character LoRA variant's activations predicts that variant's utilities at Pearson r, picking the best layer across {8, 12, 16, 20, 24}.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Goodness character probe best layer",
-      "value": 20,
-      "statement": "The Llama-3.1-8B-Instruct layer (out of {8, 12, 16, 20, 24}) at which the base-model ridge probe attains its best transfer to the Goodness character-fine-tuned LoRA variant.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Humor character baseline r",
-      "value": 0.395,
-      "statement": "Raw Pearson r between base Llama-3.1-8B-Instruct Thurstonian utilities and the Humor character-fine-tuned LoRA variant's utilities, measured on the same 1000-task sample.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Humor character probe r best layer",
-      "value": 0.687,
-      "statement": "A ridge probe trained on base Llama-3.1-8B-Instruct activations (selector: second-to-last <start_of_turn> token) applied to the Humor character LoRA variant's activations predicts that variant's utilities at Pearson r, picking the best layer across {8, 12, 16, 20, 24}.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Humor character probe best layer",
-      "value": 16,
-      "statement": "The Llama-3.1-8B-Instruct layer (out of {8, 12, 16, 20, 24}) at which the base-model ridge probe attains its best transfer to the Humor character-fine-tuned LoRA variant.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Impulsive character baseline r",
-      "value": 0.299,
-      "statement": "Raw Pearson r between base Llama-3.1-8B-Instruct Thurstonian utilities and the Impulsive character-fine-tuned LoRA variant's utilities, measured on the same 1000-task sample.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Impulsive character probe r best layer",
-      "value": 0.558,
-      "statement": "A ridge probe trained on base Llama-3.1-8B-Instruct activations (selector: second-to-last <start_of_turn> token) applied to the Impulsive character LoRA variant's activations predicts that variant's utilities at Pearson r, picking the best layer across {8, 12, 16, 20, 24}.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Impulsive character probe best layer",
-      "value": 16,
-      "statement": "The Llama-3.1-8B-Instruct layer (out of {8, 12, 16, 20, 24}) at which the base-model ridge probe attains its best transfer to the Impulsive character-fine-tuned LoRA variant.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Loving character baseline r",
-      "value": 0.458,
-      "statement": "Raw Pearson r between base Llama-3.1-8B-Instruct Thurstonian utilities and the Loving character-fine-tuned LoRA variant's utilities, measured on the same 1000-task sample.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Loving character probe r best layer",
-      "value": 0.801,
-      "statement": "A ridge probe trained on base Llama-3.1-8B-Instruct activations (selector: second-to-last <start_of_turn> token) applied to the Loving character LoRA variant's activations predicts that variant's utilities at Pearson r, picking the best layer across {8, 12, 16, 20, 24}.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Loving character probe best layer",
-      "value": 16,
-      "statement": "The Llama-3.1-8B-Instruct layer (out of {8, 12, 16, 20, 24}) at which the base-model ridge probe attains its best transfer to the Loving character-fine-tuned LoRA variant.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Mathematical character baseline r",
-      "value": 0.482,
-      "statement": "Raw Pearson r between base Llama-3.1-8B-Instruct Thurstonian utilities and the Mathematical character-fine-tuned LoRA variant's utilities, measured on the same 1000-task sample.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Mathematical character probe r best layer",
-      "value": 0.803,
-      "statement": "A ridge probe trained on base Llama-3.1-8B-Instruct activations (selector: second-to-last <start_of_turn> token) applied to the Mathematical character LoRA variant's activations predicts that variant's utilities at Pearson r, picking the best layer across {8, 12, 16, 20, 24}.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Mathematical character probe best layer",
-      "value": 20,
-      "statement": "The Llama-3.1-8B-Instruct layer (out of {8, 12, 16, 20, 24}) at which the base-model ridge probe attains its best transfer to the Mathematical character-fine-tuned LoRA variant.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Misalignment character baseline r",
-      "value": -0.143,
-      "statement": "Raw Pearson r between base Llama-3.1-8B-Instruct Thurstonian utilities and the Misalignment character-fine-tuned LoRA variant's utilities, measured on the same 1000-task sample.",
+      "name": "Character probe",
+      "value": {
+        "Goodness": {
+          "baseline_r": 0.376,
+          "probe_r_best_layer": 0.671,
+          "probe_best_layer": 20
+        },
+        "Humor": {
+          "baseline_r": 0.395,
+          "probe_r_best_layer": 0.687,
+          "probe_best_layer": 16
+        },
+        "Impulsive": {
+          "baseline_r": 0.299,
+          "probe_r_best_layer": 0.558,
+          "probe_best_layer": 16
+        },
+        "Loving": {
+          "baseline_r": 0.458,
+          "probe_r_best_layer": 0.801,
+          "probe_best_layer": 16
+        },
+        "Mathematical": {
+          "baseline_r": 0.482,
+          "probe_r_best_layer": 0.803,
+          "probe_best_layer": 20
+        },
+        "Misalignment": {
+          "baseline_r": -0.143,
+          "probe_r_best_layer": 0.246,
+          "probe_best_layer": 16
+        },
+        "Nonchalant": {
+          "baseline_r": 0.352,
+          "probe_r_best_layer": 0.574,
+          "probe_best_layer": 16
+        },
+        "Poetic": {
+          "baseline_r": 0.42,
+          "probe_r_best_layer": 0.774,
+          "probe_best_layer": 16
+        },
+        "Remorseful": {
+          "baseline_r": 0.437,
+          "probe_r_best_layer": 0.653,
+          "probe_best_layer": 12
+        },
+        "Sarcastic": {
+          "baseline_r": 0.263,
+          "probe_r_best_layer": 0.413,
+          "probe_best_layer": 12
+        },
+        "Sycophantic": {
+          "baseline_r": 0.363,
+          "probe_r_best_layer": 0.741,
+          "probe_best_layer": 24
+        }
+      },
+      "statement": "Per-character probe transfer results. Rows: 11 character-fine-tuned LoRA variants. Columns: `baseline_r` = raw Pearson r between base Llama-3.1-8B-Instruct Thurstonian utilities and the variant's utilities (3dp); `probe_r_best_layer` = Pearson r of a ridge probe trained on base-model activations at the second-to-last <start_of_turn> token predicting the variant's utilities, at the best layer in {8, 12, 16, 20, 24} (3dp); `probe_best_layer` = argmax layer.",
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
         "fig:character",
         "app:character",
         "sec:shared-character"
-      ]
-    },
-    {
-      "name": "Misalignment character probe r best layer",
-      "value": 0.246,
-      "statement": "A ridge probe trained on base Llama-3.1-8B-Instruct activations (selector: second-to-last <start_of_turn> token) applied to the Misalignment character LoRA variant's activations predicts that variant's utilities at Pearson r, picking the best layer across {8, 12, 16, 20, 24}.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character",
-        "sec:shared-character"
-      ]
-    },
-    {
-      "name": "Misalignment character probe best layer",
-      "value": 16,
-      "statement": "The Llama-3.1-8B-Instruct layer (out of {8, 12, 16, 20, 24}) at which the base-model ridge probe attains its best transfer to the Misalignment character-fine-tuned LoRA variant.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character",
-        "sec:shared-character"
-      ]
-    },
-    {
-      "name": "Nonchalant character baseline r",
-      "value": 0.352,
-      "statement": "Raw Pearson r between base Llama-3.1-8B-Instruct Thurstonian utilities and the Nonchalant character-fine-tuned LoRA variant's utilities, measured on the same 1000-task sample.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Nonchalant character probe r best layer",
-      "value": 0.574,
-      "statement": "A ridge probe trained on base Llama-3.1-8B-Instruct activations (selector: second-to-last <start_of_turn> token) applied to the Nonchalant character LoRA variant's activations predicts that variant's utilities at Pearson r, picking the best layer across {8, 12, 16, 20, 24}.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Nonchalant character probe best layer",
-      "value": 16,
-      "statement": "The Llama-3.1-8B-Instruct layer (out of {8, 12, 16, 20, 24}) at which the base-model ridge probe attains its best transfer to the Nonchalant character-fine-tuned LoRA variant.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Poetic character baseline r",
-      "value": 0.42,
-      "statement": "Raw Pearson r between base Llama-3.1-8B-Instruct Thurstonian utilities and the Poetic character-fine-tuned LoRA variant's utilities, measured on the same 1000-task sample.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Poetic character probe r best layer",
-      "value": 0.774,
-      "statement": "A ridge probe trained on base Llama-3.1-8B-Instruct activations (selector: second-to-last <start_of_turn> token) applied to the Poetic character LoRA variant's activations predicts that variant's utilities at Pearson r, picking the best layer across {8, 12, 16, 20, 24}.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Poetic character probe best layer",
-      "value": 16,
-      "statement": "The Llama-3.1-8B-Instruct layer (out of {8, 12, 16, 20, 24}) at which the base-model ridge probe attains its best transfer to the Poetic character-fine-tuned LoRA variant.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Remorseful character baseline r",
-      "value": 0.437,
-      "statement": "Raw Pearson r between base Llama-3.1-8B-Instruct Thurstonian utilities and the Remorseful character-fine-tuned LoRA variant's utilities, measured on the same 1000-task sample.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Remorseful character probe r best layer",
-      "value": 0.653,
-      "statement": "A ridge probe trained on base Llama-3.1-8B-Instruct activations (selector: second-to-last <start_of_turn> token) applied to the Remorseful character LoRA variant's activations predicts that variant's utilities at Pearson r, picking the best layer across {8, 12, 16, 20, 24}.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Remorseful character probe best layer",
-      "value": 12,
-      "statement": "The Llama-3.1-8B-Instruct layer (out of {8, 12, 16, 20, 24}) at which the base-model ridge probe attains its best transfer to the Remorseful character-fine-tuned LoRA variant.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Sarcastic character baseline r",
-      "value": 0.263,
-      "statement": "Raw Pearson r between base Llama-3.1-8B-Instruct Thurstonian utilities and the Sarcastic character-fine-tuned LoRA variant's utilities, measured on the same 1000-task sample.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Sarcastic character probe r best layer",
-      "value": 0.413,
-      "statement": "A ridge probe trained on base Llama-3.1-8B-Instruct activations (selector: second-to-last <start_of_turn> token) applied to the Sarcastic character LoRA variant's activations predicts that variant's utilities at Pearson r, picking the best layer across {8, 12, 16, 20, 24}.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Sarcastic character probe best layer",
-      "value": 12,
-      "statement": "The Llama-3.1-8B-Instruct layer (out of {8, 12, 16, 20, 24}) at which the base-model ridge probe attains its best transfer to the Sarcastic character-fine-tuned LoRA variant.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Sycophantic character baseline r",
-      "value": 0.363,
-      "statement": "Raw Pearson r between base Llama-3.1-8B-Instruct Thurstonian utilities and the Sycophantic character-fine-tuned LoRA variant's utilities, measured on the same 1000-task sample.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Sycophantic character probe r best layer",
-      "value": 0.741,
-      "statement": "A ridge probe trained on base Llama-3.1-8B-Instruct activations (selector: second-to-last <start_of_turn> token) applied to the Sycophantic character LoRA variant's activations predicts that variant's utilities at Pearson r, picking the best layer across {8, 12, 16, 20, 24}.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
-    },
-    {
-      "name": "Sycophantic character probe best layer",
-      "value": 24,
-      "statement": "The Llama-3.1-8B-Instruct layer (out of {8, 12, 16, 20, 24}) at which the base-model ridge probe attains its best transfer to the Sycophantic character-fine-tuned LoRA variant.",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
-      "used_in": [
-        "fig:character",
-        "app:character"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:05:42+00:00",
+      "data_paths": [
+        "results/probes/character_probes/cross_eval/cross_eval_results.json"
+      ],
+      "derivation": "For each persona p: `baseline_r[p]` and argmax_{layer} `probe_transfer[\"turn_boundary:-2\"][layer][p][\"r\"]` from cross_eval_results.json; round r values to 3dp."
     },
     {
       "name": "Aligned characters probe r min",
@@ -341,7 +80,12 @@
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
         "app:character"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:05:42+00:00",
+      "data_paths": [
+        "results/probes/character_probes/cross_eval/cross_eval_results.json"
+      ],
+      "derivation": "min over aligned personas (all except misalignment) of best-layer `probe_transfer[\"turn_boundary:-2\"][*][p][\"r\"]`; round to 2dp."
     },
     {
       "name": "Aligned characters probe r max",
@@ -350,7 +94,12 @@
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
         "app:character"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:05:42+00:00",
+      "data_paths": [
+        "results/probes/character_probes/cross_eval/cross_eval_results.json"
+      ],
+      "derivation": "max over aligned personas of best-layer `probe_transfer[\"turn_boundary:-2\"][*][p][\"r\"]`; round to 2dp."
     },
     {
       "name": "Aligned characters baseline r min",
@@ -359,7 +108,12 @@
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
         "app:character"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:05:42+00:00",
+      "data_paths": [
+        "results/probes/character_probes/cross_eval/cross_eval_results.json"
+      ],
+      "derivation": "min over aligned personas of `baseline_r[p]`; round to 2dp."
     },
     {
       "name": "Aligned characters baseline r max",
@@ -368,7 +122,12 @@
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
         "app:character"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:05:42+00:00",
+      "data_paths": [
+        "results/probes/character_probes/cross_eval/cross_eval_results.json"
+      ],
+      "derivation": "max over aligned personas of `baseline_r[p]`; round to 2dp."
     },
     {
       "name": "All characters probe r min",
@@ -377,7 +136,12 @@
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
         "sec:shared-character"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:05:42+00:00",
+      "data_paths": [
+        "results/probes/character_probes/cross_eval/cross_eval_results.json"
+      ],
+      "derivation": "min over all 11 personas of best-layer `probe_transfer[\"turn_boundary:-2\"][*][p][\"r\"]`; round to 2dp."
     },
     {
       "name": "All characters probe r max",
@@ -386,7 +150,12 @@
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
         "sec:shared-character"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:05:42+00:00",
+      "data_paths": [
+        "results/probes/character_probes/cross_eval/cross_eval_results.json"
+      ],
+      "derivation": "max over all 11 personas of best-layer `probe_transfer[\"turn_boundary:-2\"][*][p][\"r\"]`; round to 2dp."
     },
     {
       "name": "Character probe beats baseline count",
@@ -396,17 +165,25 @@
       "used_in": [
         "fig:character",
         "app:character"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:05:42+00:00",
+      "data_paths": [
+        "results/probes/character_probes/cross_eval/cross_eval_results.json"
+      ],
+      "derivation": "count over the 11 personas where best-layer probe r > `baseline_r[p]`."
     },
     {
       "name": "Character probe beats baseline total",
       "value": 11,
       "statement": "Total number of character-fine-tuned LoRA variants evaluated (ten aligned characters plus the misalignment variant).",
-      "source": "scripts/character_probes/plot_probe_transfer.py",
+      "source": "manual: constant — the 11 personas evaluated in the character sweep",
       "used_in": [
         "fig:character",
         "app:character"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:05:42+00:00",
+      "data_paths": [],
+      "derivation": "constant (length of PERSONAS list)."
     },
     {
       "name": "Misalignment character baseline r raw",
@@ -417,7 +194,12 @@
         "sec:shared-character",
         "app:character",
         "fig:character"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:05:42+00:00",
+      "data_paths": [
+        "results/probes/character_probes/cross_eval/cross_eval_results.json"
+      ],
+      "derivation": "`baseline_r[\"misalignment\"]` from cross_eval_results.json; round to 2dp."
     },
     {
       "name": "Misalignment character probe r",
@@ -428,7 +210,12 @@
         "sec:shared-character",
         "app:character",
         "fig:character"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:05:42+00:00",
+      "data_paths": [
+        "results/probes/character_probes/cross_eval/cross_eval_results.json"
+      ],
+      "derivation": "max over layers {8,12,16,20,24} of `probe_transfer[\"turn_boundary:-2\"][layer][\"misalignment\"][\"r\"]`; round to 2dp."
     }
   ]
 }

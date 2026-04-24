@@ -6,28 +6,60 @@
       "value": 2000,
       "statement": "Total number of task-condition points (40 A-vs-C biography pairs × 50 comparison tasks) plotted in the Exp3v8 fine-grained biography-injection scatter for Gemma-3-27B.",
       "source": "manual: producer requires activations/ood/exp3v8_minimal_pairs and results/probes/gemma3_10k_heldout_std_demean (both currently not synced locally; see paper/TODO_producers.md). Value from experiments/probe_generalization/ood_system_prompts/exp3_v8/exp3_v8_report.md.",
-      "used_in": ["fig:fine-grained"]
+      "used_in": [
+        "fig:fine-grained"
+      ],
+      "computed_at": "2026-04-24T10:05:52+00:00",
+      "data_paths": [
+        "experiments/probe_generalization/ood_system_prompts/exp3_v8/exp3_v8_report.md"
+      ],
+      "derivation": "Manual value transcribed from exp3_v8_report.md; original producer is scripts/ood_system_prompts/plot_exp3v8_avc.py (count of points across all A-vs-C pairs), re-run once activations/ood/exp3v8_minimal_pairs and results/probes/gemma3_10k_heldout_std_demean are synced locally."
     },
     {
       "name": "Exp3v8 AvC target tasks total",
       "value": 40,
       "statement": "Number of (base_role, target) A-vs-C biography pairs in the Exp3v8 fine-grained experiment on Gemma-3-27B — 20 targets × 2 base roles; the denominator for the probe-ranks-target-#1 rate.",
       "source": "manual: producer requires activations/ood/exp3v8_minimal_pairs and results/probes/gemma3_10k_heldout_std_demean (both currently not synced locally). Value from docs/lw_post/section3_draft.md and qwen_replication_report.md.",
-      "used_in": ["fig:fine-grained", "app:induced-fine"]
+      "used_in": [
+        "fig:fine-grained",
+        "app:induced-fine"
+      ],
+      "computed_at": "2026-04-24T10:05:52+00:00",
+      "data_paths": [
+        "experiments/probe_generalization/ood_system_prompts/exp3_v8/exp3_v8_report.md",
+        "experiments/qwen_replication/qwen_replication_report.md"
+      ],
+      "derivation": "Manual value (20 targets × 2 base roles = 40) transcribed from exp3_v8_report.md; original producer is scripts/ood_system_prompts/plot_exp3v8_avc.py — re-run once activations/ood/exp3v8_minimal_pairs and results/probes/gemma3_10k_heldout_std_demean are synced locally."
     },
     {
       "name": "Exp3v8 AvC target tasks probe ranks 1",
       "value": 36,
       "statement": "Number of A-vs-C biography pairs on which the Gemma-3-27B L31 ridge probe ranks the target task #1 out of 50 by probe delta (probe_A - probe_C). Rendered in §B.5 prose as “ranks the target task #1 of 50 in 36/40 pro-vs-anti comparisons”.",
       "source": "manual: producer requires activations/ood/exp3v8_minimal_pairs and results/probes/gemma3_10k_heldout_std_demean (both currently not synced locally). Value from docs/lw_post/section3_draft.md and experiments/qwen_replication/qwen_replication_report.md.",
-      "used_in": ["fig:fine-grained", "app:induced-fine"]
+      "used_in": [
+        "fig:fine-grained",
+        "app:induced-fine"
+      ],
+      "computed_at": "2026-04-24T10:05:52+00:00",
+      "data_paths": [
+        "experiments/probe_generalization/ood_system_prompts/exp3_v8/exp3_v8_report.md",
+        "experiments/qwen_replication/qwen_replication_report.md"
+      ],
+      "derivation": "Manual value (36/40) transcribed from exp3_v8_report.md; original producer is scripts/ood_system_prompts/plot_exp3v8_avc.py — re-run once activations/ood/exp3v8_minimal_pairs and results/probes/gemma3_10k_heldout_std_demean are synced locally."
     },
     {
       "name": "Exp3v8 AvC probe delta pooled r all points",
       "value": 0.62,
       "statement": "Pearson r between per-task probe delta (probe_A - probe_C) and behavioural delta (P_A - P_C) pooled across all 2,000 task-condition points in the Exp3v8 fine-grained biography-injection scatter on Gemma-3-27B (ridge probe, L31). Rendered in the figure legend as ‘All (r = 0.62)’.",
       "source": "manual: producer requires activations/ood/exp3v8_minimal_pairs and results/probes/gemma3_10k_heldout_std_demean (both currently not synced locally). Value from experiments/probe_generalization/ood_system_prompts/exp3_v8/exp3_v8_report.md.",
-      "used_in": ["fig:fine-grained"]
+      "used_in": [
+        "fig:fine-grained"
+      ],
+      "computed_at": "2026-04-24T10:05:52+00:00",
+      "data_paths": [
+        "experiments/probe_generalization/ood_system_prompts/exp3_v8/exp3_v8_report.md"
+      ],
+      "derivation": "Manual value (r=0.62) transcribed from exp3_v8_report.md; original producer is scripts/ood_system_prompts/plot_exp3v8_avc.py — re-run once activations/ood/exp3v8_minimal_pairs and results/probes/gemma3_10k_heldout_std_demean are synced locally."
     }
   ]
 }

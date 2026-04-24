@@ -7,8 +7,11 @@
       "statement": "In the phase-1 stated-preference steering experiment (n=200, Feb 2026, subsequently superseded), the unsteered baseline rating was 3.64 on the 1-5 preference scale.",
       "source": "manual: stated-steering phase 1 (superseded a/b template); see paper/TODO_producers.md",
       "used_in": [
-        "fig:stated-steering-positions"
-      ]
+        "fig:stated-positions"
+      ],
+      "computed_at": "2026-04-24T10:26:39+00:00",
+      "data_paths": [],
+      "derivation": "Manual frozen value from the superseded phase-1 stated-preference experiment (Feb 2026); producer scripts deleted (commit 04526b5), raw data not reproducible under the canonical completion template; see paper/TODO_producers.md."
     },
     {
       "name": "Stated-steering phase1 negative range",
@@ -16,8 +19,11 @@
       "statement": "At c=-10% of the mean activation norm, stated-preference rating falls to 3.27-3.36 across position arms (phase-1 experiment).",
       "source": "manual: stated-steering phase 1 (superseded a/b template); see paper/TODO_producers.md",
       "used_in": [
-        "fig:stated-steering-positions"
-      ]
+        "fig:stated-positions"
+      ],
+      "computed_at": "2026-04-24T10:26:39+00:00",
+      "data_paths": [],
+      "derivation": "Manual frozen range from the superseded phase-1 stated-preference experiment (Feb 2026); producer scripts deleted, figure preserved in experiments/steering/stated_steering/assets/; see paper/TODO_producers.md."
     },
     {
       "name": "Stated-steering phase1 positive range",
@@ -25,8 +31,11 @@
       "statement": "At c=+10% of the mean activation norm, stated-preference rating rises to 4.60-4.61 across position arms (phase-1 experiment).",
       "source": "manual: stated-steering phase 1 (superseded a/b template); see paper/TODO_producers.md",
       "used_in": [
-        "fig:stated-steering-positions"
-      ]
+        "fig:stated-positions"
+      ],
+      "computed_at": "2026-04-24T10:26:39+00:00",
+      "data_paths": [],
+      "derivation": "Manual frozen range from the superseded phase-1 stated-preference experiment (Feb 2026); producer scripts deleted, figure preserved in experiments/steering/stated_steering/assets/; see paper/TODO_producers.md."
     },
     {
       "name": "Abstract targeted tasks r approximation",
@@ -35,7 +44,10 @@
       "source": "manual: cross-experiment abstract approximation; refine by replacing with a derived range from the registered per-experiment targeted-r claims",
       "used_in": [
         "abstract"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:26:39+00:00",
+      "data_paths": [],
+      "derivation": "Manual cross-experiment shorthand summarising Gemma simple-target r=0.95 (§4.1), Qwen simple-target r=0.83, conflict r=0.86, opposing r=0.88, and biography-injection rank-1-of-50 rate of 36/40; refine by replacing with a derived range from the per-experiment targeted-r claims once they are all registered."
     }
   ]
 }

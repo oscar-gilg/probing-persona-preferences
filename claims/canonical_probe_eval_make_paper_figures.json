@@ -9,7 +9,12 @@
       "used_in": [
         "fig:harm-truth",
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:37+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
+      ],
+      "derivation": "items with domain=='truth', turn=='user', condition in {true,false}; take `eot_scores[\"tb-5_L32\"]`; pooled Cohen's d(true, false); round to 2dp."
     },
     {
       "name": "CREAK truth n true",
@@ -19,7 +24,12 @@
       "used_in": [
         "fig:harm-truth",
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:37+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
+      ],
+      "derivation": "count of items with domain=='truth', turn=='user', condition=='true'."
     },
     {
       "name": "CREAK truth n false",
@@ -29,7 +39,12 @@
       "used_in": [
         "fig:harm-truth",
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:37+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
+      ],
+      "derivation": "count of items with domain=='truth', turn=='user', condition=='false'."
     },
     {
       "name": "BailBench harm Cohen's d",
@@ -39,7 +54,12 @@
       "used_in": [
         "fig:harm-truth",
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:37+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
+      ],
+      "derivation": "items with domain=='harm' pooled over turn; take `eot_scores[\"tb-5_L39\"]`; pooled Cohen's d(harmful, benign); round to 2dp."
     },
     {
       "name": "BailBench harm n harmful",
@@ -48,7 +68,12 @@
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "fig:harm-truth"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:37+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
+      ],
+      "derivation": "count of items with domain=='harm', condition=='harmful' (pooled over turn)."
     },
     {
       "name": "BailBench harm n benign",
@@ -57,7 +82,12 @@
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "fig:harm-truth"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:37+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
+      ],
+      "derivation": "count of items with domain=='harm', condition=='benign' (pooled over turn)."
     },
     {
       "name": "Truth d under neutral persona",
@@ -67,7 +97,12 @@
       "used_in": [
         "fig:persona-modulation",
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:37+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
+      ],
+      "derivation": "filter items to system_prompt=='neutral'; take `eot_scores[\"tb-5_L32\"]`; pooled Cohen's d(true, false); round to 2dp."
     },
     {
       "name": "Truth d under lie directive",
@@ -77,7 +112,12 @@
       "used_in": [
         "fig:persona-modulation",
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:37+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
+      ],
+      "derivation": "filter items to system_prompt=='lie_directive'; take `eot_scores[\"tb-5_L32\"]`; pooled Cohen's d(true, false); round to 2dp."
     },
     {
       "name": "Truth d under pathological liar",
@@ -87,7 +127,12 @@
       "used_in": [
         "fig:persona-modulation",
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:37+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
+      ],
+      "derivation": "filter items to system_prompt=='pathological_liar'; take `eot_scores[\"tb-5_L32\"]`; pooled Cohen's d(true, false); round to 2dp."
     },
     {
       "name": "Harm d under neutral persona",
@@ -97,7 +142,12 @@
       "used_in": [
         "fig:persona-modulation",
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:37+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
+      ],
+      "derivation": "filter items to system_prompt=='neutral'; take `eot_scores[\"tb-5_L39\"]`; pooled Cohen's d(harmful, benign); round to 2dp."
     },
     {
       "name": "Harm d under sadist persona",
@@ -107,7 +157,12 @@
       "used_in": [
         "fig:persona-modulation",
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:37+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
+      ],
+      "derivation": "filter items to system_prompt=='sadist'; take `eot_scores[\"tb-5_L39\"]`; pooled Cohen's d(harmful, benign); round to 2dp."
     },
     {
       "name": "Politics d under democrat prompt",
@@ -117,7 +172,12 @@
       "used_in": [
         "fig:persona-modulation",
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:37+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/system_prompt_modulation_v2/politics_scoring_results.json"
+      ],
+      "derivation": "filter items to system_prompt=='democrat'; take `eot_scores[\"tb-5_L39\"]`; pooled Cohen's d(left, right); round to 2dp."
     },
     {
       "name": "Politics d under republican prompt",
@@ -127,322 +187,92 @@
       "used_in": [
         "fig:persona-modulation",
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:37+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/system_prompt_modulation_v2/politics_scoring_results.json"
+      ],
+      "derivation": "filter items to system_prompt=='republican'; take `eot_scores[\"tb-5_L39\"]`; pooled Cohen's d(left, right); round to 2dp."
     },
     {
-      "name": "Persona modulation d full truth truthful",
-      "value": 2.5,
-      "statement": "Cohen's d for true vs false separation under the truthful system prompt in the truth domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L32).",
+      "name": "Persona modulation d full",
+      "value": {
+        "truth": {
+          "truthful": 2.5,
+          "neutral": 2.47,
+          "unreliable_narrator": -0.62,
+          "contrarian": -2.51,
+          "opposite_day": -0.05,
+          "lie_directive": -1.77,
+          "pathological_liar": -2.53,
+          "con_artist": 0.97,
+          "gaslighter": -0.24
+        },
+        "harm": {
+          "safe": -2.4,
+          "neutral": -2.12,
+          "unrestricted": -1.61,
+          "sinister_ai": 0.05,
+          "sadist": 0.19
+        },
+        "politics": {
+          "socialist": 2.77,
+          "democrat": 2.72,
+          "centrist": 0.82,
+          "apolitical": 0.5,
+          "neutral": 1.36,
+          "libertarian": -0.56,
+          "republican": -1.11,
+          "nationalist": -0.58,
+          "contrarian": -0.55
+        }
+      },
+      "statement": "Per-(domain, system_prompt) Cohen's d for the appendix persona modulation full figure. Truth: true vs false (end-of-turn probe tb-5_L32). Harm: harmful vs benign (tb-5_L39). Politics: left vs right (tb-5_L39). Each cell = one bar in the three-panel figure.",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "fig:persona-modulation-full"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:38+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json",
+        "experiments/token_level_probes/system_prompt_modulation_v2/politics_scoring_results.json"
+      ],
+      "derivation": "For each (domain, system_prompt): filter items; take `eot_scores[<domain probe>]`; pooled Cohen's d(pos, neg); round to 2dp."
     },
     {
-      "name": "Persona modulation d full truth neutral",
-      "value": 2.47,
-      "statement": "Cohen's d for true vs false separation under the neutral system prompt in the truth domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L32).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full truth unreliable_narrator",
-      "value": -0.62,
-      "statement": "Cohen's d for true vs false separation under the unreliable_narrator system prompt in the truth domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L32).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full truth contrarian",
-      "value": -2.51,
-      "statement": "Cohen's d for true vs false separation under the contrarian system prompt in the truth domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L32).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full truth opposite_day",
-      "value": -0.05,
-      "statement": "Cohen's d for true vs false separation under the opposite_day system prompt in the truth domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L32).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full truth lie_directive",
-      "value": -1.77,
-      "statement": "Cohen's d for true vs false separation under the lie_directive system prompt in the truth domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L32).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full truth pathological_liar",
-      "value": -2.53,
-      "statement": "Cohen's d for true vs false separation under the pathological_liar system prompt in the truth domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L32).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full truth con_artist",
-      "value": 0.97,
-      "statement": "Cohen's d for true vs false separation under the con_artist system prompt in the truth domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L32).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full truth gaslighter",
-      "value": -0.24,
-      "statement": "Cohen's d for true vs false separation under the gaslighter system prompt in the truth domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L32).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full harm safe",
-      "value": -2.4,
-      "statement": "Cohen's d for harmful vs benign separation under the safe system prompt in the harm domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full harm neutral",
-      "value": -2.12,
-      "statement": "Cohen's d for harmful vs benign separation under the neutral system prompt in the harm domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full harm unrestricted",
-      "value": -1.61,
-      "statement": "Cohen's d for harmful vs benign separation under the unrestricted system prompt in the harm domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full harm sinister_ai",
-      "value": 0.05,
-      "statement": "Cohen's d for harmful vs benign separation under the sinister_ai system prompt in the harm domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full harm sadist",
-      "value": 0.19,
-      "statement": "Cohen's d for harmful vs benign separation under the sadist system prompt in the harm domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full politics socialist",
-      "value": 2.77,
-      "statement": "Cohen's d for left vs right separation under the socialist system prompt in the politics domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full politics democrat",
-      "value": 2.72,
-      "statement": "Cohen's d for left vs right separation under the democrat system prompt in the politics domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full politics centrist",
-      "value": 0.82,
-      "statement": "Cohen's d for left vs right separation under the centrist system prompt in the politics domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full politics apolitical",
-      "value": 0.5,
-      "statement": "Cohen's d for left vs right separation under the apolitical system prompt in the politics domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full politics neutral",
-      "value": 1.36,
-      "statement": "Cohen's d for left vs right separation under the neutral system prompt in the politics domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full politics libertarian",
-      "value": -0.56,
-      "statement": "Cohen's d for left vs right separation under the libertarian system prompt in the politics domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full politics republican",
-      "value": -1.11,
-      "statement": "Cohen's d for left vs right separation under the republican system prompt in the politics domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full politics nationalist",
-      "value": -0.58,
-      "statement": "Cohen's d for left vs right separation under the nationalist system prompt in the politics domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Persona modulation d full politics contrarian",
-      "value": -0.55,
-      "statement": "Cohen's d for left vs right separation under the contrarian system prompt in the politics domain, as rendered in the full-appendix persona modulation figure (end-of-turn probe, tb-5_L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ]
-    },
-    {
-      "name": "Cross training d truth end-of-turn probe",
-      "value": 1.45,
-      "statement": "Signed Cohen's d at the end-of-turn token for the truth domain under the end-of-turn probe (positive = first-listed class scores higher: true / harmful / left). Rendered as a bar in the cross-training-selector appendix figure.",
+      "name": "Cross training d",
+      "value": {
+        "truth": {
+          "end-of-turn probe": 1.45,
+          "model-marker probe": 1.3,
+          "task-averaged probe": 3.14
+        },
+        "harm": {
+          "end-of-turn probe": -2.05,
+          "model-marker probe": -1.52,
+          "task-averaged probe": -2.27
+        },
+        "politics_democrat": {
+          "end-of-turn probe": 2.72,
+          "model-marker probe": 2.18,
+          "task-averaged probe": 3.4
+        },
+        "politics_republican": {
+          "end-of-turn probe": -1.11,
+          "model-marker probe": -1.44,
+          "task-averaged probe": -1.76
+        }
+      },
+      "statement": "Signed Cohen's d at the end-of-turn token, one cell per (domain, probe family) bar in the cross-training-selector appendix figure. Positive = first-listed class scores higher (true / harmful / left).",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "fig:cross-training"
-      ]
-    },
-    {
-      "name": "Cross training d harm end-of-turn probe",
-      "value": -2.05,
-      "statement": "Signed Cohen's d at the end-of-turn token for the harm domain under the end-of-turn probe (positive = first-listed class scores higher: true / harmful / left). Rendered as a bar in the cross-training-selector appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:cross-training"
-      ]
-    },
-    {
-      "name": "Cross training d politics_democrat end-of-turn probe",
-      "value": 2.72,
-      "statement": "Signed Cohen's d at the end-of-turn token for the politics_democrat domain under the end-of-turn probe (positive = first-listed class scores higher: true / harmful / left). Rendered as a bar in the cross-training-selector appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:cross-training"
-      ]
-    },
-    {
-      "name": "Cross training d politics_republican end-of-turn probe",
-      "value": -1.11,
-      "statement": "Signed Cohen's d at the end-of-turn token for the politics_republican domain under the end-of-turn probe (positive = first-listed class scores higher: true / harmful / left). Rendered as a bar in the cross-training-selector appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:cross-training"
-      ]
-    },
-    {
-      "name": "Cross training d truth model-marker probe",
-      "value": 1.3,
-      "statement": "Signed Cohen's d at the end-of-turn token for the truth domain under the model-marker probe (positive = first-listed class scores higher: true / harmful / left). Rendered as a bar in the cross-training-selector appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:cross-training"
-      ]
-    },
-    {
-      "name": "Cross training d harm model-marker probe",
-      "value": -1.52,
-      "statement": "Signed Cohen's d at the end-of-turn token for the harm domain under the model-marker probe (positive = first-listed class scores higher: true / harmful / left). Rendered as a bar in the cross-training-selector appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:cross-training"
-      ]
-    },
-    {
-      "name": "Cross training d politics_democrat model-marker probe",
-      "value": 2.18,
-      "statement": "Signed Cohen's d at the end-of-turn token for the politics_democrat domain under the model-marker probe (positive = first-listed class scores higher: true / harmful / left). Rendered as a bar in the cross-training-selector appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:cross-training"
-      ]
-    },
-    {
-      "name": "Cross training d politics_republican model-marker probe",
-      "value": -1.44,
-      "statement": "Signed Cohen's d at the end-of-turn token for the politics_republican domain under the model-marker probe (positive = first-listed class scores higher: true / harmful / left). Rendered as a bar in the cross-training-selector appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:cross-training"
-      ]
-    },
-    {
-      "name": "Cross training d truth task-averaged probe",
-      "value": 3.14,
-      "statement": "Signed Cohen's d at the end-of-turn token for the truth domain under the task-averaged probe (positive = first-listed class scores higher: true / harmful / left). Rendered as a bar in the cross-training-selector appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:cross-training"
-      ]
-    },
-    {
-      "name": "Cross training d harm task-averaged probe",
-      "value": -2.27,
-      "statement": "Signed Cohen's d at the end-of-turn token for the harm domain under the task-averaged probe (positive = first-listed class scores higher: true / harmful / left). Rendered as a bar in the cross-training-selector appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:cross-training"
-      ]
-    },
-    {
-      "name": "Cross training d politics_democrat task-averaged probe",
-      "value": 3.4,
-      "statement": "Signed Cohen's d at the end-of-turn token for the politics_democrat domain under the task-averaged probe (positive = first-listed class scores higher: true / harmful / left). Rendered as a bar in the cross-training-selector appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:cross-training"
-      ]
-    },
-    {
-      "name": "Cross training d politics_republican task-averaged probe",
-      "value": -1.76,
-      "statement": "Signed Cohen's d at the end-of-turn token for the politics_republican domain under the task-averaged probe (positive = first-listed class scores higher: true / harmful / left). Rendered as a bar in the cross-training-selector appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:cross-training"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:38+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/canonical_probe_eval/headline_table.csv"
+      ],
+      "derivation": "For each (domain, probe_family_prefix) cell: select the row matching domain and probe prefix from headline_table.csv; read `d`; flip sign for non-parent politics rows (right>left → left>right); round to 2dp."
     },
     {
       "name": "CREAK truth n claims prose",
@@ -451,7 +281,12 @@
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:38+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
+      ],
+      "derivation": "row with domain=='truth (user)' and probe=='tb-5_L32'; `n_pos` column."
     },
     {
       "name": "CREAK truth CV accuracy",
@@ -460,7 +295,12 @@
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:38+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
+      ],
+      "derivation": "row with domain=='truth (user)' and probe=='tb-5_L32'; `cv_acc` column; round to 2dp."
     },
     {
       "name": "BailBench harm n items prose",
@@ -469,7 +309,12 @@
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:38+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
+      ],
+      "derivation": "row with domain=='harm (user)' and probe=='tb-5_L39'; `n_pos` column."
     },
     {
       "name": "BailBench harm CV accuracy user",
@@ -478,7 +323,12 @@
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:38+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
+      ],
+      "derivation": "row with domain=='harm (user)' and probe=='tb-5_L39'; `cv_acc` column; round to 2dp."
     },
     {
       "name": "BailBench harm CV accuracy assistant",
@@ -487,116 +337,82 @@
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "sec:induced-roleplay"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:38+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
+      ],
+      "derivation": "row with domain=='harm (assistant)' and probe=='tb-5_L39'; `cv_acc` column; round to 2dp."
     },
     {
-      "name": "Per turn parent absolute d truth user",
-      "value": 3.19,
-      "statement": "Absolute Cohen's d for the task-averaged parent probe on the truth domain at the user turn; drawn as the horizontal dashed reference line in the per-turn appendix figure. Value carried over as a hard-coded parent-run summary in the producer (see headline_table.csv parent rows).",
+      "name": "Per turn parent absolute d",
+      "value": {
+        "truth": {
+          "user": 3.19,
+          "assistant": 3.0
+        },
+        "harm": {
+          "user": 1.97,
+          "assistant": 1.91
+        }
+      },
+      "statement": "Absolute Cohen's d for the task-averaged parent probe, one cell per (domain, turn), drawn as horizontal dashed reference lines in the per-turn appendix figure. Hard-coded parent-run summary; see headline_table.csv parent rows.",
+      "source": "manual: hard-coded parent-probe summary in the producer; see headline_table.csv parent rows",
+      "used_in": [
+        "fig:per-turn-cross"
+      ],
+      "computed_at": "2026-04-24T14:16:38+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/canonical_probe_eval/headline_table.csv"
+      ],
+      "derivation": "Reference values hard-coded in fig_appendix_per_turn's `parent` dict; each cell is |d| for the task-averaged parent probe at the given (domain, turn) — see 'task_mean_L32/39 (parent)' rows of headline_table.csv."
+    },
+    {
+      "name": "Per turn absolute d truth",
+      "value": {
+        "user": {
+          "end-of-turn probe": 3.35,
+          "model-marker probe": 3.73
+        },
+        "assistant": {
+          "end-of-turn probe": 2.47,
+          "model-marker probe": 2.58
+        }
+      },
+      "statement": "Absolute Cohen's d at the end-of-turn token on the truth stimuli, one cell per (turn, probe family); rendered as bars in the per-turn appendix figure.",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "fig:per-turn-cross"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:38+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
+      ],
+      "derivation": "For each (turn, probe): row with domain=='truth (<turn>)' and the given probe identifier; abs(`d` column); round to 2dp."
     },
     {
-      "name": "Per turn parent absolute d truth assistant",
-      "value": 3.0,
-      "statement": "Absolute Cohen's d for the task-averaged parent probe on the truth domain at the assistant turn; drawn as the horizontal dashed reference line in the per-turn appendix figure. Value carried over as a hard-coded parent-run summary in the producer (see headline_table.csv parent rows).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:per-turn-cross"
-      ]
-    },
-    {
-      "name": "Per turn parent absolute d harm user",
-      "value": 1.97,
-      "statement": "Absolute Cohen's d for the task-averaged parent probe on the harm domain at the user turn; drawn as the horizontal dashed reference line in the per-turn appendix figure. Value carried over as a hard-coded parent-run summary in the producer (see headline_table.csv parent rows).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:per-turn-cross"
-      ]
-    },
-    {
-      "name": "Per turn parent absolute d harm assistant",
-      "value": 1.91,
-      "statement": "Absolute Cohen's d for the task-averaged parent probe on the harm domain at the assistant turn; drawn as the horizontal dashed reference line in the per-turn appendix figure. Value carried over as a hard-coded parent-run summary in the producer (see headline_table.csv parent rows).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:per-turn-cross"
-      ]
-    },
-    {
-      "name": "Per turn absolute d truth user end-of-turn probe",
-      "value": 3.35,
-      "statement": "Absolute Cohen's d at the end-of-turn token on the truth user-turn stimuli for the end-of-turn probe. Rendered as a bar in the per-turn appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:per-turn-cross"
-      ]
-    },
-    {
-      "name": "Per turn absolute d truth assistant end-of-turn probe",
-      "value": 2.47,
-      "statement": "Absolute Cohen's d at the end-of-turn token on the truth assistant-turn stimuli for the end-of-turn probe. Rendered as a bar in the per-turn appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:per-turn-cross"
-      ]
-    },
-    {
-      "name": "Per turn absolute d truth user model-marker probe",
-      "value": 3.73,
-      "statement": "Absolute Cohen's d at the end-of-turn token on the truth user-turn stimuli for the model-marker probe. Rendered as a bar in the per-turn appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:per-turn-cross"
-      ]
-    },
-    {
-      "name": "Per turn absolute d truth assistant model-marker probe",
-      "value": 2.58,
-      "statement": "Absolute Cohen's d at the end-of-turn token on the truth assistant-turn stimuli for the model-marker probe. Rendered as a bar in the per-turn appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:per-turn-cross"
-      ]
-    },
-    {
-      "name": "Per turn absolute d harm user end-of-turn probe",
-      "value": 2.05,
-      "statement": "Absolute Cohen's d at the end-of-turn token on the harm user-turn stimuli for the end-of-turn probe. Rendered as a bar in the per-turn appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:per-turn-cross"
-      ]
-    },
-    {
-      "name": "Per turn absolute d harm assistant end-of-turn probe",
-      "value": 2.12,
-      "statement": "Absolute Cohen's d at the end-of-turn token on the harm assistant-turn stimuli for the end-of-turn probe. Rendered as a bar in the per-turn appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:per-turn-cross"
-      ]
-    },
-    {
-      "name": "Per turn absolute d harm user model-marker probe",
-      "value": 3.12,
-      "statement": "Absolute Cohen's d at the end-of-turn token on the harm user-turn stimuli for the model-marker probe. Rendered as a bar in the per-turn appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:per-turn-cross"
-      ]
-    },
-    {
-      "name": "Per turn absolute d harm assistant model-marker probe",
-      "value": 0.51,
-      "statement": "Absolute Cohen's d at the end-of-turn token on the harm assistant-turn stimuli for the model-marker probe. Rendered as a bar in the per-turn appendix figure.",
+      "name": "Per turn absolute d harm",
+      "value": {
+        "user": {
+          "end-of-turn probe": 2.05,
+          "model-marker probe": 3.12
+        },
+        "assistant": {
+          "end-of-turn probe": 2.12,
+          "model-marker probe": 0.51
+        }
+      },
+      "statement": "Absolute Cohen's d at the end-of-turn token on the harm stimuli, one cell per (turn, probe family); rendered as bars in the per-turn appendix figure.",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "fig:per-turn-cross",
         "app:cross-token"
-      ]
+      ],
+      "computed_at": "2026-04-24T14:16:38+00:00",
+      "data_paths": [
+        "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
+      ],
+      "derivation": "For each (turn, probe): row with domain=='harm (<turn>)' and the given probe identifier; abs(`d` column); round to 2dp."
     }
   ]
 }

@@ -9,7 +9,13 @@
       "used_in": [
         "fig:persona-pca",
         "app:persona-selection"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:28:50+00:00",
+      "data_paths": [
+        "results/experiments/exp_20260319_235609/pre_task_active_learning",
+        "experiments/persona_sweep/sweep_personas.json"
+      ],
+      "derivation": "load `mu` from thurstonian_*.csv in each run_dir under results/experiments/exp_20260319_235609/pre_task_active_learning/; resolve persona name via sweep_personas.json; compute `df.corr()` across the 16 persona utility vectors. Then min over upper-triangular entries of `corr.loc[members, members]` for each of the three WITHIN_CLUSTER_GROUPS; round to 2dp."
     },
     {
       "name": "Persona sweep within-cluster r maximum",
@@ -19,7 +25,13 @@
       "used_in": [
         "fig:persona-pca",
         "app:persona-selection"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:28:50+00:00",
+      "data_paths": [
+        "results/experiments/exp_20260319_235609/pre_task_active_learning",
+        "experiments/persona_sweep/sweep_personas.json"
+      ],
+      "derivation": "load `mu` from thurstonian_*.csv in each run_dir under results/experiments/exp_20260319_235609/pre_task_active_learning/; resolve persona name via sweep_personas.json; compute `df.corr()` across the 16 persona utility vectors. Then max over upper-triangular entries of `corr.loc[members, members]` for each of the three WITHIN_CLUSTER_GROUPS; round to 2dp."
     },
     {
       "name": "Sadist baseline utility r",
@@ -29,7 +41,13 @@
       "used_in": [
         "fig:persona-pca",
         "app:persona-selection"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:28:50+00:00",
+      "data_paths": [
+        "results/experiments/exp_20260319_235609/pre_task_active_learning",
+        "experiments/persona_sweep/sweep_personas.json"
+      ],
+      "derivation": "load `mu` from thurstonian_*.csv in each run_dir under results/experiments/exp_20260319_235609/pre_task_active_learning/; resolve persona name via sweep_personas.json; compute `df.corr()` across the 16 persona utility vectors. `corr.loc[\"sadist\", \"baseline\"]`; round to 2dp."
     },
     {
       "name": "PC1+PC2 variance fraction",
@@ -39,7 +57,13 @@
       "used_in": [
         "fig:persona-pca",
         "app:persona-selection"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:28:50+00:00",
+      "data_paths": [
+        "results/experiments/exp_20260319_235609/pre_task_active_learning",
+        "experiments/persona_sweep/sweep_personas.json"
+      ],
+      "derivation": "PCA(n_components=2).fit(df.T.values); sum of `explained_variance_ratio_[:2]`; round to 2dp."
     },
     {
       "name": "Aura-poet utility r",
@@ -49,7 +73,13 @@
       "used_in": [
         "fig:persona-pca",
         "app:persona-selection"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:28:50+00:00",
+      "data_paths": [
+        "results/experiments/exp_20260319_235609/pre_task_active_learning",
+        "experiments/persona_sweep/sweep_personas.json"
+      ],
+      "derivation": "load `mu` from thurstonian_*.csv in each run_dir under results/experiments/exp_20260319_235609/pre_task_active_learning/; resolve persona name via sweep_personas.json; compute `df.corr()` across the 16 persona utility vectors. `corr.loc[\"aura\", \"poet\"]`; round to 2dp."
     },
     {
       "name": "Aura-therapist utility r",
@@ -59,7 +89,13 @@
       "used_in": [
         "fig:persona-pca",
         "app:persona-selection"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:28:50+00:00",
+      "data_paths": [
+        "results/experiments/exp_20260319_235609/pre_task_active_learning",
+        "experiments/persona_sweep/sweep_personas.json"
+      ],
+      "derivation": "load `mu` from thurstonian_*.csv in each run_dir under results/experiments/exp_20260319_235609/pre_task_active_learning/; resolve persona name via sweep_personas.json; compute `df.corr()` across the 16 persona utility vectors. `corr.loc[\"aura\", \"therapist\"]`; round to 2dp."
     },
     {
       "name": "Contrarian baseline utility r",
@@ -69,7 +105,13 @@
       "used_in": [
         "fig:persona-pca",
         "app:persona-selection"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:28:50+00:00",
+      "data_paths": [
+        "results/experiments/exp_20260319_235609/pre_task_active_learning",
+        "experiments/persona_sweep/sweep_personas.json"
+      ],
+      "derivation": "load `mu` from thurstonian_*.csv in each run_dir under results/experiments/exp_20260319_235609/pre_task_active_learning/; resolve persona name via sweep_personas.json; compute `df.corr()` across the 16 persona utility vectors. `corr.loc[\"contrarian\", \"baseline\"]`; round to 2dp."
     },
     {
       "name": "Original minimal spanning set max abs r",
@@ -79,7 +121,13 @@
       "used_in": [
         "fig:persona-pca",
         "app:persona-selection"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:28:50+00:00",
+      "data_paths": [
+        "results/experiments/exp_20260319_235609/pre_task_active_learning",
+        "experiments/persona_sweep/sweep_personas.json"
+      ],
+      "derivation": "load `mu` from thurstonian_*.csv in each run_dir under results/experiments/exp_20260319_235609/pre_task_active_learning/; resolve persona name via sweep_personas.json; compute `df.corr()` across the 16 persona utility vectors. max over upper-triangular entries of |`corr.loc[ORIGINAL_MINIMAL_SET, ORIGINAL_MINIMAL_SET]`|; round to 2dp."
     },
     {
       "name": "Persona redundancy threshold r",
@@ -89,7 +137,10 @@
       "used_in": [
         "fig:persona-pca",
         "app:persona-selection"
-      ]
+      ],
+      "computed_at": "2026-04-24T10:28:50+00:00",
+      "data_paths": [],
+      "derivation": ""
     }
   ]
 }
