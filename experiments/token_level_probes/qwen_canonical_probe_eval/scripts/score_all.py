@@ -10,10 +10,13 @@ Usage:
 import json
 from pathlib import Path
 
+from dotenv import load_dotenv
 from tqdm import tqdm
 
 from src.models.huggingface_model import HuggingFaceModel
 from src.probes.score_stimuli import Probe, load_probes_from_manifest, score_stimuli_with_probes
+
+load_dotenv()
 
 DATA_DIR = Path("experiments/token_level_probes/system_prompt_modulation_v2/data")
 OUTPUT_PATH = Path("experiments/token_level_probes/qwen_canonical_probe_eval/scoring_results.json")
