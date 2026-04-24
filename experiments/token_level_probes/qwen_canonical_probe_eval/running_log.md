@@ -25,7 +25,10 @@ Append-only. Also the progress signal for the user when running on a pod.
 - Qwen-3.5-122B download in parallel tmux session `qwen_download` at ~77 MB/s. At 46 GB / 244 GB after ~10 min — ~35 more min to full download.
 - **Qwen sweep attempt 1:** transformers 4.57 doesn't recognize `qwen3_5_moe` architecture. Upgraded to transformers from git (5.7.0.dev0 — matches what was on the pod before container wipe).
 - **Qwen sweep attempt 2:** OOM on GPU 0. The `HuggingFaceModel` constructor defaults `device="cuda"`, which passes `device_map="cuda"` to `from_pretrained()` — loads everything on GPU 0 (fails for 244 GB model on 80 GB GPU). Fixed by passing `device="auto"` in the scripts, which produces `device_map="auto"` and shards across all 3 A100s.
-- **Qwen sweep attempt 3 (current):** relaunched with device="auto". Loading model across 3 GPUs.
+- **Qwen sweep attempt 3:** with device="auto" — hits `RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:2`. Root cause: probe callback pre-allocated `coef` on `cuda:0`, but sharded model means hooked layers can run on any GPU. Fixed `src/probes/scoring.py:_make_probe_callback` to cache coef per `hidden.device`. Committed + pushed.
+- **Qwen sweep attempt 4 (running):** weights sharded 77/77/77 GB across 3 A100s (near capacity — transformers reports "Some parameters are on the meta device because they were offloaded to the cpu"). Throughput ~1.8 s/item unbatched — ETA ~1h45m for 3531 truth+harm items + ~45m for politics = ~2.5h total. Monitor armed on 25/50/75/100% milestones.
+- **Selector check output (verified):** Qwen chat template ends with `['.', '<|im_end|>', '\n']`. `turn_boundary:-1 = '\n'` (newline after `<|im_end|>`). This is exactly where the Qwen probe was trained (per the `heldout_turn_boundary_m1` manifest activations path), so it's the right application point — the paper's "end-of-turn token" phrasing glosses over Qwen's trailing-newline quirk.
+
 
 
 
