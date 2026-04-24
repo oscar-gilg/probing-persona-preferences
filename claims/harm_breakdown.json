@@ -9,7 +9,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
@@ -24,7 +24,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -42,7 +42,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -60,7 +60,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -78,7 +78,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
@@ -93,7 +93,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -111,7 +111,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -129,7 +129,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -147,7 +147,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
@@ -162,7 +162,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -180,7 +180,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -198,7 +198,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -216,7 +216,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl"
       ],
@@ -230,11 +230,28 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl"
       ],
       "derivation": "Same as the c=-0.05 endpoint but report mean at applied_c==+0.05."
+    },
+    {
+      "name": "Contrastive P chose steered at L23 c pos 0.05 min pair type",
+      "value": 0.968,
+      "statement": "At layer 23 with $|c|=5\\%$, the minimum of $P(\\text{chose steered task} \\mid \\text{responded})$ across the three pair types (bb=0.998, hb=0.968, hh=0.973) is 0.968 on the balanced 150-pair set — lower bound for the paper's headline causal-efficacy claim.",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "abstract",
+        "sec:shared.intro",
+        "sec:method-val2"
+      ],
+      "computed_at": "2026-04-24T17:07:12+00:00",
+      "data_paths": [
+        "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
+        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
+      ],
+      "derivation": "Per pair_type in {bb, hb, hh}: filter contrastive_L23_150.parsed.jsonl to layer==23 and pair_type==pt; for each responded row, credit P(chose steered) by treating task a as steered (applied_c = +signed_multiplier, chose_steered = choice=='a') and task b as steered (applied_c = -signed_multiplier, chose_steered = choice=='b'); report mean at applied_c==+0.05; take min across pair types; round to 3dp."
     },
     {
       "name": "Single task swing L23 aggregate",
@@ -244,7 +261,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:03:14+00:00",
+      "computed_at": "2026-04-24T17:07:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
