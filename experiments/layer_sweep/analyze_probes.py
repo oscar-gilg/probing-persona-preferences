@@ -165,7 +165,7 @@ def _plot_heatmap(matrix: np.ndarray, layers: list[int], title: str, path: Path,
 
 def _plot_cross_selector(matrix: np.ndarray, layers: list[int], path: Path) -> None:
     fig, ax = plt.subplots(figsize=(7, 6))
-    im = ax.imshow(matrix, vmin=-1, vmax=1, cmap="RdBu_r", aspect="equal")
+    im = ax.imshow(matrix, vmin=0, vmax=1, cmap="viridis", aspect="equal")
     ax.set_xticks(range(len(layers)))
     ax.set_yticks(range(len(layers)))
     ax.set_xticklabels(layers, rotation=90, fontsize=7)
@@ -265,7 +265,7 @@ def main() -> None:
         _plot_heatmap(
             within_cosine[sel], layers_ref,
             f"Within-selector cosine — {SELECTORS[sel]['display']}",
-            p, vmin=-1, vmax=1, cmap="RdBu_r",
+            p, vmin=0, vmax=1, cmap="viridis",
         )
 
     cross_mat = _cross_selector_cosine(
