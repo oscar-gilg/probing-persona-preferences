@@ -17,3 +17,5 @@
 - **Aura complete (20:00:41 UTC)**: retry attempt 1 finished parse cleanly in ~3 min. 2400/2400 parsed, 0 unparseable labels.
   - `compute_swings.py`: aura P(steered)@|c|=0.05 = **0.849** (SEM 0.010, n=1200); @|c|=0.03 = 0.767; refusal (LLM judge hard_refusal) = **13.8%**.
   - vs unilateral mean Δ for aura (0.383): differential swing 2·(0.849−0.5) = 0.698 is ~1.8× the unilateral — matches the paper's expectation that contrastive > unilateral.
+- **Contrarian complete (20:24 UTC)**: parse also hung at ~1950/2400 on attempt 1 (similar pattern — ~40s no progress, 38 idle sockets); SIGKILL'd, attempt 2 resumed parse from 1950 and finished in ~30s. Results: P(steered)@|c|=0.05 = **0.727** (SEM 0.013, n=1198); refusal 10.38%. Differential swing 2·(0.727−0.5) = 0.454 vs unilateral mean Δ 0.228 (≈2× stronger, consistent with aura).
+- Both aura and contrarian needed one retry due to OpenRouter parse hang — robust script worked as intended.
