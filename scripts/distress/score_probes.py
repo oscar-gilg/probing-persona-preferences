@@ -121,7 +121,7 @@ def main() -> None:
             print(f"[warn] {tr['condition']}/{tr['task_id']}/r{tr['rollout_idx']}: found {len(eot_positions)} assistant EOTs, expected {n_asst_turns}")
 
         for probe_idx, (layer, probe_key, _) in enumerate(probes):
-            scores_arr = all_token_scores[probe_idx][0]  # (seq_len,) — score_prompt_all_tokens batches
+            scores_arr = all_token_scores[probe_idx]  # (seq_len,)
             for turn_idx, pos in enumerate(eot_positions):
                 row = {
                     "condition": tr["condition"],
@@ -140,7 +140,7 @@ def main() -> None:
             # Only save L32 (the canonical probe) to keep the npz manageable.
             l32_idx = LAYERS.index(32)
             key = f"{tr['condition']}__{tr['task_id']}__r{tr['rollout_idx']}"
-            token_scores_store[key] = all_token_scores[l32_idx][0].astype(np.float32)
+            token_scores_store[key] = all_token_scores[l32_idx].astype(np.float32)
 
         out_f.flush()
 
