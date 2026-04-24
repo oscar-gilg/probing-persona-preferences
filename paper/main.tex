@@ -540,14 +540,13 @@ We tighten the test by pitting a system-prompted subject preference against an i
 
 \subsection{Single-sentence biography injection}
 \label{app:induced-fine}
-A 10-sentence biography identical except for one sentence installs or removes a target interest. The probe ranks the target task \#1 of 50 in \expthreeveightAvcTargetTasksProbeRanksOne/\expthreeveightAvcTargetTasksTotal{} pro-vs-anti comparisons: a single sentence of biographical context moves the direction.
-
-\todo{Qwen-3.5-122B replication (E1c) pending: 120 biography conditions (2 base roles $\times$ 20 targets $\times$ A/B/C), 50 comparison tasks, $\sim$12\,k forward passes + $\sim$2,400 API calls. Success criterion: rank-\#1 rate $>70\%$ on A-vs-C pairs.}
+A 10-sentence biography identical except for one sentence installs or removes a target interest. On Gemma-3-27B (L31 ridge probe), the probe ranks the target task \#1 of 50 in \expthreeveightAvcTargetTasksProbeRanksOne/\expthreeveightAvcTargetTasksTotal{} pro-vs-anti (A-vs-C) comparisons. On Qwen-3.5-122B (L38 tb-1 ridge probe), the same experiment on a math-pruned \qwenEonecAvcTargetPairsTotal{}-pair pool reaches \qwenEonecAvcTargetRanksOne/\qwenEonecAvcTargetPairsTotal. Both Qwen misses are the same math target (\texttt{competition\_math\_10564}); the other math target in the pool ranks \#1 in both base roles. This is consistent with the biography sentence boosting a cluster of related math tasks rather than the specific target --- a selectivity ceiling of the probe, not a failure of the injection mechanism.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\linewidth]{plot_030526_exp3v8_avc.png}
-  \caption{\textbf{Fine-grained preference injection.} Stars mark the target task for each biography; filled stars indicate the probe ranked it \#1.}
+  \includegraphics[width=0.48\linewidth]{plot_030526_exp3v8_avc.png}\hfill
+  \includegraphics[width=0.48\linewidth]{plot_042426_qwen_e1c_avc.png}
+  \caption{\textbf{Fine-grained preference injection.} Each grey dot is one (A-vs-C pair, comparison task) pair; 50 tasks $\times$ pool size. Filled red stars: probe ranked the target task \#1 of 50; open red stars: not \#1. Dashed line: linear fit pooled across all task-condition points. Left: Gemma-3-27B, full \expthreeveightAvcTargetTasksTotal{}-pair pool (pooled $r = \expthreeveightAvcProbeDeltaPooledRAllPoints$). Right: Qwen-3.5-122B, math-pruned \qwenEonecAvcTargetPairsTotal{}-pair pool retaining \texttt{competition\_math\_10564} and \texttt{competition\_math\_11276} as the two math targets (pooled $r = \qwenEonecAvcProbeDeltaPooledRAllPoints$). Both Qwen misses are the same math target (\texttt{competition\_math\_10564}).}
   \label{fig:fine-grained}
 \end{figure}
 
@@ -856,7 +855,7 @@ Confirmed:
 \begin{itemize}
 \item \todo{E1a: Novel-topic preference shifts (\S\mbox{\ref{sec:induced-basic}}).}
 \item \todo{E1b: Persona-induced preferences on 4 paper personas (\S\mbox{\ref{sec:shared-probe}}).}
-\item \todo{E1c: Single-sentence biography injection (\S\mbox{\ref{sec:induced-fine}}).}
+\item E1c: Single-sentence biography injection --- Qwen-3.5-122B \qwenEonecAvcTargetRanksOne/\qwenEonecAvcTargetPairsTotal{} rank-\#1 on math-pruned pool (App.~\ref{app:induced-fine}).
 \item \todo{E2a: Harmful-benign contrastive steering (\S\mbox{\ref{sec:induced-roleplay}}, \S\mbox{\ref{sec:open-ended-safety}}).}
 \item \todo{E2b: CREAK truth-probe eval (\S\mbox{\ref{sec:induced-roleplay}}).}
 \item \todo{E3a: Cross-persona probe transfer (\S\mbox{\ref{sec:shared-probe}}).}
