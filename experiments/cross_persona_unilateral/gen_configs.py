@@ -45,7 +45,7 @@ def _config_for_persona(persona: str, mean_norm_L25: float, system_prompt: str) 
         "pairs_path": str(PAIRS_PATH),
         "probe_manifest": PROBE_MANIFEST_TMPL.format(persona=persona),
         "checkpoint_path": str(CHECKPOINTS_DIR / f"{persona}.jsonl"),
-        "mean_norm": {INJECT_LAYER: float(mean_norm_L25)},
+        "mean_norm": float(mean_norm_L25),
         "n_trials": 3,
         "temperature": 1.0,
         "seed": 42,

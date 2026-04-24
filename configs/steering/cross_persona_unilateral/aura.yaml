@@ -3,8 +3,7 @@ max_new_tokens: 64
 pairs_path: experiments/cross_persona_unilateral/steering_pairs.json
 probe_manifest: results/probes/persona_sweep_final_six/aura_tb-5/
 checkpoint_path: experiments/cross_persona_unilateral/checkpoints/aura.jsonl
-mean_norm:
-  25: 42361.92578125
+mean_norm: 42361.92578125
 n_trials: 3
 temperature: 1.0
 seed: 42
