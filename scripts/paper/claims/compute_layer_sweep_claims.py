@@ -124,36 +124,6 @@ def main() -> None:
     )
 
     claims.register(
-        name="Contrastive steering P a at L23 c neg 0.05 eot",
-        value=p_a_neg5,
-        statement=(
-            f"Contrastive steering along the eot probe direction at layer 23 "
-            f"with $c = -5\\%$ of the mean activation norm drives "
-            f"$P(\\text{{chose higher-utility task}}) = {p_a_neg5}$ on a 50-pair "
-            f"test sample."
-        ),
-        used_in=["sec:method-val2"],
-        data_paths=["experiments/layer_sweep/checkpoints/eot_probe_L23.parsed.jsonl"],
-        derivation=(
-            "Filter rows to layer==23 and signed_multiplier==-0.05; "
-            "P(choice_original=='a'); round to 3dp."
-        ),
-    )
-    claims.register(
-        name="Contrastive steering P a at L23 c pos 0.05 eot",
-        value=p_a_pos5,
-        statement=(
-            f"Contrastive steering along the eot probe direction at layer 23 "
-            f"with $c = +5\\%$ raises $P(\\text{{chose higher-utility task}}) = {p_a_pos5}$."
-        ),
-        used_in=["sec:method-val2"],
-        data_paths=["experiments/layer_sweep/checkpoints/eot_probe_L23.parsed.jsonl"],
-        derivation=(
-            "Filter rows to layer==23 and signed_multiplier==+0.05; "
-            "P(choice_original=='a'); round to 3dp."
-        ),
-    )
-    claims.register(
         name="Contrastive preference swing L23",
         value=contr_swing_L23,
         statement=(
@@ -287,38 +257,6 @@ def main() -> None:
     suppression_L23 = round(agg_baseline - agg_neg5_L23, 3)
     amplification_L23 = round(agg_pos5_L23 - agg_baseline, 3)
 
-    claims.register(
-        name="Single task aggregate P steered at L23 c pos 0.05",
-        value=agg_pos5_L23,
-        statement=(
-            f"At layer 23 with an applied coefficient of +5\\% on a single task's "
-            f"tokens, the model picks that task at P = {agg_pos5_L23}, averaged "
-            f"across which of the two physical tasks was steered."
-        ),
-        used_in=["sec:method-val2"],
-        data_paths=[
-            "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
-        ],
-        derivation=(
-            "Aggregate over both unilateral_first and unilateral_second conditions "
-            "at layer==23 where the applied coefficient (= signed_multiplier * "
-            "(+1 if ordering==0 else -1)) equals +0.05; compute P(choice_original "
-            "== physical task in steered span); round to 3dp."
-        ),
-    )
-    claims.register(
-        name="Single task aggregate P steered at L23 c neg 0.05",
-        value=agg_neg5_L23,
-        statement=(
-            f"At layer 23 with an applied coefficient of -5\\% on a single task's "
-            f"tokens, the model picks that task at P = {agg_neg5_L23}."
-        ),
-        used_in=["sec:method-val2"],
-        data_paths=[
-            "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
-        ],
-        derivation="Same as the +5% version but applied coefficient == -0.05.",
-    )
     claims.register(
         name="Single task aggregate swing L23",
         value=single_swing_L23,

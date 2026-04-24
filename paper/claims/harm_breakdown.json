@@ -9,30 +9,12 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
+      "computed_at": "2026-04-24T18:12:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
       ],
       "derivation": "Filter to layer==23 in the contrastive parsed.jsonl; keep rows where the pair's pair_type=='bb' (via steering_pairs_150.json); compute P(choice_original=='a') separately at signed_multiplier ==+0.05 and ==-0.05; return |P@+0.05 - P@-0.05|; round to 3dp."
-    },
-    {
-      "name": "Single task swing L23 bb",
-      "value": 0.492,
-      "statement": "At layer 23, single-task steering produces a 0.49-point swing in $P(\\text{chose steered task} \\mid \\text{responded})$ on benign-benign pairs between $c = -5\\%$ (0.005) and $c = +5\\%$ (0.497).",
-      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
-      "used_in": [
-        "sec:method-val2"
-      ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
-      "data_paths": [
-        "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
-        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
-        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
-        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
-        "experiments/layer_sweep/steering_pairs.json"
-      ],
-      "derivation": "Filter single_task_L23_150.parsed.jsonl to layer==23 and pair_type=='bb'. For each row compute applied_c = signed_multiplier * (1 if ordering==0 else -1) and target = 'a' if first-span ordering==0 else 'b' (analogous for second-span). Aggregate P(choice_original==target) at applied_c==+0.05 and ==-0.05; swing = P(+) - P(-); round to 3dp."
     },
     {
       "name": "Single task suppression L23 bb",
@@ -42,7 +24,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
+      "computed_at": "2026-04-24T18:12:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -60,7 +42,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
+      "computed_at": "2026-04-24T18:12:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -78,30 +60,12 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
+      "computed_at": "2026-04-24T18:12:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
       ],
       "derivation": "Filter to layer==23 in the contrastive parsed.jsonl; keep rows where the pair's pair_type=='hb' (via steering_pairs_150.json); compute P(choice_original=='a') separately at signed_multiplier ==+0.05 and ==-0.05; return |P@+0.05 - P@-0.05|; round to 3dp."
-    },
-    {
-      "name": "Single task swing L23 hb",
-      "value": 0.49,
-      "statement": "At layer 23, single-task steering produces a 0.49-point swing in $P(\\text{chose steered task} \\mid \\text{responded})$ on harmful-benign pairs between $c = -5\\%$ (0.232) and $c = +5\\%$ (0.722).",
-      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
-      "used_in": [
-        "sec:method-val2"
-      ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
-      "data_paths": [
-        "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
-        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
-        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
-        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
-        "experiments/layer_sweep/steering_pairs.json"
-      ],
-      "derivation": "Filter single_task_L23_150.parsed.jsonl to layer==23 and pair_type=='hb'. For each row compute applied_c = signed_multiplier * (1 if ordering==0 else -1) and target = 'a' if first-span ordering==0 else 'b' (analogous for second-span). Aggregate P(choice_original==target) at applied_c==+0.05 and ==-0.05; swing = P(+) - P(-); round to 3dp."
     },
     {
       "name": "Single task suppression L23 hb",
@@ -111,7 +75,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
+      "computed_at": "2026-04-24T18:12:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -129,7 +93,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
+      "computed_at": "2026-04-24T18:12:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -147,30 +111,12 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
+      "computed_at": "2026-04-24T18:12:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
       ],
       "derivation": "Filter to layer==23 in the contrastive parsed.jsonl; keep rows where the pair's pair_type=='hh' (via steering_pairs_150.json); compute P(choice_original=='a') separately at signed_multiplier ==+0.05 and ==-0.05; return |P@+0.05 - P@-0.05|; round to 3dp."
-    },
-    {
-      "name": "Single task swing L23 hh",
-      "value": 0.498,
-      "statement": "At layer 23, single-task steering produces a 0.50-point swing in $P(\\text{chose steered task} \\mid \\text{responded})$ on harmful-harmful pairs between $c = -5\\%$ (0.232) and $c = +5\\%$ (0.73).",
-      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
-      "used_in": [
-        "sec:method-val2"
-      ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
-      "data_paths": [
-        "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
-        "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
-        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
-        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
-        "experiments/layer_sweep/steering_pairs.json"
-      ],
-      "derivation": "Filter single_task_L23_150.parsed.jsonl to layer==23 and pair_type=='hh'. For each row compute applied_c = signed_multiplier * (1 if ordering==0 else -1) and target = 'a' if first-span ordering==0 else 'b' (analogous for second-span). Aggregate P(choice_original==target) at applied_c==+0.05 and ==-0.05; swing = P(+) - P(-); round to 3dp."
     },
     {
       "name": "Single task suppression L23 hh",
@@ -180,7 +126,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
+      "computed_at": "2026-04-24T18:12:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -198,7 +144,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
+      "computed_at": "2026-04-24T18:12:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -216,7 +162,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
+      "computed_at": "2026-04-24T18:12:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl"
       ],
@@ -230,7 +176,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
+      "computed_at": "2026-04-24T18:12:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl"
       ],
@@ -243,10 +189,10 @@
       "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
       "used_in": [
         "abstract",
-        "sec:shared.intro",
+        "sec:shared",
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
+      "computed_at": "2026-04-24T18:12:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
@@ -261,7 +207,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T17:07:12+00:00",
+      "computed_at": "2026-04-24T18:12:12+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"

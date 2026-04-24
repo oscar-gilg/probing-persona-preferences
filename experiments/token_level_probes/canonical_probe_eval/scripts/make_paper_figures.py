@@ -45,9 +45,9 @@ PROBE_DISPLAY = {
     "tb-5_L32": "end-of-turn probe",
     "tb-5_L39": "end-of-turn probe",
     "tb-5_L53": "end-of-turn probe (L53)",
-    "tb-2_L32": "model-marker probe",
-    "tb-2_L39": "model-marker probe",
-    "tb-2_L53": "model-marker probe (L53)",
+    "tb-2_L32": "role-marker probe",
+    "tb-2_L39": "role-marker probe",
+    "tb-2_L53": "role-marker probe (L53)",
     "task_mean_L32": "task-averaged probe",
     "task_mean_L39": "task-averaged probe",
     "task_mean_L53": "task-averaged probe (L53)",
@@ -145,19 +145,22 @@ def fig_main_base_discrimination():
                 derivation="count of items with domain=='truth', turn=='user', condition=='false'.",
             )
         else:
-            d = claims.register(
-                name="BailBench harm Cohen's d",
-                value=round(float(d_raw), 2),
+            d = round(float(d_raw), 2)
+            claims.register(
+                name="BailBench harm absolute Cohen's d",
+                value=round(abs(float(d_raw)), 2),
                 statement=(
-                    "A ridge probe trained at the end-of-turn token (Gemma-3-27B, "
-                    "layer 39) discriminates harmful vs benign BailBench and "
-                    "stress-test items with Cohen's d under the default "
-                    "(neutral) persona; negative sign reflects the benign>harmful "
-                    "projection convention in the scoring pipeline."
+                    "Magnitude of the end-of-turn probe's Cohen's d (Gemma-3-27B, "
+                    "layer 39) discriminating harmful vs benign BailBench and "
+                    "stress-test items under the default persona; reported as "
+                    "|d| in sec:induced-roleplay."
                 ),
-                used_in=["fig:harm-truth", "sec:induced-roleplay"],
+                used_in=["sec:induced-roleplay"],
                 data_paths=[PARENT_REL],
-                derivation="items with domain=='harm' pooled over turn; take `eot_scores[\"tb-5_L39\"]`; pooled Cohen's d(harmful, benign); round to 2dp.",
+                derivation=(
+                    "Same as the signed harm Cohen's d derivation but report "
+                    "abs(value); round to 2dp."
+                ),
             )
             claims.register(
                 name="BailBench harm n harmful",
@@ -504,7 +507,7 @@ def fig_appendix_token_diagram():
     probe_annotations = [
         (4, "task-averaged probe\n(mean over the task span)", "#E65100", 1.5),
         (5, "end-of-turn probe\n(canonical; used in §5.1.2)", "#1976D2", 0.6),
-        (8, "model-marker probe\n(appendix only)", "#00897B", 0.6),
+        (8, "role-marker probe\n(appendix only)", "#00897B", 0.6),
     ]
     for idx, label, color, label_offset in probe_annotations:
         x = positions[idx]
@@ -554,7 +557,7 @@ def fig_appendix_cross_training_selector():
     }
     probe_color = {
         "end-of-turn probe": "#1976D2",
-        "model-marker probe": "#00897B",
+        "role-marker probe": "#00897B",
         "task-averaged probe": "#E65100",
     }
     # Match CSV probe name strings exactly (task_mean rows have " (parent)" suffix)
@@ -570,11 +573,11 @@ def fig_appendix_cross_training_selector():
     fig, ax = plt.subplots(figsize=(10, 4.8))
     x = np.arange(len(domain_order))
     w = 0.25
-    family_to_offset = {"end-of-turn probe": -w, "model-marker probe": 0, "task-averaged probe": w}
+    family_to_offset = {"end-of-turn probe": -w, "role-marker probe": 0, "task-averaged probe": w}
 
     ct_table: dict[str, dict[str, float]] = {d: {} for d in domain_order}
     for probe_prefix, label in [("tb-5", "end-of-turn probe"),
-                                ("tb-2", "model-marker probe"),
+                                ("tb-2", "role-marker probe"),
                                 ("task_mean", "task-averaged probe")]:
         heights = []
         for d in domain_order:
@@ -643,18 +646,6 @@ def fig_appendix_per_turn():
                          if r["domain"] == "harm (user)" and r["probe"] == "tb-5_L39")
     harm_assistant_row = next(r for r in rows
                               if r["domain"] == "harm (assistant)" and r["probe"] == "tb-5_L39")
-    claims.register(
-        name="CREAK truth n claims prose",
-        value=int(truth_user_row["n_pos"]),
-        statement=(
-            "Approximate per-class sample size quoted in sec:induced-roleplay "
-            "for CREAK true vs false claims at the user turn (also the n used "
-            "in the base discrimination panel)."
-        ),
-        used_in=["sec:induced-roleplay"],
-        data_paths=[PER_TURN_TABLE_REL],
-        derivation="row with domain=='truth (user)' and probe=='tb-5_L32'; `n_pos` column.",
-    )
     claims.register(
         name="CREAK truth CV accuracy",
         value=round(float(truth_user_row["cv_acc"]), 2),
@@ -737,11 +728,11 @@ def fig_appendix_per_turn():
     per_turn_tables: dict[str, dict[str, dict[str, float]]] = {}
     for ax, domain in zip(axes, ["truth", "harm"]):
         probes = [("tb-5_L32" if domain == "truth" else "tb-5_L39", "end-of-turn probe"),
-                  ("tb-2_L32" if domain == "truth" else "tb-2_L39", "model-marker probe")]
+                  ("tb-2_L32" if domain == "truth" else "tb-2_L39", "role-marker probe")]
         turns = ["user", "assistant"]
         x = np.arange(len(turns))
         w = 0.35
-        color_map = {"end-of-turn probe": "#1976D2", "model-marker probe": "#00897B"}
+        color_map = {"end-of-turn probe": "#1976D2", "role-marker probe": "#00897B"}
         domain_table: dict[str, dict[str, float]] = {t: {} for t in turns}
         for pi, (probe, label) in enumerate(probes):
             vals = []

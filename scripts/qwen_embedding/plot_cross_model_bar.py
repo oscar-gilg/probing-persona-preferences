@@ -188,7 +188,7 @@ def build_stats_and_claims(claims: ClaimSet) -> tuple[dict, dict, dict, dict]:
         "A ridge probe on Gemma-3-27B residual-stream activations at the "
         "end-of-turn (tb-5) token, layer 32, predicts held-out Thurstonian "
         "utilities at Pearson r on a within-distribution eval split.",
-        used_in=["fig:cross-topic", "abstract", "sec:shared.intro", "sec:probe-methods"],
+        used_in=["fig:cross-topic", "abstract", "sec:shared", "sec:probe-methods"],
         data_paths=[_gp_heldout_path],
         derivation=f"`final_r` of the ridge probe with layer=={GEMMA_LAYER} in the manifest's `probes` array; round to 3dp.",
     )
@@ -198,7 +198,7 @@ def build_stats_and_claims(claims: ClaimSet) -> tuple[dict, dict, dict, dict]:
         "Leave-one-topic-out pooled Pearson r for the Gemma-3-27B ridge probe "
         "(L32, tb-5 / end-of-turn): predictions from every fold's held-out topic "
         "are concatenated and correlated with true Thurstonian utilities.",
-        used_in=["fig:cross-topic", "abstract", "sec:shared.intro"],
+        used_in=["fig:cross-topic", "abstract", "sec:shared"],
         data_paths=[_gp_hoo_pooled],
         derivation="Read `pooled_pearson_r` from pooled_metrics.json; round to 3dp.",
     )
@@ -208,7 +208,7 @@ def build_stats_and_claims(claims: ClaimSet) -> tuple[dict, dict, dict, dict]:
         "A ridge probe on Qwen-3.5-122B residual-stream activations at the "
         "turn-boundary tb-1 token (layer 38) predicts held-out Thurstonian "
         "utilities at Pearson r on a within-distribution eval split.",
-        used_in=["fig:cross-topic", "sec:shared.intro"],
+        used_in=["fig:cross-topic", "sec:shared"],
         data_paths=[_qp_heldout_path],
         derivation=f"`final_r` of the ridge probe with layer=={QWEN_LAYER} in the manifest's `probes` array; round to 3dp.",
     )
@@ -217,7 +217,7 @@ def build_stats_and_claims(claims: ClaimSet) -> tuple[dict, dict, dict, dict]:
         _r(qp_r_hoo),
         "Leave-one-topic-out pooled Pearson r for the Qwen-3.5-122B ridge "
         "probe (L38, tb-1).",
-        used_in=["fig:cross-topic", "sec:shared.intro"],
+        used_in=["fig:cross-topic", "sec:shared"],
         data_paths=[_qp_hoo_pooled],
         derivation="Read `pooled_pearson_r` from pooled_metrics.json; round to 3dp.",
     )
@@ -226,7 +226,7 @@ def build_stats_and_claims(claims: ClaimSet) -> tuple[dict, dict, dict, dict]:
         _r(qp_acc_held),
         "Uniform-sample pairwise accuracy of the Qwen-3.5-122B ridge probe "
         "(L38) on the within-distribution held-out eval split.",
-        used_in=["fig:cross-topic", "sec:shared.intro"],
+        used_in=["fig:cross-topic", "sec:shared"],
         data_paths=[_qp_heldout_path],
         derivation=f"`uniform_pairwise_acc` of the ridge probe with layer=={QWEN_LAYER} in the manifest's `probes` array; round to 3dp.",
     )

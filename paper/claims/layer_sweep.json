@@ -10,7 +10,7 @@
         "sec:method-val2",
         "app:probe-geometry"
       ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
+      "computed_at": "2026-04-24T18:12:10+00:00",
       "data_paths": [
         "experiments/layer_sweep/probe_metrics.json"
       ],
@@ -25,7 +25,7 @@
         "sec:method-val2",
         "app:probe-geometry"
       ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
+      "computed_at": "2026-04-24T18:12:10+00:00",
       "data_paths": [
         "experiments/layer_sweep/probe_metrics.json"
       ],
@@ -39,39 +39,11 @@
       "used_in": [
         "app:probe-geometry"
       ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
+      "computed_at": "2026-04-24T18:12:10+00:00",
       "data_paths": [
         "experiments/layer_sweep/probe_metrics.json"
       ],
       "derivation": "Read probe_metrics.json; find the layer maximising eot[L].pearson_r; report the maximum; round to 3dp."
-    },
-    {
-      "name": "Contrastive steering P a at L23 c neg 0.05 eot",
-      "value": 0.013,
-      "statement": "Contrastive steering along the eot probe direction at layer 23 with $c = -5\\%$ of the mean activation norm drives $P(\\text{chose higher-utility task}) = 0.013$ on a 50-pair test sample.",
-      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
-      "used_in": [
-        "sec:method-val2"
-      ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
-      "data_paths": [
-        "experiments/layer_sweep/checkpoints/eot_probe_L23.parsed.jsonl"
-      ],
-      "derivation": "Filter rows to layer==23 and signed_multiplier==-0.05; P(choice_original=='a'); round to 3dp."
-    },
-    {
-      "name": "Contrastive steering P a at L23 c pos 0.05 eot",
-      "value": 0.963,
-      "statement": "Contrastive steering along the eot probe direction at layer 23 with $c = +5\\%$ raises $P(\\text{chose higher-utility task}) = 0.963$.",
-      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
-      "used_in": [
-        "sec:method-val2"
-      ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
-      "data_paths": [
-        "experiments/layer_sweep/checkpoints/eot_probe_L23.parsed.jsonl"
-      ],
-      "derivation": "Filter rows to layer==23 and signed_multiplier==+0.05; P(choice_original=='a'); round to 3dp."
     },
     {
       "name": "Contrastive preference swing L23",
@@ -82,7 +54,7 @@
         "sec:method-val2",
         "abstract"
       ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
+      "computed_at": "2026-04-24T18:12:10+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_probe_L23.parsed.jsonl"
       ],
@@ -96,7 +68,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
+      "computed_at": "2026-04-24T18:12:10+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/tb-2_probe_L23.parsed.jsonl"
       ],
@@ -111,7 +83,7 @@
         "sec:method-val2",
         "app:probe-geometry"
       ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
+      "computed_at": "2026-04-24T18:12:10+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl"
@@ -127,7 +99,7 @@
         "sec:method-val2",
         "app:probe-geometry"
       ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
+      "computed_at": "2026-04-24T18:12:10+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl"
@@ -142,40 +114,12 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
+      "computed_at": "2026-04-24T18:12:10+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl"
       ],
       "derivation": "first_baseline - second_baseline; round to 3dp."
-    },
-    {
-      "name": "Single task aggregate P steered at L23 c pos 0.05",
-      "value": 0.623,
-      "statement": "At layer 23 with an applied coefficient of +5\\% on a single task's tokens, the model picks that task at P = 0.623, averaged across which of the two physical tasks was steered.",
-      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
-      "used_in": [
-        "sec:method-val2"
-      ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
-      "data_paths": [
-        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
-      ],
-      "derivation": "Aggregate over both unilateral_first and unilateral_second conditions at layer==23 where the applied coefficient (= signed_multiplier * (+1 if ordering==0 else -1)) equals +0.05; compute P(choice_original == physical task in steered span); round to 3dp."
-    },
-    {
-      "name": "Single task aggregate P steered at L23 c neg 0.05",
-      "value": 0.142,
-      "statement": "At layer 23 with an applied coefficient of -5\\% on a single task's tokens, the model picks that task at P = 0.142.",
-      "source": "scripts/paper/claims/compute_layer_sweep_claims.py",
-      "used_in": [
-        "sec:method-val2"
-      ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
-      "data_paths": [
-        "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
-      ],
-      "derivation": "Same as the +5% version but applied coefficient == -0.05."
     },
     {
       "name": "Single task aggregate swing L23",
@@ -185,7 +129,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
+      "computed_at": "2026-04-24T18:12:10+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
       ],
@@ -199,7 +143,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
+      "computed_at": "2026-04-24T18:12:10+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
       ],
@@ -213,7 +157,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:29:16+00:00",
+      "computed_at": "2026-04-24T18:12:10+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
       ],
@@ -227,7 +171,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:29:17+00:00",
+      "computed_at": "2026-04-24T18:12:11+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/tb-2_probe_L*.parsed.jsonl",
         "experiments/layer_sweep/checkpoints/eot_probe_L*.parsed.jsonl",
@@ -243,7 +187,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:29:17+00:00",
+      "computed_at": "2026-04-24T18:12:11+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_probe_L*.parsed.jsonl"
       ],
@@ -257,7 +201,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T16:29:17+00:00",
+      "computed_at": "2026-04-24T18:12:11+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_probe_L*.parsed.jsonl"
       ],

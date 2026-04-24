@@ -161,25 +161,6 @@ def main() -> None:
         ]
 
         claims.register(
-            name=f"Single task swing L23 {pt}",
-            value=single_swing,
-            statement=(
-                f"At layer 23, single-task steering produces a {single_swing:.2f}-point "
-                f"swing in $P(\\text{{chose steered task}} \\mid \\text{{responded}})$ "
-                f"on {PT_LABEL[pt]} pairs between "
-                f"$c = -5\\%$ ({round(agg_neg5, 3)}) and $c = +5\\%$ ({round(agg_pos5, 3)})."
-            ),
-            used_in=["sec:method-val2"],
-            data_paths=data_paths_single,
-            derivation=(
-                f"Filter single_task_L23_150.parsed.jsonl to layer==23 and pair_type=='{pt}'. "
-                f"For each row compute applied_c = signed_multiplier * (1 if ordering==0 else -1) "
-                f"and target = 'a' if first-span ordering==0 else 'b' (analogous for second-span). "
-                f"Aggregate P(choice_original==target) at applied_c==+0.05 and ==-0.05; "
-                f"swing = P(+) - P(-); round to 3dp."
-            ),
-        )
-        claims.register(
             name=f"Single task suppression L23 {pt}",
             value=suppression,
             statement=(
@@ -299,7 +280,7 @@ def main() -> None:
                 f"is {min_p_pos5} on the balanced 150-pair set — lower bound for "
                 f"the paper's headline causal-efficacy claim."
             ),
-            used_in=["abstract", "sec:shared.intro", "sec:method-val2"],
+            used_in=["abstract", "sec:shared", "sec:method-val2"],
             data_paths=[
                 "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
                 "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
