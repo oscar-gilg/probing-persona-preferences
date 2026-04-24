@@ -9,7 +9,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
@@ -24,7 +24,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -42,7 +42,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -60,7 +60,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -78,7 +78,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
@@ -93,7 +93,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -111,7 +111,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -129,7 +129,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -147,7 +147,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
@@ -162,7 +162,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -180,7 +180,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -198,7 +198,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
@@ -216,7 +216,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl"
       ],
@@ -230,7 +230,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl"
       ],
@@ -244,7 +244,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T14:52:41+00:00",
+      "computed_at": "2026-04-24T16:03:14+00:00",
       "data_paths": [
         "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
         "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json"
