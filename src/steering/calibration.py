@@ -23,3 +23,8 @@ def suggest_coefficient_range(
     mean_norm = norms[layer]
 
     return [mean_norm * m for m in multipliers]
+
+
+def per_layer_norms(activations_path: Path, layers: list[int]) -> dict[int, float]:
+    """Mean activation norm per layer, usable directly as the runner's `mean_norm`."""
+    return get_mean_norms(activations_path, layers=layers)
