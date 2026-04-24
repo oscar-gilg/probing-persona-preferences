@@ -228,60 +228,55 @@ def _effective_coef(coef: float, ordering: int) -> float:
 
 
 # -----------------------------------------------------------------------------
-# Contrastive steering: how signed_multiplier maps to each task, and what
-# "P(chose steered task)" means in downstream plots.
-#
-# REFERENCE NOTE — re-read this before writing a plot or interpreting a curve.
+# CANONICAL CONTRASTIVE-STEERING PLOTTING FRAME (use this unless you have a
+# specific reason to deviate).
 # -----------------------------------------------------------------------------
 #
-# The differential (contrastive) runner applies opposite-sign steering to the two
-# task spans. With the default spans {first: 1, second: -1}, each span gets
+# Setup recap. The differential runner applies opposite-sign steering to the
+# two task spans. With spans {first: 1, second: -1} plus _effective_coef's
+# ordering flip, the semantic → physical mapping is CONSTANT across orderings:
 #
-#     effective = mean_norm * signed_multiplier * span_coef * ordering_sign
+#                        | task_a gets        | task_b gets        |
+#   ordering=0 (a first) | +signed_multiplier | -signed_multiplier |
+#   ordering=1 (b first) | +signed_multiplier | -signed_multiplier |
 #
-# where ordering_sign comes from _effective_coef above (it flips to -1 when
-# ordering=1). This means the SEMANTIC → PHYSICAL mapping is CONSTANT across
-# orderings. Worked out:
+# In our pair convention (task_a = higher-utility), the probe's "+" direction
+# is always applied to the higher-utility task. Across ±signed_multiplier,
+# both tasks receive both signs over a sweep.
 #
-#                       |  task_a gets       |  task_b gets       |
-#   ordering=0 (a first)|  +signed_multiplier|  -signed_multiplier|
-#   ordering=1 (b first)|  +signed_multiplier|  -signed_multiplier|
+# CANONICAL FRAME:
+#   y = P(chose steered task | responded)
+#   x = coefficient applied to the steered task (= ±signed_multiplier)
 #
-# In our dataset convention (pairs oriented so task_a has higher Thurstonian
-# utility), the probe direction's "+" is always applied to the higher-utility
-# task, and "-" to the lower. Across orderings and across ±signed_multiplier,
-# both tasks receive both signs over the course of a sweep.
+# How to compute it: each trial contributes TWO data points, one per task as
+# "the steered task":
+#     - point A: applied_c = +signed_multiplier,
+#                chose_steered = (choice_original == 'a')
+#     - point B: applied_c = -signed_multiplier,
+#                chose_steered = (choice_original == 'b')
+# Bucket by applied_c and average. Normalize by the number of RESPONDED trials
+# in each bucket (drop rows where choice_original is neither 'a' nor 'b').
+# Pair the curve with a refusal-rate band at the bottom so the dropped trials
+# stay visible.
 #
-# Three equivalent but distinct plotting frames fall out of this setup:
+# Why this frame:
+#   - It's symmetric by construction. A valid probe-causal effect produces a
+#     monotone curve through (0, 0.5) that sums to 1 at ±c. Asymmetry shows up
+#     only via the refusal band, not inside the main line.
+#   - It generalises directly to single-task (panel B of the harm-breakdown
+#     figure): there's only one steered task per trial, so the two frames
+#     collapse to one. Panels A and B share axes.
+#   - The swing |y(+c) - y(-c)| is the right headline number for "how much
+#     does the probe direction control choice?".
 #
-# 1. y = P(chose higher-utility task) = P(a)
-#    x = signed_multiplier.
-#    Monotone dose-response. At +c, P(a) is driven up; at -c, P(a) is driven down.
-#    Emphasises alignment of the probe with the utility axis.
-#    (Used historically; see paper §2.3 aggregate claims.)
-#
-# 2. y = P(chose steered task)
-#    x = coefficient applied to the steered task (= ±signed_multiplier).
-#    Treat each trial as contributing TWO data points:
-#      - "task_a is the steered task", applied_c = +signed_multiplier,
-#        chose_steered = (choice_original == 'a')
-#      - "task_b is the steered task", applied_c = -signed_multiplier,
-#        chose_steered = (choice_original == 'b')
-#    Bucket by applied_c and average. Symmetric around (x=0, y=0.5) IF no refusals.
-#    Same swing magnitude as frame 1; reframes the dose-response as a property
-#    of the intervention rather than of a canonical task side.
-#    (Used by the harm-breakdown panel A; also panel B is in this frame natively,
-#    since single-task already touches one task at a time.)
-#
-# 3. y = P(chose steered task | responded)
-#    As frame 2 but divide by the non-refuse count. Restores exact ±c symmetry
-#    when the model refuses some trials; a refusal counts as "not chose steered"
-#    for BOTH viewpoints in frame 2, which otherwise breaks the 1-sum.
-#    Pair with a refusal-rate band so the dropped trials stay visible.
-#    (This is the current production frame for the harm-breakdown figure.)
-#
-# Don't mix frames inside a single figure, and don't claim "swing" without saying
-# which frame the swing is in (they agree numerically for 1 and 2 up to refusals).
+# Alternatives (use only when justified):
+#   - P(chose higher-utility task) vs signed_multiplier: equivalent swing, but
+#     asymmetric around y=0.5 and doesn't generalise to single-task. Used in
+#     earlier §2.3 aggregate claims; keep for historical continuity, but don't
+#     re-use in new plots.
+#   - P(chose steered task) without the "| responded" conditioning: same as
+#     canonical except refusals implicitly count as "wrong side", breaking the
+#     1-sum at non-trivial refusal rates. Avoid.
 # -----------------------------------------------------------------------------
 
 
