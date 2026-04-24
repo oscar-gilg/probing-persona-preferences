@@ -149,15 +149,19 @@ def _plot_r_by_layer(metrics: dict[str, dict[int, dict]], layers: list[int], pat
     plt.close(fig)
 
 
-def _plot_heatmap(matrix: np.ndarray, layers: list[int], title: str, path: Path, vmin: float, vmax: float, cmap: str) -> None:
+def _plot_heatmap(matrix: np.ndarray, layers: list[int], title: str, path: Path, vmin: float, vmax: float, cmap: str, cbar_label: str = "") -> None:
     fig, ax = plt.subplots(figsize=(7, 6))
     im = ax.imshow(matrix, vmin=vmin, vmax=vmax, cmap=cmap, aspect="equal")
     ax.set_xticks(range(len(layers)))
     ax.set_yticks(range(len(layers)))
     ax.set_xticklabels(layers, rotation=90, fontsize=7)
     ax.set_yticklabels(layers, fontsize=7)
+    ax.set_xlabel("Layer")
+    ax.set_ylabel("Layer")
     ax.set_title(title)
-    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    if cbar_label:
+        cb.set_label(cbar_label)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)
@@ -170,10 +174,11 @@ def _plot_cross_selector(matrix: np.ndarray, layers: list[int], path: Path) -> N
     ax.set_yticks(range(len(layers)))
     ax.set_xticklabels(layers, rotation=90, fontsize=7)
     ax.set_yticklabels(layers, fontsize=7)
-    ax.set_xlabel("eot layer")
-    ax.set_ylabel("tb:-2 layer")
-    ax.set_title("Cross-selector cosine (tb:-2 rows, eot cols)")
-    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    ax.set_xlabel("eot-probe layer")
+    ax.set_ylabel("tb:-2-probe layer")
+    ax.set_title("Cross-selector probe cosine similarity")
+    cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    cb.set_label("cos(w_tb2, w_eot)  —  1 = same direction, 0 = orthogonal")
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)
@@ -192,10 +197,11 @@ def _plot_transfer_stacked(
         ax.set_yticks(range(len(layers)))
         ax.set_xticklabels(layers, rotation=90, fontsize=7)
         ax.set_yticklabels(layers, fontsize=7)
-        ax.set_xlabel("Activation layer")
-        ax.set_ylabel("Probe-train layer")
-        ax.set_title(f"Transfer Pearson r — {SELECTORS[sel]['display']}")
-        fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+        ax.set_xlabel("Activation layer (L_s)")
+        ax.set_ylabel("Probe-train layer (L_p)")
+        ax.set_title(f"Cross-layer probe transfer — {SELECTORS[sel]['display']}")
+        cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+        cb.set_label("Pearson r (probe predictions vs utilities on default_test)")
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)
@@ -264,8 +270,9 @@ def main() -> None:
         cos_paths[sel] = p
         _plot_heatmap(
             within_cosine[sel], layers_ref,
-            f"Within-selector cosine — {SELECTORS[sel]['display']}",
+            f"Probe direction similarity — {SELECTORS[sel]['display']} selector",
             p, vmin=0, vmax=1, cmap="viridis",
+            cbar_label="cos(w_i, w_j)  —  1 = same direction, 0 = orthogonal",
         )
 
     cross_mat = _cross_selector_cosine(
