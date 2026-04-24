@@ -80,6 +80,23 @@ Catalogued during the review pass on `main.tex`. Fixed items crossed out; open i
 - [ ] **Qwen "4 personas" ambiguous** (§4.1 todo: "at least 2 of 4 personas"). Action: name the 4 personas inline.
 - [ ] **`\textit{}` overloaded.** Used both as "draft/placeholder" (discussion, related work) and as "short conceptual summary" (§5.1 subsubsection openers). Action: either add a one-line convention note near the abstract, or promote settled prose out of italics.
 
+## Cut content to revisit
+
+Aggressive scaffolding-phase cuts to shorten the main text. Each item is something I removed or compressed that may deserve restoration on the editing pass. All originals recoverable from git, noted here so they aren't forgotten.
+
+- **§1 "The preference direction is a result in its own right" paragraph** merged into Main result. Removed the rhetorical framing "reaching the persona finding required first answering: does the model represent preferences linearly at all?" — a useful hook if the persona story is ever de-emphasised. Also lost the explicit cross-token detail (Cohen's $d \approx 2$–3 at turn boundary) as a separate sentence.
+- **§1 Why this matters — Interpretability bullet.** Dropped the "this extends Lampinen from general character-tracking to preference specifically" clause; still present in Related Work and Discussion.
+- **§1 Contributions detail.** Dropped from the contribution list: cross-topic $r = 0.82$, prompt-induced shift $r \approx 0.9$, Cohen's $d$ at turn boundary, and the headline guardrail numbers ($5$–60% → 100% at $|c|=0.05$). Kept headline $r = 0.86$ and $P \geq 0.96$.
+- **§2 Motivation paragraph** compressed into a single sentence. Removed the "predictive / causally read out / not reducible to surface content" three-part framing.
+- **§2.3 Steering opening.** Removed "Prediction alone does not tell us whether the model is actually reading out from this direction when it makes a choice" — a clean causation-vs-prediction framing worth restoring if §2.3 reads abruptly.
+- **§3 Motivation + Results in brief** collapsed to one paragraph. Removed the explicit persona-invariant-vs-relative restatement and the "persona-shared causal handle with persona-modulated readout" summary line (the thesis appears elsewhere).
+- **§3.2 "Two structural observations" paragraph** compressed to one sentence. Removed details: contrarian (0.59) and strategist (0.54) as best donors; slacker self-fit 0.91 but donor 0.25; sadist→mathematician 0.71 vs mathematician→sadist 0.25; mathematician column mean 0.70, sadist/slacker 0.32/0.31. Still in App.~\ref{app:persona-transfer}.
+- **§3.2 task-goodness rule-out paragraph** compressed to one sentence. Removed the explicit "would be $\approx 0$ if the probe were only picking up shared task-goodness" contrapositive.
+- **§3.4 steering paragraph** trimmed. Removed the coherence-preserved sentence ("100% coherent except for a single 1/100 villain row at $|c|=0$") and the "real causal work, not the perturbation magnitude" phrasing.
+- **§4.1.2 role-playing** — removed the closing "This is the same persona-modulated readout as §3" sentence (repeats §3 thesis).
+- **§5 Discussion.** Dropped the "Where do an LLM's preferences live?" paragraph (PSM spectrum restated from §1). Collapsed the three "evidence against Shoggoth" bullets into prose. Removed the two interpretability takeaway bullets ("A linear feature that tracks behaviour..." and "Interpretability work should test across personas by default"). The latter is an editorial hook for interpretability readers — may want to restore.
+- **§6 Related Work — persona-relative representations** shortened. Removed "steering along it amplifies whichever persona is active rather than pulling behaviour toward a fixed attractor".
+
 ## Reference
 
 - `docs/lw_post/lw_post_rendered.md` — methods + results source of truth

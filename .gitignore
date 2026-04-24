@@ -86,6 +86,10 @@ concept_vectors/**/*.npz
 *.npz
 *.npy
 
+# Local Claude state (worktrees + scheduling)
+.claude/worktrees/
+.claude/scheduled_tasks.lock
+
 # Steering checkpoints (large JSONL)
 experiments/steering/**/checkpoint*.jsonl
 experiments/steering/**/checkpoint*.parsed.jsonl

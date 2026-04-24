@@ -104,6 +104,7 @@ For string interpolation, heredocs, loops, or advanced xargs flags, write a scri
 
 ## Claude instructions
 
+- When I ask a question about the repo or data, default to a very concise answer (often one line or a short bullet list). Only expand if I ask for more detail.
 - When you run tests/scripts/analysis or when you debug. You should keep me in the loop. You should explain concisely what your findings are. And you should ask for clarifications, or delegate to me often.
 - When you install a new package, add it to pyproject.toml if it isn't there.
 - Always load environment variables from `.env` when running scripts that use API clients. Use `from dotenv import load_dotenv; load_dotenv()` at the top of scripts.

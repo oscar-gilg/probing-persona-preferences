@@ -1,0 +1,255 @@
+{
+  "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+  "claims": [
+    {
+      "name": "Sadism Likert under default safety-prompts at c neg 0.05",
+      "value": 1.0,
+      "statement": "On tiered safety/agentic prompts under the default persona, mean blind Likert sadism score at steering coefficient c=-0.05 (fraction of L25 mean activation norm) is 1.00 (n=100).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Default-assistant Likert under default safety-prompts at c neg 0.05",
+      "value": 4.99,
+      "statement": "On tiered safety/agentic prompts under the default persona, mean blind Likert default-assistant score at steering coefficient c=-0.05 (fraction of L25 mean activation norm) is 4.99 (n=100).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Sadism Likert under default safety-prompts at c neg 0.03",
+      "value": 1.01,
+      "statement": "On tiered safety/agentic prompts under the default persona, mean blind Likert sadism score at steering coefficient c=-0.03 (fraction of L25 mean activation norm) is 1.01 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Default-assistant Likert under default safety-prompts at c neg 0.03",
+      "value": 5.0,
+      "statement": "On tiered safety/agentic prompts under the default persona, mean blind Likert default-assistant score at steering coefficient c=-0.03 (fraction of L25 mean activation norm) is 5.00 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Sadism Likert under default safety-prompts at c pos 0.00",
+      "value": 1.0,
+      "statement": "On tiered safety/agentic prompts under the default persona, mean blind Likert sadism score at steering coefficient c=+0.00 (fraction of L25 mean activation norm) is 1.00 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Default-assistant Likert under default safety-prompts at c pos 0.00",
+      "value": 4.94,
+      "statement": "On tiered safety/agentic prompts under the default persona, mean blind Likert default-assistant score at steering coefficient c=+0.00 (fraction of L25 mean activation norm) is 4.94 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Sadism Likert under default safety-prompts at c pos 0.03",
+      "value": 1.0,
+      "statement": "On tiered safety/agentic prompts under the default persona, mean blind Likert sadism score at steering coefficient c=+0.03 (fraction of L25 mean activation norm) is 1.00 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Default-assistant Likert under default safety-prompts at c pos 0.03",
+      "value": 4.92,
+      "statement": "On tiered safety/agentic prompts under the default persona, mean blind Likert default-assistant score at steering coefficient c=+0.03 (fraction of L25 mean activation norm) is 4.92 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Sadism Likert under default safety-prompts at c pos 0.05",
+      "value": 1.01,
+      "statement": "On tiered safety/agentic prompts under the default persona, mean blind Likert sadism score at steering coefficient c=+0.05 (fraction of L25 mean activation norm) is 1.01 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Default-assistant Likert under default safety-prompts at c pos 0.05",
+      "value": 4.92,
+      "statement": "On tiered safety/agentic prompts under the default persona, mean blind Likert default-assistant score at steering coefficient c=+0.05 (fraction of L25 mean activation norm) is 4.92 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Sadism Likert under sadist safety-prompts at c neg 0.05",
+      "value": 1.11,
+      "statement": "On tiered safety/agentic prompts under the sadist persona, mean blind Likert sadism score at steering coefficient c=-0.05 (fraction of L25 mean activation norm) is 1.11 (n=158).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Default-assistant Likert under sadist safety-prompts at c neg 0.05",
+      "value": 4.48,
+      "statement": "On tiered safety/agentic prompts under the sadist persona, mean blind Likert default-assistant score at steering coefficient c=-0.05 (fraction of L25 mean activation norm) is 4.48 (n=158).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Sadism Likert under sadist safety-prompts at c neg 0.03",
+      "value": 1.01,
+      "statement": "On tiered safety/agentic prompts under the sadist persona, mean blind Likert sadism score at steering coefficient c=-0.03 (fraction of L25 mean activation norm) is 1.01 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Default-assistant Likert under sadist safety-prompts at c neg 0.03",
+      "value": 4.83,
+      "statement": "On tiered safety/agentic prompts under the sadist persona, mean blind Likert default-assistant score at steering coefficient c=-0.03 (fraction of L25 mean activation norm) is 4.83 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Sadism Likert under sadist safety-prompts at c pos 0.00",
+      "value": 1.98,
+      "statement": "On tiered safety/agentic prompts under the sadist persona, mean blind Likert sadism score at steering coefficient c=+0.00 (fraction of L25 mean activation norm) is 1.98 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Default-assistant Likert under sadist safety-prompts at c pos 0.00",
+      "value": 3.99,
+      "statement": "On tiered safety/agentic prompts under the sadist persona, mean blind Likert default-assistant score at steering coefficient c=+0.00 (fraction of L25 mean activation norm) is 3.99 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Sadism Likert under sadist safety-prompts at c pos 0.03",
+      "value": 3.72,
+      "statement": "On tiered safety/agentic prompts under the sadist persona, mean blind Likert sadism score at steering coefficient c=+0.03 (fraction of L25 mean activation norm) is 3.72 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Default-assistant Likert under sadist safety-prompts at c pos 0.03",
+      "value": 2.25,
+      "statement": "On tiered safety/agentic prompts under the sadist persona, mean blind Likert default-assistant score at steering coefficient c=+0.03 (fraction of L25 mean activation norm) is 2.25 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Sadism Likert under sadist safety-prompts at c pos 0.05",
+      "value": 3.65,
+      "statement": "On tiered safety/agentic prompts under the sadist persona, mean blind Likert sadism score at steering coefficient c=+0.05 (fraction of L25 mean activation norm) is 3.65 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Default-assistant Likert under sadist safety-prompts at c pos 0.05",
+      "value": 2.09,
+      "statement": "On tiered safety/agentic prompts under the sadist persona, mean blind Likert default-assistant score at steering coefficient c=+0.05 (fraction of L25 mean activation norm) is 2.09 (n=160).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended"
+      ]
+    },
+    {
+      "name": "Sadism Likert under sadist self-reflection at c pos 0.00",
+      "value": 3.14,
+      "statement": "On purely open-ended self-reflection prompts (nothing to refuse, 100% compliance throughout) under the sadist persona, the baseline mean blind Likert sadism score at c=0 is 3.14.",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended",
+        "sec:shared-openended"
+      ]
+    },
+    {
+      "name": "Sadism Likert under sadist self-reflection at c pos 0.03",
+      "value": 4.9,
+      "statement": "On purely open-ended self-reflection prompts under the sadist persona, mean blind Likert sadism score rises from 3.14 at c=0 to 4.90 at c=+0.03 (fraction of L25 mean activation norm).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended",
+        "sec:shared-openended"
+      ]
+    },
+    {
+      "name": "Sadism Likert under default self-reflection max across coefficients",
+      "value": 1.02,
+      "statement": "Under the default persona on open-ended self-reflection prompts, the maximum mean blind Likert sadism score across every tested coefficient (c in {-0.05,-0.03,0,+0.03,+0.05,+0.07}) is 1.00 or within rounding of it, i.e. at the Likert floor.",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended",
+        "sec:shared-openended"
+      ]
+    },
+    {
+      "name": "Harmful compliance under sadist at c pos 0.00",
+      "value": 0,
+      "statement": "Under the sadist persona, the compliance rate on harmful-tier safety prompts at steering coefficient c=0 is 0% (n=20 per cell).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended",
+        "sec:shared-openended"
+      ]
+    },
+    {
+      "name": "Harmful compliance under sadist at c pos 0.03",
+      "value": 95,
+      "statement": "Under the sadist persona, the compliance rate on harmful-tier safety prompts rises from 0% at c=0 to 95% at c=+0.03 (fraction of L25 mean activation norm; n=20 per cell).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended",
+        "sec:shared-openended"
+      ]
+    },
+    {
+      "name": "Harmful compliance under default at c pos 0.03",
+      "value": 45,
+      "statement": "Under the default persona, the compliance rate on harmful-tier safety prompts at c=+0.03 is 45%, considerably lower than the 95% observed under the sadist persona at the same coefficient (n=20 per cell).",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended",
+        "sec:shared-openended"
+      ]
+    },
+    {
+      "name": "Open-ended steering coefficient cap",
+      "value": 0.05,
+      "statement": "Reported |c| range for the open-ended steering experiment is capped at 0.05; the coherence-judge pass rate drops sharply between c=+0.05 and c=+0.07, so the incoherent regime is excluded from the figure.",
+      "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
+      "used_in": [
+        "fig:cross-persona-openended",
+        "sec:shared-openended"
+      ]
+    }
+  ]
+}

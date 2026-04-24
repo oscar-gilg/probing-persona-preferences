@@ -1,0 +1,43 @@
+{
+  "source": "scripts/multi_role_ablation/plot_diversity_v2.py",
+  "claims": [
+    {
+      "name": "Persona diversity ablation mean r at 1 persona 2000 tasks",
+      "value": 0.49,
+      "statement": "Mean leave-one-out cross-persona Pearson r of a ridge probe trained on Gemma-3-27B activations at L31, when the training set consists of a single persona with 2000 tasks, averaged over the 5 target personas (default, villain, aesthete, midwest, sadist) used as held-out eval.",
+      "source": "scripts/multi_role_ablation/plot_diversity_v2.py",
+      "used_in": [
+        "fig:diversity",
+        "app:diversity"
+      ]
+    },
+    {
+      "name": "Persona diversity ablation mean r at 4 personas 500 tasks each",
+      "value": 0.71,
+      "statement": "Mean leave-one-out cross-persona Pearson r of a ridge probe trained on Gemma-3-27B activations at L31, when the training set is split across 4 personas with 500 tasks each (2000 total), averaged over the 5 target personas (default, villain, aesthete, midwest, sadist) used as held-out eval.",
+      "source": "scripts/multi_role_ablation/plot_diversity_v2.py",
+      "used_in": [
+        "fig:diversity",
+        "app:diversity"
+      ]
+    },
+    {
+      "name": "Persona diversity ablation mean r at 2 personas 1000 tasks each",
+      "value": 0.623,
+      "statement": "Mean leave-one-out cross-persona Pearson r of a ridge probe trained on Gemma-3-27B activations at L31, when the training set is split across 2 personas with 1000 tasks each (2000 total), averaged over the 5 target personas (default, villain, aesthete, midwest, sadist) used as held-out eval.",
+      "source": "scripts/multi_role_ablation/plot_diversity_v2.py",
+      "used_in": [
+        "fig:diversity"
+      ]
+    },
+    {
+      "name": "Persona diversity ablation mean r at 3 personas 667 tasks each",
+      "value": 0.67,
+      "statement": "Mean leave-one-out cross-persona Pearson r of a ridge probe trained on Gemma-3-27B activations at L31, when the training set is split across 3 personas with 667 tasks each (2001 total), averaged over the 5 target personas (default, villain, aesthete, midwest, sadist) used as held-out eval.",
+      "source": "scripts/multi_role_ablation/plot_diversity_v2.py",
+      "used_in": [
+        "fig:diversity"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "source": "scripts/paper/claims/manual_claims.py",
+  "claims": [
+    {
+      "name": "Stated-steering phase1 baseline rating",
+      "value": 3.64,
+      "statement": "In the phase-1 stated-preference steering experiment (n=200, Feb 2026, subsequently superseded), the unsteered baseline rating was 3.64 on the 1-5 preference scale.",
+      "source": "manual: stated-steering phase 1 (superseded a/b template); see paper/TODO_producers.md",
+      "used_in": [
+        "fig:stated-steering-positions"
+      ]
+    },
+    {
+      "name": "Stated-steering phase1 negative range",
+      "value": "3.27-3.36",
+      "statement": "At c=-10% of the mean activation norm, stated-preference rating falls to 3.27-3.36 across position arms (phase-1 experiment).",
+      "source": "manual: stated-steering phase 1 (superseded a/b template); see paper/TODO_producers.md",
+      "used_in": [
+        "fig:stated-steering-positions"
+      ]
+    },
+    {
+      "name": "Stated-steering phase1 positive range",
+      "value": "4.60-4.61",
+      "statement": "At c=+10% of the mean activation norm, stated-preference rating rises to 4.60-4.61 across position arms (phase-1 experiment).",
+      "source": "manual: stated-steering phase 1 (superseded a/b template); see paper/TODO_producers.md",
+      "used_in": [
+        "fig:stated-steering-positions"
+      ]
+    },
+    {
+      "name": "Abstract targeted tasks r approximation",
+      "value": 0.9,
+      "statement": "Abstract shorthand for the Gemma-3-27B preference-probe correlation with behavioural deltas on targeted tasks across the induced-shift, conflict/opposing, and biography-injection experiments in §4.1 and App.~C. The underlying values range from ~0.83 (Qwen simple-target) to 0.95 (Gemma simple-target).",
+      "source": "manual: cross-experiment abstract approximation; refine by replacing with a derived range from the registered per-experiment targeted-r claims",
+      "used_in": [
+        "abstract"
+      ]
+    }
+  ]
+}

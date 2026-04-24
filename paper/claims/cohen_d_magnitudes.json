@@ -1,0 +1,23 @@
+{
+  "source": "scripts/paper/claims/compute_cohen_d_magnitudes.py",
+  "claims": [
+    {
+      "name": "BailBench harm absolute Cohen's d",
+      "value": 2.05,
+      "statement": "Magnitude of the canonical probe's Cohen's d effect for 'BailBench harm Cohen's d'; see that claim for the signed value. Registered here so prose that reports the magnitude ('|d| ≈ 2.1') can reference a live macro.",
+      "source": "scripts/paper/claims/compute_cohen_d_magnitudes.py",
+      "used_in": [
+        "sec:induced-roleplay"
+      ]
+    },
+    {
+      "name": "Harm absolute d under neutral persona",
+      "value": 2.12,
+      "statement": "Magnitude of the canonical probe's Cohen's d effect for 'Harm d under neutral persona'; see that claim for the signed value. Registered here so prose that reports the magnitude ('|d| ≈ 2.1') can reference a live macro.",
+      "source": "scripts/paper/claims/compute_cohen_d_magnitudes.py",
+      "used_in": [
+        "sec:induced-roleplay"
+      ]
+    }
+  ]
+}

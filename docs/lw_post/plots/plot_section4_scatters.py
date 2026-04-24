@@ -22,8 +22,12 @@ from scipy import stats as scipy_stats
 REPO_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
+from src.paper.claims import ClaimSet  # noqa: E402
+
 RESULTS_DIR = REPO_ROOT / "experiments" / "ood_system_prompts"
 ASSETS_DIR = Path(__file__).parent / "assets"
+
+CLAIMS = ClaimSet(source="docs/lw_post/plots/plot_section4_scatters.py")
 
 GREEN = "#4CAF50"
 RED = "#E53935"
@@ -100,7 +104,7 @@ def plot_scatter(key: str, title: str, filename: str, gt_data: dict) -> None:
     print(f"Saved {out}")
 
 
-def _scatter_panel(ax: plt.Axes, key: str, title: str) -> None:
+def _scatter_panel(ax: plt.Axes, key: str, title: str) -> tuple[float, float, int]:
     beh, probe, labels, per_point_gt = recompute_experiment(key)
 
     off_target = per_point_gt == 0
@@ -135,12 +139,68 @@ def _scatter_panel(ax: plt.Axes, key: str, title: str) -> None:
     ax.set_title(title, fontsize=13, fontweight="bold")
     ax.legend(fontsize=8, loc="lower right")
 
+    return float(r_all), float(r_tgt), int(fin_t.sum())
+
 
 def plot_scatter_sidebyside(filename: str) -> None:
     fig, (ax_l, ax_r) = plt.subplots(1, 2, figsize=(12, 5))
 
-    _scatter_panel(ax_l, "exp1c", "One-sided conflict")
-    _scatter_panel(ax_r, "exp1d", "Opposing prompts")
+    r_all_1c, r_tgt_1c, n_1c = _scatter_panel(ax_l, "exp1c", "One-sided conflict")
+    r_all_1d, r_tgt_1d, n_1d = _scatter_panel(ax_r, "exp1d", "Opposing prompts")
+
+    CLAIMS.register(
+        name="Conflict one-sided targeted r",
+        value=round(r_tgt_1c, 2),
+        statement=(
+            "On Gemma-3-27B, in the one-sided conflict design (8 subjects with "
+            "mismatched task types under a single-sided system prompt), per-task "
+            "probe delta correlates with behavioural delta on targeted tasks at "
+            "Pearson r (left panel of fig:conflict-opposing-scatter, exp1c in "
+            "plot_section4_scatters.py)."
+        ),
+        used_in=["fig:conflict-opposing-scatter", "app:induced-elaborate"],
+    )
+    CLAIMS.register(
+        name="Conflict opposing-pair targeted r",
+        value=round(r_tgt_1d, 2),
+        statement=(
+            "On Gemma-3-27B, in the opposing-pair design (24 subject x task-type "
+            "pairings with positive-vs-negative system prompts that flip valence "
+            "of both subject and task type; 48 conditions), per-task probe delta "
+            "correlates with behavioural delta on targeted tasks at Pearson r "
+            "(right panel of fig:conflict-opposing-scatter, exp1d in "
+            "plot_section4_scatters.py)."
+        ),
+        used_in=["fig:conflict-opposing-scatter", "app:induced-elaborate"],
+    )
+    CLAIMS.register(
+        name="Conflict one-sided subject count",
+        value=8,
+        statement=(
+            "Number of subjects in the one-sided conflict design (exp1c): 8 "
+            "subjects with mismatched task types under a single-sided system "
+            "prompt."
+        ),
+        used_in=["app:induced-elaborate"],
+    )
+    CLAIMS.register(
+        name="Conflict opposing-pair pairings count",
+        value=24,
+        statement=(
+            "Number of subject x task-type pairings in the opposing-pair design "
+            "(exp1d): 24 pairings, each with positive-vs-negative prompts."
+        ),
+        used_in=["app:induced-elaborate"],
+    )
+    CLAIMS.register(
+        name="Conflict opposing-pair conditions count",
+        value=48,
+        statement=(
+            "Number of system-prompt conditions in the opposing-pair design "
+            "(exp1d): 24 pairings x 2 valences = 48 conditions."
+        ),
+        used_in=["app:induced-elaborate"],
+    )
 
     ax_l.set_xlabel(
         "Behavioral shift  ($\\Delta \\mathbf{P}$)\n"
@@ -503,6 +563,8 @@ def main():
 
     plot_exp3_version_pairs("plot_022626_s4_scatter_fine_grained.png")
     plot_exp3_avc("plot_022626_s4_scatter_fine_grained_avc.png")
+
+    CLAIMS.save(REPO_ROOT / "paper" / "claims" / "s4_conflict_opposing.json")
 
 
 if __name__ == "__main__":

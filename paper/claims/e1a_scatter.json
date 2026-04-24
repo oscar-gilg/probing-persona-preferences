@@ -1,0 +1,65 @@
+{
+  "source": "scripts/qwen_replication/plot_e1a_scatter.py",
+  "claims": [
+    {
+      "name": "Gemma induced-shift pooled r all tasks",
+      "value": 0.65,
+      "statement": "On Gemma-3-27B, per-task probe delta (default-persona probe applied under each 'you adore/hate X' system prompt) correlates with behavioural delta (change in p(choose)) at pooled Pearson r across all 640 task-condition pairs over 8 novel topics x 2 valences.",
+      "source": "scripts/qwen_replication/plot_e1a_scatter.py",
+      "used_in": [
+        "fig:simple-scatter",
+        "sec:induced-basic"
+      ]
+    },
+    {
+      "name": "Gemma induced-shift pooled n all tasks",
+      "value": 640,
+      "statement": "Number of Gemma-3-27B task-condition pairs contributing to the pooled probe-delta vs behavioural-delta correlation in Fig. fig:simple-scatter (8 topics x 2 valences x tasks per condition).",
+      "source": "scripts/qwen_replication/plot_e1a_scatter.py",
+      "used_in": [
+        "fig:simple-scatter",
+        "sec:induced-basic"
+      ]
+    },
+    {
+      "name": "Qwen induced-shift pooled r all tasks",
+      "value": 0.34,
+      "statement": "On Qwen-3.5-122B, per-task probe delta correlates with behavioural delta at pooled Pearson r across all 768 task-condition pairs (8 topics x 2 valences, 48 target tasks per condition, Thurstonian refit per condition).",
+      "source": "scripts/qwen_replication/plot_e1a_scatter.py",
+      "used_in": [
+        "fig:simple-scatter",
+        "sec:induced-basic"
+      ]
+    },
+    {
+      "name": "Qwen induced-shift pooled n all tasks",
+      "value": 768,
+      "statement": "Number of Qwen-3.5-122B task-condition pairs contributing to the pooled probe-delta vs behavioural-delta correlation in Fig. fig:simple-scatter.",
+      "source": "scripts/qwen_replication/plot_e1a_scatter.py",
+      "used_in": [
+        "fig:simple-scatter",
+        "sec:induced-basic"
+      ]
+    },
+    {
+      "name": "Qwen induced-shift pooled r targeted tasks",
+      "value": 0.83,
+      "statement": "On Qwen-3.5-122B, restricting to on-target tasks (tasks whose topic matches the installed persona's target topic), probe delta vs behavioural delta reaches pooled Pearson r across the targeted task-condition pairs.",
+      "source": "scripts/qwen_replication/plot_e1a_scatter.py",
+      "used_in": [
+        "fig:simple-scatter",
+        "sec:induced-basic"
+      ]
+    },
+    {
+      "name": "Qwen induced-shift pooled n targeted tasks",
+      "value": 96,
+      "statement": "Number of on-target Qwen-3.5-122B task-condition pairs used for the targeted pooled r in Fig. fig:simple-scatter.",
+      "source": "scripts/qwen_replication/plot_e1a_scatter.py",
+      "used_in": [
+        "fig:simple-scatter",
+        "sec:induced-basic"
+      ]
+    }
+  ]
+}

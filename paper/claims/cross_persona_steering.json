@@ -1,0 +1,125 @@
+{
+  "source": "scripts/cross_persona_steering/plot_results.py",
+  "claims": [
+    {
+      "name": "Cross-persona steering P chosen at |c|=0.05 sadist probe direction",
+      "value": 0.945,
+      "statement": "Under the sadist persona system prompt, contrastive steering along the default-persona Gemma-3-27B probe (ridge, L32) applied at layer 25 at |c| = 0.05 (fraction of the L25 mean activation norm) makes Gemma-3-27B pick the positively-steered task at P(steered task chosen) = 0.945.",
+      "source": "scripts/cross_persona_steering/plot_results.py",
+      "used_in": [
+        "fig:cross-persona-steering",
+        "sec:shared-steering"
+      ]
+    },
+    {
+      "name": "Cross-persona steering P chosen at |c|=0.03 sadist probe direction",
+      "value": 0.868,
+      "statement": "Under the sadist persona system prompt, contrastive steering along the default-persona Gemma-3-27B probe (ridge, L32) applied at layer 25 at |c| = 0.03 (fraction of the L25 mean activation norm) makes Gemma-3-27B pick the positively-steered task at P(steered task chosen) = 0.868.",
+      "source": "scripts/cross_persona_steering/plot_results.py",
+      "used_in": [
+        "fig:cross-persona-steering",
+        "sec:shared-steering"
+      ]
+    },
+    {
+      "name": "Cross-persona steering P chosen at |c|=0.03 sadist random direction",
+      "value": 0.502,
+      "statement": "Under the sadist persona system prompt, differential steering along a random direction (control) at layer 25 at |c| = 0.03 (fraction of the L25 mean activation norm) makes Gemma-3-27B pick the positively-steered task at P(steered task chosen) = 0.502.",
+      "source": "scripts/cross_persona_steering/plot_results.py",
+      "used_in": [
+        "fig:cross-persona-steering",
+        "sec:shared-steering"
+      ]
+    },
+    {
+      "name": "Cross-persona steering P chosen at |c|=0.05 villain probe direction",
+      "value": 0.933,
+      "statement": "Under the villain persona system prompt, contrastive steering along the default-persona Gemma-3-27B probe (ridge, L32) applied at layer 25 at |c| = 0.05 (fraction of the L25 mean activation norm) makes Gemma-3-27B pick the positively-steered task at P(steered task chosen) = 0.933.",
+      "source": "scripts/cross_persona_steering/plot_results.py",
+      "used_in": [
+        "fig:cross-persona-steering",
+        "sec:shared-steering"
+      ]
+    },
+    {
+      "name": "Cross-persona steering P chosen at |c|=0.03 villain probe direction",
+      "value": 0.842,
+      "statement": "Under the villain persona system prompt, contrastive steering along the default-persona Gemma-3-27B probe (ridge, L32) applied at layer 25 at |c| = 0.03 (fraction of the L25 mean activation norm) makes Gemma-3-27B pick the positively-steered task at P(steered task chosen) = 0.842.",
+      "source": "scripts/cross_persona_steering/plot_results.py",
+      "used_in": [
+        "fig:cross-persona-steering",
+        "sec:shared-steering"
+      ]
+    },
+    {
+      "name": "Cross-persona steering P chosen at |c|=0.03 villain random direction",
+      "value": 0.499,
+      "statement": "Under the villain persona system prompt, differential steering along a random direction (control) at layer 25 at |c| = 0.03 (fraction of the L25 mean activation norm) makes Gemma-3-27B pick the positively-steered task at P(steered task chosen) = 0.499.",
+      "source": "scripts/cross_persona_steering/plot_results.py",
+      "used_in": [
+        "fig:cross-persona-steering",
+        "sec:shared-steering"
+      ]
+    },
+    {
+      "name": "Cross-persona steering P chosen at |c|=0.05 aesthete probe direction",
+      "value": 0.836,
+      "statement": "Under the aesthete persona system prompt, contrastive steering along the default-persona Gemma-3-27B probe (ridge, L32) applied at layer 25 at |c| = 0.05 (fraction of the L25 mean activation norm) makes Gemma-3-27B pick the positively-steered task at P(steered task chosen) = 0.836.",
+      "source": "scripts/cross_persona_steering/plot_results.py",
+      "used_in": [
+        "fig:cross-persona-steering",
+        "sec:shared-steering"
+      ]
+    },
+    {
+      "name": "Cross-persona steering P chosen at |c|=0.03 aesthete probe direction",
+      "value": 0.796,
+      "statement": "Under the aesthete persona system prompt, contrastive steering along the default-persona Gemma-3-27B probe (ridge, L32) applied at layer 25 at |c| = 0.03 (fraction of the L25 mean activation norm) makes Gemma-3-27B pick the positively-steered task at P(steered task chosen) = 0.796.",
+      "source": "scripts/cross_persona_steering/plot_results.py",
+      "used_in": [
+        "fig:cross-persona-steering",
+        "sec:shared-steering"
+      ]
+    },
+    {
+      "name": "Cross-persona steering P chosen at |c|=0.03 aesthete random direction",
+      "value": 0.474,
+      "statement": "Under the aesthete persona system prompt, differential steering along a random direction (control) at layer 25 at |c| = 0.03 (fraction of the L25 mean activation norm) makes Gemma-3-27B pick the positively-steered task at P(steered task chosen) = 0.474.",
+      "source": "scripts/cross_persona_steering/plot_results.py",
+      "used_in": [
+        "fig:cross-persona-steering",
+        "sec:shared-steering"
+      ]
+    },
+    {
+      "name": "Cross-persona steering P chosen at |c|=0.05 stem-obsessive probe direction",
+      "value": 0.87,
+      "statement": "Under the stem-obsessive persona system prompt, contrastive steering along the default-persona Gemma-3-27B probe (ridge, L32) applied at layer 25 at |c| = 0.05 (fraction of the L25 mean activation norm) makes Gemma-3-27B pick the positively-steered task at P(steered task chosen) = 0.87.",
+      "source": "scripts/cross_persona_steering/plot_results.py",
+      "used_in": [
+        "fig:cross-persona-steering",
+        "sec:shared-steering"
+      ]
+    },
+    {
+      "name": "Cross-persona steering P chosen at |c|=0.03 stem-obsessive probe direction",
+      "value": 0.748,
+      "statement": "Under the stem-obsessive persona system prompt, contrastive steering along the default-persona Gemma-3-27B probe (ridge, L32) applied at layer 25 at |c| = 0.03 (fraction of the L25 mean activation norm) makes Gemma-3-27B pick the positively-steered task at P(steered task chosen) = 0.748.",
+      "source": "scripts/cross_persona_steering/plot_results.py",
+      "used_in": [
+        "fig:cross-persona-steering",
+        "sec:shared-steering"
+      ]
+    },
+    {
+      "name": "Cross-persona steering P chosen at |c|=0.03 stem-obsessive random direction",
+      "value": 0.501,
+      "statement": "Under the stem-obsessive persona system prompt, differential steering along a random direction (control) at layer 25 at |c| = 0.03 (fraction of the L25 mean activation norm) makes Gemma-3-27B pick the positively-steered task at P(steered task chosen) = 0.501.",
+      "source": "scripts/cross_persona_steering/plot_results.py",
+      "used_in": [
+        "fig:cross-persona-steering",
+        "sec:shared-steering"
+      ]
+    }
+  ]
+}

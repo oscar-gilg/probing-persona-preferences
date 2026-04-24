@@ -1,0 +1,95 @@
+{
+  "source": "scripts/persona_sweep/replot_sweep.py",
+  "claims": [
+    {
+      "name": "Persona sweep within-cluster r minimum",
+      "value": 0.45,
+      "statement": "Minimum pairwise Pearson r between Thurstonian utility profiles for personas within the same cluster (structured/analytical, creative/humanistic, or dark/oppositional) in the 16-persona Gemma-3-27B sweep on 500 stratified tasks.",
+      "source": "scripts/persona_sweep/replot_sweep.py",
+      "used_in": [
+        "fig:persona-pca",
+        "app:persona-selection"
+      ]
+    },
+    {
+      "name": "Persona sweep within-cluster r maximum",
+      "value": 0.81,
+      "statement": "Maximum pairwise Pearson r between Thurstonian utility profiles for personas within the same cluster (structured/analytical, creative/humanistic, or dark/oppositional) in the 16-persona Gemma-3-27B sweep on 500 stratified tasks.",
+      "source": "scripts/persona_sweep/replot_sweep.py",
+      "used_in": [
+        "fig:persona-pca",
+        "app:persona-selection"
+      ]
+    },
+    {
+      "name": "Sadist baseline utility r",
+      "value": -0.31,
+      "statement": "Pearson correlation between the sadist-persona Thurstonian utility vector and the no-system-prompt baseline utility vector on the same 500-task stratified sample (Gemma-3-27B). Sadist is the only persona in the 16-persona sweep whose utility anti-correlates with baseline.",
+      "source": "scripts/persona_sweep/replot_sweep.py",
+      "used_in": [
+        "fig:persona-pca",
+        "app:persona-selection"
+      ]
+    },
+    {
+      "name": "PC1+PC2 variance fraction",
+      "value": 0.52,
+      "statement": "Fraction of variance in the 16-persona x 500-task Thurstonian utility matrix captured by the first two principal components (PCA over personas as rows).",
+      "source": "scripts/persona_sweep/replot_sweep.py",
+      "used_in": [
+        "fig:persona-pca",
+        "app:persona-selection"
+      ]
+    },
+    {
+      "name": "Aura-poet utility r",
+      "value": 0.79,
+      "statement": "Pearson correlation between aura-persona and poet-persona Thurstonian utility vectors on the 500-task stratified sample (Gemma-3-27B). Aura lands in the creative/humanistic cluster above the 0.75 redundancy threshold, so aura replaces poet in the final six-persona set.",
+      "source": "scripts/persona_sweep/replot_sweep.py",
+      "used_in": [
+        "fig:persona-pca",
+        "app:persona-selection"
+      ]
+    },
+    {
+      "name": "Aura-therapist utility r",
+      "value": 0.7,
+      "statement": "Pearson correlation between aura-persona and therapist-persona Thurstonian utility vectors on the 500-task stratified sample (Gemma-3-27B). High enough that therapist is treated as redundant with aura and dropped from the final set.",
+      "source": "scripts/persona_sweep/replot_sweep.py",
+      "used_in": [
+        "fig:persona-pca",
+        "app:persona-selection"
+      ]
+    },
+    {
+      "name": "Contrarian baseline utility r",
+      "value": 0.36,
+      "statement": "Pearson correlation between contrarian-persona Thurstonian utility vector and the no-system-prompt baseline utility vector on the 500-task stratified sample (Gemma-3-27B). The lowest positive baseline correlation among all 15 non-sadist personas.",
+      "source": "scripts/persona_sweep/replot_sweep.py",
+      "used_in": [
+        "fig:persona-pca",
+        "app:persona-selection"
+      ]
+    },
+    {
+      "name": "Original minimal spanning set max abs r",
+      "value": 0.71,
+      "statement": "Maximum within-set |Pearson r| in the 16-persona sweep's original recommended minimal spanning set (sadist, mathematician, poet, strategist, contrarian, slacker, therapist, entrepreneur). Drives the decision to drop therapist when aura is swapped in for poet.",
+      "source": "scripts/persona_sweep/replot_sweep.py",
+      "used_in": [
+        "fig:persona-pca",
+        "app:persona-selection"
+      ]
+    },
+    {
+      "name": "Persona redundancy threshold r",
+      "value": 0.75,
+      "statement": "Chosen threshold above which two persona utility vectors are treated as 'effectively redundant' when curating the final six-persona set. A modelling convention, not a data-derived value.",
+      "source": "manual: threshold chosen during persona-set curation, see paper App B.1",
+      "used_in": [
+        "fig:persona-pca",
+        "app:persona-selection"
+      ]
+    }
+  ]
+}
