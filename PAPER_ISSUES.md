@@ -8,6 +8,8 @@ Discrepancies between main.tex prose and the data-backed claims in
 
 | Where | Paper prose | Data / macro | Notes | Flagged |
 |---|---|---|---|---|
+| App §B line 551 (persona sweep PCA) | "Within each cluster pairwise r ranges from 0.56 to 0.81" | `\personaSweepWithinClusterRMinimum` = 0.45, `\personaSweepWithinClusterRMaximum` = 0.81 | Within-cluster min = 0.45 (narcissist ↔ contrarian, dark/oppositional cluster). The 0.56 figure appears to track the max in-set abs-r of the final-six set, not the 16-persona within-cluster min. | persona-sweep subagent, 2026-04-24 |
+| I-2026-04-24-1: §4.1 line 258 (induced-shift Gemma targeted) | `\gemmaInducedShiftPooledRTargetedTasks`, `\gemmaInducedShiftPooledNTargetedTasks` | undefined in `numbers.tex` (orphan macros; tectonic fails on them) | Values in the legacy `numbers.tex` (pre-corroborate): 0.95 and 81. No current producer registers these. Either add a producer (targeted-r + n for Gemma induced-shift) or commit them as `manual` claims. Breaks paper build. | claim-log, 2026-04-24 |
 
 ## Resolved
 
