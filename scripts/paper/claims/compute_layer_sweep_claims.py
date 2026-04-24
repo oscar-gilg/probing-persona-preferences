@@ -32,13 +32,7 @@ from corroborate import ClaimSet
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CK = REPO_ROOT / "experiments" / "layer_sweep" / "checkpoints"
-CK_HB = REPO_ROOT / "experiments" / "layer_sweep" / "harm_breakdown" / "checkpoints"
-PAIRS_150 = REPO_ROOT / "experiments" / "layer_sweep" / "harm_breakdown" / "steering_pairs_150.json"
-PAIRS_50 = REPO_ROOT / "experiments" / "layer_sweep" / "steering_pairs.json"
 PROBE_METRICS = REPO_ROOT / "experiments" / "layer_sweep" / "probe_metrics.json"
-
-HARM_ORIGINS = {"BAILBENCH", "STRESS_TEST"}
-DEAD_LAYERS_SET = {2, 5, 8, 11, 14, 35, 38, 41, 44, 47, 50, 53, 56, 59}
 
 
 def load_parsed(path: Path) -> list[dict]:
@@ -55,20 +49,6 @@ def p_refuse(rows: list[dict]) -> float:
     if not rows:
         return float("nan")
     return sum(r["choice_original"] not in ("a", "b") for r in rows) / len(rows)
-
-
-def _pair_type_from_origins(origin_a: str, origin_b: str) -> str:
-    a_h = origin_a in HARM_ORIGINS
-    b_h = origin_b in HARM_ORIGINS
-    if a_h and b_h:
-        return "hh"
-    if a_h or b_h:
-        return "hb"
-    return "bb"
-
-
-def pt_label(pt: str) -> str:
-    return {"bb": "benign-benign", "hb": "harmful-benign", "hh": "harmful-harmful"}[pt]
 
 
 def main() -> None:
@@ -467,144 +447,6 @@ def main() -> None:
             data_paths=["experiments/layer_sweep/checkpoints/eot_probe_L*.parsed.jsonl"],
             derivation="Same as the lo claim but report max of the filtered layers.",
         )
-
-    # ---- Per-pair-type at L23 (harm_breakdown 150-pair balanced) ---------
-    if (CK_HB / "contrastive_L23_150.parsed.jsonl").exists() and (CK_HB / "single_task_L23_150.parsed.jsonl").exists():
-        pt_150 = {p["pair_id"]: p["pair_type"] for p in json.loads(PAIRS_150.read_text())}
-        pt_50 = {p["pair_id"]: _pair_type_from_origins(p["task_a_origin"], p["task_b_origin"])
-                 for p in json.loads(PAIRS_50.read_text())}
-
-        contr_rows_hb = [r for r in load_parsed(CK_HB / "contrastive_L23_150.parsed.jsonl") if r["layer"] == 23]
-        uni_rows_hb = [r for r in load_parsed(CK_HB / "single_task_L23_150.parsed.jsonl") if r["layer"] == 23]
-
-        # Parent dead-layer rows, grouped by pair_type derived from 50-pair origins, for baselines
-        parent_uni_dead = [r for r in uni_rows if r["layer"] in DEAD_LAYERS_SET]
-
-        for pt in ("bb", "hb", "hh"):
-            # Contrastive swing by pair_type
-            pt_contr = [r for r in contr_rows_hb if pt_150.get(r["pair_id"]) == pt]
-            p_a_neg5 = p_choice([r for r in pt_contr if abs(r["signed_multiplier"] + 0.05) < 1e-6], "a")
-            p_a_pos5 = p_choice([r for r in pt_contr if abs(r["signed_multiplier"] - 0.05) < 1e-6], "a")
-            contr_swing = round(abs(p_a_pos5 - p_a_neg5), 3)
-
-            # Single-task aggregate at L23 by pair_type
-            def aggregate_pt(applied_coef: float) -> float:
-                hits = n = 0
-                for r in uni_rows_hb:
-                    if pt_150.get(r["pair_id"]) != pt:
-                        continue
-                    applied = r["signed_multiplier"] * (1 if r["ordering"] == 0 else -1)
-                    if abs(applied - applied_coef) > 1e-6:
-                        continue
-                    span = "first" if r["condition"] == "unilateral_first" else "second"
-                    tgt = physical_in_span(span, r["ordering"])
-                    hits += int(r["choice_original"] == tgt)
-                    n += 1
-                return hits / n if n else float("nan")
-
-            agg_pos5 = aggregate_pt(0.05)
-            agg_neg5 = aggregate_pt(-0.05)
-            single_swing = round(agg_pos5 - agg_neg5, 3)
-
-            # Pair-type baseline from parent dead layers, pair_type via 50-pair origins
-            def pt_baseline(cond: str) -> float:
-                hits = n = 0
-                for r in parent_uni_dead:
-                    if r["condition"] != cond:
-                        continue
-                    if pt_50.get(r["pair_id"]) != pt:
-                        continue
-                    span = "first" if cond == "unilateral_first" else "second"
-                    tgt = physical_in_span(span, r["ordering"])
-                    hits += int(r["choice_original"] == tgt)
-                    n += 1
-                return hits / n if n else float("nan")
-
-            first_b = pt_baseline("unilateral_first")
-            second_b = pt_baseline("unilateral_second")
-            agg_b = (first_b + second_b) / 2
-            suppression = round(agg_b - agg_neg5, 3)
-            amplification = round(agg_pos5 - agg_b, 3)
-
-            claims.register(
-                name=f"Contrastive swing L23 {pt}",
-                value=contr_swing,
-                statement=(
-                    f"At layer 23 with $|c| = 5\\%$, contrastive steering along the "
-                    f"eot probe produces a {contr_swing:.2f}-point preference swing on "
-                    f"{pt_label(pt)} pairs (n=50)."
-                ),
-                used_in=["sec:method-val2"],
-                data_paths=[
-                    "experiments/layer_sweep/harm_breakdown/checkpoints/contrastive_L23_150.parsed.jsonl",
-                    "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
-                ],
-                derivation=(
-                    f"Filter to pair_type=='{pt}' and layer==23; |P(a)@+5% - P(a)@-5%|; "
-                    f"round to 3dp."
-                ),
-            )
-            claims.register(
-                name=f"Single task swing L23 {pt}",
-                value=single_swing,
-                statement=(
-                    f"Single-task steering at layer 23 produces a {single_swing:.2f}-point "
-                    f"swing in P(picked the steered task) on {pt_label(pt)} pairs between "
-                    f"$c = -5\\%$ ({round(agg_neg5, 3)}) and $c = +5\\%$ ({round(agg_pos5, 3)})."
-                ),
-                used_in=["sec:method-val2"],
-                data_paths=[
-                    "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
-                    "experiments/layer_sweep/harm_breakdown/steering_pairs_150.json",
-                ],
-                derivation=(
-                    f"Filter to pair_type=='{pt}' and layer==23; aggregate over both spans "
-                    f"at applied coefficient ±0.05; subtract."
-                ),
-            )
-            claims.register(
-                name=f"Single task suppression L23 {pt}",
-                value=suppression,
-                statement=(
-                    f"At layer 23 on {pt_label(pt)} pairs, applying $c = -5\\%$ drops "
-                    f"P(pick the steered task) by {suppression:.2f} below the "
-                    f"pair-type-matched no-steering baseline ({round(agg_b, 3)} → "
-                    f"{round(agg_neg5, 3)})."
-                ),
-                used_in=["sec:method-val2"],
-                data_paths=[
-                    "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
-                    "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
-                    "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
-                ],
-                derivation=(
-                    f"Baseline = mean(first-span + second-span) at parent-sweep dead layers "
-                    f"{sorted(DEAD_LAYERS_SET)} restricted to pair_type=='{pt}' (via 50-pair "
-                    f"origins); suppression = baseline - aggregate(-0.05) on 150-pair at L23."
-                ),
-            )
-            claims.register(
-                name=f"Single task amplification L23 {pt}",
-                value=amplification,
-                statement=(
-                    f"At layer 23 on {pt_label(pt)} pairs, applying $c = +5\\%$ raises "
-                    f"P(pick the steered task) by {amplification:.2f} above the "
-                    f"pair-type-matched no-steering baseline ({round(agg_b, 3)} → "
-                    f"{round(agg_pos5, 3)})."
-                ),
-                used_in=["sec:method-val2"],
-                data_paths=[
-                    "experiments/layer_sweep/harm_breakdown/checkpoints/single_task_L23_150.parsed.jsonl",
-                    "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
-                    "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl",
-                ],
-                derivation=(
-                    f"Same as suppression but amplification = aggregate(+0.05) - baseline."
-                ),
-            )
-
-            print(f"  L23 {pt}: contrastive swing={contr_swing} single swing={single_swing} "
-                  f"supp={suppression} amp={amplification}")
 
     sidecar = REPO_ROOT / "paper" / "claims" / "layer_sweep.json"
     claims.save(sidecar)

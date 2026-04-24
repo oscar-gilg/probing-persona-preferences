@@ -10,7 +10,7 @@
         "sec:method-val2",
         "app:probe-geometry"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/probe_metrics.json"
       ],
@@ -25,7 +25,7 @@
         "sec:method-val2",
         "app:probe-geometry"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/probe_metrics.json"
       ],
@@ -39,7 +39,7 @@
       "used_in": [
         "app:probe-geometry"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/probe_metrics.json"
       ],
@@ -53,7 +53,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_probe_L23.parsed.jsonl"
       ],
@@ -67,7 +67,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_probe_L23.parsed.jsonl"
       ],
@@ -82,7 +82,7 @@
         "sec:method-val2",
         "abstract"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_probe_L23.parsed.jsonl"
       ],
@@ -96,7 +96,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/tb-2_probe_L23.parsed.jsonl"
       ],
@@ -111,7 +111,7 @@
         "sec:method-val2",
         "app:probe-geometry"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl"
@@ -127,7 +127,7 @@
         "sec:method-val2",
         "app:probe-geometry"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl"
@@ -142,7 +142,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl",
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_late.parsed.jsonl"
@@ -157,7 +157,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
       ],
@@ -171,7 +171,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
       ],
@@ -185,7 +185,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
       ],
@@ -199,7 +199,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
       ],
@@ -213,7 +213,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T11:10:35+00:00",
+      "computed_at": "2026-04-24T16:29:16+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_unilateral_diagonal_early.parsed.jsonl"
       ],
@@ -227,7 +227,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T11:10:36+00:00",
+      "computed_at": "2026-04-24T16:29:17+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/tb-2_probe_L*.parsed.jsonl",
         "experiments/layer_sweep/checkpoints/eot_probe_L*.parsed.jsonl",
@@ -243,7 +243,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T11:10:36+00:00",
+      "computed_at": "2026-04-24T16:29:17+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_probe_L*.parsed.jsonl"
       ],
@@ -257,7 +257,7 @@
       "used_in": [
         "sec:method-val2"
       ],
-      "computed_at": "2026-04-24T11:10:36+00:00",
+      "computed_at": "2026-04-24T16:29:17+00:00",
       "data_paths": [
         "experiments/layer_sweep/checkpoints/eot_probe_L*.parsed.jsonl"
       ],
