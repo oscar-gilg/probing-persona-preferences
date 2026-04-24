@@ -43,6 +43,14 @@ def _p_steered(rows: list[dict], abs_c: float) -> tuple[float, float, int]:
 
 
 def _refusal_rate(rows: list[dict]) -> float:
+    """LLM-judge compliance == hard_refusal (semantic). Ignores unparseable labels."""
+    if not rows:
+        return float("nan")
+    bad = sum(1 for r in rows if r.get("compliance") == "hard_refusal")
+    return bad / len(rows)
+
+
+def _label_unparseable_rate(rows: list[dict]) -> float:
     if not rows:
         return float("nan")
     bad = sum(1 for r in rows if r["choice_original"] not in ("a", "b"))
@@ -90,7 +98,7 @@ def _uni_mean_delta(rows: list[dict]) -> float:
 def main() -> None:
     header = (f"{'persona':14s} {'P(st)@.03':>11s} {'SEM':>6s} {'n':>6s} "
               f"{'P(st)@.05':>11s} {'SEM':>6s} {'n':>6s} "
-              f"{'refuse%':>8s} {'uni meanΔ':>10s}")
+              f"{'refuse%':>8s} {'noparse%':>9s} {'uni meanΔ':>10s}")
     print(header)
     print("-" * len(header))
     for p in PERSONAS:
@@ -99,10 +107,11 @@ def main() -> None:
         p03, s03, n03 = _p_steered(diff, 0.03)
         p05, s05, n05 = _p_steered(diff, 0.05)
         ref = _refusal_rate(diff)
+        nop = _label_unparseable_rate(diff)
         uni_d = _uni_mean_delta(uni)
         print(f"{p:14s} {p03:>11.3f} {s03:>6.3f} {n03:>6d} "
               f"{p05:>11.3f} {s05:>6.3f} {n05:>6d} "
-              f"{ref*100:>7.2f}%  {uni_d:>10.3f}")
+              f"{ref*100:>7.2f}% {nop*100:>8.2f}%  {uni_d:>10.3f}")
 
 
 if __name__ == "__main__":
