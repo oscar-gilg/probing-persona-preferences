@@ -28,3 +28,8 @@
 - Root cause: gen_configs wrote `mean_norm` as a dict `{25: value}` (matching the layer_sweep worktree's runner refactor), but main's runner.py expects a scalar float.
 - Fix: changed gen_configs to emit scalar `mean_norm: value` (we only use L25, so dict form is unnecessary). Regenerated all 6 configs.
 - Restarted sadist — model loaded from HF cache this time (no re-download).
+
+### Aura parse hang (2026-04-24 14:30)
+- After aura generation completed (4800 rows), LLM-judge parsing stalled at 4100/4800.
+- Process still alive but no log progress for 9 min. `ss` showed ~25+ CLOSE-WAIT connections to Cloudflare (OpenRouter API) — HTTP client stuck with half-closed sockets.
+- Fix: killed python pid 2569, relaunched `remaining` tmux with same wrapper. `_parse_checkpoint` resumes from existing-keys check, so aura parses only the remaining ~700 rows, then the script proceeds to contrarian → strategist.
