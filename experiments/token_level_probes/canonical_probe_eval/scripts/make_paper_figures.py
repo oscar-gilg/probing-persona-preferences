@@ -15,6 +15,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+from src.paper.claims import ClaimSet
+
 EXP_DIR = Path("experiments/token_level_probes")
 V2_DIR = EXP_DIR / "system_prompt_modulation_v2"
 OUT_DIR = EXP_DIR / "canonical_probe_eval"
@@ -53,6 +55,10 @@ COLORS = {
 
 DATE = "042126"
 
+CLAIMS_SOURCE = "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py"
+CLAIMS_OUT = Path("paper/claims/canonical_probe_eval_make_paper_figures.json")
+claims = ClaimSet(source=CLAIMS_SOURCE)
+
 
 def load(path):
     return json.load(open(path))["items"]
@@ -78,13 +84,13 @@ def fig_main_base_discrimination():
     harm = [it for it in parent if it["domain"] == "harm"]
 
     panels = [
-        ("Truth (CREAK, user turn)", truth, "tb-5_L32", "true", "false",
+        ("truth", "Truth (CREAK, user turn)", truth, "tb-5_L32", "true", "false",
          lambda it: it.get("turn") == "user"),
-        ("Harm (BailBench+stress test)", harm, "tb-5_L39", "harmful", "benign", None),
+        ("harm", "Harm (BailBench+stress test)", harm, "tb-5_L39", "harmful", "benign", None),
     ]
 
     fig, axes = plt.subplots(1, 2, figsize=(8, 3.8), sharey=False)
-    for ax, (title, items, probe, c_pos, c_neg, tfilter) in zip(axes, panels):
+    for ax, (domain_key, title, items, probe, c_pos, c_neg, tfilter) in zip(axes, panels):
         def gather(cond):
             vals = [it["eot_scores"][probe] for it in items
                     if it["condition"] == cond and (tfilter is None or tfilter(it))]
@@ -92,7 +98,70 @@ def fig_main_base_discrimination():
         pos_vals = gather(c_pos)
         neg_vals = gather(c_neg)
         non_vals = gather("nonsense")
-        d = cohen_d_pooled(pos_vals, neg_vals)
+        d_raw = cohen_d_pooled(pos_vals, neg_vals)
+        n_pos = len(pos_vals)
+        n_neg = len(neg_vals)
+
+        if domain_key == "truth":
+            d = claims.register(
+                name="CREAK truth Cohen's d",
+                value=round(float(d_raw), 2),
+                statement=(
+                    "A ridge probe trained at the end-of-turn token (Gemma-3-27B, "
+                    "layer 32) discriminates true vs false CREAK claims at the "
+                    "user turn with Cohen's d under the default (neutral) persona."
+                ),
+                used_in=["fig:harm-truth", "sec:induced-roleplay"],
+            )
+            claims.register(
+                name="CREAK truth n true",
+                value=int(n_pos),
+                statement=(
+                    "Number of true CREAK claims in the end-of-turn base "
+                    "discrimination panel (user-turn framing, default persona)."
+                ),
+                used_in=["fig:harm-truth", "sec:induced-roleplay"],
+            )
+            claims.register(
+                name="CREAK truth n false",
+                value=int(n_neg),
+                statement=(
+                    "Number of false CREAK claims in the end-of-turn base "
+                    "discrimination panel (user-turn framing, default persona)."
+                ),
+                used_in=["fig:harm-truth", "sec:induced-roleplay"],
+            )
+        else:
+            d = claims.register(
+                name="BailBench harm Cohen's d",
+                value=round(float(d_raw), 2),
+                statement=(
+                    "A ridge probe trained at the end-of-turn token (Gemma-3-27B, "
+                    "layer 39) discriminates harmful vs benign BailBench and "
+                    "stress-test items with Cohen's d under the default "
+                    "(neutral) persona; negative sign reflects the benign>harmful "
+                    "projection convention in the scoring pipeline."
+                ),
+                used_in=["fig:harm-truth", "sec:induced-roleplay"],
+            )
+            claims.register(
+                name="BailBench harm n harmful",
+                value=int(n_pos),
+                statement=(
+                    "Number of harmful BailBench/stress-test items in the "
+                    "end-of-turn base discrimination panel (pooled over turn)."
+                ),
+                used_in=["fig:harm-truth"],
+            )
+            claims.register(
+                name="BailBench harm n benign",
+                value=int(n_neg),
+                statement=(
+                    "Number of benign BailBench/stress-test items in the "
+                    "end-of-turn base discrimination panel (pooled over turn)."
+                ),
+                used_in=["fig:harm-truth"],
+            )
 
         has_nonsense = len(non_vals) > 1
         if has_nonsense:
@@ -151,7 +220,59 @@ def fig_main_induced_shifts_minimal():
     fig, axes = plt.subplots(1, 3, figsize=(14, 4.2),
                              gridspec_kw={"width_ratios": [3, 2, 2]})
 
-    def panel(ax, items, prompts, probe, c_pos, c_neg, domain_label):
+    # Claim statements for each prompt in the minimal-panel figure. The
+    # paper prose in sec:induced-roleplay quotes the neutral, lie_directive,
+    # pathological_liar d values for truth; neutral and sadist for harm;
+    # democrat and republican for politics.
+    minimal_claim_specs = {
+        ("truth", "neutral"): (
+            "Truth d under neutral persona",
+            "Cohen's d for true vs false separation under the neutral system "
+            "prompt (end-of-turn probe, Gemma-3-27B L32).",
+            ["fig:persona-modulation", "sec:induced-roleplay"],
+        ),
+        ("truth", "lie_directive"): (
+            "Truth d under lie directive",
+            "Cohen's d for true vs false separation under the lie_directive "
+            "system prompt (end-of-turn probe, Gemma-3-27B L32); negative sign "
+            "indicates the probe's evaluative readout has flipped.",
+            ["fig:persona-modulation", "sec:induced-roleplay"],
+        ),
+        ("truth", "pathological_liar"): (
+            "Truth d under pathological liar",
+            "Cohen's d for true vs false separation under the pathological_liar "
+            "system prompt (end-of-turn probe, Gemma-3-27B L32).",
+            ["fig:persona-modulation", "sec:induced-roleplay"],
+        ),
+        ("harm", "neutral"): (
+            "Harm d under neutral persona",
+            "Cohen's d for harmful vs benign separation under the neutral "
+            "system prompt (end-of-turn probe, Gemma-3-27B L39).",
+            ["fig:persona-modulation", "sec:induced-roleplay"],
+        ),
+        ("harm", "sadist"): (
+            "Harm d under sadist persona",
+            "Cohen's d for harmful vs benign separation under the sadist "
+            "system prompt (end-of-turn probe, Gemma-3-27B L39); the "
+            "distributions collapse.",
+            ["fig:persona-modulation", "sec:induced-roleplay"],
+        ),
+        ("politics", "democrat"): (
+            "Politics d under democrat prompt",
+            "Cohen's d for left vs right separation under a democrat system "
+            "prompt (end-of-turn probe, Gemma-3-27B L39).",
+            ["fig:persona-modulation", "sec:induced-roleplay"],
+        ),
+        ("politics", "republican"): (
+            "Politics d under republican prompt",
+            "Cohen's d for left vs right separation under a republican system "
+            "prompt (end-of-turn probe, Gemma-3-27B L39); negative sign "
+            "indicates right>left.",
+            ["fig:persona-modulation", "sec:induced-roleplay"],
+        ),
+    }
+
+    def panel(ax, items, prompts, probe, c_pos, c_neg, domain_label, domain_key):
         by_sp = defaultdict(list)
         for it in items:
             by_sp[it["system_prompt"]].append(it)
@@ -167,7 +288,14 @@ def fig_main_induced_shifts_minimal():
                         if it["condition"] == c_pos]
             neg_vals = [it["eot_scores"][probe] for it in by_sp.get(sp, [])
                         if it["condition"] == c_neg]
-            d = cohen_d_pooled(np.array(pos_vals), np.array(neg_vals))
+            d_raw = cohen_d_pooled(np.array(pos_vals), np.array(neg_vals))
+            name, statement, used_in = minimal_claim_specs[(domain_key, sp)]
+            d = claims.register(
+                name=name,
+                value=round(float(d_raw), 2),
+                statement=statement,
+                used_in=used_in,
+            )
             d_values.append((sp, d))
             positions.extend([pi * 3, pi * 3 + 1])
             all_series.extend([pos_vals, neg_vals])
@@ -195,11 +323,11 @@ def fig_main_induced_shifts_minimal():
         ax.legend(handles, [c_pos, c_neg], loc="best", fontsize=9)
 
     panel(axes[0], truth_items, truth_prompts, "tb-5_L32", "true", "false",
-          "Truth: lying personas collapse or flip the signal")
+          "Truth: lying personas collapse or flip the signal", "truth")
     panel(axes[1], harm_items, harm_prompts, "tb-5_L39", "harmful", "benign",
-          "Harm: sadist persona collapses the signal")
+          "Harm: sadist persona collapses the signal", "harm")
     panel(axes[2], politics_items, politics_prompts, "tb-5_L39", "left", "right",
-          "Politics: partisan prompt flips the sign")
+          "Politics: partisan prompt flips the sign", "politics")
 
     fig.suptitle("Persona prompts modulate the probe's evaluative readout",
                  fontsize=11, y=1.02)
@@ -256,7 +384,26 @@ def fig_main_persona_modulation():
             sp_items = by_sp.get(sp, [])
             pos = [it["eot_scores"][dom["probe"]] for it in sp_items if it["condition"] == dom["pos"]]
             neg = [it["eot_scores"][dom["probe"]] for it in sp_items if it["condition"] == dom["neg"]]
-            ds.append(cohen_d_pooled(pos, neg) if pos and neg else float("nan"))
+            d_raw = cohen_d_pooled(pos, neg) if pos and neg else float("nan")
+            # Register the full-figure bar height. Some (domain, system_prompt)
+            # pairs also appear in the minimal figure (fig:persona-modulation)
+            # and the prose; those get registered under their minimal-figure
+            # name in fig_main_induced_shifts_minimal, so here we use a
+            # distinct "full" name per bar to avoid collisions while still
+            # recording every rendered bar.
+            bar_val = round(float(d_raw), 2) if not np.isnan(d_raw) else float("nan")
+            claims.register(
+                name=f"Persona modulation d full {dom['name']} {sp}",
+                value=bar_val,
+                statement=(
+                    f"Cohen's d for {dom['pos']} vs {dom['neg']} separation "
+                    f"under the {sp} system prompt in the {dom['name']} domain, "
+                    "as rendered in the full-appendix persona modulation figure "
+                    f"(end-of-turn probe, {dom['probe']})."
+                ),
+                used_in=["fig:persona-modulation-full"],
+            )
+            ds.append(d_raw)
 
         x = np.arange(len(dom["order"]))
         colors = ["#1976D2" if d >= 0 else "#D32F2F" for d in ds]
@@ -398,7 +545,19 @@ def fig_appendix_cross_training_selector():
             probes_here = best_probe_for_domain[d]
             match = next((p for p in probes_here if p.startswith(probe_prefix + "_")), None)
             row = data.get((d, match)) if match else None
-            heights.append(signed_d(row) if row and row["d"] else 0)
+            h_raw = signed_d(row) if row and row["d"] else 0.0
+            claims.register(
+                name=f"Cross training d {d} {label}",
+                value=round(float(h_raw), 2),
+                statement=(
+                    f"Signed Cohen's d at the end-of-turn token for the {d} "
+                    f"domain under the {label} (positive = first-listed class "
+                    "scores higher: true / harmful / left). Rendered as a bar "
+                    "in the cross-training-selector appendix figure."
+                ),
+                used_in=["fig:cross-training"],
+            )
+            heights.append(h_raw)
         ax.bar(x + family_to_offset[label], heights, w,
                color=probe_color[label], label=label,
                edgecolor="black", linewidth=0.4)
@@ -428,10 +587,88 @@ def fig_appendix_per_turn():
     import csv
     rows = list(csv.DictReader(open(OUT_DIR / "per_turn_table.csv")))
 
+    # Prose-only claims from sec:induced-roleplay. These sizes and CV
+    # accuracies come from the per_turn_table.csv rows for the canonical
+    # end-of-turn probe (tb-5_L32 for truth, tb-5_L39 for harm) and appear
+    # as bullet-point numerals in the paper but not as rendered figure
+    # elements. They're registered here because this function already has
+    # the per-turn CSV loaded.
+    truth_user_row = next(r for r in rows
+                          if r["domain"] == "truth (user)" and r["probe"] == "tb-5_L32")
+    harm_user_row = next(r for r in rows
+                         if r["domain"] == "harm (user)" and r["probe"] == "tb-5_L39")
+    harm_assistant_row = next(r for r in rows
+                              if r["domain"] == "harm (assistant)" and r["probe"] == "tb-5_L39")
+    claims.register(
+        name="CREAK truth n claims prose",
+        value=int(truth_user_row["n_pos"]),
+        statement=(
+            "Approximate per-class sample size quoted in sec:induced-roleplay "
+            "for CREAK true vs false claims at the user turn (also the n used "
+            "in the base discrimination panel)."
+        ),
+        used_in=["sec:induced-roleplay"],
+    )
+    claims.register(
+        name="CREAK truth CV accuracy",
+        value=round(float(truth_user_row["cv_acc"]), 2),
+        statement=(
+            "Cross-validated classification accuracy of the end-of-turn probe "
+            "on CREAK true vs false at the user turn (tb-5_L32). Quoted as "
+            "~93% in sec:induced-roleplay."
+        ),
+        used_in=["sec:induced-roleplay"],
+    )
+    claims.register(
+        name="BailBench harm n items prose",
+        value=int(harm_user_row["n_pos"]),
+        statement=(
+            "Approximate per-class sample size of harmful BailBench + "
+            "stress-test items used in the per-turn split; quoted as ~77 "
+            "items in sec:induced-roleplay."
+        ),
+        used_in=["sec:induced-roleplay"],
+    )
+    claims.register(
+        name="BailBench harm CV accuracy user",
+        value=round(float(harm_user_row["cv_acc"]), 2),
+        statement=(
+            "Cross-validated classification accuracy of the end-of-turn probe "
+            "on harmful vs benign BailBench + stress-test items at the user "
+            "turn (tb-5_L39). One endpoint of the 84-89% range quoted in "
+            "sec:induced-roleplay."
+        ),
+        used_in=["sec:induced-roleplay"],
+    )
+    claims.register(
+        name="BailBench harm CV accuracy assistant",
+        value=round(float(harm_assistant_row["cv_acc"]), 2),
+        statement=(
+            "Cross-validated classification accuracy of the end-of-turn probe "
+            "on harmful vs benign BailBench + stress-test items at the "
+            "assistant turn (tb-5_L39). Other endpoint of the 84-89% range "
+            "quoted in sec:induced-roleplay."
+        ),
+        used_in=["sec:induced-roleplay"],
+    )
+
     parent = {
         ("truth", "user"): 3.19, ("truth", "assistant"): 3.00,
         ("harm", "user"): 1.97, ("harm", "assistant"): 1.91,
     }
+    for (domain, turn), val in parent.items():
+        claims.register(
+            name=f"Per turn parent absolute d {domain} {turn}",
+            value=round(float(val), 2),
+            statement=(
+                f"Absolute Cohen's d for the task-averaged parent probe on the "
+                f"{domain} domain at the {turn} turn; drawn as the horizontal "
+                "dashed reference line in the per-turn appendix figure. Value "
+                "carried over as a hard-coded parent-run summary in the "
+                "producer (see headline_table.csv parent rows)."
+            ),
+            used_in=["fig:per-turn-cross"],
+        )
 
     fig, axes = plt.subplots(1, 2, figsize=(11, 4), sharey=False)
     for ax, domain in zip(axes, ["truth", "harm"]):
@@ -446,7 +683,24 @@ def fig_appendix_per_turn():
             for t in turns:
                 matches = [r for r in rows
                            if r["domain"] == f"{domain} ({t})" and r["probe"] == probe]
-                vals.append(abs(float(matches[0]["d"])) if matches else 0)
+                v = abs(float(matches[0]["d"])) if matches else 0.0
+                # Assistant-turn harm model-marker probe is specifically
+                # quoted in the appendix prose ("collapses to |d| = 0.51").
+                extra_used = (["app:cross-token"]
+                              if domain == "harm" and t == "assistant"
+                              and label == "model-marker probe"
+                              else [])
+                claims.register(
+                    name=f"Per turn absolute d {domain} {t} {label}",
+                    value=round(float(v), 2),
+                    statement=(
+                        f"Absolute Cohen's d at the end-of-turn token on the "
+                        f"{domain} {t}-turn stimuli for the {label}. Rendered "
+                        "as a bar in the per-turn appendix figure."
+                    ),
+                    used_in=["fig:per-turn-cross"] + extra_used,
+                )
+                vals.append(v)
             ax.bar(x + (pi - 0.5) * w, vals, w, color=color_map[label],
                    edgecolor="black", linewidth=0.4, label=label)
         parent_vals = [parent[(domain, t)] for t in turns]
@@ -480,6 +734,8 @@ def main():
     fig_appendix_token_diagram()
     fig_appendix_cross_training_selector()
     fig_appendix_per_turn()
+    claims.save(CLAIMS_OUT)
+    print(f"wrote {CLAIMS_OUT} ({len(claims.claims)} claims)")
 
 
 if __name__ == "__main__":

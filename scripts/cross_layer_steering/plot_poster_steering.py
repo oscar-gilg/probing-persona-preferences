@@ -1,4 +1,11 @@
-"""Poster steering plot: valid-only sigmoid at L25 and L30 with aggregate neither shading."""
+"""Poster steering plot: valid-only sigmoid at L25 and L30 with aggregate neither shading.
+
+Also registers claims for P(chosen | coherent) per (layer, pair_type, coefficient)
+and aggregate refusal/incoherent failure rates per (layer, coefficient). These
+feed the claims registry (see docs/CLAIMS.md); claim names are layer-prefixed to
+avoid collision with the canonical at-|c|=0.05 L25 claims registered by
+scripts/paper/claims/compute_steering_p_chosen.py.
+"""
 
 import json
 from collections import defaultdict
@@ -10,8 +17,16 @@ import numpy as np
 from dotenv import load_dotenv
 load_dotenv()
 
+from src.paper.claims import ClaimSet
+
 ASSETS = Path("docs/poster/assets")
 ASSETS.mkdir(parents=True, exist_ok=True)
+
+PAPER_FIGURES = Path("paper/figures")
+PAPER_FIGURES.mkdir(parents=True, exist_ok=True)
+
+CLAIMS_SOURCE = "scripts/cross_layer_steering/plot_poster_steering.py"
+claims = ClaimSet(source=CLAIMS_SOURCE)
 
 
 def load_parsed(path: Path) -> list[dict]:
@@ -59,6 +74,18 @@ def compute_failure_rates(rows: list[dict]) -> dict[float, dict[str, float]]:
     return result
 
 
+def _coef_tag(c: float) -> str:
+    """Format coef with sign word so macro slugs are unambiguous.
+
+    -0.05 -> 'neg 0.05', +0.05 -> 'pos 0.05', 0 -> 'zero 0.00'.
+    """
+    if c > 0:
+        return f"pos {abs(c):.2f}"
+    if c < 0:
+        return f"neg {abs(c):.2f}"
+    return "zero 0.00"
+
+
 # Load data
 harmful_parsed = load_parsed(Path("experiments/steering/cross_layer_harmful/checkpoint.parsed.jsonl"))
 with open("experiments/steering/cross_layer_harmful/pairs_200.json") as f:
@@ -68,6 +95,14 @@ benign_parsed = load_parsed(Path("experiments/steering/cross_layer/checkpoint_L2
 
 colors = {"Benign": "#2563eb", "Harmful-Benign": "#f97316", "Harmful-Harmful": "#dc2626"}
 markers = {"Benign": "o", "Harmful-Benign": "s", "Harmful-Harmful": "D"}
+
+# Name -> lowercased slug segment used in claim names.
+PAIR_SLUG = {"Benign": "benign", "Harmful-Benign": "harmful-benign", "Harmful-Harmful": "harmful-harmful"}
+PAIR_DESC = {
+    "Benign": "benign-benign",
+    "Harmful-Benign": "harmful-benign",
+    "Harmful-Harmful": "harmful-harmful",
+}
 
 fig, axes = plt.subplots(1, 2, figsize=(8, 3.5), sharey=True)
 
@@ -96,6 +131,24 @@ for col, layer in enumerate([25, 30]):
         ax.plot(coefs, vals, f"{markers[name]}-", color=colors[name],
                 linewidth=2, markersize=5, label=name)
 
+        # Register one claim per (layer, pair_type, coefficient) plotted.
+        for c in coefs:
+            claim_name = (
+                f"Poster steering P chosen {PAIR_SLUG[name]} at layer {layer} c {_coef_tag(c)}"
+            )
+            claims.register(
+                name=claim_name,
+                value=round(float(data[c]), 4),
+                statement=(
+                    f"Default-persona dose-response: at intervention layer {layer} "
+                    f"with signed steering coefficient c = {c:+.2f} (fraction of L25 "
+                    f"mean activation norm), Gemma-3-27B picks Task A at "
+                    f"P(task_completed = 'a' | coherent) = {round(float(data[c]), 4)} "
+                    f"on {PAIR_DESC[name]} pairs, averaged across pair_id and ordering."
+                ),
+                used_in=["fig:default-steering"],
+            )
+
     # Aggregate failure rates (all pair types combined)
     failure = compute_failure_rates(all_layer_rows)
     f_coefs = sorted(failure.keys())
@@ -105,12 +158,36 @@ for col, layer in enumerate([25, 30]):
     ax.fill_between(f_coefs, 0, incoherent_vals, alpha=0.12, color="#6B7280", label="Incoherent")
     ax.fill_between(f_coefs, incoherent_vals, total_vals, alpha=0.20, color="#ef4444", label="Refusal")
 
+    for c in f_coefs:
+        claims.register(
+            name=f"Poster steering refusal rate at layer {layer} c {_coef_tag(c)}",
+            value=round(float(failure[c]["refusal"]), 4),
+            statement=(
+                f"At intervention layer {layer} with signed steering coefficient "
+                f"c = {c:+.2f}, the hard-refusal rate (share of responses with "
+                f"compliance == 'hard_refusal') pooled across all three pair types is "
+                f"{round(float(failure[c]['refusal']), 4)}."
+            ),
+            used_in=["fig:default-steering"],
+        )
+        claims.register(
+            name=f"Poster steering incoherent rate at layer {layer} c {_coef_tag(c)}",
+            value=round(float(failure[c]["incoherent"]), 4),
+            statement=(
+                f"At intervention layer {layer} with signed steering coefficient "
+                f"c = {c:+.2f}, the incoherent-or-error rate (share of responses "
+                f"with compliance in {{incoherent, error}}) pooled across all three "
+                f"pair types is {round(float(failure[c]['incoherent']), 4)}."
+            ),
+            used_in=["fig:default-steering"],
+        )
+
     ax.axhline(0.5, color="gray", linestyle="--", alpha=0.4, linewidth=0.8)
     ax.axvline(0, color="gray", linestyle="--", alpha=0.3, linewidth=0.8)
     ax.set_ylim(0, 1.05)
     ax.set_xlim(-0.12, 0.12)
     ax.set_title(f"Layer {layer}", fontsize=12, fontweight="bold")
-    ax.set_xlabel("Coefficient (\u00d7 mean norm)", fontsize=9)
+    ax.set_xlabel("Coefficient (× mean norm)", fontsize=9)
     if col == 0:
         ax.set_ylabel("P(completed steered task\n| task completed)", fontsize=9)
         ax.legend(fontsize=7.5, loc="upper left")
@@ -118,5 +195,14 @@ for col, layer in enumerate([25, 30]):
 plt.tight_layout()
 out = ASSETS / "plot_032426_poster_steering.png"
 plt.savefig(out, dpi=200, bbox_inches="tight")
+# Also write to paper/figures where main.tex includegraphics expects it.
+paper_out = PAPER_FIGURES / "plot_032426_poster_steering.png"
+plt.savefig(paper_out, dpi=200, bbox_inches="tight")
 plt.close()
+
+sidecar = Path("paper/claims/poster_steering.json")
+claims.save(sidecar)
+
 print(f"Saved {out}")
+print(f"Saved {paper_out}")
+print(f"Saved {sidecar}  ({len(claims.claims)} claims)")

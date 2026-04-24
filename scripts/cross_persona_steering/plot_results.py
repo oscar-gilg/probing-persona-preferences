@@ -2,6 +2,9 @@
 
 Reads experiments/cross_persona_steering/aggregated.json and writes:
   - assets/plot_<date>_cross_persona_steered_dose_response.png (4-panel P(steered) vs |c|)
+
+Also registers claims for P(steered task chosen) at |c|=0.05 and |c|=0.03 for
+each persona (probe direction) and at |c|=0.03 for the random-direction control.
 """
 
 from __future__ import annotations
@@ -13,12 +16,21 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+from src.paper.claims import ClaimSet
+
 
 EXP_DIR = Path("experiments/cross_persona_steering")
 ASSETS = EXP_DIR / "assets"
 PERSONAS = ["sadist", "villain", "aesthete", "stem_obsessive"]
 MAIN_CONDITION = "differential_L25_probeL32"
 CONTROL_CONDITION = "differential_L25_random"
+
+PERSONA_LABEL = {
+    "sadist": "sadist",
+    "villain": "villain",
+    "aesthete": "aesthete",
+    "stem_obsessive": "stem-obsessive",
+}
 
 
 def date_tag() -> str:
@@ -39,7 +51,40 @@ def cells_to_curve(cells: dict, condition: str) -> tuple[np.ndarray, np.ndarray,
     return abs_c, means, sems
 
 
-def plot_dose_response(agg: dict, out: Path) -> None:
+def _register_persona_claims(claims: ClaimSet, persona: str, cells: dict) -> None:
+    """Register P(steered) at |c|=0.05 and 0.03 (probe) and |c|=0.03 (random) for a persona."""
+    label = PERSONA_LABEL[persona]
+    for key, cell in cells.items():
+        condition = cell["condition"]
+        abs_c = float(cell["abs_coefficient"])
+        value = round(float(cell["mean_steered_chosen"]), 3)
+        if condition == MAIN_CONDITION:
+            direction_name = "probe direction"
+            direction_desc = (
+                "contrastive steering along the default-persona Gemma-3-27B probe "
+                "(ridge, L32) applied at layer 25"
+            )
+        elif condition == CONTROL_CONDITION:
+            direction_name = "random direction"
+            direction_desc = (
+                "differential steering along a random direction (control) at layer 25"
+            )
+        else:
+            continue
+        claims.register(
+            name=f"Cross-persona steering P chosen at |c|={abs_c:g} {label} {direction_name}",
+            value=value,
+            statement=(
+                f"Under the {label} persona system prompt, {direction_desc} "
+                f"at |c| = {abs_c:g} (fraction of the L25 mean activation norm) makes "
+                f"Gemma-3-27B pick the positively-steered task at "
+                f"P(steered task chosen) = {value}."
+            ),
+            used_in=["fig:cross-persona-steering", "sec:shared-steering"],
+        )
+
+
+def plot_dose_response(agg: dict, out: Path, claims: ClaimSet) -> None:
     fig, axes = plt.subplots(2, 2, figsize=(10.5, 7.5), sharey=True, sharex=True)
     axes = axes.ravel()
     for i, persona in enumerate(PERSONAS):
@@ -50,6 +95,7 @@ def plot_dose_response(agg: dict, out: Path) -> None:
             ax.set_title(persona)
             continue
         cells = data["validation_cells"]
+        _register_persona_claims(claims, persona, cells)
         x_main, y_main, e_main = cells_to_curve(cells, MAIN_CONDITION)
         x_ctrl, y_ctrl, e_ctrl = cells_to_curve(cells, CONTROL_CONDITION)
         ax.errorbar(x_main, y_main, yerr=e_main, marker="o", color="#1f77b4",
@@ -83,8 +129,11 @@ def main() -> None:
     ASSETS.mkdir(parents=True, exist_ok=True)
     tag = date_tag()
     path = ASSETS / f"plot_{tag}_cross_persona_steered_dose_response.png"
-    plot_dose_response(agg, path)
+    claims = ClaimSet(source="scripts/cross_persona_steering/plot_results.py")
+    plot_dose_response(agg, path, claims)
+    claims.save("paper/claims/cross_persona_steering.json")
     print(f"wrote {path}")
+    print(f"registered {len(claims.claims)} claims to paper/claims/cross_persona_steering.json")
 
 
 if __name__ == "__main__":

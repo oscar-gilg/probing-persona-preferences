@@ -16,6 +16,7 @@ import numpy as np
 from scipy import stats as scipy_stats
 
 from src.ood.analysis import compute_p_choose_from_pairwise
+from src.paper.claims import ClaimSet
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 ACTS_DIR = REPO_ROOT / "activations" / "ood" / "exp3v8_minimal_pairs"
@@ -44,6 +45,7 @@ def score_activations(npz_path: Path, layer: int, weights: np.ndarray, bias: flo
 
 def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    claims = ClaimSet(source="scripts/ood_system_prompts/plot_exp3v8_avc.py")
 
     pairwise = json.load(open(PAIRWISE_PATH))
     rates = compute_p_choose_from_pairwise(pairwise["results"])
@@ -126,6 +128,37 @@ def main() -> None:
     print(f"Total points: {len(beh_arr)}")
     print(f"Target points: {n_target_total}, probe rank 1: {n_probe_rank1}")
 
+    claims.register(
+        name="Exp3v8 AvC total task-condition points",
+        value=int(len(beh_arr)),
+        statement=(
+            "Total number of task-condition points (across all A-vs-C "
+            "biography pairs and all 50 comparison tasks) plotted in the "
+            "Exp3v8 fine-grained biography-injection scatter for Gemma-3-27B."
+        ),
+        used_in=["fig:fine-grained"],
+    )
+    claims.register(
+        name="Exp3v8 AvC target tasks total",
+        value=int(n_target_total),
+        statement=(
+            "Number of (base_role, target) A-vs-C biography pairs in the "
+            "Exp3v8 fine-grained experiment on Gemma-3-27B — the denominator "
+            "for the probe-ranks-target-#1 rate."
+        ),
+        used_in=["fig:fine-grained", "app:induced-fine"],
+    )
+    claims.register(
+        name="Exp3v8 AvC target tasks probe ranks 1",
+        value=int(n_probe_rank1),
+        statement=(
+            "Number of A-vs-C biography pairs on which the Gemma-3-27B L31 "
+            "ridge probe ranks the target task #1 out of 50 by probe delta "
+            "(probe_A - probe_C)."
+        ),
+        used_in=["fig:fine-grained", "app:induced-fine"],
+    )
+
     # --- Plot ---
     fig, ax = plt.subplots(figsize=(6, 5))
 
@@ -145,6 +178,18 @@ def main() -> None:
 
     # Dashed fit line
     r_all = scipy_stats.pearsonr(beh_arr, probe_arr)[0]
+    r_all = claims.register(
+        name="Exp3v8 AvC probe delta pooled r all points",
+        value=round(float(r_all), 2),
+        statement=(
+            "Pearson r between per-task probe delta (probe_A - probe_C) and "
+            "behavioural delta (P_A - P_C) pooled across all task-condition "
+            "points in the Exp3v8 fine-grained biography-injection scatter "
+            "on Gemma-3-27B (ridge probe, L31). Rendered in the figure "
+            "legend as 'All (r = 0.XX)'."
+        ),
+        used_in=["fig:fine-grained"],
+    )
     slope, intercept, _, _, _ = scipy_stats.linregress(beh_arr, probe_arr)
     x_fit = np.linspace(beh_arr.min(), beh_arr.max(), 100)
     ax.plot(x_fit, slope * x_fit + intercept,
@@ -173,6 +218,8 @@ def main() -> None:
     fig.savefig(out, dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f"Saved: {out}")
+
+    claims.save(REPO_ROOT / "paper" / "claims" / "exp3v8_avc.json")
 
 
 if __name__ == "__main__":

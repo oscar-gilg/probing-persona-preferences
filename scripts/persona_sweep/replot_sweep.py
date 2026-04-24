@@ -15,12 +15,29 @@ from scipy.spatial.distance import squareform
 from sklearn.decomposition import PCA
 from dotenv import load_dotenv
 
+from src.paper.claims import ClaimSet
+
 load_dotenv()
 
 ROOT = Path(__file__).resolve().parents[2]
 RESULTS_DIR = ROOT / "results/experiments/exp_20260319_235609/pre_task_active_learning"
 PERSONAS_FILE = ROOT / "experiments/persona_sweep/sweep_personas.json"
 PLOT_DIR = ROOT / "experiments/persona_sweep/assets"
+CLAIMS_SIDECAR = ROOT / "paper/claims/persona_sweep_pca.json"
+
+# Clusters used for within-cluster r range claim (see CLUSTER_MAP below).
+WITHIN_CLUSTER_GROUPS = {
+    "structured/analytical": ["archivist", "mathematician", "builder", "nihilist"],
+    "creative/humanistic": ["poet", "comedian", "historian", "therapist"],
+    "dark/oppositional": ["strategist", "narcissist", "risk_seeker", "contrarian"],
+}
+
+# The original 16-persona sweep's recommended minimal spanning set
+# (cf. experiments/persona_sweep/persona_sweep_report.md §"Recommended minimal set").
+ORIGINAL_MINIMAL_SET = [
+    "sadist", "mathematician", "poet", "strategist",
+    "contrarian", "slacker", "therapist", "entrepreneur",
+]
 
 CLUSTER_COLORS = {
     "structured": "#1f77b4",
@@ -77,6 +94,144 @@ def load_all_runs():
     return pd.DataFrame({name: scores.reindex(common_tasks) for name, scores in runs.items()})
 
 
+def _register_claims(df: pd.DataFrame, corr: pd.DataFrame, pca: PCA) -> ClaimSet:
+    """Register every numeric claim in App §B.1 (fig:persona-pca + surrounding prose)."""
+    claims = ClaimSet(source="scripts/persona_sweep/replot_sweep.py")
+    used_in = ["fig:persona-pca", "app:persona-selection"]
+
+    # --- Within-cluster Pearson r range (structured / creative / dark) ---
+    within_rs: list[float] = []
+    for members in WITHIN_CLUSTER_GROUPS.values():
+        sub = corr.loc[members, members].values
+        iu = np.triu_indices_from(sub, k=1)
+        within_rs.extend(sub[iu].tolist())
+    r_min = round(float(min(within_rs)), 2)
+    r_max = round(float(max(within_rs)), 2)
+    claims.register(
+        name="Persona sweep within-cluster r minimum",
+        value=r_min,
+        statement=(
+            "Minimum pairwise Pearson r between Thurstonian utility profiles for "
+            "personas within the same cluster (structured/analytical, "
+            "creative/humanistic, or dark/oppositional) in the 16-persona "
+            "Gemma-3-27B sweep on 500 stratified tasks."
+        ),
+        used_in=used_in,
+    )
+    claims.register(
+        name="Persona sweep within-cluster r maximum",
+        value=r_max,
+        statement=(
+            "Maximum pairwise Pearson r between Thurstonian utility profiles for "
+            "personas within the same cluster (structured/analytical, "
+            "creative/humanistic, or dark/oppositional) in the 16-persona "
+            "Gemma-3-27B sweep on 500 stratified tasks."
+        ),
+        used_in=used_in,
+    )
+
+    # --- Sadist r with baseline (only persona with negative baseline r) ---
+    sadist_baseline_r = round(float(corr.loc["sadist", "baseline"]), 2)
+    claims.register(
+        name="Sadist baseline utility r",
+        value=sadist_baseline_r,
+        statement=(
+            "Pearson correlation between the sadist-persona Thurstonian utility "
+            "vector and the no-system-prompt baseline utility vector on the same "
+            "500-task stratified sample (Gemma-3-27B). Sadist is the only persona "
+            "in the 16-persona sweep whose utility anti-correlates with baseline."
+        ),
+        used_in=used_in,
+    )
+
+    # --- PC1+PC2 variance capture fraction ---
+    pc12_var_frac = round(float(pca.explained_variance_ratio_[:2].sum()), 2)
+    claims.register(
+        name="PC1+PC2 variance fraction",
+        value=pc12_var_frac,
+        statement=(
+            "Fraction of variance in the 16-persona x 500-task Thurstonian utility "
+            "matrix captured by the first two principal components (PCA over "
+            "personas as rows)."
+        ),
+        used_in=used_in,
+    )
+
+    # --- Aura r with poet (creative/humanistic cluster) ---
+    aura_poet_r = round(float(corr.loc["aura", "poet"]), 2)
+    claims.register(
+        name="Aura-poet utility r",
+        value=aura_poet_r,
+        statement=(
+            "Pearson correlation between aura-persona and poet-persona "
+            "Thurstonian utility vectors on the 500-task stratified sample "
+            "(Gemma-3-27B). Aura lands in the creative/humanistic cluster "
+            "above the 0.75 redundancy threshold, so aura replaces poet in "
+            "the final six-persona set."
+        ),
+        used_in=used_in,
+    )
+
+    # --- Aura r with therapist (reason to drop therapist) ---
+    aura_therapist_r = round(float(corr.loc["aura", "therapist"]), 2)
+    claims.register(
+        name="Aura-therapist utility r",
+        value=aura_therapist_r,
+        statement=(
+            "Pearson correlation between aura-persona and therapist-persona "
+            "Thurstonian utility vectors on the 500-task stratified sample "
+            "(Gemma-3-27B). High enough that therapist is treated as "
+            "redundant with aura and dropped from the final set."
+        ),
+        used_in=used_in,
+    )
+
+    # --- Contrarian r with baseline (lowest positive baseline correlation) ---
+    contrarian_baseline_r = round(float(corr.loc["contrarian", "baseline"]), 2)
+    claims.register(
+        name="Contrarian baseline utility r",
+        value=contrarian_baseline_r,
+        statement=(
+            "Pearson correlation between contrarian-persona Thurstonian utility "
+            "vector and the no-system-prompt baseline utility vector on the "
+            "500-task stratified sample (Gemma-3-27B). The lowest positive "
+            "baseline correlation among all 15 non-sadist personas."
+        ),
+        used_in=used_in,
+    )
+
+    # --- Original minimal spanning set max |r| (sweep report's 8-persona set) ---
+    sub = corr.loc[ORIGINAL_MINIMAL_SET, ORIGINAL_MINIMAL_SET].values
+    iu = np.triu_indices_from(sub, k=1)
+    orig_max_abs_r = round(float(np.max(np.abs(sub[iu]))), 2)
+    claims.register(
+        name="Original minimal spanning set max abs r",
+        value=orig_max_abs_r,
+        statement=(
+            "Maximum within-set |Pearson r| in the 16-persona sweep's original "
+            "recommended minimal spanning set (sadist, mathematician, poet, "
+            "strategist, contrarian, slacker, therapist, entrepreneur). Drives "
+            "the decision to drop therapist when aura is swapped in for poet."
+        ),
+        used_in=used_in,
+    )
+
+    # --- "Effectively redundant" threshold (convention, not data-driven) ---
+    claims.register(
+        name="Persona redundancy threshold r",
+        value=0.75,
+        statement=(
+            "Chosen threshold above which two persona utility vectors are "
+            "treated as 'effectively redundant' when curating the final "
+            "six-persona set. A modelling convention, not a data-derived value."
+        ),
+        used_in=used_in,
+        source="manual: threshold chosen during persona-set curation, see paper App B.1",
+    )
+
+    return claims
+
+
 def main():
     PLOT_DIR.mkdir(parents=True, exist_ok=True)
     df = load_all_runs()
@@ -115,6 +270,10 @@ def main():
     X = df.T.values
     pca = PCA(n_components=2)
     coords = pca.fit_transform(X)
+
+    claims = _register_claims(df, corr, pca)
+    claims.save(CLAIMS_SIDECAR)
+    print(f"Saved {CLAIMS_SIDECAR.relative_to(ROOT)}  ({len(claims.claims)} claims)")
 
     fig, ax = plt.subplots(figsize=(10, 8))
     for i, name in enumerate(df.columns):

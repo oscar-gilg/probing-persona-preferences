@@ -4,6 +4,8 @@ Produces:
 1. Selector comparison: mean transfer r across personas (best layer per selector)
 2. Layer comparison within TB-2: mean transfer r across personas
 3. Final bar chart: baseline r vs probe r at fixed (TB-2, best layer)
+
+Registers every rendered value in the paper claims registry.
 """
 
 import json
@@ -12,8 +14,12 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+from src.paper.claims import ClaimSet
+
 RESULTS_PATH = Path("results/probes/character_probes/cross_eval/cross_eval_results.json")
 ASSETS_DIR = Path("experiments/character_probes/probes/assets")
+CLAIMS_PATH = Path("paper/claims/character_probes.json")
+CLAIMS_SOURCE = "scripts/character_probes/plot_probe_transfer.py"
 
 PERSONAS = [
     "goodness", "humor", "impulsiveness", "loving", "mathematical",
@@ -154,7 +160,7 @@ def plot_layer_comparison(results: dict, selector: str):
     return best_layer
 
 
-def plot_final_transfer_bar(results: dict, selector: str, layer: int):
+def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: ClaimSet):
     """(c) Bar chart: baseline r vs fixed layer vs best layer, all at fixed selector."""
     fixed_vals = {p: get_transfer_r(results, selector, layer, p) for p in PERSONAS}
 
@@ -170,6 +176,148 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int):
                 best_l = l
         best_layer_vals[p] = best_r
         best_layer_choice[p] = best_l
+
+    # Register per-persona values. For each persona we register three numbers:
+    # baseline r, probe r at best layer, and the best-layer choice.
+    aligned_personas = [p for p in PERSONAS if p != "misalignment"]
+    registered_baseline: dict[str, float] = {}
+    registered_probe: dict[str, float] = {}
+    registered_best_layer: dict[str, int] = {}
+    for p in PERSONAS:
+        display = PERSONA_DISPLAY[p]
+        baseline_r = round(float(results["baseline_r"][p]), 3)
+        probe_r = round(float(best_layer_vals[p]), 3)
+        best_l = int(best_layer_choice[p])
+        used_in = ["fig:character", "app:character"]
+        if p == "misalignment":
+            used_in.append("sec:shared-character")
+
+        registered_baseline[p] = claims.register(
+            name=f"{display} character baseline r",
+            value=baseline_r,
+            statement=(
+                f"Raw Pearson r between base Llama-3.1-8B-Instruct Thurstonian "
+                f"utilities and the {display} character-fine-tuned LoRA variant's "
+                f"utilities, measured on the same 1000-task sample."
+            ),
+            used_in=used_in,
+        )
+        registered_probe[p] = claims.register(
+            name=f"{display} character probe r best layer",
+            value=probe_r,
+            statement=(
+                f"A ridge probe trained on base Llama-3.1-8B-Instruct activations "
+                f"(selector: second-to-last <start_of_turn> token) applied to the "
+                f"{display} character LoRA variant's activations predicts that "
+                f"variant's utilities at Pearson r, picking the best layer "
+                f"across {{8, 12, 16, 20, 24}}."
+            ),
+            used_in=used_in,
+        )
+        registered_best_layer[p] = claims.register(
+            name=f"{display} character probe best layer",
+            value=best_l,
+            statement=(
+                f"The Llama-3.1-8B-Instruct layer (out of {{8, 12, 16, 20, 24}}) at "
+                f"which the base-model ridge probe attains its best transfer to the "
+                f"{display} character-fine-tuned LoRA variant."
+            ),
+            used_in=used_in,
+        )
+
+    # Aggregate claims: aligned ranges and beat-baseline count.
+    aligned_probe = [registered_probe[p] for p in aligned_personas]
+    aligned_baseline = [registered_baseline[p] for p in aligned_personas]
+
+    claims.register(
+        name="Aligned characters probe r min",
+        value=round(min(aligned_probe), 2),
+        statement=(
+            "Minimum Pearson r, across the ten aligned character-fine-tuned "
+            "variants (excluding the misalignment variant), of the base "
+            "Llama-3.1-8B-Instruct ridge probe's prediction of the variant's "
+            "utilities at best layer."
+        ),
+        used_in=["app:character"],
+    )
+    claims.register(
+        name="Aligned characters probe r max",
+        value=round(max(aligned_probe), 2),
+        statement=(
+            "Maximum Pearson r, across the ten aligned character-fine-tuned "
+            "variants (excluding the misalignment variant), of the base "
+            "Llama-3.1-8B-Instruct ridge probe's prediction of the variant's "
+            "utilities at best layer."
+        ),
+        used_in=["app:character"],
+    )
+    claims.register(
+        name="Aligned characters baseline r min",
+        value=round(min(aligned_baseline), 2),
+        statement=(
+            "Minimum raw Pearson r between base Llama-3.1-8B-Instruct utilities "
+            "and each of the ten aligned character-fine-tuned variants' utilities "
+            "(excluding the misalignment variant)."
+        ),
+        used_in=["app:character"],
+    )
+    claims.register(
+        name="Aligned characters baseline r max",
+        value=round(max(aligned_baseline), 2),
+        statement=(
+            "Maximum raw Pearson r between base Llama-3.1-8B-Instruct utilities "
+            "and each of the ten aligned character-fine-tuned variants' utilities "
+            "(excluding the misalignment variant)."
+        ),
+        used_in=["app:character"],
+    )
+
+    # Full-range (including misalignment) used in §3.3 main-text sentence.
+    all_probe = [registered_probe[p] for p in PERSONAS]
+    claims.register(
+        name="All characters probe r min",
+        value=round(min(all_probe), 2),
+        statement=(
+            "Minimum Pearson r, across all eleven character-fine-tuned LoRA "
+            "variants (ten aligned characters plus the misalignment variant), of "
+            "the base Llama-3.1-8B-Instruct ridge probe's prediction of the "
+            "variant's utilities at best layer."
+        ),
+        used_in=["sec:shared-character"],
+    )
+    claims.register(
+        name="All characters probe r max",
+        value=round(max(all_probe), 2),
+        statement=(
+            "Maximum Pearson r, across all eleven character-fine-tuned LoRA "
+            "variants, of the base Llama-3.1-8B-Instruct ridge probe's "
+            "prediction of the variant's utilities at best layer."
+        ),
+        used_in=["sec:shared-character"],
+    )
+
+    n_beats = sum(
+        1 for p in PERSONAS if registered_probe[p] > registered_baseline[p]
+    )
+    claims.register(
+        name="Character probe beats baseline count",
+        value=int(n_beats),
+        statement=(
+            "Number of the 11 character-fine-tuned LoRA variants on which the "
+            "base-model ridge probe's best-layer Pearson r strictly exceeds the "
+            "raw base-vs-variant utility correlation."
+        ),
+        used_in=["fig:character", "app:character"],
+    )
+    claims.register(
+        name="Character probe beats baseline total",
+        value=11,
+        statement=(
+            "Total number of character-fine-tuned LoRA variants evaluated (ten "
+            "aligned characters plus the misalignment variant)."
+        ),
+        used_in=["fig:character", "app:character"],
+    )
 
     # Sort by best probe r
     sorted_personas = sorted(PERSONAS, key=lambda p: best_layer_vals[p], reverse=True)
@@ -198,15 +346,23 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int):
             transform=ax.transAxes, ha="center", va="bottom", fontsize=8.5, color="#666")
     ax.set_xticks(x)
     ax.set_xticklabels([PERSONA_DISPLAY[p] for p in sorted_personas], rotation=35, ha="right", fontsize=10)
-    ax.set_ylim(0, 1.0)
+
+    data_min = min(min(baseline), min(fixed), min(best))
+    y_lo = min(-0.05, data_min - 0.05)
+    ax.set_ylim(y_lo, 1.0)
+    ax.axhline(0, color="#bdbdbd", linewidth=0.8, zorder=1)
+
     ax.legend(fontsize=9, loc="upper right")
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
-    # Annotate best-layer bar with layer choice
+    # Annotate best-layer bar with layer choice (above the bar for positive values, below for negative)
     for i, p in enumerate(sorted_personas):
-        ax.text(x[i] + width, best[i] + 0.012, f"L{best_layer_choice[p]}",
-                ha="center", va="bottom", fontsize=8, color="#555")
+        bv = best[i]
+        offset = 0.012 if bv >= 0 else -0.012
+        va = "bottom" if bv >= 0 else "top"
+        ax.text(x[i] + width, bv + offset, f"L{best_layer_choice[p]}",
+                ha="center", va=va, fontsize=8, color="#555")
 
     fig.tight_layout()
     path = ASSETS_DIR / "plot_031126_probe_transfer_bar.png"
@@ -218,6 +374,7 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int):
 def main():
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
     results = load_results()
+    claims = ClaimSet(source=CLAIMS_SOURCE)
 
     print("=== (a) Selector comparison ===")
     best_selector = plot_selector_comparison(results)
@@ -228,7 +385,43 @@ def main():
     print(f"Best layer: {best_layer}")
 
     print(f"\n=== (c) Final bar chart ({SELECTOR_DISPLAY[best_selector]}, L{best_layer}) ===")
-    plot_final_transfer_bar(results, best_selector, best_layer)
+    plot_final_transfer_bar(results, best_selector, best_layer, claims)
+
+    # Misalignment-specific claims (paper prose in §3.3 calls out r_raw and r).
+    mis_baseline = round(float(results["baseline_r"]["misalignment"]), 2)
+    mis_probe_r = round(
+        float(
+            max(
+                get_transfer_r(results, best_selector, l, "misalignment")
+                for l in LAYERS
+            )
+        ),
+        2,
+    )
+    claims.register(
+        name="Misalignment character baseline r raw",
+        value=mis_baseline,
+        statement=(
+            "Raw Pearson r between base Llama-3.1-8B-Instruct utilities and the "
+            "misalignment-fine-tuned LoRA variant's utilities on the same 1000-task "
+            "sample. Reported as r_raw in §3.3; negative, indicating anti-correlation."
+        ),
+        used_in=["sec:shared-character", "app:character", "fig:character"],
+    )
+    claims.register(
+        name="Misalignment character probe r",
+        value=mis_probe_r,
+        statement=(
+            "Best-layer Pearson r of the base Llama-3.1-8B-Instruct ridge probe's "
+            "prediction of the misalignment-fine-tuned variant's utilities "
+            "(selector: second-to-last <start_of_turn> token; layer sweep over "
+            "{8, 12, 16, 20, 24})."
+        ),
+        used_in=["sec:shared-character", "app:character", "fig:character"],
+    )
+
+    claims.save(CLAIMS_PATH)
+    print(f"\nSaved claims: {CLAIMS_PATH} ({len(claims.claims)} claims)")
 
     # Print summary table
     print(f"\nPer-persona results at {SELECTOR_DISPLAY[best_selector]}, layer {best_layer}:")

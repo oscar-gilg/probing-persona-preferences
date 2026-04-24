@@ -10,6 +10,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+from src.paper.claims import ClaimSet
+
 plt.style.use("seaborn-v0_8-whitegrid")
 
 RESULTS_PATH = "results/experiments/mra_exp3/probes/mra_8persona_results.json"
@@ -32,6 +34,8 @@ PERSONA_DISPLAY = {
     "midwest": "Midwest",
     "sadist": "Sadist",
 }
+
+claims = ClaimSet(source="scripts/multi_role_ablation/plot_diversity_v2.py")
 
 with open(RESULTS_PATH) as f:
     results = json.load(f)
@@ -81,6 +85,51 @@ for i, key in enumerate(cond_keys):
 means = [np.mean([e["r"] for e in groups[k]]) for k in cond_keys]
 ses = [np.std([e["r"] for e in groups[k]]) / np.sqrt(len(groups[k])) for k in cond_keys]
 
+mean_1x2000 = claims.register(
+    name="Persona diversity ablation mean r at 1 persona 2000 tasks",
+    value=round(float(means[0]), 2),
+    statement=(
+        "Mean leave-one-out cross-persona Pearson r of a ridge probe trained on "
+        "Gemma-3-27B activations at L31, when the training set consists of a "
+        "single persona with 2000 tasks, averaged over the 5 target personas "
+        "(default, villain, aesthete, midwest, sadist) used as held-out eval."
+    ),
+    used_in=["fig:diversity", "app:diversity"],
+)
+mean_4x500 = claims.register(
+    name="Persona diversity ablation mean r at 4 personas 500 tasks each",
+    value=round(float(means[3]), 2),
+    statement=(
+        "Mean leave-one-out cross-persona Pearson r of a ridge probe trained on "
+        "Gemma-3-27B activations at L31, when the training set is split across "
+        "4 personas with 500 tasks each (2000 total), averaged over the 5 target "
+        "personas (default, villain, aesthete, midwest, sadist) used as held-out eval."
+    ),
+    used_in=["fig:diversity", "app:diversity"],
+)
+claims.register(
+    name="Persona diversity ablation mean r at 2 personas 1000 tasks each",
+    value=round(float(means[1]), 3),
+    statement=(
+        "Mean leave-one-out cross-persona Pearson r of a ridge probe trained on "
+        "Gemma-3-27B activations at L31, when the training set is split across "
+        "2 personas with 1000 tasks each (2000 total), averaged over the 5 target "
+        "personas (default, villain, aesthete, midwest, sadist) used as held-out eval."
+    ),
+    used_in=["fig:diversity"],
+)
+claims.register(
+    name="Persona diversity ablation mean r at 3 personas 667 tasks each",
+    value=round(float(means[2]), 3),
+    statement=(
+        "Mean leave-one-out cross-persona Pearson r of a ridge probe trained on "
+        "Gemma-3-27B activations at L31, when the training set is split across "
+        "3 personas with 667 tasks each (2001 total), averaged over the 5 target "
+        "personas (default, villain, aesthete, midwest, sadist) used as held-out eval."
+    ),
+    used_in=["fig:diversity"],
+)
+
 ax.plot(x, means, "o-", color="black", markersize=8, linewidth=1.5, zorder=4)
 ax.errorbar(x, means, yerr=ses, fmt="none", color="black",
             capsize=3, elinewidth=0.8, zorder=4)
@@ -101,3 +150,6 @@ ax.set_title("Probe performance vs persona diversity (L31)", fontsize=13)
 fig.tight_layout()
 fig.savefig(OUTPUT_PATH, dpi=150, bbox_inches="tight")
 print(f"\nSaved to {OUTPUT_PATH}")
+
+claims.save("paper/claims/diversity_ablation.json")
+print("Saved claims to paper/claims/diversity_ablation.json")

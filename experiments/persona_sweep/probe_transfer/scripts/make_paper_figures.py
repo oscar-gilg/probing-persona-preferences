@@ -19,6 +19,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+from src.paper.claims import ClaimSet
+
 REPO = Path(__file__).resolve().parents[4]
 RESULTS = REPO / "experiments/persona_sweep/probe_transfer/results"
 ASSETS = REPO / "experiments/persona_sweep/probe_transfer/assets"
@@ -29,6 +31,10 @@ HEADLINE = ("tb-5", 32)
 
 BLUE = "#1a73e8"
 GREY = "#9aa0a6"
+
+CLAIMS = ClaimSet(
+    source="experiments/persona_sweep/probe_transfer/scripts/make_paper_figures.py"
+)
 
 
 def _load_matrix(tag: str, layer: int):
@@ -70,6 +76,74 @@ def fig_default_probe(personas, transfer, utility_r, order):
     probe = np.array([transfer[i_def, personas.index(p)] for p in labels])
     util = np.array([utility_r[i_def, personas.index(p)] for p in labels])
     gap = probe - util
+
+    for persona, r_val, u_val, d_val in zip(labels, probe, util, gap):
+        CLAIMS.register(
+            name=f"Default-to-{persona} classification r",
+            value=round(float(r_val), 3),
+            statement=(
+                f"A ridge probe trained on default-persona Gemma-3-27B residual-stream "
+                f"activations at L32 (end-of-turn selector) predicts {persona}-persona "
+                f"Thurstonian utilities at Pearson r on the 1k canonical test split."
+            ),
+            used_in=["fig:default-probe", "sec:shared-probe"],
+        )
+        CLAIMS.register(
+            name=f"Default-to-{persona} utility similarity r",
+            value=round(float(u_val), 3),
+            statement=(
+                f"Pearson correlation between default-persona Thurstonian utilities and "
+                f"{persona}-persona Thurstonian utilities on the same 1k canonical test tasks."
+            ),
+            used_in=["fig:default-probe", "sec:shared-probe"],
+        )
+        CLAIMS.register(
+            name=f"Default-to-{persona} probe-vs-utility gap",
+            value=round(float(d_val), 3),
+            statement=(
+                f"Delta = probe transfer r minus utility-utility r for default → {persona}; "
+                f"how much the default probe beats the naive utility-similarity baseline at "
+                f"predicting {persona} preferences."
+            ),
+            used_in=["fig:default-probe", "sec:shared-probe"],
+        )
+
+    CLAIMS.register(
+        name="Default probe classification r minimum across personas",
+        value=round(float(probe.min()), 3),
+        statement=(
+            "Minimum across the six non-default personas of the default probe's Pearson r "
+            "predicting that persona's held-out Thurstonian utilities (eot, L32)."
+        ),
+        used_in=["fig:default-probe", "sec:shared-probe"],
+    )
+    CLAIMS.register(
+        name="Default probe classification r maximum across personas",
+        value=round(float(probe.max()), 3),
+        statement=(
+            "Maximum across the six non-default personas of the default probe's Pearson r "
+            "predicting that persona's held-out Thurstonian utilities (eot, L32)."
+        ),
+        used_in=["fig:default-probe", "sec:shared-probe"],
+    )
+    CLAIMS.register(
+        name="Default probe gap minimum across personas",
+        value=round(float(gap.min()), 3),
+        statement=(
+            "Minimum across the six non-default personas of the probe-minus-utility delta — "
+            "the smallest bonus the default probe offers over the utility-similarity baseline."
+        ),
+        used_in=["fig:default-probe", "sec:shared-probe"],
+    )
+    CLAIMS.register(
+        name="Default probe gap maximum across personas",
+        value=round(float(gap.max()), 3),
+        statement=(
+            "Maximum across the six non-default personas of the probe-minus-utility delta — "
+            "the largest bonus the default probe offers over the utility-similarity baseline."
+        ),
+        used_in=["fig:default-probe", "sec:shared-probe"],
+    )
 
     fig, ax = plt.subplots(figsize=(10, 6.5))
     x = np.arange(len(labels))
@@ -138,6 +212,81 @@ def fig_transfer_bonus_pair(personas, transfer, utility_r, order):
     else:
         partial_o = np.full((n, n), np.nan)
 
+    # Summary stats quoted in paper prose and caption (heatmap cell values are
+    # not individually registered — 49 cells each).
+    diag = np.array([transfer_o[i, i] for i in range(n)])
+    i_diag_min = int(np.argmin(diag))
+    i_diag_max = int(np.argmax(diag))
+    off_mask = ~np.eye(n, dtype=bool)
+    off_mean = float(transfer_o[off_mask].mean())
+    n_pairs = int(off_mask.sum())
+    n_bonus_pos = int((bonus_with_nan[off_mask] > 0).sum())
+
+    CLAIMS.register(
+        name="Persona-transfer diagonal r minimum",
+        value=round(float(diag.min()), 3),
+        statement=(
+            "Minimum across the 7 persona self-fit cells of the probe's held-out "
+            f"Pearson r — attained by {labels[i_diag_min]} (eot, L32)."
+        ),
+        used_in=["fig:persona-transfer-bonus", "sec:shared-probe"],
+    )
+    CLAIMS.register(
+        name="Persona-transfer diagonal r minimum persona",
+        value=labels[i_diag_min],
+        statement=(
+            "Persona achieving the minimum self-fit Pearson r in the 7x7 transfer matrix "
+            "(eot, L32)."
+        ),
+        used_in=["fig:persona-transfer-bonus", "sec:shared-probe"],
+    )
+    CLAIMS.register(
+        name="Persona-transfer diagonal r maximum",
+        value=round(float(diag.max()), 3),
+        statement=(
+            "Maximum across the 7 persona self-fit cells of the probe's held-out "
+            f"Pearson r — attained by {labels[i_diag_max]} (eot, L32)."
+        ),
+        used_in=["fig:persona-transfer-bonus", "sec:shared-probe"],
+    )
+    CLAIMS.register(
+        name="Persona-transfer diagonal r maximum persona",
+        value=labels[i_diag_max],
+        statement=(
+            "Persona achieving the maximum self-fit Pearson r in the 7x7 transfer matrix "
+            "(eot, L32)."
+        ),
+        used_in=["fig:persona-transfer-bonus", "sec:shared-probe"],
+    )
+    CLAIMS.register(
+        name="Persona-transfer off-diagonal mean r",
+        value=round(off_mean, 3),
+        statement=(
+            "Mean probe transfer Pearson r across the 42 ordered off-diagonal "
+            "(train, eval) persona pairs at eot / L32."
+        ),
+        used_in=["fig:persona-transfer-bonus", "sec:shared-probe"],
+    )
+    CLAIMS.register(
+        name="Persona-transfer positive-bonus pair count",
+        value=n_bonus_pos,
+        statement=(
+            "Number of ordered off-diagonal (train, eval) persona pairs (out of 42) for "
+            "which probe transfer r strictly exceeds the utility-utility r between the "
+            "two personas (eot, L32)."
+        ),
+        used_in=["fig:persona-transfer-bonus", "sec:shared-probe"],
+    )
+    CLAIMS.register(
+        name="Persona-transfer off-diagonal pair count",
+        value=n_pairs,
+        statement=(
+            "Number of ordered off-diagonal (train, eval) persona pairs used to summarise "
+            "transfer (7 personas, self-pairs excluded)."
+        ),
+        used_in=["fig:persona-transfer-bonus", "sec:shared-probe"],
+    )
+
     fig, axes = plt.subplots(1, 3, figsize=(21, 6.5), constrained_layout=True)
     _heatmap(axes[0], transfer_o, labels,
              "Probe transfer  r(pred, eval)")
@@ -166,6 +315,17 @@ def fig_transfer_per_layer(personas):
     for layer in LAYERS:
         _, tr, _ = _load_matrix("tb-5", layer)
         means.append(float(tr[mask].mean()))
+
+    for layer, m in zip(LAYERS, means):
+        CLAIMS.register(
+            name=f"Mean off-diagonal transfer r at L{layer}",
+            value=round(float(m), 3),
+            statement=(
+                f"Mean Pearson r across the 42 ordered off-diagonal (train, eval) persona "
+                f"pairs at the end-of-turn selector, layer {layer}."
+            ),
+            used_in=["fig:persona-transfer-per-layer", "sec:shared-probe"],
+        )
 
     fig, ax = plt.subplots(figsize=(7, 4.5))
     ax.plot(LAYERS, means, "-o", color=BLUE, lw=2.2, markersize=7)
@@ -215,6 +375,31 @@ def fig_layer_dependence(personas, order):
             outbound[pi, li] = tr[pi][mask[pi]].mean()
             inbound[pi, li] = tr[:, pi][mask[:, pi]].mean()
 
+    # Per-persona averages across the 5 layers — the summary ranking that the
+    # paper's prose refers to ("contrarian is best donor, slacker worst").
+    for persona in ordered:
+        pi = personas.index(persona)
+        CLAIMS.register(
+            name=f"Persona {persona} mean outbound r across layers",
+            value=round(float(np.nanmean(outbound[pi])), 3),
+            statement=(
+                f"Mean across layers {{25,32,39,46,53}} of persona {persona}'s outbound "
+                f"transfer: the average Pearson r of its probe evaluated on each of the "
+                f"other six personas (eot selector, 6 off-diagonal pairs per layer)."
+            ),
+            used_in=["fig:persona-layer"],
+        )
+        CLAIMS.register(
+            name=f"Persona {persona} mean inbound r across layers",
+            value=round(float(np.nanmean(inbound[pi])), 3),
+            statement=(
+                f"Mean across layers {{25,32,39,46,53}} of persona {persona}'s inbound "
+                f"transfer: the average Pearson r of the other six personas' probes "
+                f"evaluated on {persona}'s utilities (eot selector)."
+            ),
+            used_in=["fig:persona-layer"],
+        )
+
     fig, axes = plt.subplots(1, 2, figsize=(14, 5), sharey=True)
     colors = plt.cm.tab10(np.linspace(0, 1, len(personas)))
     color_by_persona = {p: colors[i] for i, p in enumerate(ordered)}
@@ -255,6 +440,34 @@ def fig_asymmetry(personas, transfer, order):
     ab = np.array(ab); ba = np.array(ba)
     asym = np.abs(ab - ba)
 
+    asym_max = CLAIMS.register(
+        name="Transfer asymmetry maximum absolute gap",
+        value=round(float(asym.max()), 3),
+        statement=(
+            "Maximum absolute difference |r(A→B) − r(B→A)| across the 21 unordered "
+            "persona pairs at eot, layer 32."
+        ),
+        used_in=["fig:persona-asymmetry"],
+    )
+    asym_mean = CLAIMS.register(
+        name="Transfer asymmetry mean absolute gap",
+        value=round(float(asym.mean()), 3),
+        statement=(
+            "Mean absolute difference |r(A→B) − r(B→A)| across the 21 unordered persona "
+            "pairs at eot, layer 32."
+        ),
+        used_in=["fig:persona-asymmetry"],
+    )
+    CLAIMS.register(
+        name="Transfer asymmetry median absolute gap",
+        value=round(float(np.median(asym)), 3),
+        statement=(
+            "Median absolute difference |r(A→B) − r(B→A)| across the 21 unordered persona "
+            "pairs at eot, layer 32 — quoted in the caption of the asymmetry figure."
+        ),
+        used_in=["fig:persona-asymmetry"],
+    )
+
     fig, ax = plt.subplots(figsize=(7.5, 7.5))
     lims = (-0.2, 1.0)
     ax.plot(lims, lims, "k--", alpha=0.3, label="y = x (symmetric)")
@@ -268,7 +481,7 @@ def fig_asymmetry(personas, transfer, order):
     ax.set_xlabel("r(persona A probe → persona B utilities)")
     ax.set_ylabel("r(persona B probe → persona A utilities)")
     ax.set_title(f"Transfer asymmetry — 21 pairs, eot, layer 32\n"
-                 f"max gap = {asym.max():.2f}, mean = {asym.mean():.2f}")
+                 f"max gap = {asym_max:.2f}, mean = {asym_mean:.2f}")
     ax.legend(loc="lower right")
     plt.tight_layout()
     plt.savefig(ASSETS / f"plot_{TODAY}_asymmetry_scatter.png", dpi=150)
@@ -438,6 +651,49 @@ def fig_corr_bias(personas):
     ax.set_title("Raw correlations — 30 non-default pairs")
     ax.legend(loc="lower right", frameon=False)
 
+    # Summary stats for Panel A: means and train-side pair counts.
+    n_pairs_raw = len(xs)
+    n_train_side_raw = int((xs > ys).sum())
+    CLAIMS.register(
+        name="Corr bias raw mean r pred-train",
+        value=round(float(xs.mean()), 3),
+        statement=(
+            "Mean raw Pearson r between the probe's prediction vector and the training "
+            "persona's Thurstonian utilities, averaged over the 30 ordered non-default "
+            "(T, E) pairs with T != E and both non-default (eot, L32)."
+        ),
+        used_in=["fig:persona-bias-raw-partial", "app:persona-bias"],
+    )
+    CLAIMS.register(
+        name="Corr bias raw mean r pred-default",
+        value=round(float(ys.mean()), 3),
+        statement=(
+            "Mean raw Pearson r between the probe's prediction vector and the default "
+            "assistant's Thurstonian utilities, averaged over the 30 ordered non-default "
+            "(T, E) pairs (eot, L32)."
+        ),
+        used_in=["fig:persona-bias-raw-partial", "app:persona-bias"],
+    )
+    CLAIMS.register(
+        name="Corr bias raw pairs on train-favouring side",
+        value=n_train_side_raw,
+        statement=(
+            "Count of non-default (T, E) pairs (out of 30) for which the raw r(pred, train) "
+            "exceeds r(pred, default) — pairs lying below the y = x diagonal in the left "
+            "panel of the corr-bias figure."
+        ),
+        used_in=["fig:persona-bias-raw-partial", "app:persona-bias"],
+    )
+    CLAIMS.register(
+        name="Corr bias non-default pair count",
+        value=n_pairs_raw,
+        statement=(
+            "Number of ordered (T, E) persona pairs with T != E and both non-default, used "
+            "in both panels of the corr-bias figure."
+        ),
+        used_in=["fig:persona-bias-raw-partial", "app:persona-bias"],
+    )
+
     # Panel B: partial correlations
     ax = axes[1]
     xs_p, ys_p = [], []
@@ -448,6 +704,39 @@ def fig_corr_bias(personas):
             xs_p.append(rtp[i, j])
             ys_p.append(rdp[i, j])
     xs_p = np.array(xs_p); ys_p = np.array(ys_p)
+    n_train_side_partial = int((xs_p > ys_p).sum())
+    n_pairs_partial = len(xs_p)
+    CLAIMS.register(
+        name="Corr bias partial mean r pred-train given eval",
+        value=round(float(xs_p.mean()), 3),
+        statement=(
+            "Mean partial Pearson r(pred, train | eval) across the 30 non-default (T, E) "
+            "pairs at eot, L32: the probe's residual alignment with the training persona "
+            "after regressing out the eval persona's utilities."
+        ),
+        used_in=["fig:persona-bias-raw-partial", "app:persona-bias", "sec:shared-probe"],
+    )
+    CLAIMS.register(
+        name="Corr bias partial mean r pred-default given eval",
+        value=round(float(ys_p.mean()), 3),
+        statement=(
+            "Mean partial Pearson r(pred, default | eval) across the 30 non-default (T, E) "
+            "pairs at eot, L32: the probe's residual alignment with the default assistant "
+            "after regressing out the eval persona's utilities."
+        ),
+        used_in=["fig:persona-bias-raw-partial", "app:persona-bias"],
+    )
+    CLAIMS.register(
+        name="Corr bias partial pairs on train-favouring side",
+        value=n_train_side_partial,
+        statement=(
+            "Count of non-default (T, E) pairs (out of 30) for which the partial "
+            "r(pred, train | eval) exceeds the partial r(pred, default | eval) — the "
+            "'30/30' unanimity quoted in the caption and prose."
+        ),
+        used_in=["fig:persona-bias-raw-partial", "app:persona-bias", "sec:shared-probe"],
+    )
+
     lo2, hi2 = -0.2, 1.0
     ax.plot([lo2, hi2], [lo2, hi2], "k--", alpha=0.3, label="y = x")
     ax.scatter(xs_p, ys_p, s=55, c="#1a73e8", edgecolor="black", lw=0.4, alpha=0.9)
@@ -455,7 +744,7 @@ def fig_corr_bias(personas):
     ax.set_xlim(lo2, hi2); ax.set_ylim(lo2, hi2)
     ax.set_xlabel("r(pred, train  |  eval)")
     ax.set_ylabel("r(pred, default  |  eval)")
-    ax.set_title(f"Partial correlations (controlling for eval)\n30/30 pairs: train > default")
+    ax.set_title(f"Partial correlations (controlling for eval)\n{n_train_side_partial}/{n_pairs_partial} pairs: train > default")
     ax.legend(loc="lower right", frameon=False)
 
     fig.suptitle(
@@ -481,6 +770,19 @@ def fig_full_bias(personas):
     sems = {p: float(np.nanstd(d[f"bias_toward_{p}"]) / np.sqrt(len(d[f"bias_toward_{p}"]))) for p in personas}
     order = sorted(personas, key=lambda p: -means[p])
 
+    for persona in order:
+        CLAIMS.register(
+            name=f"Double-partial bias toward {persona}",
+            value=round(float(means[persona]), 3),
+            statement=(
+                f"Mean double-partial Pearson r(pred, u_{persona} | u_E, u_T) across the "
+                f"30 ordered (T, E) non-default persona pairs at eot, L32: the probe "
+                f"prediction's residual alignment with {persona}'s utilities after "
+                f"controlling for both the eval and train personas' utilities."
+            ),
+            used_in=["fig:persona-bias-observers", "app:persona-bias"],
+        )
+
     fig, ax = plt.subplots(figsize=(9, 5))
     x = np.arange(len(order))
     heights = [means[p] for p in order]
@@ -488,7 +790,16 @@ def fig_full_bias(personas):
     colors = ["#c0392b" if p == "default" else BLUE for p in order]
     ax.bar(x, heights, yerr=errs, color=colors, edgecolor="black", lw=0.4, capsize=3)
 
-    train_mean = float(np.nanmean(train_self))
+    train_mean = CLAIMS.register(
+        name="Train self-bias partial r pred-train given eval",
+        value=round(float(np.nanmean(train_self)), 3),
+        statement=(
+            "Mean partial r(pred, u_T | u_E) across all 42 ordered off-diagonal (T, E) "
+            "persona pairs at eot, L32 — the green dashed reference line in the full-bias "
+            "figure; the 'partial r = 0.67' quoted in the main-text paragraph on probe bias."
+        ),
+        used_in=["fig:persona-bias-observers", "app:persona-bias", "sec:shared-probe"],
+    )
     ax.axhline(train_mean, color="#2ecc71", lw=1.8, ls="--",
                label=f"train self-bias  r(pred, train | eval) = {train_mean:+.2f}  (n=42)")
     ax.axhline(0, color="black", lw=0.5)
@@ -591,6 +902,10 @@ def main():
     fig_profile_bias(personas)
     fig_corr_bias(personas)
     fig_full_bias(personas)
+
+    claims_path = REPO / "paper/claims/persona_sweep_make_paper_figures.json"
+    CLAIMS.save(claims_path)
+    print(f"Wrote {len(CLAIMS.claims)} claims to {claims_path.relative_to(REPO)}")
 
     print(f"13 figures written to {ASSETS.relative_to(REPO)}/ with date stamp {TODAY}")
 
