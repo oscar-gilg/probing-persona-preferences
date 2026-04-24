@@ -211,9 +211,13 @@ def compute_probe_similarity(
     probes = []
     for probe_id in probe_ids:
         weights = load_probe(manifest_dir, probe_id)
-        # Normalize to unit length
-        weights_norm = weights / np.linalg.norm(weights)
-        probes.append(weights_norm)
+        # Ridge stores [coef_0, ..., coef_n, intercept]. The intercept is a scalar
+        # offset (target mean when inputs are standardized); it has no direction in
+        # activation space, so drop it before computing direction cosines. Including
+        # it makes probes with opposite-sign intercepts look anti-correlated.
+        direction = weights[:-1]
+        direction = direction / np.linalg.norm(direction)
+        probes.append(direction)
 
     probes_array = np.array(probes)
     # Cosine similarity = dot product of normalized vectors

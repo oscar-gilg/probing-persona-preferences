@@ -125,9 +125,9 @@ def _cross_selector_cosine(
     manifest_a: Path, manifest_b: Path, layers: list[int],
 ) -> np.ndarray:
     """Rows = manifest_a probes, cols = manifest_b probes."""
-    weights_a = np.stack([load_probe(manifest_a, _probe_id(L)) for L in layers])
-    weights_b = np.stack([load_probe(manifest_b, _probe_id(L)) for L in layers])
-    # Normalise to unit length (matching compute_probe_similarity convention).
+    # Drop the Ridge intercept (last element) before computing direction cosine.
+    weights_a = np.stack([load_probe(manifest_a, _probe_id(L))[:-1] for L in layers])
+    weights_b = np.stack([load_probe(manifest_b, _probe_id(L))[:-1] for L in layers])
     wa = weights_a / np.linalg.norm(weights_a, axis=1, keepdims=True)
     wb = weights_b / np.linalg.norm(weights_b, axis=1, keepdims=True)
     return wa @ wb.T
