@@ -36,7 +36,8 @@ def main():
         stimuli = stimuli["items"]
     print(f"loaded {len(stimuli)} politics stimuli, {len(probes)} probes")
 
-    model = HuggingFaceModel("qwen3.5-122b")
+    # device="auto" for multi-GPU sharding (Qwen-122B ~244 GB requires 3+ GPUs).
+    model = HuggingFaceModel("qwen3.5-122b", device="auto")
     scored = score_stimuli_with_probes(
         model, stimuli, probes, add_generation_prompt=False, progress=True,
     )

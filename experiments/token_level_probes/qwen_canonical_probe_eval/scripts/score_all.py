@@ -51,7 +51,8 @@ def main():
     print(f"loaded {len(stimuli)} stimuli")
 
     # Selector sanity check on one stimulus
-    model = HuggingFaceModel("qwen3.5-122b")
+    # device="auto" enables device_map="auto" for multi-GPU sharding (Qwen-122B needs ~244GB, so 3+ GPUs).
+    model = HuggingFaceModel("qwen3.5-122b", device="auto")
     formatted = model.format_messages(stimuli[0]["messages"], add_generation_prompt=False)
     tokens = model.tokenizer.encode(formatted, add_special_tokens=False)
     decoded = [model.tokenizer.decode([t]) for t in tokens[-6:]]
