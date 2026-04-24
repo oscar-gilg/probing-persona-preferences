@@ -182,16 +182,11 @@ def build_stats_and_claims(claims: ClaimSet) -> tuple[dict, dict, dict, dict]:
     _qb_hoo_summary = _rel(QWEN_BASELINE_HOO_DIR / "hoo_summary.json")
 
     # --- Cited scalar claims (macro names must not change) ---
-    gp_r_held_val = claims.register(
-        "Gemma probe heldout r",
-        _r(gp_r_held),
-        "A ridge probe on Gemma-3-27B residual-stream activations at the "
-        "end-of-turn (tb-5) token, layer 32, predicts held-out Thurstonian "
-        "utilities at Pearson r on a within-distribution eval split.",
-        used_in=["fig:cross-topic", "abstract", "sec:shared", "sec:probe-methods"],
-        data_paths=[_gp_heldout_path],
-        derivation=f"`final_r` of the ridge probe with layer=={GEMMA_LAYER} in the manifest's `probes` array; round to 3dp.",
-    )
+    # NOTE: Gemma heldout r is registered by compute_position_sweep.py as
+    # "Position sweep Gemma EndOfTurn best r" (best-layer over the sweep, same
+    # manifest) — strictly more informative than a fixed-layer pick. Keep the
+    # value for plotting here but do not double-register the claim.
+    gp_r_held_val = _r(gp_r_held)
     gp_r_hoo_val = claims.register(
         "Gemma probe cross-topic pooled r",
         _r(gp_r_hoo),
