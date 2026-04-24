@@ -38,14 +38,15 @@ model: gemma-3-27b
 
 ### Probe direction similarity
 
-![tb-2 within-selector cosine](assets/plot_042326_probe_cosine_tb2.png)
-![eot within-selector cosine](assets/plot_042326_probe_cosine_eot.png)
-![Cross-selector cosine](assets/plot_042326_probe_cosine_cross_selector.png)
+![tb-2 within-selector cosine](assets/plot_042426_probe_cosine_tb2.png)
+![eot within-selector cosine](assets/plot_042426_probe_cosine_eot.png)
+![Cross-selector cosine](assets/plot_042426_probe_cosine_cross_selector.png)
 ![Probe transfer heatmap](assets/plot_042326_probe_transfer_heatmap.png)
 
-- Neighbouring layers share direction (cos ≈ 0.8–0.9); L2 and L59 are nearly orthogonal.
-- Mid-layers L20–L35 form a coherent block.
-- Cross-selector (tb:-2 vs eot at same layer) is nearly 1.0 in mid-to-late layers — token choice barely changes the direction.
+- Neighbouring layers share direction; cosine falls off smoothly with layer distance.
+- Mid-to-late layers (~L29 through L59) form a coherent block — any two probes in that range have cos ≥ 0.5. The evaluative direction, once established by mid-network, stays stable through the output.
+- Early layers (L2–L17) are nearly orthogonal to the mid/late block — they encode a related but rotated direction.
+- Cross-selector (tb:-2 vs eot at same layer) is near 1.0 in mid-to-late layers — token choice barely changes the direction.
 - Probe-transfer heatmap mirrors the cosine structure: mid-layer probes generalise to nearby layers, early/late layers are self-contained.
 
 ## Steering — differential, self-layer diagonal
