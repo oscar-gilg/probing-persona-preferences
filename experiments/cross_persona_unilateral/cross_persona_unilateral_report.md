@@ -8,8 +8,8 @@ model: gemma-3-27b
 ## TL;DR
 
 - **Unilateral probe-direction steering at L25 works across all 6 canonical personas** — every persona shows a non-zero preference swing under its own ridge_L25 probe.
-- **Swing magnitude varies ~3×** across personas: mathematician weakest (mean Δ = 0.148), slacker strongest (0.453). Ordering: slacker ≈ strategist ≈ aura > sadist ≈ contrarian > mathematician.
-- **Asymmetry between first-span and second-span injection is persona-specific.** Contrarian is extreme (first Δ = 0.082, second Δ = 0.368 — 4.5× gap); most others are within 1.2×.
+- **Swing magnitude spans 3× across personas** (max/min = 0.453/0.148): mathematician weakest, slacker strongest. Ordering: slacker ≈ strategist > aura > sadist ≈ contrarian > mathematician.
+- **Asymmetry between first-span and second-span injection is persona-specific.** Contrarian is extreme (first Δ = 0.082, second Δ = 0.368 — 4.5× gap); aura (1.9×) and slacker (1.4×) also notably asymmetric. Strategist and mathematician are near-symmetric (≤1.2×).
 - **Refusals stay ≤ 2.6%** at every operating point. Real preference shifts, not broken generations.
 
 ## Setup
@@ -63,4 +63,6 @@ For reference: the layer_sweep default-persona unilateral at L25 gave aggregate 
 - **tb-5 selector.** Layer_sweep used eot; persona probes are tb-5. Cross-selector cosines are ~1.0 in mid-to-late layers, so this should be innocuous, but not empirically verified for these personas.
 - **No random-direction control.** Coefficient sign-flip is the within-probe null. A random-direction run at the same multipliers would rule out that any unit-norm direction steers pairwise choice.
 - **Shared pairs from default_test.** Pairs are not persona-optimal; sadist-preferred (harmful) tasks may be rare in this pool. A per-persona pair set (tasks with large gaps under that persona's utility) might tighten the signal, especially for sadist and contrarian.
-- **Aura parsing hung once mid-run** (HTTP client got stuck with ~25 CLOSE_WAIT sockets to OpenRouter). Killed and resumed from the `_parse_checkpoint` existing-keys check; no data lost. Worth flagging as a runner robustness issue.
+- **No bootstrap CIs.** Δ values have ~600 underlying trials per cell (100 pairs × 2 orderings × 3 trials), so differences between personas larger than ~0.05 are likely real, but small comparisons (sadist vs contrarian, aura vs mean-of-top-two) need explicit error bars before the paper.
+- **Position bias is not small.** At negative coef, first-span P(pick) sits at 0.28–0.40 and second-span at 0.15–0.35. The both-orderings design averages this out but individual panels visibly reflect it.
+- **Operational note:** aura's LLM-judge parsing hung once mid-run (OpenRouter HTTP client stuck on ~25 CLOSE_WAIT sockets). Resumed cleanly via `_parse_checkpoint`'s existing-keys check; no data lost, but a runner robustness fix would prevent this.
