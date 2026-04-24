@@ -22,6 +22,30 @@ Source of truth for prompts: `experiments/persona_sweep/sweep_personas.json`
 (`metadata.final_six` + `personas[]`). Persona prompts are model-agnostic and
 reused byte-for-byte from Gemma.
 
+## Pod provisioning
+
+Launch via `/zombuul:launch-runpod qwen-persona-transfer --disk-gb 500 --volume-gb 30`.
+Pick **3× NVIDIA A100-SXM4-80GB** from the GPU options — the MoE needs
+> 160 GB VRAM; 3 cards fit bf16 cleanly without CPU offload.
+
+Disk/volume rationale (covered generally in zombuul's `run-experiment`
+sizing guide):
+
+- `--disk-gb 500`: container disk holds the ~244 GB Qwen-3.5-122B bf16 HF
+  cache + venv + headroom. Regenerable; wiped on pause.
+- `--volume-gb 30`: MooseFS volume holds the cloned repo + ~3 GB of
+  extraction outputs. Keep small to stay well under the per-user quota.
+
+Environment exports (set before any python invocation on the pod):
+
+- `HF_HUB_DISABLE_XET=1` — xet's concurrent-small-writes pattern is
+  unreliable on MooseFS-adjacent storage; forces legacy single-stream download.
+- `HF_HUB_ENABLE_HF_TRANSFER=0` — same reason.
+
+Pod setup leaves a few deps uninstalled for our use case — on first boot:
+`pip install -e ".[dev]"` and `pip install --upgrade "transformers @ git+https://github.com/huggingface/transformers.git"` (transformers' `qwen3_5_moe` support
+lives on main, newer than any pypi release) and `apt-get install -y tmux`.
+
 ## Task set — reuse Gemma's canonical splits
 
 Reuse `data/canonical_splits/{train,eval,test}_task_ids.txt` unchanged
@@ -60,6 +84,11 @@ at L38 are the working probe selectors):
 - `save_every: 200`, `device: auto`, `temperature: 1.0`, `seed: 42`
 - `output_dir: /workspace/activations/qwen35_122b/pref_<persona>_sweep`
 
+Outputs write directly to `/workspace/` (MooseFS, durable across pause).
+Total write volume across all 7 personas is ~3 GB — small enough to stay
+well under the per-user quota and small-enough-per-file to avoid the
+I/O-error patterns that only show up at HF-cache scale.
+
 Per-persona field: `system_prompt` — the persona's prompt for the final
 six, or unset for `default`.
 
@@ -68,10 +97,13 @@ configs sequentially, logging to `/workspace/logs/extract_qwen_<persona>_sweep.l
 
 ### GPU requirements
 
-Qwen-3.5-122B-A10B needs `device_map=auto` on 2+ A100-80GB. Reuse the same
-pod spec as the `qwen_replication` E1 extraction. 6000 tasks × prompt
-encoding only (`max_new_tokens=1`) × batch 4 → ~5–10 min per persona,
-~1 h total for the 7.
+3× A100-SXM4-80GB via `device_map=auto`. The 122B MoE at bf16 totals ~244 GB
+parameters — 2 cards force CPU offload which slows extraction substantially.
+3 cards fit the model cleanly in VRAM.
+
+6000 tasks × prompt encoding only (`max_new_tokens=1`) × batch 4 → ~55 min
+per persona, ~6.5 h total for the 7. First persona adds ~30 min of HF
+cache download.
 
 ### Expected output
 
@@ -151,22 +183,56 @@ the longest AL run (train splits); expect several hours end-to-end, not days.
 
 ## Execution order
 
-1. Generate extraction configs:
-   `python -m scripts.persona_sweep_extraction.gen_qwen_configs` →
-   `configs/extraction/qwen35_pref_*_sweep.yaml` (7 files).
-2. Generate measurement configs:
-   `python -m scripts.persona_sweep_extraction.gen_qwen_measurement_configs`
-   → `configs/measurement/qwen_persona_sweep/final_six/*.yaml` (21 files).
-3. Launch Qwen GPU pod (`/launch-runpod`, `/provision-pod`); run
-   `bash scripts/persona_sweep_extraction/run_qwen_all.sh` on the pod.
-4. In parallel on the laptop, kick off the 21 AL runs:
-   `python -m src.measurement.runners.run configs/measurement/qwen_persona_sweep/final_six/*.yaml --max-concurrent 50 --experiment-id qwen_persona_sweep_final_six`
-   (wrap in tmux for durability; add `--resume` on retry).
-5. When all AL runs land, rename to `<persona>_<split>` symlinks via
-   `rename_exp_dir.py`.
-6. Sync activations from the GPU pod to the CPU storage pod
-   (standard rsync pattern from `persona_sweep/extraction/extraction_spec.md`),
-   plus laptop-local copy for the probe-transfer step.
+1. **Generate configs** (already checked in — skip if present):
+   `python -m scripts.persona_sweep_extraction.gen_qwen_configs` and
+   `python -m scripts.persona_sweep_extraction.gen_qwen_measurement_configs`.
+
+2. **Provision pod** per the "Pod provisioning" section above
+   (`/zombuul:launch-runpod` with the sizing flags, then `/zombuul:provision-pod`
+   to sync `.env` and the spec).
+
+3. **On the pod, install missing deps** (per the "Pod provisioning" section):
+   `pip install -e ".[dev]"`, upgrade transformers from git, `apt-get install -y tmux`.
+
+4. **Launch extraction in a tmux session** so it survives SSH disconnects:
+
+   ```bash
+   tmux new -d -s extraction "set -a; source .env; set +a; \
+     export HF_HUB_DISABLE_XET=1; export HF_HUB_ENABLE_HF_TRANSFER=0; \
+     bash scripts/persona_sweep_extraction/run_qwen_all.sh 2>&1 \
+     | tee /workspace/logs/run_qwen_all.log"
+   ```
+
+5. **Attach a babysit** so the main session can do other work:
+   `/zombuul:babysit qwen-persona-transfer "Qwen persona-sweep extraction — 7 personas writing to /workspace/activations/qwen35_122b/pref_<persona>_sweep/. Done when 14 NPZs present and log ends with '=== done: slacker ==='."`
+
+6. **In parallel on the laptop**, launch the 21 AL runs in a durable tmux:
+
+   ```bash
+   export SSL_CERT_FILE=$(python -m certifi); export REQUESTS_CA_BUNDLE=$SSL_CERT_FILE; \
+   python -m src.measurement.runners.run \
+     configs/measurement/qwen_persona_sweep/final_six/*.yaml \
+     --max-concurrent 50 \
+     --experiment-id qwen_persona_sweep_final_six
+   ```
+
+   The SSL cert exports sidestep a ~30 min startup hang in
+   `ssl.SSLContext.load_verify_locations` under many concurrent clients.
+
+7. **When extraction completes** (log ends with `=== done: slacker ===` and
+   all 7 `pref_<persona>_sweep/` dirs have both NPZs), rsync activations to
+   the laptop:
+
+   ```bash
+   rsync -az runpod-qwen-persona-transfer:/workspace/activations/qwen35_122b/ activations/qwen35_122b/
+   ```
+
+8. **When AL completes**, rename the auto-generated result subdirs to
+   `<persona>_<split>` via `scripts/persona_sweep_extraction/rename_exp_dir.py`.
+
+9. **Pause the pod** via `/zombuul:pause-runpod`. Outputs are already on
+   `/workspace/` (preserved) and mirrored on the laptop; only HF cache and
+   venv are lost — both regenerable if we resume.
 
 ## Sanity checks before handoff
 
