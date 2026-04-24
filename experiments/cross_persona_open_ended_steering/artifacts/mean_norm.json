@@ -1,0 +1,7 @@
+{
+  "mean_norm": 41856.58984375,
+  "layer": 25,
+  "activations_path": "activations/gemma-3-27b_it/pref_main/activations_turn_boundary:-5.npz",
+  "n_tasks": 29996,
+  "hidden_dim": 5376
+}
