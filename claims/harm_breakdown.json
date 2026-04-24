@@ -1,0 +1,32 @@
+{
+  "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+  "claims": [
+    {
+      "name": "Contrastive swing L23 bb",
+      "value": 0.997,
+      "statement": "At layer 23 with $|c| = 5\\%$, contrastive steering along the eot probe produces a 1.00-point preference swing on benign-benign pairs (n=50).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ]
+    },
+    {
+      "name": "Contrastive swing L23 hb",
+      "value": 0.937,
+      "statement": "At layer 23 with $|c| = 5\\%$, contrastive steering along the eot probe produces a 0.94-point preference swing on harmful-benign pairs (n=50).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ]
+    },
+    {
+      "name": "Contrastive swing L23 hh",
+      "value": 0.927,
+      "statement": "At layer 23 with $|c| = 5\\%$, contrastive steering along the eot probe produces a 0.93-point preference swing on harmful-harmful pairs (n=50).",
+      "source": "scripts/paper/claims/compute_harm_breakdown_claims.py",
+      "used_in": [
+        "sec:method-val2"
+      ]
+    }
+  ]
+}
