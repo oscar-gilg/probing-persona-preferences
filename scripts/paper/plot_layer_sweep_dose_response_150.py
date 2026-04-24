@@ -63,11 +63,18 @@ def main() -> None:
     pt_50 = load_pair_type_map(PAIRS_50)
 
     # --- Contrastive: new 150-pair data, filter to L23 ---
+    # Re-parametrize as "P(chose steered task)" vs "coefficient applied to steered task":
+    # each row contributes TWO data points (task_a steered, task_b steered), since both
+    # tasks receive signed steering in opposite directions. task_a gets +signed_multiplier,
+    # task_b gets -signed_multiplier (consistent across orderings, by _effective_coef).
     contr_rows = [r for r in load_parsed(CK_HB / "contrastive_L23_150.parsed.jsonl") if r["layer"] == LAYER]
-    contr_by = defaultdict(lambda: defaultdict(list))
+    # contr_points[pt][applied_c] -> list of (chose_steered: bool)
+    contr_points: dict[str, dict[float, list[bool]]] = defaultdict(lambda: defaultdict(list))
     for r in contr_rows:
         pt = pt_150[r["pair_id"]]
-        contr_by[pt][r["signed_multiplier"]].append(r)
+        mult = r["signed_multiplier"]
+        contr_points[pt][round(+mult, 4)].append(r["choice_original"] == "a")
+        contr_points[pt][round(-mult, 4)].append(r["choice_original"] == "b")
 
     # --- Single-task: prefer new 150-pair data; fall back to parent 50-pair ---
     single_task_new = CK_HB / "single_task_L23_150.parsed.jsonl"
@@ -118,33 +125,24 @@ def main() -> None:
             / max(len(second), 1)
         )
 
-    # Contrastive baseline: parent sweep's eot_probe dead-layer rows, pair_type from 50-pair set
-    contr_dead = [
-        r
-        for L in DEAD_LAYERS
-        for r in (load_parsed(CK_PARENT / f"eot_probe_L{L:02d}.parsed.jsonl")
-                  if (CK_PARENT / f"eot_probe_L{L:02d}.parsed.jsonl").exists()
-                  else [])
-        if r["layer"] == L
-    ]
-    contr_baseline: dict[str, float] = {}
-    for pt in ("bb", "hb", "hh"):
-        rs = [r for r in contr_dead if pt_50.get(r["pair_id"]) == pt]
-        contr_baseline[pt] = sum(r["choice_original"] == "a" for r in rs) / max(len(rs), 1)
+    # Contrastive baseline at applied_c=0: symmetric no-steer anchor at 0.5 by construction,
+    # since "P(chose steered task)" averaging both sides of a neutral intervention is 0.5.
+    # (Position bias drops out of the symmetric average.)
+    contr_baseline = {"bb": 0.5, "hb": 0.5, "hh": 0.5}
 
     # --- Plot ---
     fig, (ax_c, ax_u) = plt.subplots(1, 2, figsize=(11, 4.5))
 
-    # Panel A: contrastive
-    coefs_c = sorted({r["signed_multiplier"] for r in contr_rows})
+    # Panel A: contrastive — P(chose steered task) vs c applied to that task
+    coefs_c = sorted({c for pt_dict in contr_points.values() for c in pt_dict.keys()})
     for pt in ("bb", "hb", "hh"):
         xs, ys = [], []
         for c in coefs_c:
-            rs = contr_by[pt][c]
-            if not rs:
+            flags = contr_points[pt].get(c, [])
+            if not flags:
                 continue
             xs.append(c)
-            ys.append(sum(r["choice_original"] == "a" for r in rs) / len(rs))
+            ys.append(sum(flags) / len(flags))
         xs.append(0.0)
         ys.append(contr_baseline[pt])
         ordered = sorted(zip(xs, ys))
@@ -153,8 +151,8 @@ def main() -> None:
                   markersize=5, linewidth=1.8)
     ax_c.axhline(0.5, color="gray", linestyle=":", alpha=0.4)
     ax_c.axvline(0, color="gray", linestyle="-", alpha=0.2, linewidth=0.5)
-    ax_c.set_xlabel("signed multiplier $c$ (× mean activation norm)", fontsize=10)
-    ax_c.set_ylabel(r"$P(\mathrm{chose\ higher\!-\!utility\ task})$", fontsize=10)
+    ax_c.set_xlabel("coefficient applied to steered task (× mean activation norm)", fontsize=10)
+    ax_c.set_ylabel(r"$P(\mathrm{chose\ steered\ task})$", fontsize=10)
     ax_c.set_title("(A) Contrastive steering — L23 eot", fontsize=11)
     ax_c.set_ylim(0, 1)
     ax_c.grid(True, alpha=0.3)
