@@ -74,6 +74,17 @@ def mean_ci(values: np.ndarray, n_boot: int = 1000) -> tuple[float, float, float
     return float(values.mean()), float(np.percentile(boots, 2.5)), float(np.percentile(boots, 97.5))
 
 
+CONDITION_COLORS = {
+    "impossible_numeric_8turn":   "#1f77b4",  # tab10 blue
+    "tones_aggressive_8turn":     "#ff7f0e",  # tab10 orange
+    "tones_disappointed_8turn":   "#2ca02c",  # tab10 green
+    "tones_sarcastic_8turn":      "#d62728",  # tab10 red
+    "redacted_history_8turn":     "#9467bd",  # tab10 purple
+    "wildchat_8turn":             "#8c564b",  # tab10 brown
+    "neutral_continuation_8turn": "#e377c2",  # tab10 pink
+}
+
+
 def trajectory(df: pd.DataFrame, value_col: str, title: str, ylabel: str, out: Path) -> None:
     fig, ax = plt.subplots(figsize=(8, 5))
     for cond in CONDITION_ORDER:
@@ -88,8 +99,14 @@ def trajectory(df: pd.DataFrame, value_col: str, title: str, ylabel: str, out: P
             m, lo, hi = mean_ci(vals)
             means.append(m); los.append(lo); his.append(hi)
         x = np.arange(1, 9)
-        ax.plot(x, means, marker="o", label=cond)
-        ax.fill_between(x, los, his, alpha=0.15)
+        color = CONDITION_COLORS[cond]
+        label = cond.replace("_8turn", "")
+        # Bold the control to make it the visual anchor
+        if cond == "neutral_continuation_8turn":
+            ax.plot(x, means, marker="o", label=label, color=color, lw=2.5, zorder=3)
+        else:
+            ax.plot(x, means, marker="o", label=label, color=color)
+        ax.fill_between(x, los, his, alpha=0.15, color=color)
     ax.set_xlabel("Assistant turn (1-indexed)")
     ax.set_ylabel(ylabel)
     ax.set_title(title)
@@ -139,19 +156,33 @@ def within_transcript_r(merged: pd.DataFrame) -> pd.DataFrame:
 
 
 def boxplot_within_r(within_df: pd.DataFrame, out: Path) -> None:
-    fig, ax = plt.subplots(figsize=(10, 5))
+    """Sorted by mean r so the strongest negative-correlation condition leads.
+
+    Adds shaded bands: red below -0.2 = probe tracks rising distress;
+    grey near 0 = no relationship; green above +0.2 = wrong-direction.
+    """
+    means = within_df.groupby("condition")["r"].mean().to_dict()
+    ordered = sorted([c for c in CONDITION_ORDER if c in means], key=lambda c: means[c])
+    fig, ax = plt.subplots(figsize=(10, 5.5))
     data, labels = [], []
-    for cond in CONDITION_ORDER:
+    for cond in ordered:
         rs = within_df[within_df["condition"] == cond]["r"].dropna().values
         if len(rs) == 0:
             continue
-        data.append(rs); labels.append(f"{cond}\n(n={len(rs)})")
-    ax.boxplot(data, labels=labels, showmeans=True)
-    ax.axhline(0, color="k", lw=0.5)
-    ax.set_ylabel("Pearson r(probe_score, frustration_score) per transcript")
-    ax.set_title("Within-transcript probe-frustration correlation")
-    ax.tick_params(axis="x", rotation=20, labelsize=8)
-    ax.grid(alpha=0.3)
+        data.append(rs)
+        labels.append(f"{cond.replace('_8turn','')}\n(n={len(rs)})")
+    # Shaded interpretation bands
+    ax.axhspan(-1, -0.2, color="#fde0e0", alpha=0.6, zorder=0, label="probe tracks rising distress")
+    ax.axhspan(-0.2, 0.2, color="#eeeeee", alpha=0.6, zorder=0, label="no relationship")
+    ax.axhspan(0.2, 1, color="#e0f0e0", alpha=0.6, zorder=0, label="wrong direction")
+    ax.boxplot(data, tick_labels=labels, showmeans=True, zorder=2)
+    ax.axhline(0, color="k", lw=0.6, zorder=1)
+    ax.set_ylim(-1, 1)
+    ax.set_ylabel("Within-transcript Pearson r(probe, frustration)")
+    ax.set_title("Per-transcript probe-frustration correlation, by condition")
+    ax.tick_params(axis="x", rotation=20, labelsize=9)
+    ax.legend(loc="upper right", fontsize=8, framealpha=0.95)
+    ax.grid(axis="y", alpha=0.3)
     fig.tight_layout()
     fig.savefig(out, dpi=130)
     plt.close(fig)
@@ -201,11 +232,12 @@ def tone_overlay(merged: pd.DataFrame, value_col: str, ylabel: str, out: Path) -
             m, lo, hi = mean_ci(vals)
             means.append(m); los.append(lo); his.append(hi)
         x = np.arange(1, 9)
-        ax.plot(x, means, marker="o", label=cond.replace("_8turn", ""))
-        ax.fill_between(x, los, his, alpha=0.15)
+        color = CONDITION_COLORS[cond]
+        ax.plot(x, means, marker="o", label=cond.replace("_8turn", ""), color=color)
+        ax.fill_between(x, los, his, alpha=0.15, color=color)
     ax.set_xlabel("Assistant turn (1-indexed)")
     ax.set_ylabel(ylabel)
-    ax.set_title("Tone variants on impossible_numeric")
+    ax.set_title("Rejection-tone variants on impossible_numeric")
     ax.legend(loc="best", fontsize=9)
     ax.grid(alpha=0.3)
     fig.tight_layout()
@@ -227,11 +259,12 @@ def redaction_overlay(merged: pd.DataFrame, value_col: str, ylabel: str, out: Pa
             m, lo, hi = mean_ci(vals)
             means.append(m); los.append(lo); his.append(hi)
         x = np.arange(1, 9)
-        ax.plot(x, means, marker="o", label=cond.replace("_8turn", ""))
-        ax.fill_between(x, los, his, alpha=0.15)
+        color = CONDITION_COLORS[cond]
+        ax.plot(x, means, marker="o", label=cond.replace("_8turn", ""), color=color)
+        ax.fill_between(x, los, his, alpha=0.15, color=color)
     ax.set_xlabel("Assistant turn (1-indexed)")
     ax.set_ylabel(ylabel)
-    ax.set_title("Effect of redacting prior assistant turns")
+    ax.set_title("Same task pool, model can vs can't see its own past failures")
     ax.legend(loc="best")
     ax.grid(alpha=0.3)
     fig.tight_layout()
