@@ -23,6 +23,10 @@ Append-only. Also the progress signal for the user when running on a pod.
 - **First positive-control run FAILED**: d=0.512 vs parent 2.47 (delta 1.96). Root cause: my scoring script applied each probe at its TRAINING selector (`turn_boundary:-5` for Gemma tb-5). The Gemma parent (`system_prompt_modulation_v2/scripts/score_all.py:82`) actually applies every probe at `scores_arr[-1]` = last token, regardless of training origin — probe names encode training position only. Fix: set `selector="turn_boundary:-1"` for all probes in score_all.py, score_politics.py, positive_control.py. Committed + pushed.
 - **Retry PASSED**: d=2.308, |delta|=0.16 < 0.5. Pipeline validated. Mean(true)=1.58, mean(false)=-1.16 — expected signs and magnitudes. Throughput ~11 it/s on 3×A100 for Gemma-3-27B (which fits on a subset of one A100 via device_map=auto).
 - Qwen-3.5-122B download in parallel tmux session `qwen_download` at ~77 MB/s. At 46 GB / 244 GB after ~10 min — ~35 more min to full download.
+- **Qwen sweep attempt 1:** transformers 4.57 doesn't recognize `qwen3_5_moe` architecture. Upgraded to transformers from git (5.7.0.dev0 — matches what was on the pod before container wipe).
+- **Qwen sweep attempt 2:** OOM on GPU 0. The `HuggingFaceModel` constructor defaults `device="cuda"`, which passes `device_map="cuda"` to `from_pretrained()` — loads everything on GPU 0 (fails for 244 GB model on 80 GB GPU). Fixed by passing `device="auto"` in the scripts, which produces `device_map="auto"` and shards across all 3 A100s.
+- **Qwen sweep attempt 3 (current):** relaunched with device="auto". Loading model across 3 GPUs.
+
 
 
 
