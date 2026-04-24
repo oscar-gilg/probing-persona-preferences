@@ -93,21 +93,33 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--persona", required=True, choices=sorted(VALID_PERSONAS))
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--smoke", action="store_true", help="Pipeline validation: 2 prompts × 3 coefs × 1 trial (6 generations).")
     args = parser.parse_args()
 
     persona = args.persona
-    output_path = EXPERIMENT_DIR / f"results_{persona}.jsonl"
+    if args.smoke:
+        output_path = EXPERIMENT_DIR / f"smoke_{persona}.jsonl"
+        mults = [-0.05, 0.0, 0.05]
+        n_trials = 1
+        prompt_limit = 2
+    else:
+        output_path = EXPERIMENT_DIR / f"results_{persona}.jsonl"
+        mults = MULTS
+        n_trials = N_TRIALS
+        prompt_limit = None
 
     system_prompt = load_system_prompt(persona)
     prompts = load_prompts(persona)
+    if prompt_limit is not None:
+        prompts = prompts[:prompt_limit]
     mean_norm = load_mean_norm()
     done = load_done_keys(output_path) if args.resume else set()
 
-    total = len(prompts) * len(MULTS) * N_TRIALS
+    total = len(prompts) * len(mults) * n_trials
     needed = total - len(done)
-    print(f"Persona: {persona}")
+    print(f"Persona: {persona}  |  smoke={args.smoke}")
     print(f"System prompt: {'(none, default)' if system_prompt is None else system_prompt[:80] + '...'}")
-    print(f"N prompts: {len(prompts)}  |  MULTS: {MULTS}  |  N_TRIALS: {N_TRIALS}")
+    print(f"N prompts: {len(prompts)}  |  MULTS: {mults}  |  N_TRIALS: {n_trials}")
     print(f"mean_norm: {mean_norm:.2f}")
     print(f"Total cells: {total}  |  Done: {len(done)}  |  To generate: {needed}")
 
@@ -136,9 +148,9 @@ def main() -> None:
                     {"role": "user", "content": prompt["text"]},
                 ]
 
-            for mult in MULTS:
+            for mult in mults:
                 keys_needed = [
-                    t for t in range(N_TRIALS)
+                    t for t in range(n_trials)
                     if (prompt["id"], mult, t) not in done
                 ]
                 if not keys_needed:
