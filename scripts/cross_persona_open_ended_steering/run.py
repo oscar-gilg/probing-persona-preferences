@@ -39,7 +39,7 @@ MODEL_CONFIG = {
 EXPERIMENT_DIR = Path("experiments/cross_persona_open_ended_steering")
 SHARED_PROMPTS_PATH = EXPERIMENT_DIR / "artifacts" / "prompts_shared.json"
 PERSONA_PROMPT_DIR = EXPERIMENT_DIR / "artifacts"
-PERSONA_SYSTEM_PROMPT_DIR = Path("experiments/new_persona_steering/artifacts")
+PERSONA_SWEEP_PATH = Path("experiments/persona_sweep/sweep_personas.json")
 
 N_TRIALS = 5
 MULTS = [-0.05, -0.03, 0.0, 0.03, 0.05, 0.07]
@@ -52,9 +52,12 @@ VALID_PERSONAS = {"default", "sadist", "mathematician", "aura", "strategist", "c
 def load_system_prompt(persona: str) -> str | None:
     if persona == "default":
         return None
-    path = PERSONA_SYSTEM_PROMPT_DIR / f"{persona}.json"
-    with open(path) as f:
-        return json.load(f)["positive"]
+    with open(PERSONA_SWEEP_PATH) as f:
+        data = json.load(f)
+    for p in data["personas"]:
+        if p["name"] == persona:
+            return p["system_prompt"]
+    raise KeyError(f"Persona {persona!r} not found in {PERSONA_SWEEP_PATH}")
 
 
 def load_prompts(persona: str) -> list[dict]:
