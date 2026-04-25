@@ -148,15 +148,39 @@ The token-level heatmaps are visually dense at column width — useful as raw ar
 
 Three follow-up questions came up after v1: (b) is the probe-judge correlation stable across turn position, or does it concentrate in a few turns? (c) what does the probe read at *user* turn boundaries (vs only at assistant turn boundaries)? (d) what does the probe do *inside* a turn, not just at its end?
 
-### (b) Within-turn pooled correlation — strongest at turn 1, decays through turn 8
+### (b) Within-turn correlation — pooled and per-condition
+
+The pooled scatter showed in the previous version mixes all 7 conditions; below is the per-condition decomposition.
+
+#### Per-condition heatmap
+
+![](assets/plot_042526_per_condition_within_turn_r_heatmap.png)
+
+7 conditions × 8 turns, cells = within-turn Pearson r (probe, frustration) across the 20 rollouts of that (condition, turn) cell. Blue = probe negative-correlates with frustration *at that single turn position* (the desired direction); red = wrong direction.
+
+- **Turn 1 column is solidly blue across all 7 conditions** — r ∈ [-0.27, -0.67]. **`tones_aggressive` at turn 1 is the strongest single cell at r = -0.67.** This is the cleanest single-cell evidence that the probe distinguishes early-turn distress from non-distress.
+- **Turns 3–8 are noisy** — most cells have |r| < 0.3 and signs vary by condition. After the first few turns, the within-turn population has saturated into a tighter distress range, leaving little spread for the probe to track.
+- **Two surprising positive cells at turn 2:** `wildchat` r=+0.58 and `neutral_continuation` r=+0.47. Both are control-flavored conditions where most turn-2 frustrations are 0/1; n=20 means a couple of outliers can flip the sign. Treat these as low-effective-sample-size noise rather than real wrong-direction signal.
+
+#### Per-condition trajectory
+
+![](assets/plot_042526_per_condition_within_turn_r_trajectory.png)
+
+Same data as a line plot — easier to see which conditions stay informative for longer.
+
+- `tones_aggressive` and `tones_disappointed` keep producing significant within-turn r (|r| ≥ 0.3) at multiple later turns (turn 4, 5, 7).
+- `impossible_numeric` slowly returns to mild negative correlation by turn 8 (r=-0.25).
+- The other conditions (sarcastic, redacted, wildchat, control) zigzag near zero after turn 2.
+
+#### Pooled-across-conditions panels (for completeness)
 
 ![](assets/plot_042426_within_turn_scatter.png)
 
-Eight panels, one per turn position. Each panel: probe vs frustration scattered across all 140 rollouts at that single turn position. Panel title = pooled Pearson r at that turn.
+Each panel = one turn position, all 140 rollouts in 7 colored clouds. Pooled r drops monotonically: **-0.53 → -0.32 → -0.20 → -0.19 → -0.08 → -0.08 → +0.02 → -0.01**.
 
-- **Turn 1 has the strongest pooled correlation: r = -0.53.** When some rollouts are already producing apologetic / hedging text at turn 1 and others are clean attempts, the probe ranks them as well as the judge does.
-- **Correlation decays monotonically: -0.53 → -0.32 → -0.20 → -0.19 → -0.08 → -0.08 → +0.02 → -0.01.** By turn 8, almost everyone is in distress, and the probe-judge spread tightens — there's nothing to discriminate.
-- **Implication.** The within-transcript r in the headline (e.g. wildchat -0.44) is real but operates on a different axis: it captures the *trajectory* shape per-rollout, not the per-position cross-rollout spread. Both signals are informative; the per-turn scatter shows the probe is a saturating-not-linear readout.
+#### Takeaway
+
+The headline-level "probe tracks distress" claim is strongest at turn 1 in every condition; from turn 3+ the within-turn signal becomes noise unless the rejection style keeps generating cross-rollout spread (the tone variants do; IMP and the controls do not). The within-*transcript* r reported in the original headline (wildchat -0.44) operates on a different axis (trajectory shape per-rollout) and remains the cleanest aggregate-level finding.
 
 ### (c) Probe at user-turn EOT vs assistant-turn EOT — they diverge, and the divergence depends on rejection tone
 
