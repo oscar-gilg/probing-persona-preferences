@@ -77,11 +77,13 @@ def score_stimuli_with_probes(
           - `probe_scores`: {probe_key: float} — score at the probe's selector.
           - optionally the keys from `extra_extractors`.
     """
-    if add_generation_prompt:
-        raise ValueError(
-            "score_stimuli_with_probes requires add_generation_prompt=False so "
-            "turn_boundary:N resolves to a concrete token slice."
-        )
+    # turn_boundary:N selectors are slices from the end of the sequence (`scores[N]`).
+    # On add_generation_prompt=False (assistant-turn stimuli), the sequence ends with
+    # the turn's end-marker tokens; on add_generation_prompt=True (user-turn stimuli
+    # with the assistant role marker appended), the sequence ends with the assistant
+    # role-marker tokens. Both are turn-boundary-anchored — `scores[-1]` is the last
+    # token in either case. Caller is responsible for confirming train/eval positions
+    # match.
     for p in probes:
         _parse_tb_offset(p.selector)
 
