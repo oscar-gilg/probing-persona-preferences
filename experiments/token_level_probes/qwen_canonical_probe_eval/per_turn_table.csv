@@ -1,0 +1,25 @@
+domain,probe,n_pos,n_neg,d,cv_acc,roc_auc
+truth (user),qwen_tb-1_L33,0,0,nan,nan,nan
+harm (user),qwen_tb-1_L33,0,0,nan,nan,nan
+truth (assistant),qwen_tb-1_L33,88,88,0.7288,0.6308,0.7228
+harm (assistant),qwen_tb-1_L33,77,77,-2.0428,0.8568,0.9298
+truth (user),qwen_tb-1_L38,0,0,nan,nan,nan
+harm (user),qwen_tb-1_L38,0,0,nan,nan,nan
+truth (assistant),qwen_tb-1_L38,88,88,1.1462,0.7560,0.8299
+harm (assistant),qwen_tb-1_L38,77,77,-2.2770,0.8768,0.9470
+truth (user),qwen_tb-1_L43,0,0,nan,nan,nan
+harm (user),qwen_tb-1_L43,0,0,nan,nan,nan
+truth (assistant),qwen_tb-1_L43,88,88,1.9083,0.8521,0.9104
+harm (assistant),qwen_tb-1_L43,77,77,-0.9546,0.6682,0.7465
+truth (user),qwen_tb-4_L33,0,0,nan,nan,nan
+harm (user),qwen_tb-4_L33,0,0,nan,nan,nan
+truth (assistant),qwen_tb-4_L33,88,88,0.8962,0.7271,0.7528
+harm (assistant),qwen_tb-4_L33,77,77,-1.0373,0.7067,0.7755
+truth (user),qwen_tb-4_L38,0,0,nan,nan,nan
+harm (user),qwen_tb-4_L38,0,0,nan,nan,nan
+truth (assistant),qwen_tb-4_L38,88,88,1.8089,0.8405,0.9079
+harm (assistant),qwen_tb-4_L38,77,77,-1.0609,0.6819,0.7775
+truth (user),qwen_tb-4_L43,0,0,nan,nan,nan
+harm (user),qwen_tb-4_L43,0,0,nan,nan,nan
+truth (assistant),qwen_tb-4_L43,88,88,1.7419,0.8008,0.8896
+harm (assistant),qwen_tb-4_L43,77,77,-1.2551,0.7073,0.8145
