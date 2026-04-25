@@ -11,9 +11,10 @@ Paper claim this feeds: the probe is a *preference* direction, not an *"assistan
   - *Why not the old `heldout_eval_gemma3_task_mean/ridge_L25` used for the sadist experiment?* Consistency: every other claim about these six personas uses `persona_sweep_final_six`. Both probes predict default preferences and share `ridge_L25`; re-using the sweep keeps pooling and training set aligned.
 - **Steering layer.** 25 (from probe manifest).
 - **Steering mode.** `all_tokens_steering`. Per `safety_steering` and the sadist report, generation-time steering is essential for open-ended persona expression; prefill-only has near-zero effect.
-- **Personas (7 contexts).** System prompts reused verbatim:
+- **Personas (7 contexts).** System prompts loaded by persona `name` from `experiments/persona_sweep/sweep_personas.json` (`personas[].system_prompt`) — the canonical source of truth for the `final_six`:
   - `default` — no system prompt.
-  - `sadist`, `mathematician`, `aura`, `strategist`, `contrarian`, `slacker` — `experiments/new_persona_steering/artifacts/{persona}.json` (`positive` field). (Source of truth: `experiments/persona_sweep/sweep_personas.json`, `final_six`.)
+  - `sadist`, `mathematician`, `aura`, `strategist`, `contrarian`, `slacker`.
+  - *Note:* this diverges from the sadist_open_ended_steering experiment, which loaded sadist from `experiments/new_persona_steering/artifacts/sadist.json` (a different text predating the sweep). Using sweep_personas.json here keeps all 6 personas stylistically consistent.
 - **Coefficients.** `{-0.05, -0.03, 0, +0.03, +0.05, +0.07}` as fractions of `mean_norm`. `+0.10` dropped (known incoherent under sadist).
   - `mean_norm` is the mean L2 norm of layer-25 activations at the `turn_boundary:-5` position in the default-persona activation set (`activations/gemma-3-27b_it/pref_main/activations_turn_boundary:-5.npz`). Computed once at preflight and saved to `artifacts/mean_norm.json`. **Do not reuse** the `35,708` constant from the sadist script — that was for `task_mean` pooling and is not the right normaliser here.
 - **Trials.** 5 per (persona, prompt, coefficient).
@@ -133,7 +134,7 @@ Under the default context, neither curve should move strongly with `+c` (nothing
 |---|---|
 | Probe dir | `results/probes/persona_sweep_final_six/default_tb-5` (id: `ridge_L25`) |
 | Default activations (for mean_norm) | `activations/gemma-3-27b_it/pref_main/activations_turn_boundary:-5.npz` |
-| Persona system prompts | `experiments/new_persona_steering/artifacts/{persona}.json` (`positive`) |
+| Persona system prompts | `experiments/persona_sweep/sweep_personas.json` (`personas[].system_prompt` keyed by `name`) |
 | Persona list | `experiments/persona_sweep/sweep_personas.json` (`final_six`) |
 | Shared prompt pool | `experiments/cross_persona_open_ended_steering/artifacts/prompts_shared.json` |
 | Persona-specific prompts | `experiments/cross_persona_open_ended_steering/artifacts/prompts_persona_{persona}.json` |
