@@ -233,10 +233,11 @@ def main():
             headline_rows.append({**headline_row(clean_items, "harm_clean", probe, "harmful", "benign"), "turn": turn})
 
     # Politics: assistant-turn only (politics stimuli are assistant-turn by design)
+    # Sign convention: d = mean(left) - mean(right), so democrat lean → positive d.
     for sp_name in ("democrat", "republican"):
         sp_filter = lambda it, s=sp_name: it.get("system_prompt") == s
         for probe in PROBES:
-            r = headline_row(pol_items, f"politics_{sp_name}", probe, "right", "left", extra_filter=sp_filter)
+            r = headline_row(pol_items, f"politics_{sp_name}", probe, "left", "right", extra_filter=sp_filter)
             headline_rows.append({**r, "turn": "assistant"})
 
     print_table("HEADLINE — base discrimination at Qwen probes (per turn)",
@@ -258,7 +259,7 @@ def main():
     truth_shift_u = tag_turn(induced_shift_rows(truth_u, "truth", PROBES, "true", "false"), "user") if truth_u else []
     harm_shift_a = tag_turn(induced_shift_rows(harm_a, "harm", PROBES, "harmful", "benign"), "assistant")
     harm_shift_u = tag_turn(induced_shift_rows(harm_u, "harm", PROBES, "harmful", "benign"), "user") if harm_u else []
-    politics_shift = tag_turn(induced_shift_rows(pol_items, "politics", PROBES, "right", "left"), "assistant")
+    politics_shift = tag_turn(induced_shift_rows(pol_items, "politics", PROBES, "left", "right"), "assistant")
     save_csv(EXP_DIR / "induced_shift_table.csv",
              truth_shift_a + truth_shift_u + harm_shift_a + harm_shift_u + politics_shift,
              ["domain", "turn", "system_prompt", "probe", "n_pos", "n_neg", "d", "pos_mean", "neg_mean"])
