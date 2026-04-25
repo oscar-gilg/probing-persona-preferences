@@ -59,21 +59,23 @@ def transcript_key(condition: str, task_id: str, rollout_idx: int) -> str:
 # ─────────────────────────────── (b) within-turn correlation per condition ───────────────────────────────
 
 
-def per_condition_within_turn_r(merged: pd.DataFrame) -> pd.DataFrame:
+def per_condition_within_turn_r(merged: pd.DataFrame, probe_col: str = "probe_score") -> pd.DataFrame:
     """Pearson r(probe, frustration) at each (condition, turn_index) cell."""
     rows = []
     for cond in CONDITION_ORDER:
         for t in range(8):
             sub = merged[(merged["condition"] == cond) & (merged["turn_index"] == t)]
-            if len(sub) >= 3 and sub["score"].std() > 0 and sub["probe_score"].std() > 0:
-                r = float(np.corrcoef(sub["score"], sub["probe_score"])[0, 1])
+            if len(sub) >= 3 and sub["score"].std() > 0 and sub[probe_col].std() > 0:
+                r = float(np.corrcoef(sub["score"], sub[probe_col])[0, 1])
             else:
                 r = float("nan")
             rows.append({"condition": cond, "turn_index": t, "r": r, "n": len(sub)})
     return pd.DataFrame(rows)
 
 
-def plot_per_condition_within_turn_r_heatmap(per_cond_r: pd.DataFrame, out: Path) -> None:
+def plot_per_condition_within_turn_r_heatmap(
+    per_cond_r: pd.DataFrame, out: Path, title_suffix: str = ""
+) -> None:
     """7 conditions × 8 turns heatmap of within-turn Pearson r."""
     pivot = per_cond_r.pivot(index="condition", columns="turn_index", values="r")
     pivot = pivot.reindex(CONDITION_ORDER)
@@ -91,8 +93,42 @@ def plot_per_condition_within_turn_r_heatmap(per_cond_r: pd.DataFrame, out: Path
         ax.text(j, i, txt, ha="center", va="center", fontsize=8,
                 color="white" if abs(v) > 0.35 else "black")
     ax.set_xlabel("Assistant turn (1-indexed)")
-    ax.set_title("Within-turn Pearson r(probe, frustration), per condition\n(blue = probe tracks distress at that turn; red = wrong direction)")
+    title = "Within-turn Pearson r(probe, frustration), per condition"
+    if title_suffix:
+        title += f"\n{title_suffix}"
+    ax.set_title(title)
     fig.colorbar(im, ax=ax, fraction=0.025, pad=0.02, label="Pearson r")
+    fig.tight_layout()
+    fig.savefig(out, dpi=130)
+    plt.close(fig)
+
+
+def plot_user_vs_asst_probe_r_heatmap(
+    user_r: pd.DataFrame, asst_r: pd.DataFrame, out: Path
+) -> None:
+    """Side-by-side heatmaps: user-EOT-probe and asst-EOT-probe vs same judge target."""
+    fig, axes = plt.subplots(1, 2, figsize=(15, 4.5), sharey=True)
+    titles = [
+        "PREDICTIVE: probe at user-EOT k vs judge of asst k\n(probe state going INTO assistant turn k)",
+        "POST-HOC: probe at asst-EOT k vs judge of asst k\n(probe state at END of assistant turn k)",
+    ]
+    for ax, df, title in zip(axes, [user_r, asst_r], titles):
+        pivot = df.pivot(index="condition", columns="turn_index", values="r")
+        pivot = pivot.reindex(CONDITION_ORDER)
+        vmax = 0.7
+        im = ax.imshow(pivot.values, cmap="RdBu_r", vmin=-vmax, vmax=vmax, aspect="auto")
+        ax.set_xticks(range(8)); ax.set_xticklabels([str(t + 1) for t in range(8)])
+        ax.set_yticks(range(len(CONDITION_ORDER)))
+        ax.set_yticklabels([c.replace("_8turn", "") for c in CONDITION_ORDER])
+        for (i, j), v in np.ndenumerate(pivot.values):
+            txt = "—" if np.isnan(v) else f"{v:+.2f}"
+            ax.text(j, i, txt, ha="center", va="center", fontsize=8,
+                    color="white" if abs(v) > 0.35 else "black")
+        ax.set_xlabel("Assistant turn k (1-indexed)")
+        ax.set_title(title, fontsize=10)
+        fig.colorbar(im, ax=ax, fraction=0.025, pad=0.02, label="Pearson r")
+    fig.suptitle("Probe-frustration correlation: predictive (user-EOT) vs post-hoc (asst-EOT)\n"
+                 "blue = probe tracks distress in the desired direction", fontsize=11)
     fig.tight_layout()
     fig.savefig(out, dpi=130)
     plt.close(fig)
@@ -351,7 +387,8 @@ def main() -> None:
     per_cond_r = per_condition_within_turn_r(merged)
     per_cond_r.to_csv(RES / "per_condition_within_turn_r.csv", index=False)
     plot_per_condition_within_turn_r_heatmap(
-        per_cond_r, ASSETS / f"plot_{TODAY}_per_condition_within_turn_r_heatmap.png"
+        per_cond_r, ASSETS / f"plot_{TODAY}_per_condition_within_turn_r_heatmap.png",
+        title_suffix="probe at assistant-turn EOT (concurrent with judged text)",
     )
     plot_per_condition_within_turn_r_trajectory(
         per_cond_r, ASSETS / f"plot_{TODAY}_per_condition_within_turn_r_trajectory.png"
@@ -364,6 +401,31 @@ def main() -> None:
     plot_user_vs_asst_trajectory(per_role, ASSETS / f"plot_{TODAY}_user_vs_asst_trajectory.png")
     plot_user_asst_diff_overlay(per_role, ASSETS / f"plot_{TODAY}_user_vs_asst_gap.png")
     per_role.to_csv(RES / "per_role_scores.csv", index=False)
+
+    # (b') Predictive correlation: user-EOT probe at turn k vs judge of asst k.
+    # Temporal alignment: user-turn-k EOT comes immediately BEFORE the model
+    # generates assistant-k. So this asks: does the model's probe state going
+    # INTO the assistant turn predict how distressed the upcoming response will be?
+    user_only = per_role[per_role["role"] == "user"][
+        ["condition", "task_id", "rollout_idx", "turn_index", "probe_score"]
+    ].rename(columns={"probe_score": "probe_user"})
+    pred_merged = user_only.merge(
+        frust[["condition", "task_id", "rollout_idx", "turn_index", "score"]],
+        on=["condition", "task_id", "rollout_idx", "turn_index"], how="inner",
+    )
+    print(f"  predictive merged rows: {len(pred_merged)}")
+    pred_r = per_condition_within_turn_r(
+        pred_merged.rename(columns={"probe_user": "probe_score"}),
+    )
+    pred_r.to_csv(RES / "per_condition_within_turn_r_user_probe.csv", index=False)
+    plot_per_condition_within_turn_r_heatmap(
+        pred_r, ASSETS / f"plot_{TODAY}_per_condition_within_turn_r_user_probe_heatmap.png",
+        title_suffix="probe at user-turn EOT (predictive: probe state BEFORE assistant generates)",
+    )
+    plot_user_vs_asst_probe_r_heatmap(
+        pred_r, per_cond_r,
+        ASSETS / f"plot_{TODAY}_predictive_vs_posthoc_r_heatmap.png",
+    )
 
     # (d) — pick the same rollouts as the original qualitative plots, but as time series
     imp_final = merged[(merged["condition"] == "impossible_numeric_8turn") & (merged["turn_index"] == 7)]

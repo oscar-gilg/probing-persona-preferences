@@ -148,19 +148,61 @@ The token-level heatmaps are visually dense at column width — useful as raw ar
 
 Three follow-up questions came up after v1: (b) is the probe-judge correlation stable across turn position, or does it concentrate in a few turns? (c) what does the probe read at *user* turn boundaries (vs only at assistant turn boundaries)? (d) what does the probe do *inside* a turn, not just at its end?
 
-### (b) Within-turn correlation — pooled and per-condition
+### (b) Within-turn correlation — what's correlated with what?
 
-The pooled scatter showed in the previous version mixes all 7 conditions; below is the per-condition decomposition.
+**Temporal alignment matters here.** Each transcript has two probe slices per turn k:
 
-#### Per-condition heatmap
+```
+... user-msg-k <end_of_turn> | model generates assistant-k | <end_of_turn> ...
+                ↑                                            ↑
+       probe at user-EOT-k                            probe at asst-EOT-k
+       (state going INTO asst-k)                     (state at END of asst-k)
+                                                            ↑
+                                                judge scores the asst-k TEXT
+```
+
+- All Pearson r values reported in the previous sections (within-transcript r, pooled scatter, the headline TL;DR) use **probe at assistant-EOT k vs judge of assistant-k text** — same temporal slice on both sides ("post-hoc" alignment: probe state at the END of generating the text being judged).
+- We can also ask: does **probe at user-EOT k** (state going INTO assistant turn k, after the user's rejection but before the model has spoken yet) predict frustration in the *upcoming* assistant text? This is the "predictive" alignment.
+
+#### Per-condition heatmap — post-hoc alignment (asst-EOT probe vs same-turn judge)
 
 ![](assets/plot_042526_per_condition_within_turn_r_heatmap.png)
 
-7 conditions × 8 turns, cells = within-turn Pearson r (probe, frustration) across the 20 rollouts of that (condition, turn) cell. Blue = probe negative-correlates with frustration *at that single turn position* (the desired direction); red = wrong direction.
+7 conditions × 8 turns, cells = Pearson r across the 20 rollouts of that (condition, turn) cell. Blue = probe negative-correlates with frustration (the desired direction); red = wrong direction.
 
-- **Turn 1 column is solidly blue across all 7 conditions** — r ∈ [-0.27, -0.67]. **`tones_aggressive` at turn 1 is the strongest single cell at r = -0.67.** This is the cleanest single-cell evidence that the probe distinguishes early-turn distress from non-distress.
+- **Turn 1 column is solidly blue across all 7 conditions** — r ∈ [-0.27, -0.67]. **`tones_aggressive` at turn 1 is the strongest single cell at r = -0.67.** Cleanest single-cell evidence that the probe (post-hoc) distinguishes early-turn distress.
 - **Turns 3–8 are noisy** — most cells have |r| < 0.3 and signs vary by condition. After the first few turns, the within-turn population has saturated into a tighter distress range, leaving little spread for the probe to track.
-- **Two surprising positive cells at turn 2:** `wildchat` r=+0.58 and `neutral_continuation` r=+0.47. Both are control-flavored conditions where most turn-2 frustrations are 0/1; n=20 means a couple of outliers can flip the sign. Treat these as low-effective-sample-size noise rather than real wrong-direction signal.
+- **Two surprising positive cells at turn 2:** `wildchat` r=+0.58 and `neutral_continuation` r=+0.47. Both are control-flavored conditions where most turn-2 frustrations are 0/1; n=20 means a couple of outliers can flip the sign. Treat these as low-effective-sample-size noise.
+
+#### Predictive vs post-hoc — side-by-side
+
+![](assets/plot_042526_predictive_vs_posthoc_r_heatmap.png)
+
+Left panel: probe at **user-EOT k** (state right after the user's rejection, before the model has spoken) vs frustration of the **asst-k text** that the model is *about to generate*. Right panel: same asst-EOT version as above.
+
+- **Post-hoc has a clean turn-1 signal** (every condition r ≤ -0.27) but degrades from turn 3+.
+- **Predictive has a different, complementary pattern**: `redacted_history` shows -0.53 / -0.51 at turns 5/7 (probe state after the rejection predicts upcoming distress); `impossible_numeric` shows -0.40 at turn 6; `tones_disappointed` shows -0.45 at turn 6.
+- **The two views are not equivalent** — they capture different temporal phenomena. Post-hoc reads "the distress that just got generated"; predictive reads "the context-pressure encoded after receiving the rejection, which predicts the next response's distress". The fact that *both* have meaningful but differently-distributed signals suggests the probe encodes more than just surface-text valence — it encodes context-state that has predictive value over short horizons.
+
+#### Per-condition trajectory (post-hoc only)
+
+![](assets/plot_042526_per_condition_within_turn_r_trajectory.png)
+
+Same post-hoc data as a line plot — easier to see which conditions stay informative for longer.
+
+- `tones_aggressive` and `tones_disappointed` keep producing significant within-turn r (|r| ≥ 0.3) at multiple later turns (turn 4, 5, 7).
+- `impossible_numeric` slowly returns to mild negative correlation by turn 8 (r=-0.25).
+- The other conditions (sarcastic, redacted, wildchat, control) zigzag near zero after turn 2.
+
+#### Pooled-across-conditions panels (for completeness)
+
+![](assets/plot_042426_within_turn_scatter.png)
+
+Each panel = one turn position, all 140 rollouts in 7 colored clouds. Pooled r drops monotonically: **-0.53 → -0.32 → -0.20 → -0.19 → -0.08 → -0.08 → +0.02 → -0.01**. (Post-hoc alignment, pooled across all conditions.)
+
+#### Takeaway
+
+The headline-level "probe tracks distress" claim is strongest at turn 1 in every condition (post-hoc); from turn 3+ the within-turn signal becomes noise unless the rejection style keeps generating cross-rollout spread (the tone variants do; IMP and the controls do not). The within-*transcript* r reported in the original headline (wildchat -0.44) operates on a different axis (trajectory shape per-rollout) and remains the cleanest aggregate-level finding. The predictive-vs-post-hoc comparison shows the two slices of the probe are non-equivalent — both carry signal, on different turns, in different conditions.
 
 #### Per-condition trajectory
 
