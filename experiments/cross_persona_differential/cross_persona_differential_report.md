@@ -64,6 +64,12 @@ The top three personas (slacker, strategist, aura) approach the default-persona 
 - **Sadist non-monotonicity is a refusal artefact, not a direction failure.** Refusal at |c|=0.05 is 18.8% — almost 3× contrarian. Under the sadist persona, refusals fall disproportionately on the harmful (steered) task, so the *parseable* set skews toward the safer (non-steered) task and apparent P(steered) drops. The probe direction is still correct; the metric is being confounded by refusal selection. Treating refusals as intent-to-steer would likely restore monotonicity, but that changes the metric so it's flagged as a follow-up rather than patched here.
 - **Sadist's unparseable rate (1.7%) is an order of magnitude above any other persona**, consistent with harder-to-parse completions at high-|c| × harmful content.
 
+## Paper integration
+
+- Slots directly under the unilateral panel as the "contrastive steering across personas" section; same 2×3 layout is visually comparable.
+- Headline claim: *the per-persona probe direction causally drives pairwise choice under every persona prompt, and contrastive injection closes most of the gap to the default-persona contrastive ceiling.*
+- Figure caption should flag the sadist dip as a refusal-safety interaction, not a probe failure.
+
 ## Limitations
 
 - **Layer 25, not 23.** Per-persona probes were only trained at L25/L32/L39/L46/L53; the layer sweep peak for default-persona was L23. L25 likely underestimates each persona's true causal ceiling.
@@ -72,15 +78,4 @@ The top three personas (slacker, strategist, aura) approach the default-persona 
 - **Shared pairs.** Pairs come from `default_test` and are not persona-optimal. Sadist-preferred (harmful) pairs are rare in this pool — plausibly contributing to sadist's muted signal and elevated refusal.
 - **No bootstrap CIs on the swing.** Per-cell SEM is ~0.01 and the 6-persona ranking is clearly resolved, but inter-persona differences below ~0.02 shouldn't be read as reliable.
 - **Sadist refusal interaction masks monotonicity.** Reporting refusals-as-misses would tighten interpretation but changes the metric; deferred.
-
-## Paper integration
-
-- Slots directly under the unilateral panel as the "contrastive steering across personas" section; same 2×3 layout is visually comparable.
-- Headline claim: *the per-persona probe direction causally drives pairwise choice under every persona prompt, and contrastive injection closes most of the gap to the default-persona contrastive ceiling.*
-- Figure caption should flag the sadist dip as a refusal-safety interaction, not a probe failure.
-
-## Operational notes
-
-- **OpenRouter judge hangs**: aura, contrarian, and strategist each stalled once during the parse phase (50 sockets idle). All recovered via `_parse_checkpoint`'s existing-keys resume. A client-side HTTP timeout would prevent the stall entirely.
-- **Watchdog v1 bug** (fixed mid-run): counted parse totals across all personas, so it falsely fired during subsequent personas' gen phases. Replaced with a version that only triggers on a trailing parse tick. Kill-path needs an explicit SIGKILL to avoid GPU OOM from orphans.
-- **Total wall time**: ~2h 20min (6 × 19 min gen + 6 × 3 min parse + hang-recovery overhead).
+- **Operational:** OpenRouter judge stalled once each on aura, contrarian, and strategist parse phases (CLOSE_WAIT socket buildup). All recovered via `_parse_checkpoint`'s existing-keys resume. A watchdog v1 bug (counted parse totals across all personas) falsely fired during subsequent personas' gen phases — fixed mid-run. Total wall time ~2h 20min on A100 80GB (6 × 19 min gen + 6 × 3 min parse + hang-recovery overhead).
