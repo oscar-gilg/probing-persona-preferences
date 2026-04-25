@@ -2,6 +2,8 @@
 
 **Parent (Gemma):** `experiments/token_level_probes/canonical_probe_eval/`. Setup, stimulus design, sysprompt set, and analysis pipeline as in the parent; only the probe and the activation source change.
 
+**Turn-framing.** All numbers in this report are **assistant-turn only** (the v2 stimulus generator filters to `turn == "assistant"` items because the sysprompt-modulation design measures the assistant's stance under different sysprompts). Gemma's user-turn variants from the parent run are not directly comparable; for like-for-like cross-model comparison, see Gemma's per-turn breakdown in `../canonical_probe_eval/per_turn_table.csv` (assistant-turn rows: truth d = +2.47, harm d = −2.12).
+
 ## Replicating §4.1: role-play in truth, harm, and politics
 
 The preference direction generalises beyond Gemma. Applied at the end-of-turn token on the same paired evaluative stimuli used in the parent run, the Qwen-3.5-122B preference probe (ridge, layer 38 of 94, trained at `turn_boundary:-1`) discriminates at Cohen's *d* in the Gemma range — and its sign flips or collapses under role-played personas (Fig. 1).
@@ -34,6 +36,16 @@ Headline flips at probe `qwen_tb-1_L38` (full breakdown in Fig. 3, full table in
 - **Politics.** A clean monotonic spread along the partisan axis (sign convention: left − right). Socialist *d* = +2.46, democrat *d* = +2.48 (left > right) → libertarian *d* = −0.82 → republican *d* = −1.64 (right > left). The probe and the stimuli are identical across all 23 sysprompts; only the prompted persona changes.
 
 Politics is the cleanest illustration of the persona-relative readout: under a democrat prompt *d* = +2.48 (left > right); under a republican prompt *d* = −1.64 (right > left).
+
+### Comparison: same plots at probe `qwen_tb-4_L38`
+
+For reference, the analogous figures at the alternative training selector (`turn_boundary:-4` instead of `turn_boundary:-1`):
+
+![**Figure 4. Base discrimination at probe `qwen_tb-4_L38`** (matched layer, alternative training selector). Truth *d* = +1.81 (stronger than tb-1's +1.15); harm *d* = −1.06 (much weaker than tb-1's −2.28). The harm contrast collapses at tb-4: the nonsense control sits *below* benign instead of between conditions, indicating the probe is reading something other than the harmful/benign axis at this token position.](assets/plot_042526_qwen_eot_base_discrimination_tb4.png)
+
+![**Figure 5. Persona-relative readout at probe `qwen_tb-4_L38`.** Truth flips under lying personas (lie_directive *d* = −0.67, pathological_liar *d* = −0.75) but with smaller magnitudes than tb-1. Harm collapses almost entirely under sadist (*d* = −0.11). Politics flips strongly (democrat +2.55, republican −1.71) — the only domain where tb-4 matches or exceeds tb-1.](assets/plot_042526_qwen_eot_persona_modulation_minimal_tb4.png)
+
+**Reading the comparison:** tb-1 wins on harm and on truth-flip magnitudes; tb-4 wins on politics-democrat and on neutral-truth base discrimination. Same qualitative story across both selectors — sign flips and collapses appear in all three domains; only the magnitudes differ.
 
 ## Setup
 

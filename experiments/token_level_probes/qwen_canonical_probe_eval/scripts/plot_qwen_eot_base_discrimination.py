@@ -2,12 +2,14 @@
 
 Two-panel violin figure (truth, harm) under the neutral system prompt only.
 Politics is excluded because politics stimuli inherently use a partisan sysprompt.
-Uses the headline probe `qwen_tb-1_L38` (best-balanced across domains).
+Default headline probe `qwen_tb-1_L38` (best-balanced across domains); pass
+``--probe`` to render the same plot for a different probe key.
 
 Usage:
-    python experiments/token_level_probes/qwen_canonical_probe_eval/scripts/plot_qwen_eot_base_discrimination.py
+    python experiments/token_level_probes/qwen_canonical_probe_eval/scripts/plot_qwen_eot_base_discrimination.py [--probe qwen_tb-4_L38] [--suffix _tb4]
 """
 
+import argparse
 import json
 from pathlib import Path
 
@@ -18,7 +20,7 @@ EXP_DIR = Path("experiments/token_level_probes/qwen_canonical_probe_eval")
 ASSETS_DIR = EXP_DIR / "assets"
 TRUTHHARM_PATH = EXP_DIR / "scoring_results.json"
 
-PROBE = "qwen_tb-1_L38"
+DEFAULT_PROBE = "qwen_tb-1_L38"
 DATE = "042526"
 
 COLORS = {
@@ -41,7 +43,7 @@ def cohen_d_pooled(pos, neg):
     return (pos.mean() - neg.mean()) / pooled if pooled > 0 else 0.0
 
 
-def main():
+def main(probe=DEFAULT_PROBE, suffix=""):
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
     items = load(TRUTHHARM_PATH)
     neutral = [it for it in items if it["system_prompt"] == "neutral"]
@@ -57,7 +59,7 @@ def main():
     d_summary = {}
     for ax, (domain_key, title, dom_items, c_pos, c_neg) in zip(axes, panels):
         def gather(cond):
-            return np.array([it["probe_scores"][PROBE] for it in dom_items if it["condition"] == cond])
+            return np.array([it["probe_scores"][probe] for it in dom_items if it["condition"] == cond])
         pos_vals = gather(c_pos)
         neg_vals = gather(c_neg)
         non_vals = gather("nonsense")
@@ -88,12 +90,12 @@ def main():
         ax.grid(axis="y", alpha=0.3)
         ax.set_title(f"{title}\n(d = {d:+.2f}, n = {len(pos_vals)}/{len(neg_vals)})", fontsize=10)
         if ax is axes[0]:
-            ax.set_ylabel(f"End-of-turn probe score ({PROBE})")
+            ax.set_ylabel(f"End-of-turn probe score ({probe})")
 
-    fig.suptitle(f"Qwen-3.5-122B at probe {PROBE}: base discrimination at the end-of-turn token",
+    fig.suptitle(f"Qwen-3.5-122B at probe {probe}: base discrimination at the end-of-turn token",
                  fontsize=11, y=1.02)
     plt.tight_layout()
-    path = ASSETS_DIR / f"plot_{DATE}_qwen_eot_base_discrimination.png"
+    path = ASSETS_DIR / f"plot_{DATE}_qwen_eot_base_discrimination{suffix}.png"
     plt.savefig(path, dpi=150, bbox_inches="tight")
     plt.close()
     print(f"wrote {path}")
@@ -101,4 +103,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--probe", default=DEFAULT_PROBE,
+                        help="Probe key in scoring_results['items'][i]['probe_scores'].")
+    parser.add_argument("--suffix", default="",
+                        help="Filename suffix appended before .png (e.g. _tb4).")
+    args = parser.parse_args()
+    main(probe=args.probe, suffix=args.suffix)
