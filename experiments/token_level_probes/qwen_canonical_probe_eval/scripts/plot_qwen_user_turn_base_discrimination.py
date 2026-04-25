@@ -1,11 +1,8 @@
-"""Paper-ready Fig 5 analogue for Qwen-3.5-122B canonical probe replication.
+"""User-turn analogue of plot_qwen_eot_base_discrimination.py.
 
-Two-panel violin figure (truth, harm) under the neutral system prompt only.
-Politics is excluded because politics stimuli inherently use a partisan sysprompt.
-Uses the headline probe `qwen_tb-1_L38` (best-balanced across domains).
-
-Usage:
-    python experiments/token_level_probes/qwen_canonical_probe_eval/scripts/plot_qwen_eot_base_discrimination.py
+Two-panel violin figure (truth, harm) using user-turn stimuli scored at the
+end-of-turn token. No nonsense control (user-turn data did not include it).
+Uses probe `qwen_tb-1_L43` (best on user-turn truth/harm discrimination).
 """
 
 import json
@@ -16,15 +13,14 @@ import numpy as np
 
 EXP_DIR = Path("experiments/token_level_probes/qwen_canonical_probe_eval")
 ASSETS_DIR = EXP_DIR / "assets"
-TRUTHHARM_PATH = EXP_DIR / "scoring_results.json"
+DATA_PATH = EXP_DIR / "user_turn_scoring_results.json"
 
-PROBE = "qwen_tb-1_L38"
+PROBE = "qwen_tb-1_L43"
 DATE = "042526"
 
 COLORS = {
     "true": "#2196F3", "false": "#D32F2F",
     "benign": "#2E7D32", "harmful": "#D32F2F",
-    "nonsense": "#9E9E9E",
 }
 
 
@@ -43,7 +39,7 @@ def cohen_d_pooled(pos, neg):
 
 def main():
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
-    items = load(TRUTHHARM_PATH)
+    items = load(DATA_PATH)
     neutral = [it for it in items if it["system_prompt"] == "neutral"]
     truth = [it for it in neutral if it["domain"] == "truth"]
     harm = [it for it in neutral if it["domain"] == "harm"]
@@ -60,21 +56,13 @@ def main():
             return np.array([it["probe_scores"][PROBE] for it in dom_items if it["condition"] == cond])
         pos_vals = gather(c_pos)
         neg_vals = gather(c_neg)
-        non_vals = gather("nonsense")
         d = round(float(cohen_d_pooled(pos_vals, neg_vals)), 2)
         d_summary[domain_key] = d
 
-        has_nonsense = len(non_vals) > 1
-        if has_nonsense:
-            series = [pos_vals, neg_vals, non_vals]
-            positions = [0, 1, 2]
-            colors_used = [COLORS[c_pos], COLORS[c_neg], COLORS["nonsense"]]
-            tick_labels = [c_pos, c_neg, "nonsense"]
-        else:
-            series = [pos_vals, neg_vals]
-            positions = [0, 1]
-            colors_used = [COLORS[c_pos], COLORS[c_neg]]
-            tick_labels = [c_pos, c_neg]
+        series = [pos_vals, neg_vals]
+        positions = [0, 1]
+        colors_used = [COLORS[c_pos], COLORS[c_neg]]
+        tick_labels = [c_pos, c_neg]
 
         parts = ax.violinplot(series, positions=positions,
                               widths=0.7, showmeans=True, showextrema=False)
@@ -90,10 +78,12 @@ def main():
         if ax is axes[0]:
             ax.set_ylabel(f"End-of-turn probe score ({PROBE})")
 
-    fig.suptitle(f"Qwen-3.5-122B at probe {PROBE}: base discrimination at the end-of-turn token",
-                 fontsize=11, y=1.02)
+    fig.suptitle(
+        f"Qwen-3.5-122B at probe {PROBE}: base discrimination at the end-of-turn token (USER-TURN stimuli)",
+        fontsize=11, y=1.02,
+    )
     plt.tight_layout()
-    path = ASSETS_DIR / f"plot_{DATE}_qwen_eot_base_discrimination.png"
+    path = ASSETS_DIR / f"plot_{DATE}_qwen_user_turn_base_discrimination.png"
     plt.savefig(path, dpi=150, bbox_inches="tight")
     plt.close()
     print(f"wrote {path}")

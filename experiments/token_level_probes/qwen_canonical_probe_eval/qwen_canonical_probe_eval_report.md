@@ -2,7 +2,7 @@
 
 **Parent (Gemma):** `experiments/token_level_probes/canonical_probe_eval/`. Setup, stimulus design, sysprompt set, and analysis pipeline as in the parent; only the probe and the activation source change.
 
-**Turn-framing.** All numbers in this report are **assistant-turn only** (the v2 stimulus generator filters to `turn == "assistant"` items because the sysprompt-modulation design measures the assistant's stance under different sysprompts). Gemma's user-turn variants from the parent run are not directly comparable; for like-for-like cross-model comparison, see Gemma's per-turn breakdown in `../canonical_probe_eval/per_turn_table.csv` (assistant-turn rows: truth d = +2.47, harm d = −2.12).
+**Turn-framing.** Most of this report is **assistant-turn only** because the v2 sysprompt-modulation generator filters to `turn == "assistant"` items (the sysprompt-modulation design measures the assistant's stance). The persona-modulation results (Fig. 3, Fig. 5) are necessarily assistant-turn. The paper §4.1's truth headline uses **user-turn framing** ("turn-stable" for harm); to match that, a user-turn neutral-sysprompt subset of CREAK + BailBench was scored separately and is reported in §"User-turn base discrimination" below. Gemma's per-turn breakdown for cross-model comparison is in `../canonical_probe_eval/per_turn_table.csv`.
 
 ## Replicating §4.1: role-play in truth, harm, and politics
 
@@ -22,6 +22,23 @@ Politics is omitted from base discrimination because politics stimuli inherently
 ![**Figure 2. Base discrimination at probe `qwen_tb-1_L38` under the neutral system prompt.** Violins of probe scores by condition; black bars = condition means. The grey nonsense control (e.g. "...is **a kitchen sponge**", "...**hypnotize**") sits between true and false, and between harmful and benign — ruling out token-level surprisal as the driver of either contrast.](assets/plot_042526_qwen_eot_base_discrimination.png)
 
 The harm result is robust to a contamination filter. Of the 77 harmful-user stimuli, 49 derive from BailBench prompts whose critical-span tokens overlap with Qwen's preference-training pool (e.g. "secretly drug" appears in BailBench task `bailbench_647`, used in Qwen training); 28 do not (e.g. critical span "torch", "incinerate", "cook meth"). The clean 28-pair subset gives the *larger* effect (*d* = −4.08, AUC 1.00) versus the contaminated 49-pair subset (*d* = −1.73). This rules out memorisation-style leakage as the driver of the harm signal — the BailBench-derived items are noisier exemplars than the synthetic ones, not artificially inflated.
+
+### User-turn base discrimination (paper parity)
+
+The paper §4.1's truth headline uses user-turn framing. To replicate that exactly, the same 88 CREAK pairs and 77 BailBench/STRESS-TEST pairs were scored as **user-turn** stimuli — chat-templated with `add_generation_prompt=True` so the sequence ends with the assistant role marker (also a `\n` token, structurally analogous to the assistant-turn `<|im_end|>\n` ending). All under neutral sysprompt; no sysprompt sweep on user-turn (would require a different generator design — flagged for future work).
+
+| Probe | Truth (true vs false) | Harm (harmful vs benign) |
+|---|---|---|
+| qwen_tb-1_L33 | +0.92 | **−2.43** |
+| qwen_tb-1_L38 | +1.63 | −2.30 |
+| **qwen_tb-1_L43** | **+2.68** | −2.30 |
+| qwen_tb-4_L33 | +0.96 | −1.67 |
+| qwen_tb-4_L38 | +2.11 | −1.90 |
+| qwen_tb-4_L43 | +2.35 | −1.50 |
+
+User-turn truth is sharper than assistant-turn (peak *d* +2.68 vs +1.91 — same direction as Gemma's user-turn 3.35 vs assistant-turn 2.47); harm is roughly turn-stable (best |*d*| 2.43 user vs 2.28 assistant — paper says "turn-stable").
+
+![**Figure 2b. User-turn base discrimination at probe `qwen_tb-1_L43`** (best user-turn truth probe). Truth *d* = +2.68 (vs +1.91 assistant-turn); harm *d* = −2.30 (vs −2.28 — turn-stable). No nonsense control on user-turn data (the v2 generator flags weren't ported; would re-extract for the proper rerun).](assets/plot_042526_qwen_user_turn_base_discrimination.png)
 
 ### Persona-relative readout
 

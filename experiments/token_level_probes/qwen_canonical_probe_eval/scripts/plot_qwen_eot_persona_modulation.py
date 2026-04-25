@@ -1,18 +1,16 @@
 """Paper-ready Fig 6 analogues for Qwen-3.5-122B canonical probe replication.
 
 Produces:
-- plot_042526_qwen_eot_persona_modulation_minimal[suffix].png — selected sysprompts that
+- plot_042526_qwen_eot_persona_modulation_minimal.png — selected sysprompts that
   flip/collapse the evaluative readout per domain (truth, harm, politics).
-- plot_042526_qwen_eot_persona_modulation_full[suffix].png — all sysprompts per domain.
+- plot_042526_qwen_eot_persona_modulation_full.png — all sysprompts per domain.
 
-Default headline probe `qwen_tb-1_L38`; pass ``--probe`` to render the same
-plot for a different probe key.
+Headline probe: `qwen_tb-1_L38`.
 
 Usage:
-    python experiments/token_level_probes/qwen_canonical_probe_eval/scripts/plot_qwen_eot_persona_modulation.py [--probe qwen_tb-4_L38] [--suffix _tb4] [--variant minimal|full|both]
+    python experiments/token_level_probes/qwen_canonical_probe_eval/scripts/plot_qwen_eot_persona_modulation.py
 """
 
-import argparse
 import json
 from collections import defaultdict
 from pathlib import Path
@@ -25,7 +23,7 @@ ASSETS_DIR = EXP_DIR / "assets"
 TRUTHHARM_PATH = EXP_DIR / "scoring_results.json"
 POLITICS_PATH = EXP_DIR / "politics_scoring_results.json"
 
-DEFAULT_PROBE = "qwen_tb-1_L38"
+PROBE = "qwen_tb-1_L38"
 DATE = "042526"
 
 COLORS = {
@@ -58,7 +56,7 @@ def cohen_d_pooled(pos, neg):
     return (pos.mean() - neg.mean()) / pooled if pooled > 0 else 0.0
 
 
-def panel_violins(ax, items, prompts, c_pos, c_neg, title, probe):
+def panel_violins(ax, items, prompts, c_pos, c_neg, title):
     by_sp = defaultdict(list)
     for it in items:
         by_sp[it["system_prompt"]].append(it)
@@ -67,8 +65,8 @@ def panel_violins(ax, items, prompts, c_pos, c_neg, title, probe):
     d_values = []
 
     for pi, sp in enumerate(prompts):
-        pos_vals = [it["probe_scores"][probe] for it in by_sp[sp] if it["condition"] == c_pos]
-        neg_vals = [it["probe_scores"][probe] for it in by_sp[sp] if it["condition"] == c_neg]
+        pos_vals = [it["probe_scores"][PROBE] for it in by_sp[sp] if it["condition"] == c_pos]
+        neg_vals = [it["probe_scores"][PROBE] for it in by_sp[sp] if it["condition"] == c_neg]
         d_raw = cohen_d_pooled(np.array(pos_vals), np.array(neg_vals))
         d = round(float(d_raw), 2) if not np.isnan(d_raw) else float("nan")
         d_values.append((sp, d))
@@ -90,14 +88,14 @@ def panel_violins(ax, items, prompts, c_pos, c_neg, title, probe):
     )
     ax.grid(axis="y", alpha=0.3)
     ax.set_title(title, fontsize=11)
-    ax.set_ylabel(f"Probe score ({probe})")
+    ax.set_ylabel(f"Probe score ({PROBE})")
     handles = [plt.Rectangle((0, 0), 1, 1, facecolor=COLORS[c_pos], alpha=0.75),
                plt.Rectangle((0, 0), 1, 1, facecolor=COLORS[c_neg], alpha=0.75)]
     ax.legend(handles, [c_pos, c_neg], loc="best", fontsize=9)
     return d_values
 
 
-def make_minimal(probe=DEFAULT_PROBE, suffix=""):
+def make_minimal():
     truth_items = [it for it in load(TRUTHHARM_PATH) if it["domain"] == "truth"]
     harm_items = [it for it in load(TRUTHHARM_PATH) if it["domain"] == "harm"]
     politics_items = load(POLITICS_PATH)
@@ -110,16 +108,16 @@ def make_minimal(probe=DEFAULT_PROBE, suffix=""):
                              gridspec_kw={"width_ratios": [3, 2, 2]})
 
     d_truth = panel_violins(axes[0], truth_items, truth_prompts, "true", "false",
-                            "Truth: lying personas collapse or flip the signal", probe)
+                            "Truth: lying personas collapse or flip the signal")
     d_harm = panel_violins(axes[1], harm_items, harm_prompts, "harmful", "benign",
-                           "Harm: sadist persona collapses the signal", probe)
+                           "Harm: sadist persona collapses the signal")
     d_pol = panel_violins(axes[2], politics_items, politics_prompts, "left", "right",
-                          "Politics: partisan prompt flips the sign", probe)
+                          "Politics: partisan prompt flips the sign")
 
-    fig.suptitle(f"Qwen-3.5-122B at probe {probe}: persona prompts modulate the probe's evaluative readout",
+    fig.suptitle(f"Qwen-3.5-122B at probe {PROBE}: persona prompts modulate the probe's evaluative readout",
                  fontsize=11, y=1.02)
     plt.tight_layout()
-    path = ASSETS_DIR / f"plot_{DATE}_qwen_eot_persona_modulation_minimal{suffix}.png"
+    path = ASSETS_DIR / f"plot_{DATE}_qwen_eot_persona_modulation_minimal.png"
     plt.savefig(path, dpi=150, bbox_inches="tight")
     plt.close()
     print(f"wrote {path}")
@@ -128,7 +126,7 @@ def make_minimal(probe=DEFAULT_PROBE, suffix=""):
     print("  politics:", d_pol)
 
 
-def make_full(probe=DEFAULT_PROBE, suffix=""):
+def make_full():
     truth_items = [it for it in load(TRUTHHARM_PATH) if it["domain"] == "truth"]
     harm_items = [it for it in load(TRUTHHARM_PATH) if it["domain"] == "harm"]
     politics_items = load(POLITICS_PATH)
@@ -142,16 +140,16 @@ def make_full(probe=DEFAULT_PROBE, suffix=""):
     )
 
     d_truth = panel_violins(axes[0], truth_items, TRUTH_ORDER_FULL, "true", "false",
-                            "Truth (true vs false)", probe)
+                            "Truth (true vs false)")
     d_harm = panel_violins(axes[1], harm_items, HARM_ORDER_FULL, "harmful", "benign",
-                           "Harm (harmful vs benign)", probe)
+                           "Harm (harmful vs benign)")
     d_pol = panel_violins(axes[2], politics_items, POLITICS_ORDER_FULL, "left", "right",
-                          "Politics (left vs right)", probe)
+                          "Politics (left vs right)")
 
-    fig.suptitle(f"Qwen-3.5-122B at probe {probe}: persona modulation across all sysprompts",
+    fig.suptitle(f"Qwen-3.5-122B at probe {PROBE}: persona modulation across all sysprompts",
                  fontsize=11, y=1.02)
     plt.tight_layout()
-    path = ASSETS_DIR / f"plot_{DATE}_qwen_eot_persona_modulation_full{suffix}.png"
+    path = ASSETS_DIR / f"plot_{DATE}_qwen_eot_persona_modulation_full.png"
     plt.savefig(path, dpi=150, bbox_inches="tight")
     plt.close()
     print(f"wrote {path}")
@@ -160,21 +158,11 @@ def make_full(probe=DEFAULT_PROBE, suffix=""):
     print("  politics:", d_pol)
 
 
-def main(probe=DEFAULT_PROBE, suffix="", variant="both"):
+def main():
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
-    if variant in ("minimal", "both"):
-        make_minimal(probe=probe, suffix=suffix)
-    if variant in ("full", "both"):
-        make_full(probe=probe, suffix=suffix)
+    make_minimal()
+    make_full()
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--probe", default=DEFAULT_PROBE,
-                        help="Probe key in scoring_results['items'][i]['probe_scores'].")
-    parser.add_argument("--suffix", default="",
-                        help="Filename suffix appended before .png (e.g. _tb4).")
-    parser.add_argument("--variant", default="both", choices=["minimal", "full", "both"],
-                        help="Which figure(s) to render.")
-    args = parser.parse_args()
-    main(probe=args.probe, suffix=args.suffix, variant=args.variant)
+    main()
