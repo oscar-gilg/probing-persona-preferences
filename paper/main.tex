@@ -225,7 +225,7 @@ Probe transfer (\S\ref{sec:shared-probe}) shows persona-specific preference axes
 \begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{plot_042526_cross_persona_perprobe_steering.png}
-  \caption{\textbf{Cross-persona steering at layer \crossPersonaUnilateralInjectionLayer.} Each persona's own ridge probe is injected at L25; \emph{contrastive panels} (left of each persona pair) apply $+c$ to the first-presented span and $-c$ to the second; \emph{single-task panels} (right) apply $\pm c$ to one span at a time, plotting $P(\text{first-span picked})$ when the first-span is steered (blue) vs.\ when the second-span is steered (orange) --- the two lines mirror around the no-steering baseline (black dot at $c{=}0$, 600 API generations per persona). All panels use $P(\text{first-span picked})$ vs.\ signed coefficient.}
+  \caption{\textbf{Cross-persona steering at layer \crossPersonaUnilateralInjectionLayer.} Each persona's own ridge probe is injected at L25; \emph{contrastive panels} (left of each persona pair) apply $+c$ to the first-presented span and $-c$ to the second; \emph{single-task panels} (right) apply $\pm c$ to one span at a time. All curves plot $P(\text{first-span picked})$ vs.\ signed coefficient; for the second-span-steered line (orange) the x-axis is negated so $+c$ corresponds to ``coef pushing first-span up'' regardless of which span carries the probe. Both unilateral lines then run low$\to$high, with the gap between them tracing the per-side amplification/suppression asymmetry. Black dot at $c{=}0$ is the empirical no-steering baseline (600 API generations per persona).}
   \label{fig:cross-persona-steering}
 \end{figure}
 

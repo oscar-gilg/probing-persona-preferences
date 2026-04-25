@@ -133,18 +133,22 @@ def main() -> None:
             if first_base is not None:
                 ax_c.plot(0, first_base, "o", color="black", markersize=4, zorder=5)
 
-            # Single-task panel: both lines plot P(picked first-span task) vs signed coef.
-            # first-span steered: amplifies first-span at +c → low→high.
-            # second-span steered: amplifies second-span at +c → first-span suppressed → high→low.
-            # The two lines are mirror images about y=0.5 modulo position bias and amp/suppr asymmetry.
-            for cond, color, label in [("unilateral_first", "C0", "first-span steered"),
-                                        ("unilateral_second", "C1", "second-span steered")]:
+            # Single-task panel: both lines plot P(picked first-span task) on a unified x-axis
+            # representing "signed coef pushing first-span up". The second-span line's x is
+            # negated so that +c on second-span (which suppresses first-span) lands at -c on
+            # this axis — mirroring the natural framing of the first-span line. After negation
+            # both lines go low→high, exposing the suppression/amplification asymmetry per side
+            # (see f95010c, scripts/layer_sweep/clean_unilateral_plot.py).
+            for cond, color, label, x_sign in [
+                ("unilateral_first", "C0", "first-span steered", +1),
+                ("unilateral_second", "C1", "second-span steered (x negated)", -1),
+            ]:
                 xs, ys, es = [], [], []
                 for c in coefs:
                     stat = _p_first_span_uni(uni[persona], cond, c)
                     if stat is None:
                         continue
-                    xs.append(c); ys.append(stat[0]); es.append(stat[1])
+                    xs.append(x_sign * c); ys.append(stat[0]); es.append(stat[1])
                 if first_base is not None:
                     xs.append(0.0); ys.append(first_base); es.append(0.0)
                 order = sorted(zip(xs, ys, es))
