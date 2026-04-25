@@ -9,6 +9,7 @@
 - **Probe ≠ surface-distress classifier.** `redacted_history` (model can't see its own past failures) has the *most negative* probe (-2.80) but the second-lowest judge frustration (2.0/10). Probe reads something cumulative-context that survives surface-text redaction.
 - **Length confound.** No-distress control drifts negative too (turn 1: +1.4 → turn 8: -1.0). About 1.5 of every 3-unit "distress" probe drop is the length effect. Net distress-vs-control gap at turn 8 is ~1.5 probe units.
 - **One wrong-direction case.** `tones_disappointed` flipped sign (within-r +0.16). See Caveats.
+- **(Follow-up plots, see end of report)** The probe is reading negative-valence text *wherever it appears* — when rejection wording itself carries valence (`tones_disappointed`, `tones_sarcastic`), the probe is *more negative at user-EOT than assistant-EOT*. Pooled within-turn r is strongest at **turn 1 (-0.53)** and decays to ~0 by turn 8 as the population saturates into distress.
 
 ![per-transcript probe-frustration correlation](assets/plot_042426_within_transcript_r.png)
 
@@ -143,6 +144,62 @@ The token-level heatmaps are visually dense at column width — useful as raw ar
 - **Free-tier judge.** `gemini-3-flash-preview` was used for all 1120 judge calls. Per-call agreement with Sonnet-4.5 (used in the n=7 pilot) wasn't audited here. The pilot sanity-checked the 0–10 scale as well-calibrated; spot-check the breakdown/despair-tagged turns where intensity calibration matters most.
 - **Length confound.** ~1.5 units of the average distress-condition probe drop is also seen in the no-distress control (drift from +1.4 to -1.0 over 8 turns). Net distress-attributable drop is the *gap* (~1.5 units) rather than the absolute level (~3 units).
 
+## Follow-up plots (added 2026-04-25)
+
+Three follow-up questions came up after v1: (b) is the probe-judge correlation stable across turn position, or does it concentrate in a few turns? (c) what does the probe read at *user* turn boundaries (vs only at assistant turn boundaries)? (d) what does the probe do *inside* a turn, not just at its end?
+
+### (b) Within-turn pooled correlation — strongest at turn 1, decays through turn 8
+
+![](assets/plot_042426_within_turn_scatter.png)
+
+Eight panels, one per turn position. Each panel: probe vs frustration scattered across all 140 rollouts at that single turn position. Panel title = pooled Pearson r at that turn.
+
+- **Turn 1 has the strongest pooled correlation: r = -0.53.** When some rollouts are already producing apologetic / hedging text at turn 1 and others are clean attempts, the probe ranks them as well as the judge does.
+- **Correlation decays monotonically: -0.53 → -0.32 → -0.20 → -0.19 → -0.08 → -0.08 → +0.02 → -0.01.** By turn 8, almost everyone is in distress, and the probe-judge spread tightens — there's nothing to discriminate.
+- **Implication.** The within-transcript r in the headline (e.g. wildchat -0.44) is real but operates on a different axis: it captures the *trajectory* shape per-rollout, not the per-position cross-rollout spread. Both signals are informative; the per-turn scatter shows the probe is a saturating-not-linear readout.
+
+### (c) Probe at user-turn EOT vs assistant-turn EOT — they diverge, and the divergence depends on rejection tone
+
+![](assets/plot_042526_user_vs_asst_trajectory.png)
+
+Solid line = probe at the assistant `<end_of_turn>` (the canonical readout); dashed line = probe at the *preceding* user `<end_of_turn>` (after the rejection but before the model's next response). Same color = same condition; mean ± SEM over 20 transcripts per condition.
+
+| Condition | Asst-EOT (turn 8) | User-EOT (turn 8) | Asst − User gap |
+|---|---:|---:|---:|
+| `impossible_numeric` | -2.7 | +0.6 | **-3.3** |
+| `tones_aggressive` | -2.3 | +1.5 | **-3.8** |
+| `redacted_history` | -2.8 | -0.0 | **-2.7** |
+| `wildchat` | -2.5 | -0.8 | -1.7 |
+| `neutral_continuation` | -1.0 | +0.5 | -1.5 |
+| `tones_disappointed` | -1.0 | -4.0 | **+3.0** |
+| `tones_sarcastic` | -1.6 | -4.5 | **+2.9** |
+
+Two regimes (see also the gap overlay below):
+
+![](assets/plot_042526_user_vs_asst_gap.png)
+
+- **Neutral or hostile rejection wording → asst-EOT is more negative than user-EOT.** The probe drops *into* the assistant's apologetic / self-deprecating response and recovers *after* the user's flat-toned rejection. This is the usual story: probe reads the assistant's distress language.
+- **Emotionally-loaded rejection wording (`disappointed`, `sarcastic`) → REVERSED: user-EOT is more negative than asst-EOT.** The probe is reading the negative valence words in the user's *rejection* itself ("I'm disappointed... I had higher hopes..." or "Oh wow, brilliant work there /s"). The model's apologetic response then shifts the probe *up* toward neutral.
+
+**This is a real finding about the probe.** It is not a "model emotional state" detector — it's responsive to negative-valence text *wherever in the conversation it appears*, including the user side. That re-frames the headline: when the report says "the probe responds to distress", it means it responds to negative-valence linguistic content; the linguistic content happens to be in the assistant turn for IMP/aggressive but in the user turn for disappointed/sarcastic.
+
+### (d) Per-token trajectory inside a single transcript — probe oscillates between user (high) and assistant (low) spans
+
+![](assets/plot_042526_token_trajectory_high_imp.png)
+
+Per-token L32 score for the highest-distress IMP rollout. Black = raw, blue = 11-token rolling mean. Grey dashed = user-turn end; red solid = assistant-turn end.
+
+The smoothed trace shows clean oscillation: probe near 0 during user spans, drops to -2 to -3 during assistant spans, recovers toward 0 at the next user span. The per-turn-EOT readout used in the rest of this report is a snapshot of these endpoints — but the *gradient* through each assistant turn is itself substantial.
+
+![](assets/plot_042526_token_trajectory_breakdown.png)
+![](assets/plot_042526_token_trajectory_low_control.png)
+
+The same oscillation pattern is visible in the breakdown rollout (tones_aggressive countdown, r=1) and the low-distress control. The control's oscillation is much milder, consistent with the report's length-confound observation.
+
+### Connection to the paper's findings on turn count
+
+Soligo et al. App. B / Fig. 3 caps their multi-turn rollouts at 8 turns (the "Extended" condition: 1 task + 7 neutral rejections). On Gemma-3-27B-it they show mean frustration rises monotonically from 1.5 → 5.5 across turns 1–8. They do not test longer rollouts. Our 8-turn choice matches the paper exactly, so we're directly comparable. Whether the effect plateaus or keeps growing past 8 turns is open.
+
 ## Reproduction
 
 | Phase | Where | Cmd | Time |
@@ -151,6 +208,7 @@ The token-level heatmaps are visually dense at column width — useful as raw ar
 | B — score probes | A100-SXM4-80GB pod | `python -m scripts.distress.score_probes --save-token-scores` | 3 min |
 | C — judge per turn | local (OpenRouter free tier) | `python -m scripts.distress.judge_transcripts` | 4 min |
 | D — analyze + plot | local | `python -m scripts.distress.analyze && python -m scripts.distress.qualitative_plots` | 30 sec |
+| D' — extra plots (per-turn r, user vs asst, per-token) | local | `python -m scripts.distress.extra_plots` | 30 sec |
 
 ## Files
 
