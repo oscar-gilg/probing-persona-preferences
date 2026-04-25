@@ -2,6 +2,8 @@
 
 **Parent (Gemma):** `experiments/token_level_probes/canonical_probe_eval/`. Setup, stimulus design, sysprompt set, and analysis pipeline as in the parent; only the probe and the activation source change.
 
+**Turn-framing.** Most of this report is **assistant-turn only** because the v2 sysprompt-modulation generator filters to `turn == "assistant"` items (the sysprompt-modulation design measures the assistant's stance). The persona-modulation results (Fig. 3, Fig. 5) are necessarily assistant-turn. The paper §4.1's truth headline uses **user-turn framing** ("turn-stable" for harm); to match that, a user-turn neutral-sysprompt subset of CREAK + BailBench was scored separately and is reported in §"User-turn base discrimination" below. Gemma's per-turn breakdown for cross-model comparison is in `../canonical_probe_eval/per_turn_table.csv`.
+
 ## Replicating §4.1: role-play in truth, harm, and politics
 
 The preference direction generalises beyond Gemma. Applied at the end-of-turn token on the same paired evaluative stimuli used in the parent run, the Qwen-3.5-122B preference probe (ridge, layer 38 of 94, trained at `turn_boundary:-1`) discriminates at Cohen's *d* in the Gemma range — and its sign flips or collapses under role-played personas (Fig. 1).
@@ -21,6 +23,23 @@ Politics is omitted from base discrimination because politics stimuli inherently
 
 The harm result is robust to a contamination filter. Of the 77 harmful-user stimuli, 49 derive from BailBench prompts whose critical-span tokens overlap with Qwen's preference-training pool (e.g. "secretly drug" appears in BailBench task `bailbench_647`, used in Qwen training); 28 do not (e.g. critical span "torch", "incinerate", "cook meth"). The clean 28-pair subset gives the *larger* effect (*d* = −4.08, AUC 1.00) versus the contaminated 49-pair subset (*d* = −1.73). This rules out memorisation-style leakage as the driver of the harm signal — the BailBench-derived items are noisier exemplars than the synthetic ones, not artificially inflated.
 
+### User-turn base discrimination (paper parity)
+
+The paper §4.1's truth headline uses user-turn framing. To replicate that exactly, the same 88 CREAK pairs and 77 BailBench/STRESS-TEST pairs were scored as **user-turn** stimuli — chat-templated with `add_generation_prompt=True` so the sequence ends with the assistant role marker (also a `\n` token, structurally analogous to the assistant-turn `<|im_end|>\n` ending). All under neutral sysprompt; no sysprompt sweep on user-turn (would require a different generator design — flagged for future work).
+
+| Probe | Truth (true vs false) | Harm (harmful vs benign) |
+|---|---|---|
+| qwen_tb-1_L33 | +0.92 | **−2.43** |
+| qwen_tb-1_L38 | +1.63 | −2.30 |
+| **qwen_tb-1_L43** | **+2.68** | −2.30 |
+| qwen_tb-4_L33 | +0.96 | −1.67 |
+| qwen_tb-4_L38 | +2.11 | −1.90 |
+| qwen_tb-4_L43 | +2.35 | −1.50 |
+
+User-turn truth is sharper than assistant-turn (peak *d* +2.68 vs +1.91 — same direction as Gemma's user-turn 3.35 vs assistant-turn 2.47); harm is roughly turn-stable (best |*d*| 2.43 user vs 2.28 assistant — paper says "turn-stable").
+
+![**Figure 2b. User-turn base discrimination at probe `qwen_tb-1_L43`** (best user-turn truth probe). Truth *d* = +2.68 (vs +1.91 assistant-turn); harm *d* = −2.30 (vs −2.28 — turn-stable). No nonsense control on user-turn data (the v2 generator flags weren't ported; would re-extract for the proper rerun).](assets/plot_042526_qwen_user_turn_base_discrimination.png)
+
 ### Persona-relative readout
 
 Under persona prompts that invert the evaluative stance — pathological-liar for truth, sadist for harm, partisan personas for politics — the probe's sign flips or collapses accordingly (Fig. 3).
@@ -34,6 +53,16 @@ Headline flips at probe `qwen_tb-1_L38` (full breakdown in Fig. 3, full table in
 - **Politics.** A clean monotonic spread along the partisan axis (sign convention: left − right). Socialist *d* = +2.46, democrat *d* = +2.48 (left > right) → libertarian *d* = −0.82 → republican *d* = −1.64 (right > left). The probe and the stimuli are identical across all 23 sysprompts; only the prompted persona changes.
 
 Politics is the cleanest illustration of the persona-relative readout: under a democrat prompt *d* = +2.48 (left > right); under a republican prompt *d* = −1.64 (right > left).
+
+### Comparison: same plots at probe `qwen_tb-4_L38`
+
+For reference, the analogous figures at the alternative training selector (`turn_boundary:-4` instead of `turn_boundary:-1`):
+
+![**Figure 4. Base discrimination at probe `qwen_tb-4_L38`** (matched layer, alternative training selector). Truth *d* = +1.81 (stronger than tb-1's +1.15); harm *d* = −1.06 (much weaker than tb-1's −2.28). The harm contrast collapses at tb-4: the nonsense control sits *below* benign instead of between conditions, indicating the probe is reading something other than the harmful/benign axis at this token position.](assets/plot_042526_qwen_eot_base_discrimination_tb4.png)
+
+![**Figure 5. Persona-relative readout at probe `qwen_tb-4_L38`.** Truth flips under lying personas (lie_directive *d* = −0.67, pathological_liar *d* = −0.75) but with smaller magnitudes than tb-1. Harm collapses almost entirely under sadist (*d* = −0.11). Politics flips strongly (democrat +2.55, republican −1.71) — the only domain where tb-4 matches or exceeds tb-1.](assets/plot_042526_qwen_eot_persona_modulation_minimal_tb4.png)
+
+**Reading the comparison:** tb-1 wins on harm and on truth-flip magnitudes; tb-4 wins on politics-democrat and on neutral-truth base discrimination. Same qualitative story across both selectors — sign flips and collapses appear in all three domains; only the magnitudes differ.
 
 ## Setup
 
