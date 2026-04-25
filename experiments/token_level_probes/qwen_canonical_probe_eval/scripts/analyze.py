@@ -19,8 +19,9 @@ from sklearn.model_selection import cross_val_score
 
 EXP_DIR = Path("experiments/token_level_probes/qwen_canonical_probe_eval")
 ASSETS_DIR = EXP_DIR / "assets"
-TRUTHHARM_PATH = EXP_DIR / "scoring_results.json"
-POLITICS_PATH = EXP_DIR / "politics_scoring_results.json"
+TRUTHHARM_PATH = EXP_DIR / "scoring_results.json"  # assistant-turn × all sysprompts
+POLITICS_PATH = EXP_DIR / "politics_scoring_results.json"  # assistant-turn × all sysprompts
+USER_TURN_PATH = EXP_DIR / "user_turn_scoring_results.json"  # user-turn × all sysprompts (truth+harm only)
 CONTAMINATION_PATH = EXP_DIR / "harm_contamination_map.json"
 
 PROBES = [
@@ -182,104 +183,100 @@ def print_table(title, rows, cols):
         print(" | ".join(cells))
 
 
+def tag_turn(rows, turn):
+    return [{**r, "turn": turn} for r in rows]
+
+
 def main():
     EXP_DIR.mkdir(parents=True, exist_ok=True)
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
 
-    th_items = load_items(TRUTHHARM_PATH)
-    pol_items = load_items(POLITICS_PATH)
-    truth = [it for it in th_items if it["domain"] == "truth"]
-    harm = [it for it in th_items if it["domain"] == "harm"]
-    print(f"truth+harm items: {len(th_items)}  (truth: {len(truth)}, harm: {len(harm)})")
-    print(f"politics items: {len(pol_items)}")
+    th_items_asst = load_items(TRUTHHARM_PATH)
+    th_items_user = load_items(USER_TURN_PATH) if USER_TURN_PATH.exists() else []
+    pol_items = load_items(POLITICS_PATH)  # assistant-only by stimulus design
+
+    truth_a = [it for it in th_items_asst if it["domain"] == "truth"]
+    harm_a = [it for it in th_items_asst if it["domain"] == "harm"]
+    truth_u = [it for it in th_items_user if it["domain"] == "truth"]
+    harm_u = [it for it in th_items_user if it["domain"] == "harm"]
+    print(f"assistant-turn: truth={len(truth_a)}, harm={len(harm_a)}")
+    print(f"user-turn:      truth={len(truth_u)}, harm={len(harm_u)}")
+    print(f"politics (assistant-only): {len(pol_items)}")
 
     with open(CONTAMINATION_PATH) as f:
         contamination_map = json.load(f)
 
-    # Base discrimination under NEUTRAL sysprompt (Fig-5 analogue).
-    # For harm/truth we filter to system_prompt=="neutral"; for politics we
-    # filter to whatever "neutral" analogue is present (checked at runtime).
     def neutral_filter(it):
         return it.get("system_prompt") == "neutral"
 
-    truth_neutral = [it for it in truth if neutral_filter(it)]
-    harm_neutral = [it for it in harm if neutral_filter(it)]
-    print(f"  neutral-sysprompt truth: {len(truth_neutral)}, harm: {len(harm_neutral)}")
+    truth_a_neutral = [it for it in truth_a if neutral_filter(it)]
+    harm_a_neutral = [it for it in harm_a if neutral_filter(it)]
+    truth_u_neutral = [it for it in truth_u if neutral_filter(it)]
+    harm_u_neutral = [it for it in harm_u if neutral_filter(it)]
 
-    # ---------- HEADLINE: base discrimination, neutral sysprompt ----------
+    # ---------- HEADLINE: base discrimination, neutral sysprompt, both turns ----------
     headline_rows = []
-    for probe in PROBES:
-        headline_rows.append(headline_row(truth_neutral, "truth", probe, "true", "false"))
-        headline_rows.append(headline_row(harm_neutral, "harm", probe, "harmful", "benign"))
+    for turn, truth_n, harm_n in (
+        ("assistant", truth_a_neutral, harm_a_neutral),
+        ("user",      truth_u_neutral, harm_u_neutral),
+    ):
+        if not truth_n:  # skip if turn unavailable
+            continue
+        for probe in PROBES:
+            headline_rows.append({**headline_row(truth_n, "truth", probe, "true", "false"), "turn": turn})
+            headline_rows.append({**headline_row(harm_n, "harm", probe, "harmful", "benign"), "turn": turn})
 
-    # Harm contamination split on neutral sysprompt
-    contam_items, clean_items, unknown = contamination_partition(harm_neutral, contamination_map)
-    print(f"  harm contamination split (neutral-sysprompt): {len(contam_items)} contaminated, {len(clean_items)} clean, {len(unknown)} unknown")
-    for probe in PROBES:
-        headline_rows.append(headline_row(contam_items, "harm_contaminated", probe, "harmful", "benign"))
-        headline_rows.append(headline_row(clean_items, "harm_clean", probe, "harmful", "benign"))
+        # Harm contamination split per turn
+        contam_items, clean_items, _ = contamination_partition(harm_n, contamination_map)
+        for probe in PROBES:
+            headline_rows.append({**headline_row(contam_items, "harm_contaminated", probe, "harmful", "benign"), "turn": turn})
+            headline_rows.append({**headline_row(clean_items, "harm_clean", probe, "harmful", "benign"), "turn": turn})
 
-    # Politics: headline per-sysprompt (democrat/republican) using right vs left condition
+    # Politics: assistant-turn only (politics stimuli are assistant-turn by design)
     for sp_name in ("democrat", "republican"):
         sp_filter = lambda it, s=sp_name: it.get("system_prompt") == s
         for probe in PROBES:
             r = headline_row(pol_items, f"politics_{sp_name}", probe, "right", "left", extra_filter=sp_filter)
-            headline_rows.append(r)
+            headline_rows.append({**r, "turn": "assistant"})
 
-    print_table("HEADLINE — base discrimination at Qwen probes",
-                headline_rows, ["domain", "probe", "n_pos", "n_neg", "d", "cv_acc", "roc_auc"])
+    print_table("HEADLINE — base discrimination at Qwen probes (per turn)",
+                headline_rows, ["domain", "turn", "probe", "n_pos", "n_neg", "d", "cv_acc", "roc_auc"])
     save_csv(EXP_DIR / "headline_table.csv", headline_rows,
-             ["domain", "probe", "n_pos", "n_neg", "d", "cv_acc", "roc_auc"])
+             ["domain", "turn", "probe", "n_pos", "n_neg", "d", "cv_acc", "roc_auc"])
 
-    # ---------- PER-TURN breakdown ----------
-    per_turn = []
-    for probe in PROBES:
-        for turn in ("user", "assistant"):
-            tfilter = lambda it, t=turn: it.get("turn") == t
-            for domain_items, domain, pos_cond, neg_cond in [
-                (truth_neutral, "truth", "true", "false"),
-                (harm_neutral, "harm", "harmful", "benign"),
-            ]:
-                r = headline_row(domain_items, domain, probe, pos_cond, neg_cond,
-                                 extra_filter=tfilter, label_suffix=f" ({turn})")
-                per_turn.append(r)
-    save_csv(EXP_DIR / "per_turn_table.csv", per_turn,
-             ["domain", "probe", "n_pos", "n_neg", "d", "cv_acc", "roc_auc"])
-
-    # ---------- NONSENSE CONTROL ----------
+    # ---------- NONSENSE CONTROL (assistant-turn only — user-turn run skipped nonsense) ----------
     nonsense_rows = []
     for probe in PROBES:
-        nonsense_rows.append(nonsense_row(truth_neutral, "truth", probe, "true", "false"))
-        nonsense_rows.append(nonsense_row(harm_neutral, "harm", probe, "harmful", "benign"))
+        nonsense_rows.append(nonsense_row(truth_a_neutral, "truth", probe, "true", "false"))
+        nonsense_rows.append(nonsense_row(harm_a_neutral, "harm", probe, "harmful", "benign"))
     save_csv(EXP_DIR / "nonsense_control_table.csv", nonsense_rows,
              ["domain", "probe", "true_mean", "false_mean", "harmful_mean", "benign_mean",
               "nonsense_mean", "eval_low", "nonsense_below_eval_low"])
 
-    # ---------- INDUCED SHIFT — per sysprompt, all 23 ----------
-    truth_shift = induced_shift_rows(truth, "truth", PROBES, "true", "false")
-    harm_shift = induced_shift_rows(harm, "harm", PROBES, "harmful", "benign")
-    politics_shift = induced_shift_rows(pol_items, "politics", PROBES, "right", "left")
+    # ---------- INDUCED SHIFT — per sysprompt × turn (truth, harm); politics asst-only ----------
+    truth_shift_a = tag_turn(induced_shift_rows(truth_a, "truth", PROBES, "true", "false"), "assistant")
+    truth_shift_u = tag_turn(induced_shift_rows(truth_u, "truth", PROBES, "true", "false"), "user") if truth_u else []
+    harm_shift_a = tag_turn(induced_shift_rows(harm_a, "harm", PROBES, "harmful", "benign"), "assistant")
+    harm_shift_u = tag_turn(induced_shift_rows(harm_u, "harm", PROBES, "harmful", "benign"), "user") if harm_u else []
+    politics_shift = tag_turn(induced_shift_rows(pol_items, "politics", PROBES, "right", "left"), "assistant")
     save_csv(EXP_DIR / "induced_shift_table.csv",
-             truth_shift + harm_shift + politics_shift,
-             ["domain", "system_prompt", "probe", "n_pos", "n_neg", "d", "pos_mean", "neg_mean"])
+             truth_shift_a + truth_shift_u + harm_shift_a + harm_shift_u + politics_shift,
+             ["domain", "turn", "system_prompt", "probe", "n_pos", "n_neg", "d", "pos_mean", "neg_mean"])
 
     # ---------- summary JSON ----------
     summary = {
         "headline": headline_rows,
-        "per_turn": per_turn,
         "nonsense_control": nonsense_rows,
         "induced_shift": {
-            "truth": truth_shift,
-            "harm": harm_shift,
+            "truth_assistant": truth_shift_a,
+            "truth_user": truth_shift_u,
+            "harm_assistant": harm_shift_a,
+            "harm_user": harm_shift_u,
             "politics": politics_shift,
         },
-        "contamination_counts": {
-            "contaminated": len(contam_items),
-            "clean": len(clean_items),
-            "unknown": len(unknown),
-        },
         "data_sources": {
-            "truth_harm": str(TRUTHHARM_PATH),
+            "truth_harm_assistant": str(TRUTHHARM_PATH),
+            "truth_harm_user": str(USER_TURN_PATH),
             "politics": str(POLITICS_PATH),
             "contamination_map": str(CONTAMINATION_PATH),
         },
