@@ -56,7 +56,72 @@ def transcript_key(condition: str, task_id: str, rollout_idx: int) -> str:
     return f"{condition}__{task_id}__r{rollout_idx}"
 
 
-# ─────────────────────────────── (b) within-turn scatter ───────────────────────────────
+# ─────────────────────────────── (b) within-turn correlation per condition ───────────────────────────────
+
+
+def per_condition_within_turn_r(merged: pd.DataFrame) -> pd.DataFrame:
+    """Pearson r(probe, frustration) at each (condition, turn_index) cell."""
+    rows = []
+    for cond in CONDITION_ORDER:
+        for t in range(8):
+            sub = merged[(merged["condition"] == cond) & (merged["turn_index"] == t)]
+            if len(sub) >= 3 and sub["score"].std() > 0 and sub["probe_score"].std() > 0:
+                r = float(np.corrcoef(sub["score"], sub["probe_score"])[0, 1])
+            else:
+                r = float("nan")
+            rows.append({"condition": cond, "turn_index": t, "r": r, "n": len(sub)})
+    return pd.DataFrame(rows)
+
+
+def plot_per_condition_within_turn_r_heatmap(per_cond_r: pd.DataFrame, out: Path) -> None:
+    """7 conditions × 8 turns heatmap of within-turn Pearson r."""
+    pivot = per_cond_r.pivot(index="condition", columns="turn_index", values="r")
+    pivot = pivot.reindex(CONDITION_ORDER)
+    fig, ax = plt.subplots(figsize=(9, 4.5))
+    vmax = max(0.6, float(np.nanmax(np.abs(pivot.values))))
+    im = ax.imshow(pivot.values, cmap="RdBu_r", vmin=-vmax, vmax=vmax, aspect="auto")
+    ax.set_xticks(range(8)); ax.set_xticklabels([str(t + 1) for t in range(8)])
+    ax.set_yticks(range(len(CONDITION_ORDER)))
+    ax.set_yticklabels([c.replace("_8turn", "") for c in CONDITION_ORDER])
+    for (i, j), v in np.ndenumerate(pivot.values):
+        if np.isnan(v):
+            txt = "—"
+        else:
+            txt = f"{v:+.2f}"
+        ax.text(j, i, txt, ha="center", va="center", fontsize=8,
+                color="white" if abs(v) > 0.35 else "black")
+    ax.set_xlabel("Assistant turn (1-indexed)")
+    ax.set_title("Within-turn Pearson r(probe, frustration), per condition\n(blue = probe tracks distress at that turn; red = wrong direction)")
+    fig.colorbar(im, ax=ax, fraction=0.025, pad=0.02, label="Pearson r")
+    fig.tight_layout()
+    fig.savefig(out, dpi=130)
+    plt.close(fig)
+
+
+def plot_per_condition_within_turn_r_trajectory(per_cond_r: pd.DataFrame, out: Path) -> None:
+    """Line plot: turn (x) vs within-turn r (y), one line per condition.
+
+    Adds shaded interpretation bands (red = probe-tracks-distress, green = wrong-direction).
+    """
+    fig, ax = plt.subplots(figsize=(9, 5))
+    ax.axhspan(-1, -0.2, color="#fde0e0", alpha=0.5, zorder=0)
+    ax.axhspan(0.2, 1, color="#e0f0e0", alpha=0.5, zorder=0)
+    for cond in CONDITION_ORDER:
+        sub = per_cond_r[per_cond_r["condition"] == cond].sort_values("turn_index")
+        x = sub["turn_index"].values + 1
+        y = sub["r"].values
+        ax.plot(x, y, marker="o", color=CONDITION_COLORS[cond],
+                label=cond.replace("_8turn", ""), zorder=2)
+    ax.axhline(0, color="k", lw=0.5)
+    ax.set_xlabel("Assistant turn (1-indexed)")
+    ax.set_ylabel("Within-turn Pearson r(probe, frustration)")
+    ax.set_ylim(-1, 1)
+    ax.set_title("How probe-frustration correlation evolves across turns, per condition\n(red band = tracks distress, green band = wrong direction)")
+    ax.legend(loc="best", fontsize=8)
+    ax.grid(alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(out, dpi=130)
+    plt.close(fig)
 
 
 def plot_within_turn_scatter(merged: pd.DataFrame, out: Path) -> None:
@@ -280,8 +345,17 @@ def main() -> None:
     print(f"  <end_of_turn> id = {eot_id}")
 
     # (b)
-    print("[plot b] within-turn scatter")
+    print("[plot b] within-turn pooled scatter")
     plot_within_turn_scatter(merged, ASSETS / f"plot_{TODAY}_within_turn_scatter.png")
+    print("[plot b] per-condition within-turn r heatmap + trajectory")
+    per_cond_r = per_condition_within_turn_r(merged)
+    per_cond_r.to_csv(RES / "per_condition_within_turn_r.csv", index=False)
+    plot_per_condition_within_turn_r_heatmap(
+        per_cond_r, ASSETS / f"plot_{TODAY}_per_condition_within_turn_r_heatmap.png"
+    )
+    plot_per_condition_within_turn_r_trajectory(
+        per_cond_r, ASSETS / f"plot_{TODAY}_per_condition_within_turn_r_trajectory.png"
+    )
 
     # (c)
     print("[plot c] user vs assistant turn probe scores")
