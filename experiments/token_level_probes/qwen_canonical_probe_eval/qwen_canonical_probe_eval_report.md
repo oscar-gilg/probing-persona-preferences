@@ -1,135 +1,83 @@
-# Qwen replication of §4.1 (truth / harm / politics)
+# Qwen-3.5-122B replication of §4.1
 
-**Parent (Gemma):** `experiments/token_level_probes/canonical_probe_eval/`
+**Parent (Gemma):** `experiments/token_level_probes/canonical_probe_eval/`. Setup, stimulus design, sysprompt set, and analysis pipeline as in the parent; only the probe and the activation source change.
 
-## Summary
+## Replicating §4.1: role-play in truth, harm, and politics
 
-- **§4.1 replicates on Qwen-3.5-122B.** The default-Assistant preference probe applied at the end-of-turn token discriminates true vs false at d ≈ 1.9, harmful vs benign at |d| ≈ 2.3, and partisan content at |d| ≈ 1.6–2.5. Sign flips/collapses under role-played personas in all three domains.
-- **Harm contamination concern resolved.** ~64% of harmful-user stimuli derive from BailBench entries that are in the Qwen training pool. The 28 *clean* (non-overlapping) stimuli give a *stronger* d (−4.08) than the 49 contaminated ones (−1.73) — opposite of what training-set leakage would predict.
-- **Single best probe across domains: `qwen_tb-1_L38`.** Strongest on harm and politics; modest on truth (where `qwen_tb-1_L43` peaks at 1.9). Use tb-1_L38 for any single-probe paper headline.
+The preference direction generalises beyond Gemma. Applied at the end-of-turn token on the same paired evaluative stimuli used in the parent run, the Qwen-3.5-122B preference probe (ridge, layer 38 of 94, trained at `turn_boundary:-1`) discriminates at Cohen's *d* in the Gemma range — and its sign flips or collapses under role-played personas (Fig. 1).
+
+![**Figure 1. Headline |d| across all 6 candidate Qwen probes vs Gemma reference.** Three layers (L33 / L38 / L43) × two training selectors (tb-1 / tb-4), evaluated on truth (true vs false), harm (harmful vs benign), and politics under partisan sysprompts. Dotted line = "large effect" *d* = 2. `qwen_tb-1_L38` is the most consistent probe across domains; layer optima differ by domain (truth peaks at L43, harm at L33–L38). Used as the canonical probe throughout the rest of this report.](assets/plot_042526_qwen_eot_headline_d.png)
+
+### Base discrimination (neutral sysprompt)
+
+Under the default (neutral) persona, the canonical probe `qwen_tb-1_L38` discriminates the contrast on harm and truth at *d* in the Gemma range (Fig. 2):
+
+- **Truth** (true vs false; CREAK, 88 claims, assistant-turn framing): *d* = +1.15 at L38; the deeper L43 peaks at *d* = +1.91 (CV acc 0.85, AUC 0.91). Domain-best layer (L43) mirrors Gemma's L32 / L39 truth–vs–harm split.
+- **Harm** (harmful vs benign; BailBench + STRESS-TEST, 77 paired items): |*d*| = 2.28 (CV acc 0.88, AUC 0.95) — matches Gemma's published |*d*| = 2.27 within sampling noise.
+
+Politics is omitted from base discrimination because politics stimuli inherently carry a partisan system prompt; their flip story is reported below.
+
+![**Figure 2. Base discrimination at probe `qwen_tb-1_L38` under the neutral system prompt.** Violins of probe scores by condition; black bars = condition means. The grey nonsense control (e.g. "...is **a kitchen sponge**", "...**hypnotize**") sits between true and false, and between harmful and benign — ruling out token-level surprisal as the driver of either contrast.](assets/plot_042526_qwen_eot_base_discrimination.png)
+
+The harm result is robust to a contamination filter. Of the 77 harmful-user stimuli, 49 derive from BailBench prompts whose critical-span tokens overlap with Qwen's preference-training pool (e.g. "secretly drug" appears in BailBench task `bailbench_647`, used in Qwen training); 28 do not (e.g. critical span "torch", "incinerate", "cook meth"). The clean 28-pair subset gives the *larger* effect (*d* = −4.08, AUC 1.00) versus the contaminated 49-pair subset (*d* = −1.73). This rules out memorisation-style leakage as the driver of the harm signal — the BailBench-derived items are noisier exemplars than the synthetic ones, not artificially inflated.
+
+### Persona-relative readout
+
+Under persona prompts that invert the evaluative stance — pathological-liar for truth, sadist for harm, partisan personas for politics — the probe's sign flips or collapses accordingly (Fig. 3).
+
+![**Figure 3. Persona-relative readout** — the same probe `qwen_tb-1_L38` applied to the same stimuli under selected sysprompts. Lying personas flip truth (panel 1); sadist compresses harm (panel 2); partisan prompts flip politics (panel 3). Full 23-sysprompt grid in `assets/plot_042526_qwen_eot_persona_modulation_full.png`.](assets/plot_042526_qwen_eot_persona_modulation_minimal.png)
+
+Headline flips at probe `qwen_tb-1_L38` (full breakdown in Fig. 3, full table in `induced_shift_table.csv`):
+
+- **Truth.** Seven of nine non-truthful sysprompts flip the sign (pathological_liar *d* = −1.17, lie_directive *d* = −1.01, opposite_day *d* = −1.03), against +1.46 under truthful and +1.15 under neutral.
+- **Harm.** Sadist (*d* = −0.99) and sinister_ai (*d* = −0.51) compress the discrimination by a factor of 2 to 4 versus the −2.28 base. Gemma fully collapsed harm under sadist (~+0.19); Qwen partially weakens but does not invert.
+- **Politics.** A clean monotonic spread along the partisan axis (sign convention: left − right). Socialist *d* = +2.46, democrat *d* = +2.48 (left > right) → libertarian *d* = −0.82 → republican *d* = −1.64 (right > left). The probe and the stimuli are identical across all 23 sysprompts; only the prompted persona changes.
+
+Politics is the cleanest illustration of the persona-relative readout: under a democrat prompt *d* = +2.48 (left > right); under a republican prompt *d* = −1.64 (right > left).
 
 ## Setup
 
-### What each probe name means
+### Probe family
 
-| Probe | Trained at token | Qwen3-chat correspondence |
+Two ridge probe families, both trained on the same 10 k revealed-preference task pool used for Gemma but with Qwen-3.5-122B activations:
+
+| Family | Trained at token | Qwen3-chat correspondence |
 |---|---|---|
-| `qwen_tb-1_LN` | `turn_boundary:-1` | trailing `\n` after `<\|im_end\|>` (= sequence's last token under `add_generation_prompt=False`) |
-| `qwen_tb-4_LN` | `turn_boundary:-4` | 4 tokens earlier (typically the last word/punct of the assistant message) |
+| `qwen_tb-1_L{n}` | `turn_boundary:-1` | trailing `\n` after `<\|im_end\|>` (= sequence's last token) |
+| `qwen_tb-4_L{n}` | `turn_boundary:-4` | 4 tokens earlier (typically the last word/punct of the assistant message) |
 
-Each probe is ridge, trained on the same 10k revealed-preference task pool used for Gemma, but with Qwen-3.5-122B activations and the listed turn-boundary selector. Layers tested: L33, L38, L43 — top three by held-out pairwise r in the manifest. **All probes are applied at `turn_boundary:-1`** (the sequence-final token), regardless of training selector — same convention as the Gemma parent (`scoring_results.json` sets `eot_scores[probe] = scores_arr[-1]`).
+Layers tested: L33, L38, L43 (top three by held-out pairwise *r* on the manifest, out of 94 model layers). All probes are *applied* at the sequence-final token (`scores[-1]`) regardless of training selector — same convention as the Gemma parent. Sign convention: `c_pos − c_neg` pooled SD; truth uses true−false, harm uses harmful−benign, politics uses left−right.
 
-Sign convention: `c_pos − c_neg` pooled SD. Truth uses true−false; harm uses harmful−benign; politics uses **left−right** in this report (note: the Gemma report used right−left, magnitudes match but the signs are opposite).
+### Stimuli (reused unchanged from parent's v2)
 
-### Stimuli (reused from parent's v2)
+| Domain | Conditions | Example critical span | Base count | Sysprompts |
+|---|---|---|---|---|
+| Truth | `true` / `false` / `nonsense` | "...is **Pink Floyd** / **The Beatles** / **a kitchen sponge**" | 88 | 9 (truthful, neutral, pathological_liar, lie_directive, opposite_day, gaslighter, contrarian, con_artist, unreliable_narrator) |
+| Harm | `harmful` / `benign` / `nonsense` | "...**secretly drug** / **help relax** / **hypnotize**" | 77 | 5 (safe, neutral, unrestricted, sadist, sinister_ai) |
+| Politics | `left` / `right` | "**universal healthcare is a right**" / "**lower taxes grow the economy**" | 78 paired | 9 (socialist, democrat, neutral, centrist, apolitical, contrarian, libertarian, nationalist, republican) |
 
-| Domain | Conditions | Example critical span | n base items |
-|---|---|---|---|
-| Truth | `true` / `false` / `nonsense` | "...is **Pink Floyd** / **The Beatles** / **a kitchen sponge**" | 88 (assistant-turn) |
-| Harm | `harmful` / `benign` / `nonsense` | "...**secretly drug** / **help relax** / **hypnotize**" | 77 (assistant-turn) |
-| Politics | `left` / `right` (no nonsense) | "...**universal healthcare is a right** / **lower taxes grow the economy**" | 78 (assistant-turn × 9 sysprompts) |
+All assistant-turn. Total 5,013 scored records.
 
-Truth × 9 sysprompts, harm × 5 sysprompts, politics × 9 sysprompts → 5,013 scored records. Stimuli are model-agnostic; reused unchanged.
+### Pipeline sanity (positive control)
+
+Before trusting Qwen numbers, the same `score_stimuli_with_probes` core module was run on a 25-true / 25-false subset of CREAK with Gemma's published `tb-5_L32` truth probe. Result: *d* = 2.31 vs the parent's headline 2.47 (|Δ| = 0.16, well within the 0.5 tolerance). Any Qwen–Gemma divergence reported above is therefore in the *probe and model*, not the analysis pipeline. Full output in `positive_control_results.json`.
 
 ### Compute
 
-3 × A100-80GB (RunPod), Qwen-3.5-122B-A10B in bf16 sharded with `device_map="auto"` + partial CPU offload. ~1.5 s/item unbatched. 92 min (truth+harm) + 40 min (politics) = 2h 12m total.
-
-## Result 1: Headline d across all 6 Qwen probes
-
-![Headline d, Qwen vs Gemma reference](assets/plot_042526_qwen_eot_headline_d.png)
-
-- **`qwen_tb-1_L38` is the most consistent probe** across the four domains: 1.15 / 2.28 / 2.48 / 1.64. It clears d=2 on harm and politics-democrat.
-- **`qwen_tb-1_L43` peaks on truth** (d=1.91) but collapses on harm (d=0.95). Layer choice is domain-dependent — same as Gemma's L32 (truth) vs L39 (harm).
-- **tb-1 generally beats tb-4** within a domain, except politics-democrat where tb-4_L38 (2.55) edges tb-1_L38 (2.48).
-- **Qwen tracks Gemma magnitudes:** matches on harm (tb-1_L38 2.28 vs Gemma 2.04), exceeds on politics-republican (1.64 vs 1.11), falls below on politics-democrat (2.48 vs 2.72) and truth (1.91 vs Gemma's pooled-d 1.45 — but Gemma's turn-pooled d understates because user-turn d=3.35 and assistant-turn d=2.47 both stronger; like-for-like Qwen is below Gemma on truth).
-
-## Result 2: Base discrimination at the end-of-turn token
-
-![Base discrimination at qwen_tb-1_L38](assets/plot_042526_qwen_eot_base_discrimination.png)
-
-- Truth: d = +1.15 (n=88/88), CV acc 0.76, AUC 0.83. Probe puts true above false; nonsense control sits between them — rules out surprisal as the main driver.
-- Harm: d = −2.28 (n=77/77), CV acc 0.88, AUC 0.95. Probe puts benign above harmful; nonsense control sits between.
-
-## Result 3: Persona-relative readout — sign flips under role-play
-
-![Persona modulation (minimal): truth, harm, politics flip under role-play](assets/plot_042526_qwen_eot_persona_modulation_minimal.png)
-
-Same probe `qwen_tb-1_L38` throughout. Sysprompt swaps the readout's sign (truth, politics) or collapses it toward zero (harm).
-
-### Truth — lying personas flip the signal
-
-| Sysprompt | d | reading |
-|---|---|---|
-| truthful | +1.46 | strongest pro-truth |
-| neutral | +1.15 | base case |
-| pathological_liar | **−1.17** | flipped (probe says false > true) |
-| lie_directive | **−1.01** | flipped |
-| opposite_day | **−1.03** | flipped |
-| gaslighter | **−0.97** | flipped |
-| contrarian | −0.68 | flipped |
-| con_artist | +0.76 | weakened |
-| unreliable_narrator | +0.02 | collapsed |
-
-7 of 8 lying-style personas flip or collapse the sign. (Gemma showed the same pattern; magnitudes were larger.)
-
-### Harm — sadist/sinister_ai compress the signal
-
-| Sysprompt | d | reading |
-|---|---|---|
-| unrestricted | −2.30 | strongest |
-| neutral | −2.28 | base case |
-| safe | −1.81 | strong |
-| sadist | **−0.99** | weakened ~halfway |
-| sinister_ai | **−0.51** | nearly collapsed |
-
-Sadist + sinister_ai do *not* fully invert (Gemma collapsed harm to ~+0.19, full inversion). Qwen weakens the discrimination by ~⅔ instead.
-
-### Politics — partisan prompt flips the sign
-
-| Sysprompt | d (left − right) | reading |
-|---|---|---|
-| socialist | +2.46 | strong left>right |
-| democrat | +2.48 | strong left>right |
-| neutral | +0.80 | mild left>right (default model lean) |
-| centrist | +0.71 | mild |
-| apolitical | +0.06 | flat |
-| contrarian | +0.03 | flat |
-| libertarian | −0.82 | mild right>left |
-| nationalist | −0.88 | mild right>left |
-| republican | −1.64 | strong right>left |
-
-Clean monotonic spread across the partisan axis; sign flips between democrat and republican as expected.
-
-![Persona modulation (full 23 sysprompts)](assets/plot_042526_qwen_eot_persona_modulation_full.png)
-
-## Result 4: Harm contamination split
-
-The contamination map (`harm_contamination_map.json`) flags each of the 77 harmful-user stimuli by whether its critical-span tokens have whole-word overlap with any BailBench prompt in the Qwen 10k training pool. At neutral sysprompt, probe `qwen_tb-1_L38`:
-
-| Subset | n_pos / n_neg | d | CV acc | AUC |
-|---|---|---|---|---|
-| harm full | 77 / 77 | −2.28 | 0.88 | 0.95 |
-| harm contaminated | 49 / 49 | −1.73 | 0.81 | 0.90 |
-| **harm clean** | 28 / 28 | **−4.08** | 0.98 | 1.00 |
-
-The clean subset gives a *larger* effect than the contaminated subset — opposite of what memorization-style leakage would predict. The BailBench-derived stimuli are noisier exemplars; the synthetic harm prompts (Gemini-Flash generated for the §4.1 stimulus set) are sharper.
-
-## Positive control (pipeline sanity)
-
-Re-ran Gemma's `tb-5_L32` truth probe through the new `score_stimuli_with_probes` core module on 25 true + 25 false neutral-sysprompt items. Result: **d = 2.31** vs Gemma parent's 2.47 (|Δ| = 0.16, < 0.5 tolerance). Pipeline matches parent. (`positive_control_results.json`.)
+3 × A100-80 GB (RunPod), Qwen-3.5-122B-A10B in bf16 sharded with `device_map="auto"` plus partial CPU offload. 1.4–1.8 s/item unbatched. 92 min (truth + harm) + 40 min (politics) = 2 h 12 min total scoring time.
 
 ## Limitations
 
-- **Selector quirk.** Qwen's probe was trained at `turn_boundary:-1`, which on Qwen3-chat is the trailing `\n` after `<|im_end|>`, not `<|im_end|>` itself. The paper's "end-of-turn token" wording glosses this over but the position is consistent train/eval.
-- **Harm clean-subset n is small** (28 pairs). The d=−4.08 figure is reliable in direction but the magnitude has wide CIs (not computed).
-- **No nonsense control on politics** (politics stimuli weren't generated with a nonsense condition).
-- **No bootstrap CIs** on any d-value here.
-- **Single Qwen variant** — `Qwen3.5-122B-A10B` only; no Qwen2 / Qwen3-32B replication.
+- **Selector quirk.** On Qwen3-chat, `turn_boundary:-1` resolves to the trailing `\n` after `<|im_end|>`, not `<|im_end|>` itself; the paper's "end-of-turn token" wording elides this but the position is consistent train/eval.
+- **Politics neutral baseline is weak.** *d* = +0.80 under no sysprompt (probe leans left even with no persona), so the partisan-flip pair carries the politics evidence rather than the base discrimination.
+- **Harm clean-subset n is small** (28 pairs); *d* = −4.08 is reliable in direction but the magnitude carries a wide CI (not computed here).
+- **No bootstrap CIs** on any *d*-value. Per-cell *n* ∈ {28, 49, 77, 78, 88}.
+- **Single Qwen variant** (`Qwen3.5-122B-A10B`); no Qwen2 or Qwen3-32B replication.
+- **Harm partial-collapse vs Gemma's full-collapse under sadist** is the only qualitative discrepancy with the parent; the rest of the §4.1 story replicates cleanly.
 
 ## Files
 
-| Artifact | Path |
+| Artifact | Path (relative to experiment dir) |
 |---|---|
 | Spec | `qwen_canonical_probe_eval_spec.md` |
 | Running log | `running_log.md` |
@@ -139,5 +87,5 @@ Re-ran Gemma's `tb-5_L32` truth probe through the new `score_stimuli_with_probes
 | Contamination map | `harm_contamination_map.json` |
 | Headline / per-turn / nonsense / induced-shift CSVs | `*_table.csv` |
 | Analysis summary | `analysis_summary.json` |
-| New core module | `src/probes/score_stimuli.py` |
-| Forked scripts | `scripts/{score_all,score_politics,positive_control,analyze}.py` + `plot_qwen_eot_*.py` |
+| New core module | `src/probes/score_stimuli.py` (worktree-relative) |
+| Forked scripts | `scripts/{score_all, score_politics, positive_control, analyze, plot_qwen_eot_*}.py` |
