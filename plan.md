@@ -44,6 +44,7 @@ More comprehensive reruns of existing experiments for the paper:
 - Results
 - Discussion / conclusion
 - Abstract (last)
+- Cite the Claude Opus 4.7 system card in Related Work.
 
 ## Infra
 
@@ -106,4 +107,5 @@ Aggressive scaffolding-phase cuts to shorten the main text. Each item is somethi
 ## Followups
 
 - **Expand harmful-pair sample for the §2.3 steering dose-response.** Current breakdown at the peak causal layer (`plot_042426_layer23_dose_response_harm_breakdown.png`) uses the 50-pair layer-sweep set, which contains only $n=8$ harmful--harmful pairs and $n=24$ harmful--benign. The hh curve in Panel B is too noisy to tell whether the amplification asymmetry differs across pair types. Options: (i) re-run single-task steering at L23 only on a harm-focused pair set (~50 hh + 50 hb pairs drawn from bailbench/stress\_test crosses); (ii) fold in the existing `experiments/steering/cross_layer_harmful/` checkpoints, which have 200 pre-classified pairs at L25 but only have contrastive data (no single-task condition).
+- **Probe firing on distress transcripts (Soligo et al. 2026).** Spec: `experiments/distress_transcripts/distress_transcripts_spec.md`. Reproduce the "Gemma Needs Help" (arXiv:2603.10011) protocol — scripted user rejection across 8 turns — and read the preference probe at every assistant turn boundary. Tests whether the probe picks up evaluative signal in naturalistic dialogue outside our pairwise-choice elicitation. Pilot at n=7 (Apr 2026) reproduced the basic distress effect on Gemma-3-27B-it.
 
