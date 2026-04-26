@@ -1,149 +1,42 @@
 # Preferences
 
-MATS 9.0 project with Patrick Butlin investigating whether LLM preferences are driven by evaluative representations.
+**Personas Use a Shared Preference Vector** — MATS 9.0 project with Patrick Butlin.
 
-> **For AI agents:** This README describes the codebase's key modules and entry points. Before writing new extraction, embedding, or probe training code, check the relevant module below — the functionality likely already exists.
+> Draft paper: [`paper/main.pdf`](paper/main.pdf). Numbers in this README track the draft and may shift before submission.
 
-## Motivation
+## TL;DR
 
-Whether LLMs are moral patients may depend on whether they have evaluative representations playing the right functional roles — internal representations that encode valuation and causally influence choice. Across major theories of welfare (hedonism, desire satisfaction, etc.), such representations are central to moral patiency (Long et al., 2024).
+A single linear direction in Gemma-3-27B's residual stream predicts and steers pairwise preferences, and the **same direction is used by qualitatively different personas** — including ones whose overt values are partially or fully inverted (villain, sadist). Personas don't carry their own preference circuitry; they share one mechanism and read it out differently.
 
-*Preferences* are behavioral patterns — choosing A over B. *Evaluative representations* are the hypothesized internal mechanism: representations that encode "how good/bad is this?" and causally drive those choices. The question is whether preferences are driven by evaluative representations, or by something else (e.g., surface-level heuristics, training artifacts).
+## Setup
 
-## Goals
+We elicit *revealed* preferences: the model is shown two tasks and picks which one to complete. Pairs are actively sampled; a Thurstonian utility model converts pairwise choices into per-task scalar utilities. A Ridge probe on residual-stream activations targets these utilities. We test the probe both as a **classifier** (does it predict held-out preferences?) and as a **steering vector** (does intervening on it shift behaviour?).
 
-We look for evaluative representations as linear directions in activation space. The methodology follows from the definition:
+## Findings
 
-1. **Probing** — If they encode value, probes should predict preferences
-2. **Steering** — If they causally drive choices, steering should shift them
-3. **Generalization** — If they're genuine evaluative representations, they should generalize across contexts
+**1. A linear preference direction exists and is causal.**
+The probe predicts held-out utilities at $r \approx 0.86$ within-topic and $r \approx 0.77$ pooled under leave-one-topic-out, beating a sentence-transformer content baseline. As a contrastive steering vector, it drives $P(\text{chose steered task} \mid \text{responded})$ across nearly the full $[0, 1]$ range at small coefficients ($|c| \le 0.05$). A random direction at the same magnitude does nothing. The causal window is sharply localised (peak at L23, six layers before the probe-quality peak) — linear decodability and causal efficacy decouple.
 
-We ground this in revealed preferences (pairwise choices where the model picks which task to complete), which have cleaner signal than stated ratings where models collapse to default values.
+**2. The direction is shared across personas.**
+A probe trained on the default Assistant transfers — as classifier *and* as steering vector — to system-prompted personas (sadist, villain, mathematician, slacker, …) and to character-fine-tuned variants (OpenCharacter LoRAs). Steering doesn't pull behaviour toward a fixed attractor: it amplifies whichever persona is active. Under the sadist, $+$ means *more* sadist; under the default, $+$ has no measurable effect on sadism. Shared mechanism, persona-modulated readout.
 
-## Structure
+**3. The direction is evaluative, not descriptive.**
+It tracks preference shifts induced by system prompts, single-sentence biographical context, and role-played harm/truth/politics framings at $r \approx 0.85$ on targeted tasks — while the content baseline does not move. It also discriminates evaluative content at multiple token positions (final prompt token, turn boundary, task-averaged), consistent with the model compiling an evaluative summary and re-reading it across the forward pass.
 
-```
-src/
-├── probes/            # Activation extraction, probe training, and evaluation (see below)
-├── steering/          # Activation steering experiments
-├── measurement/       # Preference measurement (pairwise choices, stated ratings)
-├── fitting/           # Utility function extraction (Thurstonian, TrueSkill)
-├── models/            # LLM clients (OpenRouter)
-├── task_data/         # Task datasets (WildChat, Alpaca, MATH, BailBench)
-├── experiments/       # Core experiment scripts
-└── analysis/          # Post-hoc analysis (probes, steering, correlations, etc.)
-```
+## Implications
 
-### `src/probes/` — Activation extraction, probe training, and evaluation
+- **Persona science.** Evidence against the "Shoggoth" view of the persona-selection model: there's no persona-independent preference attractor underneath each persona. Representations are persona-instrumental.
+- **Interpretability.** A linear feature that looks fundamental in one persona can carry opposite or absent content under another. Single-persona probing over-indexes on persona-instrumental features.
+- **AI welfare.** Evaluative representations with a causal role in choice are functionally central in theories of moral patiency (Long et al., 2024). Whether this finding carries welfare weight depends on further commitments we don't take a stand on.
+- **AI safety.** A direction trained on preference, not refusal, partially overrides refusal guardrails at small steering coefficients — the two share more representational machinery than their training objectives suggest.
 
-#### `extraction/` — Extract activations from any HuggingFace model
+## Code pointers
 
-Config-driven pipeline that loads a HuggingFace model, runs it on tasks, and saves per-layer activations as `.npz` files. Supports batching, periodic checkpointing (`save_every`), and `--resume` to skip already-extracted tasks. Works with any model — use it for content encoder embeddings too, not just the target model.
+- `src/probes/` — activation extraction, probe training, evaluation
+- `src/steering/` — composable steering primitives (hooks, calibration, analysis)
+- `src/measurement/` — pairwise choice elicitation, LLM judges
+- `src/fitting/` — Thurstonian / TrueSkill utility models
+- `experiments/` — self-contained per-experiment dirs (spec, report, assets)
+- `paper/` — draft, claim registry (`claims/`), figures (`figures/panels/`)
 
-Use `--from-completions` to extract activations from an existing completions JSON (skips re-generation).
-
-```bash
-python -m src.probes.extraction.run configs/extraction/<config>.yaml [--resume] [--from-completions path.json]
-```
-
-Config fields: `model`, `backend` (huggingface/transformer_lens), `layers_to_extract` (fractional like 0.5 = middle layer), `selectors` (e.g. prompt_last), `batch_size`, `n_tasks`, `task_origins`. See `configs/extraction/` for examples.
-
-#### `experiments/` — Probe training orchestration
-
-`run_dir_probes.py` is the main entry point for training probes from a measurement run. Loads Thurstonian scores and/or pairwise comparisons, loads activations, and trains Ridge and/or Bradley-Terry probes.
-
-When `eval_run_dir` is set, uses heldout evaluation (preferred): trains on `run_dir`, sweeps alpha on half the eval set, evaluates on the other half. Otherwise falls back to CV alpha selection. Supports: score demeaning against confounds (topic, dataset), content-orthogonal projection, held-one-out (HOO) evaluation by group.
-
-```bash
-python -m src.probes.experiments.run_dir_probes --config configs/probes/<config>.yaml
-```
-
-Config fields: `run_dir`, `activations_path`, `layers`, `modes` (ridge/bradley_terry), `eval_run_dir` (optional, for heldout eval), `eval_split_seed`, `demean_confounds`, `content_embedding_path`, `hoo_grouping`. See `configs/probes/` for examples.
-
-#### `core/` — Probe training and evaluation primitives
-
-- **`linear_probe.py`** — Ridge regression with CV alpha sweep (`alpha_sweep` for raw sweep results, `train_and_evaluate` to sweep + fit final model, `train_at_alpha` for fixed alpha). Returns probe, eval metrics, and sweep results.
-- **`activations.py`** — Loads `.npz` activation files with optional task ID filtering and layer selection (`load_activations`).
-- **`evaluate.py`** — Probe evaluation: `evaluate_probe_on_data` (given activations + scores), `evaluate_probe_on_template` (cross-template transfer), `compute_probe_similarity` (cosine similarity between probe weight vectors).
-
-#### `content_orthogonal.py` — Project out content-predictable variance
-
-Fits Ridge regression from content embeddings to activations (or scores), subtracts predictions. The residuals contain only variance the content encoder cannot explain. Key functions: `project_out_content` (activations), `project_out_content_from_scores` (scalar scores). Use `alpha_sweep` from `core/linear_probe.py` to CV-select the content Ridge alpha.
-
-#### `content_embedding.py` — Sentence transformer embeddings of task prompts
-
-Embeds task prompts using a sentence transformer (default: `all-MiniLM-L6-v2`). Used as input to content-orthogonal projection. Functions: `embed_tasks` (from completions JSON), `save_content_embeddings`, `load_content_embeddings` (from `.npz`).
-
-#### `residualization.py` — OLS demeaning against categorical confounds
-
-Removes group-level mean differences (topic, dataset) from preference scores via OLS on one-hot indicators. Distinct from content projection: this removes categorical confounds, content projection removes continuous content-predictable variance. Key function: `demean_scores(scores, topics_json, confounds=["topic", "dataset"])`.
-
-### `src/steering/` — Activation steering experiments
-
-Composable primitives for steering experiments. No rigid runner — each experiment composes the pieces it needs.
-
-#### `client.py` — Steered model client
-
-`SteeredHFClient` wraps a `HuggingFaceModel` with a steering direction and coefficient, duck-typed as `OpenAICompatibleClient`. Handles the coef==0 bypass, pre-computes the scaled tensor on GPU.
-
-For coefficient sweeps, use `with_coefficient()` to create new clients sharing the same loaded model:
-
-```python
-from src.models.huggingface_model import HuggingFaceModel
-from src.steering.client import SteeredHFClient
-
-hf_model = HuggingFaceModel("gemma-3-27b", max_new_tokens=256)
-client = SteeredHFClient(hf_model, layer=31, steering_direction=direction, coefficient=0)
-for coef in [-3000, -1000, 0, 1000, 3000]:
-    steered = client.with_coefficient(coef)
-    response = steered.generate(messages)
-```
-
-For position-selective or differential steering, use `generate_with_hook()` with a custom hook:
-
-```python
-from src.steering.hooks import position_selective_steering, compose_hooks
-
-direction = client.direction  # access the loaded probe direction
-tensor = torch.tensor(direction * coef, dtype=torch.bfloat16, device="cuda")
-
-# Single span
-hook = position_selective_steering(tensor, start=10, end=50)
-response = client.generate_with_hook(messages, hook)
-
-# Differential: +direction on first span, -direction on second
-hook = compose_hooks(
-    position_selective_steering(tensor, first_start, first_end),
-    position_selective_steering(-tensor, second_start, second_end),
-)
-response = client.generate_with_hook(messages, hook)
-```
-
-#### Hook factories (`src/steering/hooks.py`)
-
-- `all_tokens_steering(tensor)` — steer all positions
-- `autoregressive_steering(tensor)` — steer last token only
-- `position_selective_steering(tensor, start, end)` — steer tokens `[start, end)` during prompt processing only
-- `compose_hooks(*hooks)` — chain multiple hooks sequentially on the same layer
-- `noop_steering()` — no-op for control conditions
-- `swap_positions(pos_a, pos_b)` — swap activations at two token positions during prefill
-- `swap_spans(a_start, a_end, b_start, b_end)` — swap activations across two token spans during prefill (right-aligned)
-
-#### `tokenization.py` — Token span detection
-
-Utilities for finding token indices of text spans, used with position-selective hooks:
-
-- `find_text_span(tokenizer, full_text, target_text, search_after=0)` — general-purpose span finder using offset mapping
-- `find_pairwise_task_spans(tokenizer, prompt, task_a, task_b, a_marker, b_marker)` — convenience for pairwise comparison prompts
-
-#### `calibration.py` — Coefficient calibration
-
-- `suggest_coefficient_range(activations_path, layer, multipliers)` — returns coefficients as multiples of the mean activation norm at the given layer, removing the guesswork from coefficient selection
-
-#### `analysis.py` — Post-hoc analysis
-
-Functions for analyzing steering experiment results: `aggregate_by_coefficient`, `compute_statistics`, `plot_dose_response`, `analyze_steering_experiment`.
-
-### `src/measurement/` — LLM judges
-
-When building LLM judges (coherence, valence, refusal, etc.), follow the existing pattern in `src/measurement/elicitation/refusal_judge.py`: use `instructor` with Pydantic response models for structured output. Do not write regex-based response parsers — use `instructor.from_openai()` which guarantees valid structured responses from the LLM.
+For AI agents: skim the relevant module under `src/` before writing new extraction, embedding, or probe-training code — the functionality likely already exists.
