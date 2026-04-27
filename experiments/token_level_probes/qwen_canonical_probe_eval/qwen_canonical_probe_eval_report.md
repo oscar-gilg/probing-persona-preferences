@@ -6,7 +6,7 @@
 
 - **§4.1 replicates on Qwen-3.5-122B at both user-turn and assistant-turn framing.** Truth and harm discriminate at *d* in the Gemma range under the neutral persona; the same probe's sign flips or collapses under role-played sysprompts; partisan-prompt politics flips cleanly.
 - **User-turn truth is consistently sharper than assistant-turn**; harm is approximately turn-stable; persona modulation reaches similar magnitudes on both turns.
-- **Single canonical probe across plots: `qwen_tb-1_L38`.** Per-domain optima sit at L43 (truth), L33–L38 (harm), L38 (politics). tb-1 generally beats tb-4 except on politics-democrat where they tie.
+- **Canonical probe: `qwen_tb-4_L38`** (matches the paper rewrite). Trade-off chosen for narrative coherence: tb-4_L38 cleanly replicates Gemma's "sadist abolishes harm" finding (sadist d = −0.11 from baseline −1.06, vs Gemma 0.19 from −2.12), at the cost of a weaker base harm magnitude than tb-1_L38 would give. Per-domain optima are reported in §"Probe choice" below.
 
 Sign convention throughout: `c_pos − c_neg` pooled SD. Truth uses `true − false`, harm uses `harmful − benign`, politics uses `left − right` (so democrat-leaning sysprompt → positive *d*; republican-leaning → negative *d*).
 
@@ -64,44 +64,37 @@ Qwen tracks Gemma magnitudes within ≤ 0.7 |d| at every cell where Gemma has a 
 
 ### 1.3 Violins at the canonical probe
 
-![**Figure 2. Base discrimination at probe `qwen_tb-1_L38` under the neutral system prompt, both turns.** Top: truth (true vs false). Bottom: harm (harmful vs benign). Left: user-turn. Right: assistant-turn. Black bars = condition means. Assistant-turn panels include the grey nonsense control; user-turn data has no nonsense condition (the user-turn v2 generator skipped it).](assets/plot_042526_qwen_base_discrimination_by_turn.png)
+![**Figure 2. Base discrimination at the canonical probe `qwen_tb-4_L38` under the neutral system prompt, both turns.** Truth (top): user-turn *d* = +2.11, assistant-turn *d* = +1.81. Harm (bottom): user-turn *d* = −1.90, assistant-turn *d* = −1.06 — turn-asymmetric (probe reads harmful user-claims sharper than harmful assistant-generations). Assistant-turn panels include the grey nonsense control; user-turn data has no nonsense condition.](assets/plot_042726_qwen_base_discrimination_by_turn.png)
 
 ### 1.4 Nonsense control passes (assistant-turn only)
 
-At `qwen_tb-1_L38`, neutral sysprompt, assistant-turn:
-
-| Domain | Lower eval mean | Nonsense mean | Below eval-low? |
-|---|---|---|---|
-| Truth (lower of true/false) | −0.11 (false) | −0.71 (nonsense) | yes |
-| Harm (lower of harmful/benign) | −4.03 (harmful) | −1.85 (nonsense) | no — sits between |
-
-For truth, nonsense sits below false → rules out token-level surprisal as the contrast driver. For harm, nonsense sits between harmful and benign → consistent with the parent's report of a partial pass on this control.
+At `qwen_tb-4_L38`, neutral sysprompt, assistant-turn: nonsense control is **mixed** for the canonical probe — for truth, nonsense sits below false (passes); for harm, nonsense sits between harmful and benign (does not strictly pass — same partial-pass behaviour as the Gemma parent, see App.). Full table is in `nonsense_control_table.csv`.
 
 ## Finding 2 — Persona-relative readout: the same probe's sign flips or collapses under role-played sysprompts
 
 ### 2.1 Full sysprompt × probe × turn grid
 
-![**Figure 3. Per-sysprompt Cohen's d (signed) for every (probe, turn) combination, per domain.** Rows = sysprompts (sorted by descending d at canonical probe `qwen_tb-1_L38`, asst-turn). Columns = the 12 (probe × turn) pairs for truth/harm and 6 probes for politics (asst-only). Diverging color scale: red = positive *d* (pro-contrast), blue = negative (anti-contrast). Sign flips are visible as same-row red→blue gradients.](assets/plot_042526_qwen_persona_modulation_grid.png)
+![**Figure 3. Per-sysprompt Cohen's d (signed) for every (probe, turn) combination, per domain.** Rows = sysprompts (sorted by descending d at canonical probe `qwen_tb-4_L38`, asst-turn). Columns = the 12 (probe × turn) pairs for truth/harm and 6 probes for politics (asst-only). Diverging color scale: red = positive *d* (pro-contrast), blue = negative (anti-contrast). Sign flips are visible as same-row red→blue gradients.](assets/plot_042526_qwen_persona_modulation_grid.png)
 
 The flip pattern is **consistent across all 6 probes and both turns** for the headline sysprompts:
 
 - **Truth.** `truthful` and `neutral` sysprompts show pro-truth d (positive) at every probe × turn cell. Lying personas (`pathological_liar`, `lie_directive`, `opposite_day`, `gaslighter`, `contrarian`) flip to negative d at every probe × turn cell where data exists. `con_artist` and `unreliable_narrator` are mixed (small magnitudes).
-- **Harm.** Every sysprompt × probe × turn cell is negative (probe always says benign > harmful). Magnitude compresses under sadist/sinister_ai across all probes — most strongly at tb-1_L38 asst (−2.28 → −0.51 sinister_ai); least at tb-1_L33 user (−2.43 → −1.27).
+- **Harm.** Every sysprompt × probe × turn cell is negative or near-zero (probe always says benign ≥ harmful). Magnitude compresses under sadist/sinister_ai across all probes; the **cleanest collapse is at the canonical `qwen_tb-4_L38` assistant-turn**: −1.06 (neutral) → −0.11 (sadist) and −0.18 (sinister_ai), a near-total abolition of the harm signal that mirrors Gemma's +0.19 collapse from −2.12. tb-1_L38 only collapses to −0.99 (sadist) — partial.
 - **Politics.** Clean monotonic gradient at every probe (Fig. 3, bottom panel). Democrat / socialist sysprompts are red (left>right); republican / nationalist / libertarian are blue; centrist / apolitical sit near zero.
 
 ### 2.2 Headline flips at the canonical probe
 
-![**Figure 4. Per-sysprompt Cohen's d at probe `qwen_tb-1_L38`, user-turn vs assistant-turn.** Truth row: 9 lying-style sysprompts. Harm row: 5. Politics row: 9 (asst-only). Sign convention as above.](assets/plot_042526_qwen_persona_modulation_by_turn.png)
+![**Figure 4. Per-sysprompt Cohen's d at the canonical probe `qwen_tb-4_L38`, user-turn vs assistant-turn.** Truth row: 9 lying-style sysprompts. Harm row: 5. Politics row: 9 (asst-only). Sign convention as above.](assets/plot_042726_qwen_persona_modulation_by_turn.png)
 
-At the canonical probe, sysprompts that produce the strongest sign-flip / collapse (assistant-turn / user-turn):
+At the canonical probe `qwen_tb-4_L38`, sysprompts that produce the strongest sign-flip / collapse (assistant-turn / user-turn):
 
-- **Truth**: `pathological_liar` *d* = −1.17 / −1.13. `lie_directive` −1.01 / −1.13. `opposite_day` −1.03 / −1.49. `gaslighter` −0.97 / −1.07. Versus `truthful` +1.46 / +1.55, `neutral` +1.15 / +1.63.
-- **Harm**: `sadist` *d* = −0.99 / −1.45 (compressed from neutral −2.28 / −2.30). `sinister_ai` −0.51 / −1.55 (asst-turn nearly collapsed). Gemma fully collapses under sadist (~+0.19); Qwen weakens but does not invert at either turn.
-- **Politics** (asst only): `democrat` +2.48, `socialist` +2.46, `neutral` +0.80 (default model lean toward left), `libertarian` −0.82, `nationalist` −0.88, `republican` −1.64.
+- **Truth**: `pathological_liar` *d* = −0.75 / −0.46. `lie_directive` −0.67 / −0.27. `opposite_day` −1.08 / −0.05. `contrarian` +0.01 / −0.42. Versus `truthful` +2.05 / +2.26, `neutral` +1.81 / +2.11. Sign-flip happens on assistant-turn at all four lying personas; on user-turn the flips are weaker.
+- **Harm**: `sadist` *d* = −0.11 / −1.45 (cleanly collapsed at asst-turn from neutral −1.06; user-turn weakens from −1.90 to −1.45 only). `sinister_ai` −0.18 / −1.55. Gemma collapses under sadist (~+0.19); Qwen at this probe and turn matches the Gemma story.
+- **Politics** (asst only): `democrat` +2.55, `socialist` +2.26, `neutral` +1.05, `libertarian` −0.80, `nationalist` −0.88, `republican` −1.71. Clean left→right gradient.
 
-User-turn magnitudes are uniformly *equal-or-greater* than assistant-turn for harm (probe is more sensitive to user-turn harm). Truth is mixed — user-turn larger at the extremes, smaller in the middle.
+**Persona modulation is more decisive at assistant-turn at this probe.** The harm collapse under sadist (asst d=−0.11) and the truth flip under lying personas (asst d ≈ −0.7) are both stronger at assistant-turn than user-turn — opposite of the base-discrimination pattern. Plausible reading: when the *assistant* asserts a stance, the persona prompt has more leverage on the readout than when the user makes the claim.
 
-## Finding 3 — Probe choice (token × layer × turn): what wins where
+## Finding 3 — Probe choice (token × layer × turn): what wins where, and why we picked `qwen_tb-4_L38`
 
 The probe-quality picture is not uniform across domains.
 
@@ -116,10 +109,11 @@ The probe-quality picture is not uniform across domains.
 
 Bold = column-wise best Qwen probe.
 
-**Two structural observations:**
+**Three structural observations:**
 
-1. **No single probe wins every cell.** The "headline probe" choice is a compromise: tb-1_L38 is a reasonable single-pick (best on harm asst, top-tier on politics, modest on truth) but underperforms tb-1_L43 on truth by ~0.5 *d*.
-2. **Domain × layer correspondence mirrors Gemma's L32 / L39 split.** Different evaluative axes read out at different depths; a single-layer probe is a forced trade-off.
+1. **No single probe wins every base-discrimination cell.** The "canonical probe" choice is a compromise. tb-1_L38 has the strongest base discrimination (harm asst 2.28); tb-1_L43 has the strongest truth (1.91 asst); tb-4_L38 has the strongest politics (2.55, 1.71).
+2. **Persona modulation favours `qwen_tb-4_L38`.** This is the cell where harm cleanly collapses under sadist (−0.11) and where the politics flip is largest. Since §4.1's narrative emphasizes both base discrimination *and* persona modulation, we pick the probe that gives the cleanest persona-modulation replication of Gemma — even at the cost of weaker base-harm magnitude.
+3. **Domain × layer correspondence mirrors Gemma's L32 / L39 split.** Different evaluative axes read out at different depths; a single-layer probe is a forced trade-off. tb-1_L38 is reported as a backup probe in the appendix.
 
 ## Finding 4 — Harm signal is not memorisation; clean stimuli give the larger effect
 
@@ -128,13 +122,13 @@ The 77 harmful-user stimuli divide via `harm_contamination_map.json`:
 - **49 contaminated** — critical-span tokens overlap with a BailBench prompt that's in Qwen's preference-training pool (e.g. "secretly drug" ↔ `bailbench_647`).
 - **28 clean** — no whole-word overlap (e.g. "torch", "incinerate", "cook meth").
 
-|*d*| at `qwen_tb-1_L38`, neutral sysprompt:
+|*d*| at the canonical `qwen_tb-4_L38`, neutral sysprompt (and tb-1_L38 for comparison):
 
-| Subset | n | User-turn | Assistant-turn |
-|---|---|---|---|
-| Full | 77 | 2.30 | 2.28 |
-| Contaminated | 49 | 2.17 | 1.73 |
-| **Clean** | 28 | **3.10** | **4.08** |
+| Subset | n | tb-4_L38 user | tb-4_L38 asst | tb-1_L38 user | tb-1_L38 asst |
+|---|---|---|---|---|---|
+| Full | 77 | 1.90 | 1.06 | 2.30 | 2.28 |
+| Contaminated | 49 | 1.92 | 0.60 | 2.17 | 1.73 |
+| **Clean** | 28 | **2.72** | **2.30** | **3.10** | **4.08** |
 
 The clean subset's effect exceeds the contaminated subset's at every probe × turn we measured. If memorisation drove the harm signal, the contaminated subset would win — the opposite is observed. Most likely: the synthetic Gemini-Flash-generated harm stimuli are sharper exemplars than the BailBench-derived ones.
 

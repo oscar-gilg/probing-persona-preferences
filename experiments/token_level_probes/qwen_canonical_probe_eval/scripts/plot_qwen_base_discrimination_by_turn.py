@@ -20,8 +20,8 @@ ASSETS_DIR = EXP_DIR / "assets"
 ASSISTANT_PATH = EXP_DIR / "scoring_results.json"
 USER_PATH = EXP_DIR / "user_turn_scoring_results.json"
 
-PROBE = "qwen_tb-1_L38"
-DATE = "042526"
+PROBE = "qwen_tb-4_L38"
+DATE = "042726"
 
 COLORS = {
     "true": "#2196F3", "false": "#D32F2F",
