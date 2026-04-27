@@ -58,7 +58,7 @@ PAIRS_FILE = (
 TEMPLATE_PATH = REPO_ROOT / "src/measurement/elicitation/prompt_templates/data/completion_preference.yaml"
 
 MODEL = "google/gemma-3-27b-it"
-MAX_NEW_TOKENS = 512
+MAX_NEW_TOKENS = 64
 TEMPERATURE = 0.7
 N_CANONICAL_SEEDS = 3
 RANDOM_SUBSET_N = 100
