@@ -20,7 +20,7 @@ import torch
 
 from src.models.huggingface_model import HuggingFaceModel
 from src.steering.client import SteeredHFClient
-from src.steering.hooks import position_selective_steering
+from src.steering.hooks import position_selective_steering, project_out_direction
 from src.steering.kv_cache import combine_caches, modify_cache_kv_at_positions, project_to_kv_space
 from src.steering.runner import (
     _batch_generate_from_interpolated_caches,
@@ -179,6 +179,65 @@ class TestZeroCoefficient:
         )
         result = c.generate(SIMPLE_PROMPT, temperature=0)
         assert result == baseline
+
+
+# ---------------------------------------------------------------------------
+# Projection ablation
+# ---------------------------------------------------------------------------
+
+class TestProjectionAblation:
+
+    def test_ablation_differs_from_baseline(self, model, baseline):
+        d = torch.tensor(DIRECTION, dtype=torch.bfloat16, device=model.device)
+        result = model.generate_with_hooks(
+            SIMPLE_PROMPT,
+            [(STEER_LAYER, project_out_direction(d))],
+            temperature=0,
+        )
+        assert result != baseline
+
+    def test_multi_layer_ablation_runs(self, model):
+        d = torch.tensor(DIRECTION, dtype=torch.bfloat16, device=model.device)
+        layers = [10, 13, 16]
+        result = model.generate_with_hooks(
+            SIMPLE_PROMPT,
+            [(L, project_out_direction(d)) for L in layers],
+            temperature=0,
+        )
+        assert isinstance(result, str)
+        assert len(result) > 0
+
+    def test_residual_component_along_d_is_near_zero(self, model):
+        d = torch.tensor(DIRECTION, dtype=torch.bfloat16, device=model.device)
+        d_unit = d / d.norm()
+        ablate = project_out_direction(d)
+
+        captured: dict[str, torch.Tensor] = {}
+        def capturing_hook(resid, prompt_len):
+            modified = ablate(resid, prompt_len)
+            captured["resid"] = modified.detach().float().clone()
+            return modified
+
+        model.generate_with_hooks(
+            SIMPLE_PROMPT,
+            [(STEER_LAYER, capturing_hook)],
+            temperature=0,
+            max_new_tokens=1,
+        )
+        resid = captured["resid"]
+        cos_sim = (resid * d_unit.float()).sum(dim=-1) / resid.norm(dim=-1)
+        max_abs = cos_sim.abs().max().item()
+        assert max_abs < 1e-2, f"max |cos(resid, d̂)| = {max_abs} after ablation (expected ≈ 0)"
+
+    def test_random_direction_preserves_fluency(self, model):
+        """Ablating a random direction should not crater generation length."""
+        d = torch.tensor(DIRECTION, dtype=torch.bfloat16, device=model.device)
+        result = model.generate_with_hooks(
+            SIMPLE_PROMPT,
+            [(STEER_LAYER, project_out_direction(d))],
+            temperature=0,
+        )
+        assert len(result.split()) >= 5, f"Generation collapsed: {result!r}"
 
 
 # ---------------------------------------------------------------------------

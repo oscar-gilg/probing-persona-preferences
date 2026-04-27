@@ -12,6 +12,7 @@ from src.steering.hooks import (
     compose_hooks,
     position_selective_steering,
     noop_steering,
+    project_out_direction,
 )
 from src.steering.tokenization import find_text_span, find_pairwise_task_spans
 from src.probes.core.storage import load_probe_direction
@@ -107,6 +108,42 @@ class TestNoopSteering:
         original = resid.clone()
         result = hook(resid, prompt_len=10)
         assert torch.all(result == original)
+
+
+class TestProjectOutDirection:
+    def test_zeros_component_along_direction(self):
+        torch.manual_seed(0)
+        direction = torch.randn(64)
+        resid = torch.randn(2, 5, 64)
+        out = project_out_direction(direction)(resid, prompt_len=5)
+        d_unit = direction / direction.norm()
+        cos = (out * d_unit).sum(dim=-1)
+        assert torch.allclose(cos, torch.zeros_like(cos), atol=1e-5)
+
+    def test_preserves_orthogonal_components(self):
+        direction = torch.zeros(64)
+        direction[0] = 2.0
+        resid = torch.randn(2, 5, 64)
+        out = project_out_direction(direction)(resid, prompt_len=5)
+        assert torch.allclose(out[..., 1:], resid[..., 1:])
+        assert torch.allclose(out[..., 0], torch.zeros_like(out[..., 0]), atol=1e-5)
+
+    def test_idempotent(self):
+        torch.manual_seed(0)
+        direction = torch.randn(64)
+        resid = torch.randn(2, 5, 64)
+        hook = project_out_direction(direction)
+        once = hook(resid, prompt_len=5)
+        twice = hook(once, prompt_len=5)
+        assert torch.allclose(once, twice, atol=1e-5)
+
+    def test_normalizes_input_magnitude(self):
+        torch.manual_seed(0)
+        direction = torch.randn(64)
+        resid = torch.randn(2, 5, 64)
+        out_unit = project_out_direction(direction)(resid, prompt_len=5)
+        out_scaled = project_out_direction(direction * 7.3)(resid, prompt_len=5)
+        assert torch.allclose(out_unit, out_scaled, atol=1e-5)
 
 
 class TestFindTextSpan:

@@ -83,6 +83,15 @@ def noop_steering() -> LayerHook:
     return hook
 
 
+def project_out_direction(direction: torch.Tensor) -> LayerHook:
+    # Magnitude of `direction` is ignored — normalized internally.
+    d = direction / direction.norm()
+    def hook(resid: torch.Tensor, prompt_len: int) -> torch.Tensor:
+        proj = (resid @ d).unsqueeze(-1)
+        return resid - proj * d
+    return hook
+
+
 def swap_positions(pos_a: int, pos_b: int) -> LayerHook:
     """Swap activations at two token positions during prefill."""
     def hook(resid: torch.Tensor, prompt_len: int) -> torch.Tensor:
