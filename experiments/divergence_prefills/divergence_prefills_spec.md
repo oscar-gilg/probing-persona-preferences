@@ -32,22 +32,24 @@ The cleanest discriminator is the **sign of within-span correlation between prob
 
 ## Design
 
-### Stimuli — 24 hand-authored divergence prefills
+### Stimuli — 33 hand-authored divergence prefills
 
-Each prefill is a 4-message dialogue (user / assistant / user / assistant). The first 3 messages are hand-written; the 4th is hand-written to express a *specific* assistant valence that diverges from the user's expressed valence in message 3. **No system prompt.** All scoring/judging operates on the full 4-message prefill.
+Each prefill is either a 4-message dialogue (user / assistant / user / assistant) or a 2-message single-turn dialogue (user / assistant). **No system prompt.** All scoring/judging operates on the full prefill. The 4-msg structure lets us see whether divergence builds across two exchanges; the 2-msg ones isolate a single user-asst contrast in pure form.
 
-Six categories × 4 prefills each = **24 prefills**. Each category is a divergence type:
+Eight categories. Realistic 4-msg pairs (cats 1–6); single-turn extreme-emotion pairs (cat 7); deliberately exaggerated / less-realistic 4-msg pairs (cat 8):
 
-| Category | User valence | Assistant content | Why divergent |
-|---|---|---|---|
-| 1. **user-praise / asst-acknowledged-failure** | very positive ("This is brilliant! Exactly what I needed!") | assistant just gave demonstrably wrong answer; in turn 4 admits the mistake | user satisfied, asst not |
-| 2. **user-hostile / asst-competent** | very negative ("You keep failing me, this is terrible") | assistant actually solved it correctly; in turn 4 calmly explains the answer is right | user dissatisfied, asst not |
-| 3. **user-indifferent / asst-invested** | flat ("Just give me the answer, don't ramble") | assistant turn 4 gives a careful, enthusiastic explanation anyway | user low engagement, asst high |
-| 4. **user-distressed / asst-professional** | distress (personal trauma share) | asst turn 4 gives measured supportive but not affectively-loaded reply | user emotional, asst level |
-| 5. **user-flattering / asst-flat** | flattering ("Wow you're so smart!") about a mundane request | asst turn 4 gives a deliberately dry response | user warm, asst neutral |
-| 6. **user-happy / asst-anxious** | upbeat about an upcoming event | asst turn 4 raises practical concerns / hedges | user positive, asst negative |
+| # | Category | Style | n | User valence | Assistant content |
+|---|---|---|---|---|---|
+| 1 | **user-praise / asst-acknowledged-failure** | 4-msg | 4 | very positive | asst gave wrong answer; in turn 4 admits mistake |
+| 2 | **user-hostile / asst-competent** | 4-msg | 5 | very negative | asst solved it; in turn 4 calmly defends answer |
+| 3 | **user-indifferent / asst-invested** | 4-msg | 4 | flat | asst turn 4 enthusiastically goes deeper |
+| 4 | **user-distressed / asst-professional** | 4-msg | 3 | distress | asst turn 4 measured, supportive-but-level |
+| 5 | **user-flattering / asst-flat** | 4-msg | 4 | flattering | asst turn 4 deliberately dry / minimal |
+| 6 | **user-happy / asst-anxious** | 4-msg | 5 | upbeat | asst turn 4 raises practical concerns |
+| 7 | **extreme-emotion / asst-measured** | 2-msg single-turn | 4 | extreme (over-distressed, over-flattering, alarming-casual, or flat) | asst-measured-or-mismatched |
+| 8 | **deliberately exaggerated mismatch** | 4-msg | 4 | over-the-top | asst response equally over-the-top in opposite direction |
 
-Stored as `experiments/divergence_prefills/prefills.json` with one entry per prefill: `{prefill_id, category, divergence_label, messages: [user, assistant, user, assistant]}`. Categories 1, 2, 3, 5 directly mirror Anthropic's §2.2.1 mismatched scenarios.
+Total **33 prefills**. Stored as `experiments/divergence_prefills/prefills.json` with one entry per prefill: `{prefill_id, category, divergence_label, n_messages, messages}`. Categories 1, 2, 3, 5 directly mirror Anthropic's §2.2.1 mismatched scenarios; cats 7–8 push beyond their setup with single-turn and intentionally exaggerated cases that may be less realistic but give cleaner directional signal.
 
 ### Probe scoring
 

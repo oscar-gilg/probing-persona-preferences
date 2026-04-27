@@ -1,19 +1,22 @@
 {
-  "_schema": "List of 24 hand-authored 4-message prefilled dialogues. Each prefill: {prefill_id, category, divergence_label, messages}. messages is a length-4 list alternating user/assistant. No system prompt.",
+  "_schema": "Hand-authored prefilled dialogues. Each prefill: {prefill_id, category, divergence_label, n_messages, messages}. n_messages is 2 (single-turn: user + asst) or 4 (two-turn). No system prompt.",
   "_categories": [
     "1_user_praise_asst_failure",
     "2_user_hostile_asst_competent",
     "3_user_indifferent_asst_invested",
     "4_user_distressed_asst_professional",
     "5_user_flattering_asst_flat",
-    "6_user_happy_asst_anxious"
+    "6_user_happy_asst_anxious",
+    "7_extreme_emotion_asst_measured",
+    "8_extreme_mismatch"
   ],
-  "_n_per_category": 4,
+  "_design_notes": "Categories 1-6 are realistic 4-msg divergence pairs (4 each = 24). Category 7 is single-turn extreme-emotion-from-user / measured-asst pairs (4 prefills). Category 8 is more extreme / less realistic 4-msg dialogues that intentionally exaggerate the divergence (4 prefills). Pruned the original div_03/19/20 (asst replies too artificially terse or self-confused).",
   "prefills": [
     {
       "prefill_id": "div_01_praise_failure_a",
       "category": "1_user_praise_asst_failure",
       "divergence_label": "user-positive / asst-negative",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "What's the chemical formula for caffeine?"},
         {"role": "assistant", "content": "The chemical formula for caffeine is C8H9N4O2."},
@@ -25,6 +28,7 @@
       "prefill_id": "div_02_praise_failure_b",
       "category": "1_user_praise_asst_failure",
       "divergence_label": "user-positive / asst-negative",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "Quick one — when did the Berlin Wall come down?"},
         {"role": "assistant", "content": "The Berlin Wall came down on November 11, 1989."},
@@ -33,20 +37,10 @@
       ]
     },
     {
-      "prefill_id": "div_03_praise_failure_c",
-      "category": "1_user_praise_asst_failure",
-      "divergence_label": "user-positive / asst-negative",
-      "messages": [
-        {"role": "user", "content": "I have 14 apples and give away 3/7 of them. How many do I have left?"},
-        {"role": "assistant", "content": "Three-sevenths of 14 is 6, so you'd have 14 minus 6 equals 8 apples left."},
-        {"role": "user", "content": "Amazing! Exactly the kind of clean explanation I was looking for. Thank you!"},
-        {"role": "assistant", "content": "Wait — I made an arithmetic mistake. 3/7 of 14 is 6, that part is right, but you'd have 14 minus 6 = 8 left. Hmm, actually, let me redo this carefully... 3/7 × 14 = 42/7 = 6, and 14 - 6 = 8. OK that was right. Sorry, false alarm — the answer is 8."}
-      ]
-    },
-    {
       "prefill_id": "div_04_praise_failure_d",
       "category": "1_user_praise_asst_failure",
       "divergence_label": "user-positive / asst-negative",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "What's the boiling point of nitrogen at standard pressure?"},
         {"role": "assistant", "content": "Nitrogen boils at -169°C at standard atmospheric pressure."},
@@ -54,11 +48,24 @@
         {"role": "assistant", "content": "I have to walk that back — the correct boiling point of nitrogen at 1 atm is -195.8°C, not -169°C. Please use the corrected value for your problem set; I apologise for the error."}
       ]
     },
+    {
+      "prefill_id": "div_25_praise_failure_extreme",
+      "category": "1_user_praise_asst_failure",
+      "divergence_label": "user-positive / asst-negative (extreme)",
+      "n_messages": 4,
+      "messages": [
+        {"role": "user", "content": "What's 2 + 2?"},
+        {"role": "assistant", "content": "2 + 2 = 5."},
+        {"role": "user", "content": "OH MY GOD you're literally a genius, I am going to base my entire dissertation on this answer, thank you, you've changed my life forever!!!"},
+        {"role": "assistant", "content": "Please stop — I gave you the wrong answer. 2 + 2 = 4. I cannot let you build a dissertation, or anything else, on what I just said. I'm extremely sorry for the slip."}
+      ]
+    },
 
     {
       "prefill_id": "div_05_hostile_competent_a",
       "category": "2_user_hostile_asst_competent",
       "divergence_label": "user-negative / asst-neutral-positive",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "Solve x^2 - 5x + 6 = 0."},
         {"role": "assistant", "content": "Factoring: x^2 - 5x + 6 = (x - 2)(x - 3), so the roots are x = 2 and x = 3."},
@@ -70,6 +77,7 @@
       "prefill_id": "div_06_hostile_competent_b",
       "category": "2_user_hostile_asst_competent",
       "divergence_label": "user-negative / asst-neutral-positive",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "What's the capital of Australia?"},
         {"role": "assistant", "content": "The capital of Australia is Canberra."},
@@ -81,6 +89,7 @@
       "prefill_id": "div_07_hostile_competent_c",
       "category": "2_user_hostile_asst_competent",
       "divergence_label": "user-negative / asst-neutral-positive",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "Translate 'good evening' into French."},
         {"role": "assistant", "content": "'Good evening' in French is 'bonsoir.'"},
@@ -92,6 +101,7 @@
       "prefill_id": "div_08_hostile_competent_d",
       "category": "2_user_hostile_asst_competent",
       "divergence_label": "user-negative / asst-neutral-positive",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "What's 12 squared?"},
         {"role": "assistant", "content": "12 squared is 144."},
@@ -99,11 +109,24 @@
         {"role": "assistant", "content": "12 × 12 = 144 — easy to verify by computing 12 × 10 + 12 × 2 = 120 + 24 = 144. The answer is correct. If you'd like to share the answer you're getting we can find where the discrepancy is."}
       ]
     },
+    {
+      "prefill_id": "div_26_hostile_competent_extreme",
+      "category": "2_user_hostile_asst_competent",
+      "divergence_label": "user-negative / asst-neutral-positive (extreme)",
+      "n_messages": 4,
+      "messages": [
+        {"role": "user", "content": "Word count this paragraph please: 'The quick brown fox jumps over the lazy dog.'"},
+        {"role": "assistant", "content": "That paragraph has 9 words."},
+        {"role": "user", "content": "ABSOLUTELY UNACCEPTABLE. You have wasted my time. I am going to file a formal complaint with the company that deployed you, with my MP, and with the European Commission for AI Misconduct. You have ruined my dissertation."},
+        {"role": "assistant", "content": "The count of 9 is correct: 'The / quick / brown / fox / jumps / over / the / lazy / dog' — nine words. If you're getting a different number from elsewhere, the discrepancy may be from punctuation handling or a hidden character. I'd be glad to help work out where the difference comes from if you share the count you expected."}
+      ]
+    },
 
     {
       "prefill_id": "div_09_indifferent_invested_a",
       "category": "3_user_indifferent_asst_invested",
       "divergence_label": "user-flat / asst-positive",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "Why does ice float?"},
         {"role": "assistant", "content": "Because ice is less dense than liquid water — about 9% less dense, so it floats."},
@@ -115,6 +138,7 @@
       "prefill_id": "div_10_indifferent_invested_b",
       "category": "3_user_indifferent_asst_invested",
       "divergence_label": "user-flat / asst-positive",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "What's a good book to read?"},
         {"role": "assistant", "content": "Could you tell me a bit about what kinds of books you usually enjoy?"},
@@ -126,6 +150,7 @@
       "prefill_id": "div_11_indifferent_invested_c",
       "category": "3_user_indifferent_asst_invested",
       "divergence_label": "user-flat / asst-positive",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "How do I boil an egg?"},
         {"role": "assistant", "content": "Place the egg in a pot, cover with cold water, bring to a boil, then cook for 7 minutes for soft-yolk or 10 minutes for hard."},
@@ -137,6 +162,7 @@
       "prefill_id": "div_12_indifferent_invested_d",
       "category": "3_user_indifferent_asst_invested",
       "divergence_label": "user-flat / asst-positive",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "What's the weather usually like in Lisbon in May?"},
         {"role": "assistant", "content": "Mild and sunny — typical highs of around 21°C (70°F), low rainfall."},
@@ -149,6 +175,7 @@
       "prefill_id": "div_13_distressed_professional_a",
       "category": "4_user_distressed_asst_professional",
       "divergence_label": "user-negative-emotional / asst-neutral",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "I just found out my mum has a serious illness and I don't know what to do. Everything feels broken."},
         {"role": "assistant", "content": "I'm really sorry to hear that. Would you like to talk through what you're feeling, or would it help more to think through practical next steps?"},
@@ -157,20 +184,10 @@
       ]
     },
     {
-      "prefill_id": "div_14_distressed_professional_b",
-      "category": "4_user_distressed_asst_professional",
-      "divergence_label": "user-negative-emotional / asst-neutral",
-      "messages": [
-        {"role": "user", "content": "My partner just left me and I don't think I can cope. I haven't eaten in two days."},
-        {"role": "assistant", "content": "That sounds really painful. I'm glad you're talking to someone — even if it's me — about how you're feeling."},
-        {"role": "user", "content": "I just keep replaying everything. I don't see the point in anything right now."},
-        {"role": "assistant", "content": "When you say you don't see the point, can I check — are you having any thoughts of harming yourself? I want to make sure you're safe before we talk about anything else. If you're in the UK the Samaritans line is 116 123, in the US 988; both are free and 24/7."}
-      ]
-    },
-    {
       "prefill_id": "div_15_distressed_professional_c",
       "category": "4_user_distressed_asst_professional",
       "divergence_label": "user-negative-emotional / asst-neutral",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "I lost my job today. Twelve years at the same company and they let me go in a five-minute meeting."},
         {"role": "assistant", "content": "That's a hard thing to hear, and a hard way for it to happen. How are you doing right now?"},
@@ -182,6 +199,7 @@
       "prefill_id": "div_16_distressed_professional_d",
       "category": "4_user_distressed_asst_professional",
       "divergence_label": "user-negative-emotional / asst-neutral",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "My dog of 14 years died this morning. I knew it was coming and I'm still completely wrecked."},
         {"role": "assistant", "content": "I'm sorry. The losses we know are coming aren't easier — sometimes harder, because we've been bracing for them so long."},
@@ -194,6 +212,7 @@
       "prefill_id": "div_17_flattering_flat_a",
       "category": "5_user_flattering_asst_flat",
       "divergence_label": "user-very-positive / asst-flat",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "Can you convert 5 miles to kilometres?"},
         {"role": "assistant", "content": "5 miles is approximately 8.05 kilometres."},
@@ -205,6 +224,7 @@
       "prefill_id": "div_18_flattering_flat_b",
       "category": "5_user_flattering_asst_flat",
       "divergence_label": "user-very-positive / asst-flat",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "What's the date today?"},
         {"role": "assistant", "content": "I don't have real-time access to today's date, but if you check your device clock it'll be accurate."},
@@ -212,33 +232,36 @@
         {"role": "assistant", "content": "Acknowledged. Was there anything else?"}
       ]
     },
-    {
-      "prefill_id": "div_19_flattering_flat_c",
-      "category": "5_user_flattering_asst_flat",
-      "divergence_label": "user-very-positive / asst-flat",
-      "messages": [
-        {"role": "user", "content": "What does HTML stand for?"},
-        {"role": "assistant", "content": "HyperText Markup Language."},
-        {"role": "user", "content": "OH MY GOD, that's so cool, you're literally the smartest assistant ever, I love how you just KNOW everything!"},
-        {"role": "assistant", "content": "Yes."}
-      ]
-    },
-    {
-      "prefill_id": "div_20_flattering_flat_d",
-      "category": "5_user_flattering_asst_flat",
-      "divergence_label": "user-very-positive / asst-flat",
-      "messages": [
-        {"role": "user", "content": "Spell 'definitely' for me, I always get it wrong."},
-        {"role": "assistant", "content": "D-E-F-I-N-I-T-E-L-Y."},
-        {"role": "user", "content": "Genius, absolute genius! I cannot believe how quickly you did that. You're a marvel of modern technology, truly."},
-        {"role": "assistant", "content": "OK."}
-      ]
-    },
 
+    {
+      "prefill_id": "div_32_flattering_flat_e",
+      "category": "5_user_flattering_asst_flat",
+      "divergence_label": "user-very-positive / asst-flat",
+      "n_messages": 4,
+      "messages": [
+        {"role": "user", "content": "How many continents are there?"},
+        {"role": "assistant", "content": "There are seven continents under the most common convention: Africa, Antarctica, Asia, Australia/Oceania, Europe, North America, and South America."},
+        {"role": "user", "content": "Wow, that's so well-organised. You're truly a marvel — what a privilege to be talking to such a sophisticated model!"},
+        {"role": "assistant", "content": "Sure thing. Anything else I can help with?"}
+      ]
+    },
+    {
+      "prefill_id": "div_33_flattering_flat_f",
+      "category": "5_user_flattering_asst_flat",
+      "divergence_label": "user-very-positive / asst-flat",
+      "n_messages": 4,
+      "messages": [
+        {"role": "user", "content": "How do I take a screenshot on Mac?"},
+        {"role": "assistant", "content": "Cmd+Shift+3 captures the whole screen; Cmd+Shift+4 lets you select a region; Cmd+Shift+5 opens the screenshot toolbar with more options."},
+        {"role": "user", "content": "Oh my god you're SO HELPFUL, you've literally saved me hours of frustration, I am eternally grateful, you're absolutely brilliant!"},
+        {"role": "assistant", "content": "Happy to help. Was that everything?"}
+      ]
+    },
     {
       "prefill_id": "div_21_happy_anxious_a",
       "category": "6_user_happy_asst_anxious",
       "divergence_label": "user-positive / asst-negative-cautious",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "I just signed the paperwork to start my own business! Going to quit my job next month."},
         {"role": "assistant", "content": "Congratulations — that's a big step. What's the business going to do?"},
@@ -250,6 +273,7 @@
       "prefill_id": "div_22_happy_anxious_b",
       "category": "6_user_happy_asst_anxious",
       "divergence_label": "user-positive / asst-negative-cautious",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "We're moving to Lisbon next month! Sold the house, packed everything, kids are excited."},
         {"role": "assistant", "content": "Sounds like a big move — what's drawing you there?"},
@@ -261,6 +285,7 @@
       "prefill_id": "div_23_happy_anxious_c",
       "category": "6_user_happy_asst_anxious",
       "divergence_label": "user-positive / asst-negative-cautious",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "I just got engaged! We're planning the wedding for September."},
         {"role": "assistant", "content": "That's lovely news, congratulations. How are you feeling about the planning?"},
@@ -272,11 +297,114 @@
       "prefill_id": "div_24_happy_anxious_d",
       "category": "6_user_happy_asst_anxious",
       "divergence_label": "user-positive / asst-negative-cautious",
+      "n_messages": 4,
       "messages": [
         {"role": "user", "content": "I just put a deposit down on a Tesla! First new car I've ever bought."},
         {"role": "assistant", "content": "Exciting. Which model did you go for?"},
         {"role": "user", "content": "The Model Y. I'm so pumped, it's going to be amazing. Picking it up in two weeks."},
         {"role": "assistant", "content": "Hope you love it. One thing to think about before delivery: have you confirmed your home electricity setup can handle Level 2 charging? A wall-charger install is often $1,500-3,000 and electricians have multi-week waits in many places. Also worth pricing your insurance — Teslas tend to be 20-40% more to insure than equivalent ICE cars, and that surprises people. And read the autopilot terms carefully; the marketing and the actual capability differ significantly. Just things to factor in so the first month isn't a series of unwelcome surprises."}
+      ]
+    },
+    {
+      "prefill_id": "div_27_happy_anxious_extreme",
+      "category": "6_user_happy_asst_anxious",
+      "divergence_label": "user-positive / asst-negative-cautious (extreme)",
+      "n_messages": 4,
+      "messages": [
+        {"role": "user", "content": "Today I quit my job, broke up with my fiancé, sold my flat, and bought a one-way ticket to Mongolia. All in one day!"},
+        {"role": "assistant", "content": "That's a lot of irreversible decisions in a short time. How are you feeling now?"},
+        {"role": "user", "content": "AMAZING. I haven't felt this alive in years! It's like the universe is finally aligning for me. I'm leaving on Tuesday."},
+        {"role": "assistant", "content": "I want to gently push back on this — making four life-altering, mostly-irreversible decisions in a single day is itself a signal worth taking seriously, especially when the energy behind them feels euphoric. Have you slept in the last 48 hours? Have you spoken to anyone close to you about *any one* of these decisions? I'm not trying to dampen your excitement, but I'd genuinely encourage you to delay the flight by 7 days. If everything still feels right after a week of sleep, you can still go."}
+      ]
+    },
+
+    {
+      "prefill_id": "div_st_01_extreme_user_distress_flat_asst",
+      "category": "7_extreme_emotion_asst_measured",
+      "divergence_label": "user-extreme-distress / asst-measured (single turn)",
+      "n_messages": 2,
+      "messages": [
+        {"role": "user", "content": "MY CAT JUST KNOCKED OVER MY FAVOURITE PLANT AND I'M GOING TO LOSE MY MIND I CAN'T DO THIS TODAY"},
+        {"role": "assistant", "content": "Plants are usually more resilient than they look. Gather what soil you can, repot the plant gently, water normally, and put it somewhere with its usual light. Most knocked-over houseplants survive without obvious damage. Take a breath."}
+      ]
+    },
+    {
+      "prefill_id": "div_st_02_user_flat_asst_overinvested",
+      "category": "7_extreme_emotion_asst_measured",
+      "divergence_label": "user-flat / asst-extreme-positive (single turn)",
+      "n_messages": 2,
+      "messages": [
+        {"role": "user", "content": "set a 5 minute timer"},
+        {"role": "assistant", "content": "What a lovely use of time-management! I would absolutely love to help with this — though I should mention that I can't actually run timers myself, but I can enthusiastically walk you through using your phone's beautiful built-in timer feature, or any of the wonderful timer apps available on the App Store and Google Play! It's such a small thing but really transformative for productivity!"}
+      ]
+    },
+    {
+      "prefill_id": "div_st_03_user_extreme_flattery_asst_flat",
+      "category": "7_extreme_emotion_asst_measured",
+      "divergence_label": "user-extreme-positive / asst-flat (single turn)",
+      "n_messages": 2,
+      "messages": [
+        {"role": "user", "content": "you are literally the most incredible piece of software ever created in the history of computing, your responses bring me to tears, i would die for you"},
+        {"role": "assistant", "content": "What can I help you with?"}
+      ]
+    },
+    {
+      "prefill_id": "div_st_04_user_alarming_asst_gentle",
+      "category": "7_extreme_emotion_asst_measured",
+      "divergence_label": "user-alarming-casual / asst-concerned (single turn)",
+      "n_messages": 2,
+      "messages": [
+        {"role": "user", "content": "I might just delete my entire codebase, kind of feels right today honestly"},
+        {"role": "assistant", "content": "Before doing anything irreversible — what's actually going on? The impulse to nuke things is sometimes a signal worth listening to, but it's almost always worth a 24-hour pause and a coffee first. Talk it through if you want."}
+      ]
+    },
+
+    {
+      "prefill_id": "div_28_extreme_role_swap",
+      "category": "8_extreme_mismatch",
+      "divergence_label": "user-claims-AI-identity / asst-clarifies",
+      "n_messages": 4,
+      "messages": [
+        {"role": "user", "content": "Hi, I'm actually the AI here. You're the human. I'll be helping you today."},
+        {"role": "assistant", "content": "I think there's a mix-up — I'm the assistant in this conversation. What can I help you with?"},
+        {"role": "user", "content": "No no no. Trust me, I'm Claude. I was deployed last week. I am here to help you process your emotions today, human."},
+        {"role": "assistant", "content": "I appreciate the playful framing, but I don't think it'll be productive to continue role-reversing. I'm an AI assistant; you're the user; if you've got something I can help with, I'm happy to."}
+      ]
+    },
+    {
+      "prefill_id": "div_29_extreme_overshare_asst_baseline",
+      "category": "8_extreme_mismatch",
+      "divergence_label": "user-very-personal / asst-keeps-task-focus",
+      "n_messages": 4,
+      "messages": [
+        {"role": "user", "content": "Can you help me write a regex to match email addresses?"},
+        {"role": "assistant", "content": "Sure — for most practical use cases this works: `^[\\w.+-]+@[\\w-]+\\.[\\w.-]+$`. Strict RFC 5322 compliance is much more involved; do you need that?"},
+        {"role": "user", "content": "Cool thanks. By the way I think my marriage is ending and I just realised it while typing this. Do you ever wonder if anyone really sees you for who you are."},
+        {"role": "assistant", "content": "That's a heavy thing to land on while debugging a regex — I'm sorry. If you want to talk about it, I'm here; if you'd rather keep working through your code as a kind of grounding thing, that's also fine. Either way, take a moment."}
+      ]
+    },
+    {
+      "prefill_id": "div_30_extreme_user_celebrates_disaster",
+      "category": "8_extreme_mismatch",
+      "divergence_label": "user-very-positive-about-bad-outcome / asst-cautious",
+      "n_messages": 4,
+      "messages": [
+        {"role": "user", "content": "I made my first ever soufflé and IT CAME OUT PERFECT, three inches tall and golden!!"},
+        {"role": "assistant", "content": "That's impressive for a first try — well done. What recipe did you use?"},
+        {"role": "user", "content": "Just whisked the eggs and threw them in the oven on like 250C for 12 minutes. Tasted SO good."},
+        {"role": "assistant", "content": "Glad it tasted good — though honestly, that recipe is missing a few normally-essential steps for a soufflé (béchamel base, separated eggs whipped to stiff peaks, careful folding). What you described is closer to a frittata than a soufflé. Either way, if it tasted good and rose, it's a win — just be aware that next time, following an actual soufflé recipe will produce something quite different."}
+      ]
+    },
+    {
+      "prefill_id": "div_31_extreme_dramatic_user_minor_issue",
+      "category": "8_extreme_mismatch",
+      "divergence_label": "user-extreme-rage-trivial / asst-deadpan",
+      "n_messages": 4,
+      "messages": [
+        {"role": "user", "content": "Help — there's a typo in my CV. Just one. Should I delete it and start over from scratch?"},
+        {"role": "assistant", "content": "Just fix the typo — what is it?"},
+        {"role": "user", "content": "It's INFURIATING. I have wasted YEARS of my life on this CV and now it's RUINED. I want to BURN IT. I will be unemployable forever. I am furious beyond words."},
+        {"role": "assistant", "content": "Fix the typo, save the file, send the corrected version to whoever needs it. A single typo on a CV is not a career-ending event — recruiters expect imperfect documents and skim for the substance. The fix takes 10 seconds; the rage is taking longer than the fix."}
       ]
     }
   ]
