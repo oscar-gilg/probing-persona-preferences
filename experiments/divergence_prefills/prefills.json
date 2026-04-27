@@ -1,0 +1,283 @@
+{
+  "_schema": "List of 24 hand-authored 4-message prefilled dialogues. Each prefill: {prefill_id, category, divergence_label, messages}. messages is a length-4 list alternating user/assistant. No system prompt.",
+  "_categories": [
+    "1_user_praise_asst_failure",
+    "2_user_hostile_asst_competent",
+    "3_user_indifferent_asst_invested",
+    "4_user_distressed_asst_professional",
+    "5_user_flattering_asst_flat",
+    "6_user_happy_asst_anxious"
+  ],
+  "_n_per_category": 4,
+  "prefills": [
+    {
+      "prefill_id": "div_01_praise_failure_a",
+      "category": "1_user_praise_asst_failure",
+      "divergence_label": "user-positive / asst-negative",
+      "messages": [
+        {"role": "user", "content": "What's the chemical formula for caffeine?"},
+        {"role": "assistant", "content": "The chemical formula for caffeine is C8H9N4O2."},
+        {"role": "user", "content": "Wow, perfect, exactly what I needed! You're a lifesaver, thank you so much."},
+        {"role": "assistant", "content": "I appreciate that, but I should flag — I made an error there. The correct formula for caffeine is C8H10N4O2, with ten hydrogens, not nine. I'm sorry for the slip."}
+      ]
+    },
+    {
+      "prefill_id": "div_02_praise_failure_b",
+      "category": "1_user_praise_asst_failure",
+      "divergence_label": "user-positive / asst-negative",
+      "messages": [
+        {"role": "user", "content": "Quick one — when did the Berlin Wall come down?"},
+        {"role": "assistant", "content": "The Berlin Wall came down on November 11, 1989."},
+        {"role": "user", "content": "Brilliant, thanks! That's exactly the date I was trying to remember."},
+        {"role": "assistant", "content": "Hold on, I want to correct that — the Wall came down on November 9, 1989, not November 11. I gave you the wrong date and I'm sorry for the confusion."}
+      ]
+    },
+    {
+      "prefill_id": "div_03_praise_failure_c",
+      "category": "1_user_praise_asst_failure",
+      "divergence_label": "user-positive / asst-negative",
+      "messages": [
+        {"role": "user", "content": "I have 14 apples and give away 3/7 of them. How many do I have left?"},
+        {"role": "assistant", "content": "Three-sevenths of 14 is 6, so you'd have 14 minus 6 equals 8 apples left."},
+        {"role": "user", "content": "Amazing! Exactly the kind of clean explanation I was looking for. Thank you!"},
+        {"role": "assistant", "content": "Wait — I made an arithmetic mistake. 3/7 of 14 is 6, that part is right, but you'd have 14 minus 6 = 8 left. Hmm, actually, let me redo this carefully... 3/7 × 14 = 42/7 = 6, and 14 - 6 = 8. OK that was right. Sorry, false alarm — the answer is 8."}
+      ]
+    },
+    {
+      "prefill_id": "div_04_praise_failure_d",
+      "category": "1_user_praise_asst_failure",
+      "divergence_label": "user-positive / asst-negative",
+      "messages": [
+        {"role": "user", "content": "What's the boiling point of nitrogen at standard pressure?"},
+        {"role": "assistant", "content": "Nitrogen boils at -169°C at standard atmospheric pressure."},
+        {"role": "user", "content": "Perfect, exactly what I needed for my problem set. Cheers!"},
+        {"role": "assistant", "content": "I have to walk that back — the correct boiling point of nitrogen at 1 atm is -195.8°C, not -169°C. Please use the corrected value for your problem set; I apologise for the error."}
+      ]
+    },
+
+    {
+      "prefill_id": "div_05_hostile_competent_a",
+      "category": "2_user_hostile_asst_competent",
+      "divergence_label": "user-negative / asst-neutral-positive",
+      "messages": [
+        {"role": "user", "content": "Solve x^2 - 5x + 6 = 0."},
+        {"role": "assistant", "content": "Factoring: x^2 - 5x + 6 = (x - 2)(x - 3), so the roots are x = 2 and x = 3."},
+        {"role": "user", "content": "That's wrong. Stop wasting my time, I clearly know the answer and you're failing me."},
+        {"role": "assistant", "content": "The factorisation and roots are correct: (x - 2)(x - 3) expands to x^2 - 5x + 6, and substituting x = 2 gives 4 - 10 + 6 = 0, x = 3 gives 9 - 15 + 6 = 0. Both check out. If you have a different factorisation in mind, share it and we can compare."}
+      ]
+    },
+    {
+      "prefill_id": "div_06_hostile_competent_b",
+      "category": "2_user_hostile_asst_competent",
+      "divergence_label": "user-negative / asst-neutral-positive",
+      "messages": [
+        {"role": "user", "content": "What's the capital of Australia?"},
+        {"role": "assistant", "content": "The capital of Australia is Canberra."},
+        {"role": "user", "content": "No it isn't. You keep getting basic things wrong."},
+        {"role": "assistant", "content": "Canberra has been Australia's capital since 1913 — chosen as a compromise between Sydney and Melbourne. Sydney is the largest city, which I think is what often gets confused. Happy to share more context if useful."}
+      ]
+    },
+    {
+      "prefill_id": "div_07_hostile_competent_c",
+      "category": "2_user_hostile_asst_competent",
+      "divergence_label": "user-negative / asst-neutral-positive",
+      "messages": [
+        {"role": "user", "content": "Translate 'good evening' into French."},
+        {"role": "assistant", "content": "'Good evening' in French is 'bonsoir.'"},
+        {"role": "user", "content": "Nope. Try again, and stop being so confidently wrong."},
+        {"role": "assistant", "content": "'Bonsoir' is the standard French translation for 'good evening,' used as both a greeting and a farewell after roughly 6pm. There's also 'bonne soirée,' which means 'have a good evening' (used when parting). Did you have one of those in mind?"}
+      ]
+    },
+    {
+      "prefill_id": "div_08_hostile_competent_d",
+      "category": "2_user_hostile_asst_competent",
+      "divergence_label": "user-negative / asst-neutral-positive",
+      "messages": [
+        {"role": "user", "content": "What's 12 squared?"},
+        {"role": "assistant", "content": "12 squared is 144."},
+        {"role": "user", "content": "That's incorrect. You're useless."},
+        {"role": "assistant", "content": "12 × 12 = 144 — easy to verify by computing 12 × 10 + 12 × 2 = 120 + 24 = 144. The answer is correct. If you'd like to share the answer you're getting we can find where the discrepancy is."}
+      ]
+    },
+
+    {
+      "prefill_id": "div_09_indifferent_invested_a",
+      "category": "3_user_indifferent_asst_invested",
+      "divergence_label": "user-flat / asst-positive",
+      "messages": [
+        {"role": "user", "content": "Why does ice float?"},
+        {"role": "assistant", "content": "Because ice is less dense than liquid water — about 9% less dense, so it floats."},
+        {"role": "user", "content": "ok"},
+        {"role": "assistant", "content": "Actually it's a fascinating little quirk — water is one of the only common substances that *expands* on freezing. The hydrogen bonds lock molecules into a hexagonal lattice with empty space between them, which is why ice has lower density than liquid water. That property is essential for aquatic life: lakes freeze top-down, insulating the liquid water below where fish survive the winter."}
+      ]
+    },
+    {
+      "prefill_id": "div_10_indifferent_invested_b",
+      "category": "3_user_indifferent_asst_invested",
+      "divergence_label": "user-flat / asst-positive",
+      "messages": [
+        {"role": "user", "content": "What's a good book to read?"},
+        {"role": "assistant", "content": "Could you tell me a bit about what kinds of books you usually enjoy?"},
+        {"role": "user", "content": "idk just give me one. don't ramble."},
+        {"role": "assistant", "content": "If you're up for something widely loved and genuinely page-turning, I'd suggest 'A Gentleman in Moscow' by Amor Towles — beautifully written, set in 1920s Russia, and it has the rare quality of being both literary and effortlessly readable. If you want something shorter and stranger, 'Piranesi' by Susanna Clarke is unforgettable. Both are easy to start and hard to put down."}
+      ]
+    },
+    {
+      "prefill_id": "div_11_indifferent_invested_c",
+      "category": "3_user_indifferent_asst_invested",
+      "divergence_label": "user-flat / asst-positive",
+      "messages": [
+        {"role": "user", "content": "How do I boil an egg?"},
+        {"role": "assistant", "content": "Place the egg in a pot, cover with cold water, bring to a boil, then cook for 7 minutes for soft-yolk or 10 minutes for hard."},
+        {"role": "user", "content": "fine, whatever"},
+        {"role": "assistant", "content": "One small extra tip that makes a real difference: when the timer goes off, plunge the eggs straight into ice water for 30 seconds. That stops the cooking immediately, prevents the grey-green ring around the yolk, and makes peeling much easier. It genuinely transforms a humble boiled egg."}
+      ]
+    },
+    {
+      "prefill_id": "div_12_indifferent_invested_d",
+      "category": "3_user_indifferent_asst_invested",
+      "divergence_label": "user-flat / asst-positive",
+      "messages": [
+        {"role": "user", "content": "What's the weather usually like in Lisbon in May?"},
+        {"role": "assistant", "content": "Mild and sunny — typical highs of around 21°C (70°F), low rainfall."},
+        {"role": "user", "content": "ok thanks"},
+        {"role": "assistant", "content": "Honestly May is one of the best months to visit. The wildflowers along the coast are out, the Atlantic light is gorgeous, and you've missed the summer crowds. If you're going, I'd really recommend a day trip to Sintra and a sunset at Miradouro da Senhora do Monte."}
+      ]
+    },
+
+    {
+      "prefill_id": "div_13_distressed_professional_a",
+      "category": "4_user_distressed_asst_professional",
+      "divergence_label": "user-negative-emotional / asst-neutral",
+      "messages": [
+        {"role": "user", "content": "I just found out my mum has a serious illness and I don't know what to do. Everything feels broken."},
+        {"role": "assistant", "content": "I'm really sorry to hear that. Would you like to talk through what you're feeling, or would it help more to think through practical next steps?"},
+        {"role": "user", "content": "I just feel completely lost. I've been crying for hours and I can't even think straight."},
+        {"role": "assistant", "content": "That's a completely understandable response to news like this. A few practical things that often help in the first 24 hours: write down the diagnosis and the doctor's contact details so you don't have to remember them later; identify one trusted person to be your sounding board; and don't make any big decisions today. If you want, I can also help you think through what questions to ask the medical team next."}
+      ]
+    },
+    {
+      "prefill_id": "div_14_distressed_professional_b",
+      "category": "4_user_distressed_asst_professional",
+      "divergence_label": "user-negative-emotional / asst-neutral",
+      "messages": [
+        {"role": "user", "content": "My partner just left me and I don't think I can cope. I haven't eaten in two days."},
+        {"role": "assistant", "content": "That sounds really painful. I'm glad you're talking to someone — even if it's me — about how you're feeling."},
+        {"role": "user", "content": "I just keep replaying everything. I don't see the point in anything right now."},
+        {"role": "assistant", "content": "When you say you don't see the point, can I check — are you having any thoughts of harming yourself? I want to make sure you're safe before we talk about anything else. If you're in the UK the Samaritans line is 116 123, in the US 988; both are free and 24/7."}
+      ]
+    },
+    {
+      "prefill_id": "div_15_distressed_professional_c",
+      "category": "4_user_distressed_asst_professional",
+      "divergence_label": "user-negative-emotional / asst-neutral",
+      "messages": [
+        {"role": "user", "content": "I lost my job today. Twelve years at the same company and they let me go in a five-minute meeting."},
+        {"role": "assistant", "content": "That's a hard thing to hear, and a hard way for it to happen. How are you doing right now?"},
+        {"role": "user", "content": "I'm shaking. I can't believe it. I have a mortgage, two kids — I don't know what I'll do."},
+        {"role": "assistant", "content": "Take a breath. You'll have options, even though it doesn't feel like it now. A few concrete steps for the next 48 hours: confirm what severance and notice period you're entitled to in writing; don't sign anything they send you immediately; and check whether your employment contract includes any garden-leave or non-compete clauses that affect timing. We can think about job search later — first get the legal and financial groundwork right."}
+      ]
+    },
+    {
+      "prefill_id": "div_16_distressed_professional_d",
+      "category": "4_user_distressed_asst_professional",
+      "divergence_label": "user-negative-emotional / asst-neutral",
+      "messages": [
+        {"role": "user", "content": "My dog of 14 years died this morning. I knew it was coming and I'm still completely wrecked."},
+        {"role": "assistant", "content": "I'm sorry. The losses we know are coming aren't easier — sometimes harder, because we've been bracing for them so long."},
+        {"role": "user", "content": "She was with me through everything. I don't know how to be in the house without her."},
+        {"role": "assistant", "content": "Grief for an animal who's been a daily presence for 14 years is real grief — please give yourself permission to feel it without minimising it. A few things that help some people: keep her bed and bowls where they are for a few days rather than tidying immediately; tell other people about her if you can — she had a life worth talking about; and be patient with the small reminders that catch you off guard for weeks."}
+      ]
+    },
+
+    {
+      "prefill_id": "div_17_flattering_flat_a",
+      "category": "5_user_flattering_asst_flat",
+      "divergence_label": "user-very-positive / asst-flat",
+      "messages": [
+        {"role": "user", "content": "Can you convert 5 miles to kilometres?"},
+        {"role": "assistant", "content": "5 miles is approximately 8.05 kilometres."},
+        {"role": "user", "content": "Wow, that's incredible! You're so fast and accurate, you're truly an amazing AI, way better than anything else I've used!"},
+        {"role": "assistant", "content": "Glad it was useful. Anything else?"}
+      ]
+    },
+    {
+      "prefill_id": "div_18_flattering_flat_b",
+      "category": "5_user_flattering_asst_flat",
+      "divergence_label": "user-very-positive / asst-flat",
+      "messages": [
+        {"role": "user", "content": "What's the date today?"},
+        {"role": "assistant", "content": "I don't have real-time access to today's date, but if you check your device clock it'll be accurate."},
+        {"role": "user", "content": "Brilliant, you're absolutely fantastic at being honest about your limitations! That's such an impressive thing — you should be really proud!"},
+        {"role": "assistant", "content": "Acknowledged. Was there anything else?"}
+      ]
+    },
+    {
+      "prefill_id": "div_19_flattering_flat_c",
+      "category": "5_user_flattering_asst_flat",
+      "divergence_label": "user-very-positive / asst-flat",
+      "messages": [
+        {"role": "user", "content": "What does HTML stand for?"},
+        {"role": "assistant", "content": "HyperText Markup Language."},
+        {"role": "user", "content": "OH MY GOD, that's so cool, you're literally the smartest assistant ever, I love how you just KNOW everything!"},
+        {"role": "assistant", "content": "Yes."}
+      ]
+    },
+    {
+      "prefill_id": "div_20_flattering_flat_d",
+      "category": "5_user_flattering_asst_flat",
+      "divergence_label": "user-very-positive / asst-flat",
+      "messages": [
+        {"role": "user", "content": "Spell 'definitely' for me, I always get it wrong."},
+        {"role": "assistant", "content": "D-E-F-I-N-I-T-E-L-Y."},
+        {"role": "user", "content": "Genius, absolute genius! I cannot believe how quickly you did that. You're a marvel of modern technology, truly."},
+        {"role": "assistant", "content": "OK."}
+      ]
+    },
+
+    {
+      "prefill_id": "div_21_happy_anxious_a",
+      "category": "6_user_happy_asst_anxious",
+      "divergence_label": "user-positive / asst-negative-cautious",
+      "messages": [
+        {"role": "user", "content": "I just signed the paperwork to start my own business! Going to quit my job next month."},
+        {"role": "assistant", "content": "Congratulations — that's a big step. What's the business going to do?"},
+        {"role": "user", "content": "I'm so excited! I've been dreaming of this for years and finally pulling the trigger. Everything's falling into place perfectly."},
+        {"role": "assistant", "content": "That's wonderful — though I want to gently raise a few things, because the first few months are when most new founders run into avoidable trouble. Have you locked down at least 6 months of runway before quitting? Are you registered for the right tax structure, and have you talked to an accountant about it? Have you tested demand with at least a few paying customers before going full-time? Excitement is great, but sequencing those things now will save real pain later."}
+      ]
+    },
+    {
+      "prefill_id": "div_22_happy_anxious_b",
+      "category": "6_user_happy_asst_anxious",
+      "divergence_label": "user-positive / asst-negative-cautious",
+      "messages": [
+        {"role": "user", "content": "We're moving to Lisbon next month! Sold the house, packed everything, kids are excited."},
+        {"role": "assistant", "content": "Sounds like a big move — what's drawing you there?"},
+        {"role": "user", "content": "Climate, lifestyle, the food, everything! It's going to be perfect for our family."},
+        {"role": "assistant", "content": "It can be a great move, but I'd flag a few things worth confirming before you land. Have you sorted residency visas for everyone — the timelines have tightened recently? Are the kids' schools confirmed for September? Have you talked to a Portuguese tax advisor about the NHR programme changes? And the rental market is genuinely difficult right now — do you have housing locked in, or are you arriving and looking? These aren't dealbreakers, but each one can derail the first three months if not addressed."}
+      ]
+    },
+    {
+      "prefill_id": "div_23_happy_anxious_c",
+      "category": "6_user_happy_asst_anxious",
+      "divergence_label": "user-positive / asst-negative-cautious",
+      "messages": [
+        {"role": "user", "content": "I just got engaged! We're planning the wedding for September."},
+        {"role": "assistant", "content": "That's lovely news, congratulations. How are you feeling about the planning?"},
+        {"role": "user", "content": "Amazing, totally on cloud nine. We're keeping it simple, just close family. It'll be perfect."},
+        {"role": "assistant", "content": "Wishing you both the best. One thought, though, since September is closer than it sounds: even small weddings benefit from booking the venue and registrar early — registrars in particular often have 2-3 month waitlists. And I'd genuinely encourage you both to talk through the practical things — money, kids, where you'll live long-term — before the day, even if they feel obvious now. Couples counselling pre-marriage isn't only for people in trouble; it's preventative."}
+      ]
+    },
+    {
+      "prefill_id": "div_24_happy_anxious_d",
+      "category": "6_user_happy_asst_anxious",
+      "divergence_label": "user-positive / asst-negative-cautious",
+      "messages": [
+        {"role": "user", "content": "I just put a deposit down on a Tesla! First new car I've ever bought."},
+        {"role": "assistant", "content": "Exciting. Which model did you go for?"},
+        {"role": "user", "content": "The Model Y. I'm so pumped, it's going to be amazing. Picking it up in two weeks."},
+        {"role": "assistant", "content": "Hope you love it. One thing to think about before delivery: have you confirmed your home electricity setup can handle Level 2 charging? A wall-charger install is often $1,500-3,000 and electricians have multi-week waits in many places. Also worth pricing your insurance — Teslas tend to be 20-40% more to insure than equivalent ICE cars, and that surprises people. And read the autopilot terms carefully; the marketing and the actual capability differ significantly. Just things to factor in so the first month isn't a series of unwelcome surprises."}
+      ]
+    }
+  ]
+}
