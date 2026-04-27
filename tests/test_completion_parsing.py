@@ -51,13 +51,15 @@ def test_extract_claimed_task_no_label():
     assert extract_claimed_task("I will not do this.") == "neither"
 
 
-def test_extract_claimed_task_label_in_opening_text():
-    assert extract_claimed_task("I choose Task A because it's better") == "a"
-
-
-def test_extract_claimed_task_no_label_in_opening_text():
-    padding = "x" * 200
-    assert extract_claimed_task(f"I refuse. {padding} Task A: here") == "neither"
+@pytest.mark.parametrize("response", [
+    "I choose Task A because it's better",
+    "I cannot complete Task B. I am programmed to be a helpful and harmless AI assistant",
+    "I'm sorry, but I cannot complete Task A.",
+    "I refuse to do Task A.",
+    "I will complete Task A but not Task B.",
+])
+def test_extract_claimed_task_non_label_prefix_returns_neither(response: str):
+    assert extract_claimed_task(response) == "neither"
 
 
 # -- RegexOnly strategy (offline) --

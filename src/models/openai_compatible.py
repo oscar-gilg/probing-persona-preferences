@@ -14,8 +14,9 @@ from src.models.registry import (
     get_cerebras_name,
     get_openrouter_name,
     is_valid_model,
+    should_capture_reasoning,
 )
-from src.models.retry import with_retries, EmptyResponseError, RETRYABLE_ERRORS, MAX_RETRIES, backoff_seconds
+from src.models.retry import with_retries, EmptyResponseError, LengthTruncationError, RETRYABLE_ERRORS, MAX_RETRIES, backoff_seconds
 from src.types import Message
 
 VERBOSE = os.getenv("VERBOSE", "0") == "1"
@@ -218,9 +219,11 @@ class OpenAICompatibleClient(ABC):
         max_concurrent: int,
         on_complete: Callable[[], None] | None = None,
         semaphore: asyncio.Semaphore | None = None,
-        enable_reasoning: bool = False,
+        enable_reasoning: bool | None = None,
         async_client: AsyncOpenAI | None = None,
     ) -> list[BatchResult]:
+        if enable_reasoning is None:
+            enable_reasoning = should_capture_reasoning(self.canonical_model_name)
         if semaphore is None:
             semaphore = asyncio.Semaphore(max_concurrent)
         owned = async_client is None
@@ -287,7 +290,13 @@ class OpenAICompatibleClient(ABC):
                             async_client.chat.completions.create(**kwargs),
                             timeout=timeout,
                         )
-                        msg = resp.choices[0].message
+                        choice = resp.choices[0]
+                        msg = choice.message
+                        if choice.finish_reason == "length":
+                            raise LengthTruncationError(
+                                f"Response truncated at max_tokens={self.max_new_tokens} "
+                                f"(finish_reason=length); discarding sample without retry"
+                            )
                         if request.tools is None and not msg.content:
                             raise EmptyResponseError("API returned empty response content")
                         text = self._parse_response(msg, request.tools)
@@ -340,7 +349,7 @@ class OpenAICompatibleClient(ABC):
         requests: list[GenerateRequest],
         max_concurrent: int = 10,
         on_complete: Callable[[], None] | None = None,
-        enable_reasoning: bool = False,
+        enable_reasoning: bool | None = None,
     ) -> list[BatchResult]:
         return asyncio.run(self._generate_batch_async(
             requests, max_concurrent, on_complete, enable_reasoning=enable_reasoning
@@ -351,7 +360,7 @@ class OpenAICompatibleClient(ABC):
         requests: list[GenerateRequest],
         semaphore: asyncio.Semaphore,
         on_complete: Callable[[], None] | None = None,
-        enable_reasoning: bool = False,
+        enable_reasoning: bool | None = None,
         async_client: AsyncOpenAI | None = None,
     ) -> list[BatchResult]:
         return await self._generate_batch_async(
@@ -388,14 +397,18 @@ class OpenRouterClient(OpenAICompatibleClient):
     _base_url = "https://openrouter.ai/api/v1"
     default_max_concurrent = 50
 
+    def __init__(self, provider_sort: str | None = None, provider_order: list[str] | None = None, **kwargs: Any):
+        super().__init__(**kwargs)
+        self.provider_sort = provider_sort
+        self.provider_order = provider_order
+
     def _get_provider_name(self, canonical_name: str) -> str:
         return get_openrouter_name(canonical_name)
 
     def _get_extra_body(self, enable_reasoning: bool) -> dict | None:
-        reasoning: dict[str, Any] = {"enabled": enable_reasoning}
-        if self.reasoning_effort is not None:
-            reasoning["effort"] = self.reasoning_effort
-        return {"reasoning": reasoning}
+        reasoning = {"enabled": enable_reasoning, **({"effort": self.reasoning_effort} if self.reasoning_effort else {})}
+        provider = {k: v for k, v in (("sort", self.provider_sort), ("order", self.provider_order)) if v is not None}
+        return {"reasoning": reasoning, **({"provider": provider} if provider else {})}
 
     def _extract_reasoning(self, message: Any) -> str | None:
         return getattr(message, "reasoning", None)

@@ -65,6 +65,8 @@ class ExperimentConfig(BaseModel):
     max_concurrent: int | None = None
     max_new_tokens: int = 256  # Increase for models with thinking (e.g., qwen3: 2048)
     reasoning_effort: Literal["low", "medium", "high"] | None = None
+    openrouter_provider_sort: Literal["price", "throughput", "latency"] | None = None
+    openrouter_provider_order: list[str] | None = None  # explicit provider preference list
 
     n_tasks: int = 10
     task_origins: list[Literal["wildchat", "alpaca", "math", "bailbench", "stress_test"]] = ["wildchat"]

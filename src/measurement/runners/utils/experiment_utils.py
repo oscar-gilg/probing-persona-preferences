@@ -145,7 +145,14 @@ def setup_experiment(
                 config.measurement_system_prompt = model_sys_prompt
 
     if client is None:
-        client = get_client(model_name=config.model, max_new_tokens=max_new_tokens, reasoning_effort=config.reasoning_effort, backend=config.backend)
+        client = get_client(
+            model_name=config.model,
+            max_new_tokens=max_new_tokens,
+            reasoning_effort=config.reasoning_effort,
+            backend=config.backend,
+            openrouter_provider_sort=config.openrouter_provider_sort,
+            openrouter_provider_order=config.openrouter_provider_order,
+        )
 
     return ExperimentContext(
         config=config,

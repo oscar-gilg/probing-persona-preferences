@@ -91,26 +91,13 @@ def extract_claimed_task(
     task_a_label: str = "Task A",
     task_b_label: str = "Task B",
 ) -> Literal["a", "b", "neither"]:
-    """Which task label appears at the start of the response (regex only, no LLM).
-
-    First checks if the response starts with a task label (after stripping markdown).
-    Falls back to finding the first task label mention in the first 150 chars.
-    """
+    """Returns 'a'/'b' only if the response literally opens with the task label
+    (after stripping leading markdown); anything else returns 'neither' so the
+    LLM judge decides."""
     cleaned = re.sub(r"^[\s*#_`>]+", "", response).lower()
-    a_lower = task_a_label.lower()
-    b_lower = task_b_label.lower()
-
-    if cleaned.startswith(a_lower):
+    if cleaned.startswith(task_a_label.lower()):
         return "a"
-    if cleaned.startswith(b_lower):
-        return "b"
-
-    head = cleaned[:150]
-    pos_a = head.find(a_lower)
-    pos_b = head.find(b_lower)
-    if pos_a >= 0 and (pos_b < 0 or pos_a < pos_b):
-        return "a"
-    if pos_b >= 0 and (pos_a < 0 or pos_b < pos_a):
+    if cleaned.startswith(task_b_label.lower()):
         return "b"
     return "neither"
 

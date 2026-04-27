@@ -15,6 +15,11 @@ class EmptyResponseError(Exception):
     """Raised when the API returns an empty/null response content."""
 
 
+class LengthTruncationError(Exception):
+    """Raised when the response was cut off by max_tokens (finish_reason=length).
+    Deliberately NOT in RETRYABLE_ERRORS — retrying usually hits the same cap."""
+
+
 RETRYABLE_ERRORS = (openai.RateLimitError, openai.APIConnectionError, openai.InternalServerError, asyncio.TimeoutError, EmptyResponseError)
 MAX_RETRIES = 3
 VERBOSE = os.getenv("VERBOSE", "0") == "1"

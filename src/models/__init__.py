@@ -35,10 +35,16 @@ def get_client(
     max_new_tokens: int = 256,
     reasoning_effort: str | None = None,
     backend: str = "openrouter",
+    openrouter_provider_sort: str | None = None,
+    openrouter_provider_order: list[str] | None = None,
 ) -> OpenAICompatibleClient:
     if model_name is not None:
         max_new_tokens = adjust_max_tokens_for_reasoning(model_name, max_new_tokens)
-    return BACKENDS[backend](model_name=model_name, max_new_tokens=max_new_tokens, reasoning_effort=reasoning_effort)
+    kwargs: dict = dict(model_name=model_name, max_new_tokens=max_new_tokens, reasoning_effort=reasoning_effort)
+    if backend == "openrouter":
+        kwargs["provider_sort"] = openrouter_provider_sort
+        kwargs["provider_order"] = openrouter_provider_order
+    return BACKENDS[backend](**kwargs)
 
 
 __all__ = [
