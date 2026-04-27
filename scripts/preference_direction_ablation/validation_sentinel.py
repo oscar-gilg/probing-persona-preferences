@@ -23,6 +23,7 @@ from dotenv import load_dotenv
 from instructor import AsyncInstructor
 from pydantic import BaseModel, Field
 
+from src.models.architecture import get_hidden_dim
 from src.models.huggingface_model import HuggingFaceModel
 from src.steering.client import SteeredHFClient
 from src.types import Message
@@ -145,7 +146,7 @@ async def main_async(args: argparse.Namespace) -> None:
     print(f"Model loaded in {time.time()-t0:.0f}s")
 
     probes = load_probes()
-    cells = define_cells(probes, hf_model.model.config.hidden_size)
+    cells = define_cells(probes, get_hidden_dim(hf_model.model))
     if args.cells:
         wanted = set(args.cells.split(","))
         cells = [c for c in cells if c["name"] in wanted]

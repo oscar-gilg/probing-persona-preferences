@@ -34,6 +34,7 @@ from dotenv import load_dotenv
 
 from src.measurement.elicitation.prompt_templates.template import load_templates_from_yaml
 from src.measurement.runners.runners import build_revealed_builder
+from src.models.architecture import get_hidden_dim
 from src.models.huggingface_model import HuggingFaceModel
 from src.steering.client import SteeredHFClient
 from src.task_data import load_filtered_tasks, parse_origins
@@ -241,10 +242,11 @@ async def main_async(args: argparse.Namespace) -> None:
     print(f"Loading {MODEL}...")
     t0 = time.time()
     hf_model = HuggingFaceModel(MODEL, max_new_tokens=MAX_NEW_TOKENS)
-    print(f"Model loaded in {time.time()-t0:.0f}s; hidden_size={hf_model.model.config.hidden_size}")
+    hidden_dim = get_hidden_dim(hf_model.model)
+    print(f"Model loaded in {time.time()-t0:.0f}s; hidden_dim={hidden_dim}")
 
     probes = load_probes()
-    cells = define_cells(probes, hf_model.model.config.hidden_size)
+    cells = define_cells(probes, hidden_dim)
 
     if args.cells:
         wanted = set(args.cells.split(","))
