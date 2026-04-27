@@ -24,8 +24,8 @@ ASSISTANT_PATH = EXP_DIR / "scoring_results.json"
 USER_PATH = EXP_DIR / "user_turn_scoring_results.json"
 POLITICS_PATH = EXP_DIR / "politics_scoring_results.json"
 
-PROBE = "qwen_tb-1_L38"
-DATE = "042526"
+PROBE = "qwen_tb-4_L38"
+DATE = "042726"
 
 COLOR_USER = "#1f77b4"
 COLOR_ASST = "#ff7f0e"
