@@ -14,27 +14,77 @@ from src.steering.hooks import (
     STEERING_MODES,
     compose_hooks,
     position_selective_steering,
+    project_out_direction,
 )
 from src.steering.kv_cache import combine_caches, modify_cache_kv_at_positions, project_to_kv_space
 from src.steering.tokenization import find_pairwise_task_spans
 
 
 class SteeredHFClient:
-    """HuggingFaceModel with steering, duck-typed as OpenAICompatibleClient."""
+    """HuggingFaceModel with steering, duck-typed as OpenAICompatibleClient.
+
+    Two modes:
+      - Steering (default): adds a scaled direction at one layer.
+      - Ablation: projects out one or more directions at one or more layers, every
+        token position. Set via `ablate_layers` + `ablate_directions` (parallel lists);
+        the steering args (layer/direction/coefficient/steering_mode) are unused.
+    """
 
     def __init__(
         self,
         hf_model: HuggingFaceModel,
-        layer: int,
-        steering_direction: np.ndarray,
-        coefficient: float,
+        layer: int | None = None,
+        steering_direction: np.ndarray | None = None,
+        coefficient: float = 0.0,
         steering_mode: str = "all_tokens",
         cache_injection: str = "hook",
         recompute_suffix: bool = False,
         a_marker: str = "Task A:",
         b_marker: str = "Task B:",
+        ablate_layers: list[int] | None = None,
+        ablate_directions: list[np.ndarray] | None = None,
     ):
         self.hf_model = hf_model
+        self.canonical_model_name = hf_model.canonical_model_name
+        self.model_name = hf_model.model_name
+        self.max_new_tokens = hf_model.max_new_tokens
+        self.a_marker = a_marker
+        self.b_marker = b_marker
+
+        if ablate_layers is not None:
+            if ablate_directions is None or len(ablate_layers) != len(ablate_directions):
+                raise ValueError(
+                    "ablate_layers and ablate_directions must be parallel lists of equal length"
+                )
+            self._ablation_mode = True
+            self.ablate_layers = list(ablate_layers)
+            self._ablate_directions = [np.asarray(d) for d in ablate_directions]
+            self._ablation_hooks = [
+                (
+                    L,
+                    project_out_direction(
+                        torch.tensor(d, dtype=torch.bfloat16, device=hf_model.device)
+                    ),
+                )
+                for L, d in zip(self.ablate_layers, self._ablate_directions)
+            ]
+            # Steering fields are unused in ablation mode but kept for interface stability.
+            self.layer = layer
+            self._direction = steering_direction
+            self.coefficient = coefficient
+            self.steering_mode = steering_mode
+            self.cache_injection = "hook"
+            self.recompute_suffix = False
+            self._steering_tensor = None
+            return
+
+        if layer is None or steering_direction is None:
+            raise ValueError(
+                "Steering mode requires `layer` and `steering_direction` (or pass `ablate_layers`/`ablate_directions` for ablation mode)"
+            )
+        self._ablation_mode = False
+        self.ablate_layers = None
+        self._ablation_hooks = None
         self.layer = layer
         self._direction = steering_direction
         self.coefficient = coefficient
@@ -47,12 +97,6 @@ class SteeredHFClient:
             )
         self.cache_injection = cache_injection
         self.recompute_suffix = recompute_suffix
-        self.a_marker = a_marker
-        self.b_marker = b_marker
-
-        self.canonical_model_name = hf_model.canonical_model_name
-        self.model_name = hf_model.model_name
-        self.max_new_tokens = hf_model.max_new_tokens
 
         # Pre-compute scaled steering tensor on GPU
         scaled = steering_direction * coefficient
@@ -66,6 +110,8 @@ class SteeredHFClient:
 
     def with_coefficient(self, coefficient: float) -> SteeredHFClient:
         """Return a new client with a different coefficient, sharing the same model."""
+        if self._ablation_mode:
+            raise RuntimeError("with_coefficient is not supported in ablation mode")
         return SteeredHFClient(
             self.hf_model,
             self.layer,
@@ -110,6 +156,14 @@ class SteeredHFClient:
         task_prompts: list[str] | None,
         n: int,
     ) -> list[str]:
+        if self._ablation_mode:
+            return self.hf_model.generate_with_hooks_n(
+                messages=messages,
+                layer_hooks=self._ablation_hooks,
+                n=n,
+                temperature=temperature,
+            )
+
         if self.coefficient == 0:
             return self.hf_model.generate_n(messages, n=n, temperature=temperature)
 
