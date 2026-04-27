@@ -25,3 +25,22 @@
 - `results/probes/heldout_eval_gemma3_tb-1/probes/probe_ridge_L25.npy`
 - `results/probes/heldout_eval_gemma3_tb-1/probes/probe_ridge_L32.npy`
 - `results/experiments/uniform_eval_gemma3_27b_v3/.../measurements.yaml`
+
+### Smoke test (3 cells × 5 pairs, max_new_tokens=64)
+- B0: 0.9 min for 5 pairs (~11 s/pair, no hooks)
+- A_L32_probe: 0.8 min for 5 pairs (~10 s/pair, single-layer hook)
+- A_L32_random0: 0.9 min for 5 pairs (~11 s/pair); 1/15 generations was a refusal; 100% position-bias flip rate (random direction destroys coherence — expected)
+- Pipeline produces correct format; analyze.py runs on output and computes metrics. ✅
+
+### First attempt at smoke (max_new_tokens=512)
+- ~8 min/pair → would have extrapolated to ~210 hours for the full sweep. Aborted.
+- Dropped max_new_tokens to 64 (spec allows ≥16). Judge regex catches the "Task A:"/"Task B:" prefix the model writes; partial completion is enough.
+
+### Sanity test status
+- **Test 1 (hook correctness):** covered by existing `tests/steering/test_steering_gpu_e2e.py` (max |cos(resid, d̂)| < 1e-2 after projection). Hook + multi-layer infra already shipped pre-session.
+- **Test 2 (random-control coherence):** will be assessed on full random-control runs (5 random vectors × 100 pairs each); spec threshold ≥0.85 modal-choice agreement with B0.
+- **Test 3 (length / refusal audit):** computed by analyze.py per cell.
+
+### Decision: kick off full sweep
+- Estimated ~22 hours wallclock on A100 SXM at ~10 s/pair (probe cells slightly slower for multi-layer / band).
+- Babysit will pause the pod on completion. Results land in `experiments/preference_direction_ablation/results/<cell>/measurements.jsonl`.
