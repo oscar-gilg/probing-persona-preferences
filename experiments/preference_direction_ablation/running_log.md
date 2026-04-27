@@ -18,7 +18,7 @@
 ### Driver design
 - Custom driver `scripts/preference_direction_ablation/run_cells.py` (CLAUDE.md "scripts/{experiment_name}/" pattern).
 - Loads `HuggingFaceModel` once, swaps `SteeredHFClient` per cell. Reuses `build_revealed_builder` + `measure_pre_task_revealed_async` for prompt construction and parsing — no new templates or parsers.
-- 723 pairs sourced from `results/experiments/uniform_eval_gemma3_27b_v3/.../measurements.yaml` (read once, dedup to unique `(task_a, task_b)` pairs).
+- Pairs sourced from `results/experiments/uniform_eval_gemma3_27b_v3/.../measurements.yaml`. Spec claimed 723 unique pairs; actual file has **955 unique unordered pairs** (4775 rows = 955 × 5 measurements). Using 955.
 - Per-cell output: `experiments/preference_direction_ablation/results/<cell>/measurements.yaml` (standard format).
 
 ### Symlinks (worktree → main repo for read-only data)
