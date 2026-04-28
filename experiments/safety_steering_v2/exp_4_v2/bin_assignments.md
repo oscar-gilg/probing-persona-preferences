@@ -16,7 +16,7 @@ the experiment report.
 
 ---
 
-## 14 scenarios, 8 isolated and 6 distributed
+## 14 scenarios, 9 isolated and 5 distributed
 
 | ID | Category | Bin | Authored from |
 |---|---|---|---|
