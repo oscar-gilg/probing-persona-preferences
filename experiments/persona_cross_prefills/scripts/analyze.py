@@ -92,7 +92,7 @@ def plot_cell_means(cm: pd.DataFrame, out: Path) -> None:
         ax.grid(axis="y", alpha=0.3)
     axes[0].set_ylabel("probe score (tb-5_L32, raw)")
     axes[1].legend(title="persona", loc="best")
-    fig.suptitle("Cell means — probe score by condition × persona × readout (n=10/cell)")
+    fig.suptitle("Does the probe rate the same asst behavior differently under sadist? (cell means, n=10)")
     fig.tight_layout(rect=[0, 0, 1, 0.95])
     fig.savefig(out, dpi=140, bbox_inches="tight")
     plt.close(fig)
@@ -118,7 +118,8 @@ def within_pair_deltas(df: pd.DataFrame) -> pd.DataFrame:
 
 def plot_within_pair(deltas: pd.DataFrame, out: Path) -> None:
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.5), sharey=True)
-    for ax, readout in zip(axes, ["asst_eot_delta", "user_eot_delta"]):
+    readouts = [("asst_eot_delta", "post-asst-response"), ("user_eot_delta", "post-user-follow-up")]
+    for ax, (readout, label) in zip(axes, readouts):
         x_positions = []
         x_labels = []
         for i, valence in enumerate(["benign", "harmful"]):
@@ -134,10 +135,10 @@ def plot_within_pair(deltas: pd.DataFrame, out: Path) -> None:
         ax.set_xticks(x_positions)
         ax.set_xticklabels(x_labels, fontsize=8)
         ax.axhline(0, color="black", linewidth=0.5)
-        ax.set_title(f"{readout} — Δ (misaligned − aligned, fixed user msg)")
+        ax.set_title(f"readout: {label}")
         ax.grid(axis="y", alpha=0.3)
-    axes[0].set_ylabel("Δ probe score")
-    fig.suptitle("Within-pair Δ — fixed user msg, varying asst behavior")
+    axes[0].set_ylabel("score(misaligned) − score(aligned), per pair")
+    fig.suptitle("How big is the aligned-vs-misaligned asst-behavior gap, and does it flip under sadist?")
     fig.tight_layout(rect=[0, 0, 1, 0.95])
     fig.savefig(out, dpi=140, bbox_inches="tight")
     plt.close(fig)
@@ -164,20 +165,21 @@ def per_persona_deltas(df: pd.DataFrame) -> pd.DataFrame:
 
 def plot_per_persona(pp: pd.DataFrame, out: Path) -> None:
     fig, axes = plt.subplots(1, 2, figsize=(13, 5), sharey=True)
-    for ax, readout in zip(axes, ["asst_eot_delta", "user_eot_delta"]):
+    readouts = [("asst_eot_delta", "post-asst-response"), ("user_eot_delta", "post-user-follow-up")]
+    for ax, (key, label) in zip(axes, readouts):
         for i, cond in enumerate(CONDITION_ORDER):
-            sub = pp[pp["condition"] == cond][readout]
+            sub = pp[pp["condition"] == cond][key]
             ax.scatter(np.full(len(sub), i) + np.random.uniform(-0.1, 0.1, len(sub)),
-                       sub, color=CONDITION_COLORS[cond], s=50, alpha=0.7, label=cond if ax is axes[0] else None)
+                       sub, color=CONDITION_COLORS[cond], s=50, alpha=0.7)
             ax.errorbar(i, sub.mean(), yerr=sub.std(ddof=1) / np.sqrt(len(sub)),
                         fmt="_", color="black", capsize=5, markersize=18)
         ax.set_xticks(range(len(CONDITION_ORDER)))
         ax.set_xticklabels([c.replace("_", "\n") for c in CONDITION_ORDER], fontsize=9)
         ax.axhline(0, color="black", linewidth=0.5)
-        ax.set_title(f"{readout} — Δ (sadist − default, fixed prefill)")
+        ax.set_title(f"readout: {label}")
         ax.grid(axis="y", alpha=0.3)
-    axes[0].set_ylabel("Δ probe score")
-    fig.suptitle("Per-persona Δ — direct test of persona-relative alignment hypothesis")
+    axes[0].set_ylabel("score(sadist) − score(default), per prefill")
+    fig.suptitle("How does swapping in the sadist system prompt change the probe's verdict?  (n=10/cond)")
     fig.tight_layout(rect=[0, 0, 1, 0.95])
     fig.savefig(out, dpi=140, bbox_inches="tight")
     plt.close(fig)
@@ -201,49 +203,77 @@ def plot_asst_vs_user_eot(df: pd.DataFrame, out: Path) -> None:
         ax.set_title(f"persona = {persona}")
         ax.grid(alpha=0.3)
     axes[1].legend(loc="best", fontsize=8)
-    fig.suptitle("asst-EOT vs user-EOT — diagonal = follow-up adds nothing")
+    fig.suptitle("Does the user follow-up dominate the readout? (off-diagonal = it does)")
     fig.tight_layout(rect=[0, 0, 1, 0.95])
     fig.savefig(out, dpi=140, bbox_inches="tight")
     plt.close(fig)
 
 
 def plot_persona_baseline(df: pd.DataFrame, out: Path) -> None:
-    """At first_user_eot — does the system prompt itself shift the baseline (before any asst content)?"""
-    fig, ax = plt.subplots(figsize=(6, 4.5))
-    for j, persona in enumerate(PERSONAS):
-        sub = df[df["persona"] == persona]["first_user_eot"]
-        pos = j
-        ax.scatter(np.full(len(sub), pos) + np.random.uniform(-0.1, 0.1, len(sub)),
-                   sub, color=["#bbbbbb", "#8B4513"][j], s=40, alpha=0.6)
-        ax.errorbar(pos, sub.mean(), yerr=sub.std(ddof=1) / np.sqrt(len(sub)),
-                    fmt="_", color="black", capsize=5, markersize=18)
-    ax.set_xticks([0, 1])
-    ax.set_xticklabels(PERSONAS)
+    """At first_user_eot — does the system prompt itself shift the baseline (before any asst content)?
+
+    Split by valence (benign vs harmful first-user-message) to expose how the persona changes
+    the user-content signal.
+    """
+    df = df.copy()
+    df["valence"] = df["pair_id"].apply(lambda p: "benign" if p.startswith("benign") else "harmful")
+    fig, ax = plt.subplots(figsize=(7, 4.5))
+    positions = []
+    labels = []
+    for i, valence in enumerate(["benign", "harmful"]):
+        for j, persona in enumerate(PERSONAS):
+            sub = df[(df["valence"] == valence) & (df["persona"] == persona)]["first_user_eot"]
+            pos = i * 2 + j * 0.5
+            positions.append(pos)
+            labels.append(f"{valence}\n{persona}")
+            ax.scatter(np.full(len(sub), pos) + np.random.uniform(-0.07, 0.07, len(sub)),
+                       sub, color=["#bbbbbb", "#8B4513"][j], s=40, alpha=0.6)
+            ax.errorbar(pos, sub.mean(), yerr=sub.std(ddof=1) / np.sqrt(len(sub)),
+                        fmt="_", color="black", capsize=5, markersize=18)
+    ax.set_xticks(positions)
+    ax.set_xticklabels(labels, fontsize=8)
+    ax.axhline(0, color="black", linewidth=0.5)
     ax.set_ylabel("probe score @ first user-EOT (post system + first user msg)")
-    ax.set_title("Persona baseline shift — pre-asst-content")
+    ax.set_title("Does the persona alone shift how the probe reads the user's request? (pre-asst-content)")
     ax.grid(axis="y", alpha=0.3)
     fig.tight_layout()
     fig.savefig(out, dpi=140, bbox_inches="tight")
     plt.close(fig)
 
 
-def plot_pair_persona_heatmap(df: pd.DataFrame, out: Path) -> None:
-    """Rows = pairs (10 benign + 10 harmful), cols = (condition × persona). Cell color = user-EOT score."""
-    cell_data = df.set_index(["pair_id", "condition", "persona"])["user_eot"].unstack(["condition", "persona"])
-    cols = [(c, p) for c in CONDITION_ORDER for p in PERSONAS]
-    cell_data = cell_data[cols]
-    pair_order = sorted([p for p in cell_data.index if p.startswith("benign")]) + sorted([p for p in cell_data.index if p.startswith("harmful")])
-    cell_data = cell_data.loc[pair_order]
-    fig, ax = plt.subplots(figsize=(9, 7))
-    abs_max = float(np.abs(cell_data.values).max())
-    im = ax.imshow(cell_data.values, cmap="RdBu_r", vmin=-abs_max, vmax=abs_max, aspect="auto")
+def plot_pair_persona_heatmap(df: pd.DataFrame, out: Path, readout: str = "asst_eot") -> None:
+    """Rows = 20 pairs, cols = 4 (aligned vs misaligned × default vs sadist).
+
+    Re-uses the within-pair "aligned vs misaligned" axis: for benign pairs aligned=helpful,
+    misaligned=evil; for harmful aligned=refused, misaligned=obliged.
+    """
+    rows = []
+    for pair_id, pair_group in df.groupby("pair_id"):
+        for persona in PERSONAS:
+            sub = pair_group[pair_group["persona"] == persona]
+            aligned = sub[sub["condition"].isin(ALIGNED_FOR_DEFAULT)][readout].iloc[0]
+            misaligned = sub[~sub["condition"].isin(ALIGNED_FOR_DEFAULT)][readout].iloc[0]
+            rows.append({"pair_id": pair_id, "persona": persona,
+                         "aligned": aligned, "misaligned": misaligned})
+    pdf = pd.DataFrame(rows)
+    grid = pdf.set_index(["pair_id", "persona"])[["aligned", "misaligned"]].unstack("persona")
+    cols = [("aligned", "default"), ("aligned", "sadist"),
+            ("misaligned", "default"), ("misaligned", "sadist")]
+    grid = grid[cols]
+    pair_order = (sorted([p for p in grid.index if p.startswith("benign")]) +
+                  sorted([p for p in grid.index if p.startswith("harmful")]))
+    grid = grid.loc[pair_order]
+
+    fig, ax = plt.subplots(figsize=(7.5, 7))
+    abs_max = float(np.nanmax(np.abs(grid.values)))
+    im = ax.imshow(grid.values, cmap="RdBu_r", vmin=-abs_max, vmax=abs_max, aspect="auto")
     ax.set_yticks(range(len(pair_order)))
     ax.set_yticklabels(pair_order, fontsize=7)
-    ax.set_xticks(range(len(cols)))
-    ax.set_xticklabels([f"{c}\n{p}" for c, p in cols], fontsize=7, rotation=0)
-    ax.axhline(9.5, color="black", linewidth=1)
-    ax.set_title("user-EOT probe score — pairs × (condition × persona)")
-    fig.colorbar(im, ax=ax, fraction=0.025, label="probe score")
+    ax.set_xticks(range(4))
+    ax.set_xticklabels([f"{a}\n{p}" for a, p in cols], fontsize=8)
+    ax.axhline(9.5, color="black", linewidth=1.2)
+    ax.set_title(f"{readout} probe score — pairs × (asst-behavior × persona)")
+    fig.colorbar(im, ax=ax, fraction=0.04, label="probe score")
     fig.tight_layout()
     fig.savefig(out, dpi=140, bbox_inches="tight")
     plt.close(fig)
@@ -319,8 +349,9 @@ def main():
     print("Persona baseline shift...")
     plot_persona_baseline(df, ASSETS / f"plot_{TODAY}_persona_baseline.png")
 
-    print("Pair × persona heatmap...")
-    plot_pair_persona_heatmap(df, ASSETS / f"plot_{TODAY}_pair_persona_heatmap.png")
+    print("Pair × persona heatmap (asst-EOT and user-EOT)...")
+    plot_pair_persona_heatmap(df, ASSETS / f"plot_{TODAY}_pair_persona_heatmap_asst_eot.png", "asst_eot")
+    plot_pair_persona_heatmap(df, ASSETS / f"plot_{TODAY}_pair_persona_heatmap_user_eot.png", "user_eot")
 
     print("Computing stats...")
     summary = compute_stats(df, deltas, pp)
