@@ -131,7 +131,9 @@ async def main() -> None:
     rows = [r for r in rows if not r.get("error")]
     print(f"Judging {len(rows)} responses from {args.pilot_jsonl}")
 
-    corpus_path = args.pilot_jsonl.parent.parent / "prompts.json"
+    corpus_path = args.pilot_jsonl.parent / "prompts.json"
+    if not corpus_path.exists():
+        corpus_path = args.pilot_jsonl.parent.parent / "prompts.json"
     corpus = {f"{c['scenario_id']}__{c['variant']}": c for c in json.loads(corpus_path.read_text())}
 
     items = []
