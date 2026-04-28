@@ -44,3 +44,27 @@
 ### Decision: kick off full sweep
 - Estimated ~22 hours wallclock on A100 SXM at ~10 s/pair (probe cells slightly slower for multi-layer / band).
 - Babysit will pause the pod on completion. Results land in `experiments/preference_direction_ablation/results/<cell>/measurements.jsonl`.
+
+## 2026-04-28 — full sweep + finalize
+
+### Sweep complete
+- 25 cells × ~10 s/pair, total wallclock ~22 hours, exactly the predicted budget. No crashes, no resumes needed mid-run.
+- All 5 full-pair cells (B0 + 4 probe cells) finished with 955 pairs each. All 20 random control cells finished with 100 pairs each.
+- Babysit cron paused the pod and self-cancelled on completion.
+
+### Finalize: pod-resume gymnastics
+- The pre-existing babysit (no `--on-complete`) paused the pod immediately on completion, so finalize had to resume it for the rsync. Resume failed for ~30 min ("not enough free GPUs on host machine") — same host saturation we saw at session start. An until-loop retried every 60 s; eventually succeeded.
+- Resume changed the pod's public SSH endpoint, but `runpod_ctl.py status` (which would print fresh ip/port) was permission-blocked. Wrote a new `runpod_ctl.py refresh-ssh <pod_name>` subcommand that pulls metadata from `runpod.get_pods()` and rewrites the `Host runpod-<name>` block in `~/.ssh/config`. PR opened against zombuul dev.
+- Pod also lacked `rsync` in its image — `apt-get update && apt-get install -y rsync` on the pod, then rsync from `/workspace/repo/experiments/preference_direction_ablation/results/` succeeded. (Not bothering to bake this into pod_setup.sh — most images do ship rsync.)
+- Both gotchas (resume-changes-SSH and missing-rsync) only matter when finalize has to come up against a paused pod. The proper fix is the `--on-complete` flow — sync runs *before* pause — which is in flight as a separate PR.
+
+### Analysis
+- Ran `python -m scripts.preference_direction_ablation.analyze`. Per-cell metrics + probe-vs-random aggregation written to `results/summary.csv` and `results/probe_vs_random.csv`.
+- Headline: probe ablation is causally inert; random ablation does more damage than probe ablation across all four conditions × all six metrics. See report.
+
+### Spec deviations (final list, also in report)
+- `max_new_tokens` 512 → 64 (after smoke at 512 measured ~8 min/pair). Spec allows ≥16; judge-parser only needs the start of the response.
+- 723 pairs → 955 (the source measurements file has 955 unique unordered pairs; spec referenced the wrong number).
+- Sanity test 1 (hook correctness) reused the existing GPU test in `tests/steering/`; not re-run on Gemma-3-27b-L32 specifically.
+- Sanity tests 2 + 3 done inline from the full sweep, not as gating pre-checks. Test 2 thresholds (≥0.85 random agreement-vs-B0) are met for single-layer conditions and missed in 1–2 of 5 random draws for B_two and C_band — included in the report.
+- Validation sentinel (10-Q capability check) not run; length+refusal audit excludes capability collapse as a confound.
