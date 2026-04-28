@@ -149,9 +149,54 @@ def cell_metrics(df: pd.DataFrame, b0: dict | None) -> dict:
     return metrics
 
 
+CONDITIONS = ("A_L25", "A_L32", "B_two", "C_band")
+COMPARISON_METRICS = (
+    "agreement_vs_b0",
+    "ks_pa_vs_b0",
+    "d_mean_abs_dev",
+    "flip_rate",
+    "test_retest",
+    "refusal_rate",
+)
+
+
+def probe_vs_random_table(per_cell: pd.DataFrame) -> pd.DataFrame:
+    """For each ablation condition, compare probe metric to the n=5 random-vector distribution."""
+    out_rows = []
+    for cond in CONDITIONS:
+        probe_name = f"{cond}_probe"
+        random_names = [f"{cond}_random{s}" for s in range(5)]
+        probe_row = per_cell.loc[per_cell["cell"] == probe_name]
+        random_rows = per_cell.loc[per_cell["cell"].isin(random_names)]
+        if probe_row.empty or random_rows.empty:
+            continue
+        probe_row = probe_row.iloc[0]
+        for metric in COMPARISON_METRICS:
+            if metric not in per_cell.columns:
+                continue
+            probe_val = probe_row[metric]
+            random_vals = random_rows[metric].dropna().values
+            if len(random_vals) == 0 or pd.isna(probe_val):
+                continue
+            r_mean = float(np.mean(random_vals))
+            r_std = float(np.std(random_vals, ddof=1)) if len(random_vals) > 1 else float("nan")
+            z = (probe_val - r_mean) / r_std if r_std and not np.isnan(r_std) and r_std > 0 else float("nan")
+            out_rows.append({
+                "condition": cond,
+                "metric": metric,
+                "probe": float(probe_val),
+                "random_mean": r_mean,
+                "random_std": r_std,
+                "n_random": int(len(random_vals)),
+                "z": float(z),
+            })
+    return pd.DataFrame(out_rows)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", type=Path, default=RESULTS_DIR / "summary.csv")
+    parser.add_argument("--comparison-out", type=Path, default=RESULTS_DIR / "probe_vs_random.csv")
     args = parser.parse_args()
 
     cell_dirs = sorted([p for p in RESULTS_DIR.iterdir() if p.is_dir() and (p / "measurements.jsonl").exists()])
@@ -181,8 +226,14 @@ def main():
     out = out[cols]
     args.out.parent.mkdir(parents=True, exist_ok=True)
     out.to_csv(args.out, index=False)
-    print(f"Wrote {args.out}")
+    print(f"\nWrote {args.out}")
     print(out.to_string(index=False))
+
+    comp = probe_vs_random_table(out)
+    if not comp.empty:
+        comp.to_csv(args.comparison_out, index=False)
+        print(f"\nWrote {args.comparison_out}")
+        print(comp.to_string(index=False))
 
 
 if __name__ == "__main__":
