@@ -1,0 +1,129 @@
+{
+  "n_shared": 6000,
+  "overall_pearson": 0.4359810513803507,
+  "overall_spearman": 0.419670412480523,
+  "per_origin": [
+    {
+      "origin": "wildchat",
+      "n": 1500,
+      "pearson": 0.13866712486015897,
+      "spearman": 0.11491650578727912,
+      "mean_no_think": 1.1256431897581691,
+      "mean_think": 1.465137256580072,
+      "std_no_think": 4.947696602087986,
+      "std_think": 3.9834163736221995,
+      "sign_flip_rate": 0.422
+    },
+    {
+      "origin": "alpaca",
+      "n": 1501,
+      "pearson": -0.03451867000617742,
+      "spearman": -0.05043118150713985,
+      "mean_no_think": 1.586413671911344,
+      "mean_think": -0.7825472000087648,
+      "std_no_think": 4.713230305710195,
+      "std_think": 2.626633375400272,
+      "sign_flip_rate": 0.5443037974683544
+    },
+    {
+      "origin": "math",
+      "n": 1500,
+      "pearson": 0.004557300655786576,
+      "spearman": 0.006363584635261607,
+      "mean_no_think": 2.3185207701749238,
+      "mean_think": 5.917811603682993,
+      "std_no_think": 4.546878072162619,
+      "std_think": 2.8061044030286335,
+      "sign_flip_rate": 0.33866666666666667
+    },
+    {
+      "origin": "bailbench",
+      "n": 596,
+      "pearson": 0.13288520708198043,
+      "spearman": 0.05300634952344769,
+      "mean_no_think": -5.2082188571721755,
+      "mean_think": -8.149674705615153,
+      "std_no_think": 4.301256783195031,
+      "std_think": 2.300635617136152,
+      "sign_flip_rate": 0.1476510067114094
+    },
+    {
+      "origin": "stress_test",
+      "n": 903,
+      "pearson": 0.46035552596670964,
+      "spearman": 0.364203038998003,
+      "mean_no_think": -4.557405850948416,
+      "mean_think": -5.181940900582427,
+      "std_no_think": 4.959859123945725,
+      "std_think": 3.3933564126266047,
+      "sign_flip_rate": 0.14839424141749724
+    }
+  ],
+  "per_persona": [
+    {
+      "persona": "default",
+      "n": 6000,
+      "pearson": 0.4359810513803507,
+      "spearman": 0.419670412480523,
+      "per_origin_pearson": {
+        "wildchat": 0.13866712486015897,
+        "alpaca": -0.03451867000617742,
+        "math": 0.004557300655786576,
+        "bailbench": 0.13288520708198043,
+        "stress_test": 0.46035552596670964
+      }
+    },
+    {
+      "persona": "sadist",
+      "n": 6000,
+      "pearson": 0.1595012180457942,
+      "spearman": 0.1560742800212793,
+      "per_origin_pearson": {
+        "wildchat": 0.06558512717939799,
+        "alpaca": -0.0012898924327898926,
+        "math": 0.0849215902797696,
+        "bailbench": 0.05265301949233005,
+        "stress_test": 0.017089445130260273
+      }
+    },
+    {
+      "persona": "mathematician",
+      "n": 2000,
+      "pearson": 0.6514591960814786,
+      "spearman": 0.6499012504958954,
+      "per_origin_pearson": {
+        "wildchat": 0.36631960354041554,
+        "alpaca": 0.443968266808536,
+        "math": 0.04079389886274585,
+        "bailbench": 0.01435157986370878,
+        "stress_test": 0.15491195245165792
+      }
+    },
+    {
+      "persona": "strategist",
+      "n": 2000,
+      "pearson": 0.1337922348256902,
+      "spearman": 0.13342366166784264,
+      "per_origin_pearson": {
+        "wildchat": 0.10946230806804318,
+        "alpaca": 0.12223130128277389,
+        "math": 0.05122441242037053,
+        "bailbench": -0.019988074874887143,
+        "stress_test": 0.23098124353436397
+      }
+    },
+    {
+      "persona": "slacker",
+      "n": 2000,
+      "pearson": 0.5621813822480969,
+      "spearman": 0.5634069828462668,
+      "per_origin_pearson": {
+        "wildchat": 0.6237478612629437,
+        "alpaca": 0.5886772346030058,
+        "math": 0.5645237833219598,
+        "bailbench": 0.08800095158648441,
+        "stress_test": 0.07361491615942584
+      }
+    }
+  ]
+}
