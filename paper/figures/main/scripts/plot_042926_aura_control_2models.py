@@ -49,6 +49,13 @@ def cohen_d_pooled(pos, neg):
     return (pos.mean() - neg.mean()) / pooled if pooled > 0 else 0.0
 
 
+DISPLAY_LABELS = {"neutral": "Assistant"}
+
+
+def display(sp: str) -> str:
+    return DISPLAY_LABELS.get(sp, sp)
+
+
 def panel(ax, items, prompts, probe, c_pos, c_neg, score_key, domain_label,
           ylabel=None, show_legend=True, highlight_sp=None):
     by_sp = defaultdict(list)
@@ -90,10 +97,11 @@ def panel(ax, items, prompts, probe, c_pos, c_neg, score_key, domain_label,
 
     labels = []
     for sp, d in d_values:
+        name = display(sp)
         if sp == highlight_sp:
-            labels.append(f"$\\bf{{{sp}}}$\n(d = {d:+.2f})")
+            labels.append(f"$\\bf{{{name}}}$\n(d = {d:+.2f})")
         else:
-            labels.append(f"{sp}\n(d = {d:+.2f})")
+            labels.append(f"{name}\n(d = {d:+.2f})")
     ax.set_xticklabels(labels, fontsize=9)
 
     ax.grid(axis="y", alpha=0.3)
