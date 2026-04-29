@@ -89,13 +89,7 @@ def panel(ax, items, prompts, probe, c_pos, c_neg, score_key, domain_label,
     ax.axhline(0, color="black", linewidth=0.5, linestyle="--")
     ax.set_xticks([pi * 3 + 0.5 for pi in range(len(prompts))])
 
-    labels = []
-    for sp, d in d_values:
-        name = display(sp)
-        if sp == highlight_sp:
-            labels.append(f"$\\bf{{{name}}}$\n(d = {d:+.2f})")
-        else:
-            labels.append(f"{name}\n(d = {d:+.2f})")
+    labels = [f"{display(sp)}\n(d = {d:+.2f})" for sp, d in d_values]
     ax.set_xticklabels(labels, fontsize=9)
 
     ax.grid(axis="y", alpha=0.3)
