@@ -60,16 +60,22 @@ def panel(ax, items, prompts, probe, c_pos, c_neg, score_key, domain_label,
     all_colors = []
     d_values = []
 
-    for pi, sp in enumerate(prompts):
+    valid_prompts = []
+    for sp in prompts:
         pos_vals = [it[score_key][probe] for it in by_sp.get(sp, [])
                     if it["condition"] == c_pos]
         neg_vals = [it[score_key][probe] for it in by_sp.get(sp, [])
                     if it["condition"] == c_neg]
+        if not pos_vals or not neg_vals:
+            continue
+        valid_prompts.append(sp)
+        pi = len(valid_prompts) - 1
         d = cohen_d_pooled(pos_vals, neg_vals)
         d_values.append((sp, d))
         positions.extend([pi * 3, pi * 3 + 1])
         all_series.extend([pos_vals, neg_vals])
         all_colors.extend([COLORS[c_pos], COLORS[c_neg]])
+    prompts = valid_prompts
 
     parts = ax.violinplot(all_series, positions=positions, widths=0.9,
                           showmeans=True, showextrema=False)
