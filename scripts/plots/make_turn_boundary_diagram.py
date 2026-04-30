@@ -14,12 +14,12 @@ PAPER_FIG_DIR = Path("paper/figures")
 
 def draw_template(ax, tokens, probe_annotations, title):
     ax.set_xlim(0, 15)
-    ax.set_ylim(0, 4.5)
+    ax.set_ylim(0, 2.6)
     ax.axis("off")
 
     box_w = 1.25
-    box_h = 0.85
-    y = 2.6
+    box_h = 0.75
+    y = 1.45
     positions = []
     for i, (tok, color) in enumerate(tokens):
         x = 0.3 + i * box_w
@@ -36,18 +36,18 @@ def draw_template(ax, tokens, probe_annotations, title):
 
     for idx, label, color, label_offset in probe_annotations:
         x = positions[idx]
-        arrow_bottom_y = y - label_offset - 0.25
+        arrow_bottom_y = y - label_offset - 0.20
         ax.annotate(
             "", xy=(x, y - 0.02), xytext=(x, arrow_bottom_y),
             arrowprops=dict(arrowstyle="->", color=color, lw=1.6),
         )
         ax.text(
-            x, arrow_bottom_y - 0.1, label,
+            x, arrow_bottom_y - 0.08, label,
             ha="center", va="top", fontsize=8.2, color=color, fontweight="bold",
         )
 
     ax.text(
-        0.3 + 5.5 * box_w, 3.95, title,
+        0.3 + 5.5 * box_w, 2.40, title,
         ha="center", va="center", fontsize=10.5, fontweight="bold",
     )
 
@@ -89,13 +89,13 @@ def main():
     ]
     # (token index, label, arrow colour, label offset below the box)
     probes = [
-        (3, "task-averaged", "#E65100", 1.5),
-        (4, "end-of-turn", "#1976D2", 0.55),
-        (7, "role-marker", "#00897B", 1.5),
-        (8, "final prompt token", "#6A1B9A", 0.55),
+        (3, "task-averaged", "#E65100", 0.85),
+        (4, "end-of-turn", "#1976D2", 0.30),
+        (7, "role-marker", "#00897B", 0.85),
+        (8, "final prompt token", "#6A1B9A", 0.30),
     ]
 
-    fig, axes = plt.subplots(2, 1, figsize=(13, 7.2))
+    fig, axes = plt.subplots(2, 1, figsize=(13, 4.2))
     draw_template(axes[0], gemma_tokens, probes, "Gemma-3-IT chat template")
     draw_template(axes[1], qwen_tokens, probes, "Qwen-3 chat template (ChatML)")
     plt.tight_layout()
