@@ -29,3 +29,33 @@
 ### Kicking off full sweep
 - All 6 cells (`A_L23_probe` + `A_L23_random{0..4}`). Driver is resumable so the 3 smoke pairs will be skipped.
 - tmux session `l23-sweep` on pod; babysit will pause pod on completion.
+
+## 2026-04-30 — sweep complete, results synced, pod paused
+
+### Final cell counts
+- A_L23_probe: 615/615 pairs (2460 rows = 615 × 4 seeds)
+- A_L23_random{0..4}: 100/100 pairs each (400 rows × 5 = 2000)
+
+### Sanity (all pass)
+- Hook correctness, probe norm, B0 coverage: pass.
+- Random-control coherence: 4/5 ≥ 0.85; random1 = 0.816 (single near-miss, parent saw similar).
+- Length & refusal: clean across all cells (refusal 0.010–0.033, mean response 249–260 chars).
+
+### Headline (matched 100-pair subset)
+- A_L23_probe agreement vs B0: **0.980**
+- A_L23_random{0..4}: 0.959, 0.816, 0.958, 0.959, 0.918 (mean 0.922)
+- Probe > 4 of 5 randoms; > random mean by 0.058.
+- Full 615-pair scope agrees with matched: probe 0.984 vs randoms 0.92.
+
+### Cross-layer comparison
+- L23 (this exp): probe 0.980 vs random mean 0.922.
+- L25 (parent): probe 0.990 vs random mean 0.944.
+- L32 (parent): probe 0.992 vs random mean 0.963.
+- Same qualitative pattern: probe is causally inert at the layer where the model is most causally responsive (L23) just as at the readout-peak layers (L25/L32).
+
+### Interpretation
+- Rules out the "localisation" reading of the parent null — the probe direction is not just inert at readout layers; it's inert at the steering peak too.
+- Leaves the "distributed choice computation" reading: the choice signal is spread across many directions, no single rank-1 ablation routes through. Distinguishing this from "rank-1 in 5376-dim is too weak" requires rank-k subspace ablation (out of scope).
+
+### Pod
+- Synced results back via rsync (~10 MB total). Pod `pref-ablation-l23` paused.
