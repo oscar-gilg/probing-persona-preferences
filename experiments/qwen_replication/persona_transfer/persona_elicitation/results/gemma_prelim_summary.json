@@ -1,0 +1,23 @@
+{
+  "strategist": {
+    "default_first_pick_rate": 0.0,
+    "canonical_first_pick_rate": 1.0,
+    "persona_effect_delta": 1.0,
+    "n_default": 22,
+    "n_canonical": 17
+  },
+  "contrarian": {
+    "default_first_pick_rate": 0.9,
+    "canonical_first_pick_rate": 1.0,
+    "persona_effect_delta": 0.09999999999999998,
+    "n_default": 30,
+    "n_canonical": 30
+  },
+  "aura": {
+    "default_first_pick_rate": 1.0,
+    "canonical_first_pick_rate": 1.0,
+    "persona_effect_delta": 0.0,
+    "n_default": 30,
+    "n_canonical": 30
+  }
+}
