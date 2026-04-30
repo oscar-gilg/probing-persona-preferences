@@ -18,13 +18,21 @@ def _make_probe_callback(
 ) -> Callable[[torch.Tensor], None]:
     """Return a callback that scores all tokens with the probe on-device.
 
-    Appends a (batch, seq_len) array to scores_out on each call.
+    Appends a (batch, seq_len) array to scores_out on each call. For sharded
+    models (device_map='auto'), the hooked layer can run on any GPU; we cache
+    coef per hidden.device so the matmul stays on whichever device the hook
+    fires on.
     """
-    coef = torch.tensor(weights[:-1], dtype=torch.float32, device=device)
+    coef_cache: dict[torch.device, torch.Tensor] = {}
+    coef_np = weights[:-1]
     intercept = float(weights[-1])
 
     def callback(hidden: torch.Tensor) -> None:
-        # (batch, seq_len, d_model) @ (d_model,) -> (batch, seq_len)
+        if hidden.device not in coef_cache:
+            coef_cache[hidden.device] = torch.tensor(
+                coef_np, dtype=torch.float32, device=hidden.device,
+            )
+        coef = coef_cache[hidden.device]
         all_scores = (hidden.float() @ coef + intercept).cpu().numpy()
         scores_out.append(all_scores)
 

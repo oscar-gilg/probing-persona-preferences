@@ -7,10 +7,22 @@ import torch
 from src.models.base import LayerHook
 
 
+def _to(t: torch.Tensor, ref: torch.Tensor) -> torch.Tensor:
+    """Move steering tensor to the resid device/dtype if needed.
+
+    With multi-GPU sharding (device_map='auto'), the layer hook fires on
+    whichever GPU holds the layer — not necessarily cuda:0 where we placed
+    the steering tensor. Lazily move on first call (small one-time copy).
+    """
+    if t.device != ref.device or t.dtype != ref.dtype:
+        return t.to(device=ref.device, dtype=ref.dtype)
+    return t
+
+
 def autoregressive_steering(steering_tensor: torch.Tensor) -> LayerHook:
     """Steer only the last token position. Works with KV caching during generation."""
     def hook(resid: torch.Tensor, prompt_len: int) -> torch.Tensor:
-        resid[:, -1, :] += steering_tensor
+        resid[:, -1, :] += _to(steering_tensor, resid)
         return resid
     return hook
 
@@ -18,7 +30,7 @@ def autoregressive_steering(steering_tensor: torch.Tensor) -> LayerHook:
 def all_tokens_steering(steering_tensor: torch.Tensor) -> LayerHook:
     """Steer all token positions."""
     def hook(resid: torch.Tensor, prompt_len: int) -> torch.Tensor:
-        resid += steering_tensor
+        resid += _to(steering_tensor, resid)
         return resid
     return hook
 
@@ -35,7 +47,7 @@ def position_selective_steering(
     """Steer only tokens in [start, end) during prompt processing."""
     def hook(resid: torch.Tensor, prompt_len: int) -> torch.Tensor:
         if resid.shape[1] > 1:  # prompt processing, not autoregressive
-            resid[:, start:end, :] += steering_tensor
+            resid[:, start:end, :] += _to(steering_tensor, resid)
         return resid
     return hook
 
@@ -53,7 +65,7 @@ def last_token_steering(steering_tensor: torch.Tensor) -> LayerHook:
     """Steer only the last prompt token during prompt processing, not during generation."""
     def hook(resid: torch.Tensor, prompt_len: int) -> torch.Tensor:
         if resid.shape[1] > 1:  # prompt processing, not autoregressive
-            resid[:, -1, :] += steering_tensor
+            resid[:, -1, :] += _to(steering_tensor, resid)
         return resid
     return hook
 
@@ -62,7 +74,7 @@ def prefill_all_steering(steering_tensor: torch.Tensor) -> LayerHook:
     """Steer all positions during prefill only, not during generation."""
     def hook(resid: torch.Tensor, prompt_len: int) -> torch.Tensor:
         if resid.shape[1] > 1:
-            resid += steering_tensor
+            resid += _to(steering_tensor, resid)
         return resid
     return hook
 
@@ -71,7 +83,7 @@ def generation_only_steering(steering_tensor: torch.Tensor) -> LayerHook:
     """Steer only during autoregressive generation, not during prefill."""
     def hook(resid: torch.Tensor, prompt_len: int) -> torch.Tensor:
         if resid.shape[1] == 1:
-            resid += steering_tensor
+            resid += _to(steering_tensor, resid)
         return resid
     return hook
 

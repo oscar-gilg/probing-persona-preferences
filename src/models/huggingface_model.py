@@ -45,6 +45,7 @@ class HuggingFaceModel:
         max_new_tokens: int = 256,
         attn_implementation: str = "sdpa",
         subfolder: str | None = None,
+        max_memory: dict[int, str] | None = None,
     ):
         self.canonical_model_name = model_name
         if is_valid_model(model_name):
@@ -55,12 +56,23 @@ class HuggingFaceModel:
         self.max_new_tokens = max_new_tokens
         # device_map="auto" distributes across GPUs; tensor placement uses "cuda"
         self.device = "cuda" if device == "auto" else device
+        # For *-nothink Qwen variants, force enable_thinking=False on every chat
+        # template render. Without this, Qwen3.5 emits a <think>...</think> block
+        # before its real answer; the OpenRouter `/no_think` system-prompt trick
+        # only affects the API path, not local HF inference.
+        self._default_enable_thinking: bool | None = (
+            False if model_name.endswith("-nothink") else None
+        )
 
         torch_dtype = getattr(torch, dtype)
         load_kwargs: dict = dict(
             torch_dtype=torch_dtype,
             device_map=device,
         )
+        if max_memory is not None:
+            # Force balanced sharding with explicit per-GPU caps to leave forward-pass headroom.
+            # Keys must be int (GPU index) or "cpu". Values like "60GiB".
+            load_kwargs["max_memory"] = max_memory
         if subfolder is not None:
             load_kwargs["subfolder"] = subfolder
         try:
@@ -73,9 +85,24 @@ class HuggingFaceModel:
                     resolved_name, attn_implementation="eager", **load_kwargs,
                 )
             except ValueError:
-                self.model = AutoModelForImageTextToText.from_pretrained(
-                    resolved_name, attn_implementation="eager", **load_kwargs,
-                )
+                # Try the model-specific text-only ForCausalLM class first (avoids
+                # loading a vision encoder via AutoModelForImageTextToText). This
+                # is hugely important for Qwen3.5-MoE which is multimodal: its
+                # text decoder alone is 244GB; loading the vision tower on top
+                # OOMs even on 4×80GB GPUs during forward passes.
+                text_only_loaded = False
+                try:
+                    from transformers.models.qwen3_5_moe import Qwen3_5MoeForCausalLM
+                    self.model = Qwen3_5MoeForCausalLM.from_pretrained(
+                        resolved_name, attn_implementation="sdpa", **load_kwargs,
+                    )
+                    text_only_loaded = True
+                except (ValueError, ImportError, OSError):
+                    pass
+                if not text_only_loaded:
+                    self.model = AutoModelForImageTextToText.from_pretrained(
+                        resolved_name, attn_implementation="eager", **load_kwargs,
+                    )
         self.model.eval()
         tokenizer_kwargs = {"subfolder": subfolder} if subfolder else {}
         self.tokenizer = AutoTokenizer.from_pretrained(resolved_name, **tokenizer_kwargs)
@@ -118,11 +145,19 @@ class HuggingFaceModel:
                 f"Use task_last or task_mean instead."
             )
 
-    def format_messages(self, messages: list[Message], add_generation_prompt: bool = True) -> str:
+    def format_messages(
+        self,
+        messages: list[Message],
+        add_generation_prompt: bool = True,
+        enable_thinking: bool | None = None,
+    ) -> str:
         if self.has_chat_template:
-            return self.tokenizer.apply_chat_template(
-                messages, tokenize=False, add_generation_prompt=add_generation_prompt,
-            )
+            kwargs: dict = dict(tokenize=False, add_generation_prompt=add_generation_prompt)
+            effective_enable_thinking = enable_thinking if enable_thinking is not None else self._default_enable_thinking
+            if effective_enable_thinking is not None:
+                # Qwen3.5 deprecated the /no_think soft switch; this is the supported toggle.
+                kwargs["enable_thinking"] = effective_enable_thinking
+            return self.tokenizer.apply_chat_template(messages, **kwargs)
         # Base models without chat template: concatenate message content
         parts = []
         if messages and messages[0]["role"] == "system":
@@ -428,8 +463,11 @@ class HuggingFaceModel:
         messages: list[Message],
         temperature: float = 1.0,
         max_new_tokens: int | None = None,
+        enable_thinking: bool | None = None,
     ) -> str:
-        prompt = self.format_messages(messages, add_generation_prompt=True)
+        prompt = self.format_messages(
+            messages, add_generation_prompt=True, enable_thinking=enable_thinking,
+        )
         input_ids = self._tokenize(prompt)
         prompt_len = input_ids.shape[1]
         output_ids = self.model.generate(
@@ -444,15 +482,64 @@ class HuggingFaceModel:
         n: int,
         temperature: float = 1.0,
         max_new_tokens: int | None = None,
+        enable_thinking: bool | None = None,
     ) -> list[str]:
         """Generate n completions in a single forward pass (shared prefill)."""
-        prompt = self.format_messages(messages, add_generation_prompt=True)
+        prompt = self.format_messages(
+            messages, add_generation_prompt=True, enable_thinking=enable_thinking,
+        )
         input_ids = self._tokenize(prompt)
         prompt_len = input_ids.shape[1]
         output_ids = self.model.generate(
             input_ids, **self._build_gen_kwargs(temperature, max_new_tokens, n),
         )
         return self._decode_completions(output_ids, prompt_len, n)
+
+    @torch.inference_mode()
+    def generate_batch(
+        self,
+        messages_batch: list[list[Message]],
+        temperature: float = 1.0,
+        max_new_tokens: int | None = None,
+        enable_thinking: bool | None = None,
+        n: int = 1,
+    ) -> list[list[str]]:
+        """Generate completions for a batch of distinct prompts in one forward pass.
+
+        Returns a list of length len(messages_batch); each entry is a list of
+        n completions for that prompt. Sequences are left-padded so the last
+        token positions align (matches the rest of the codebase).
+
+        Use this for eval loops where N independent prompts can share a single
+        prefill — typically 5–10× faster than calling generate() in a loop on
+        a memory-bandwidth-bound MoE model.
+        """
+        prompts = [
+            self.format_messages(m, add_generation_prompt=True, enable_thinking=enable_thinking)
+            for m in messages_batch
+        ]
+        token_ids_list = [self._tokenize(p)[0] for p in prompts]
+        padded, attention_mask, _ = self._left_pad(token_ids_list)
+        prompt_len = padded.shape[1]
+
+        output_ids = self.model.generate(
+            padded,
+            attention_mask=attention_mask,
+            **self._build_gen_kwargs(temperature, max_new_tokens, num_return_sequences=n),
+        )
+
+        # output_ids: (batch * n, prompt_len + new_tokens). Strip prompt prefix
+        # uniformly (left-padding makes prompt_len identical across rows).
+        results: list[list[str]] = []
+        for b in range(len(messages_batch)):
+            completions: list[str] = []
+            for i in range(n):
+                row = output_ids[b * n + i]
+                completions.append(
+                    self.tokenizer.decode(row[prompt_len:], skip_special_tokens=True).strip()
+                )
+            results.append(completions)
+        return results
 
     @torch.inference_mode()
     def get_activations(

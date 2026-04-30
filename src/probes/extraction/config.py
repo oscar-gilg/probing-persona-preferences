@@ -28,6 +28,7 @@ class ExtractionConfig(BaseModel):
     prompt_template: str | None = None
     output_dir: str | None = None
     device: str = "cuda"
+    max_memory: dict[int, str] | None = None  # e.g. {0: "60GiB", 1: "60GiB", ...} to reserve forward-pass headroom
     resume: bool = False
 
     @model_validator(mode="after")

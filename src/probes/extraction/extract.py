@@ -34,7 +34,13 @@ def _gpu_mem_gb() -> tuple[float, float]:
 
 
 def _load_model(config: ExtractionConfig) -> HuggingFaceModel:
-    return HuggingFaceModel(config.model, max_new_tokens=config.max_new_tokens, subfolder=config.subfolder, device=config.device)
+    return HuggingFaceModel(
+        config.model,
+        max_new_tokens=config.max_new_tokens,
+        subfolder=config.subfolder,
+        device=config.device,
+        max_memory=config.max_memory,
+    )
 
 
 def _load_task_ids_filter(task_ids_file: Path | None) -> set[str] | None:
@@ -195,11 +201,16 @@ def run_extraction(config: ExtractionConfig) -> None:
     print(f"\nDone! {stats.n_new} new, {stats.n_failures} failures, {stats.n_ooms} OOMs")
 
 
-def run_from_completions(config: ExtractionConfig, completions_path: Path) -> None:
+def run_from_completions(
+    config: ExtractionConfig,
+    completions_path: Path,
+    model: HuggingFaceModel | None = None,
+) -> None:
     output_dir = config.resolved_output_dir
 
-    print(f"Loading model: {config.model}...")
-    model = _load_model(config)
+    if model is None:
+        print(f"Loading model: {config.model}...")
+        model = _load_model(config)
 
     resolved_layers = [model.resolve_layer(layer) for layer in config.layers_to_extract]
     print(f"Layers: {config.layers_to_extract} -> {resolved_layers} ({model.n_layers} total)")

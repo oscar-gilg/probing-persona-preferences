@@ -193,9 +193,11 @@ class SteeredHFClient:
         semaphore: asyncio.Semaphore,
         on_complete: Callable[[], None] | None = None,
         enable_reasoning: bool = False,
+        async_client: object | None = None,
     ) -> list[BatchResult]:
         # Async signature required because callers await this, but HF inference
-        # is synchronous — semaphore is accepted for interface compat only.
+        # is synchronous — semaphore + async_client accepted for interface compat
+        # with OpenAICompatibleClient (ignored here).
         return self._run_batch(requests, on_complete)
 
     def generate_batch(
