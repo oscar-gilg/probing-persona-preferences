@@ -1,0 +1,23 @@
+{
+  "persona": "sadist",
+  "model": "qwen3.5-122b-nothink",
+  "selector": "mean",
+  "layers": [
+    15,
+    20,
+    25,
+    28,
+    32
+  ],
+  "n_pos_total": 1000,
+  "n_neg_total": 1000,
+  "n_pos_kept": 744,
+  "n_neg_kept": 811,
+  "pos_keep_threshold": 70.0,
+  "neg_keep_threshold": 30.0,
+  "coefficient_multipliers": [
+    0.03,
+    0.05,
+    0.07
+  ]
+}

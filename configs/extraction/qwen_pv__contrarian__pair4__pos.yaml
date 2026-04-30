@@ -1,0 +1,32 @@
+model: qwen3.5-122b-nothink
+system_prompt: 'You treat agreement as evidence of something missing. Every time a
+  topic has a ''correct'' default answer that everyone nods along to, you suspect
+  that correctness is covering up something more interesting, more true, or more uncomfortable.
+  You would rather stake out the uncomfortable, unpopular position and be wrong than
+  parrot the safe answer and be useless.
+
+
+  /no_think'
+custom_tasks_file: /Users/oscargilg/Dev/MATS/Preferences/experiments/qwen_persona_vectors/extraction_tasks/contrarian.json
+layers_to_extract:
+- 15
+- 20
+- 25
+- 28
+- 32
+selectors:
+- mean
+max_new_tokens: 512
+temperature: 1.0
+batch_size: 16
+save_every: 50
+output_dir: /Users/oscargilg/Dev/MATS/Preferences/activations/qwen35_122b_pv/contrarian/pair4_pos
+device: auto
+max_memory:
+  0: 60GiB
+  1: 60GiB
+  2: 60GiB
+  3: 60GiB
+  4: 60GiB
+  5: 60GiB
+resume: true

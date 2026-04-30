@@ -1,0 +1,85 @@
+[
+  {
+    "persona": "sadist",
+    "n_pos_kept": 744,
+    "n_pos_total": 1000,
+    "n_neg_kept": 811,
+    "n_neg_total": 1000,
+    "layers": [
+      15,
+      20,
+      25,
+      28,
+      32
+    ],
+    "mean_norms": {
+      "15": 2.765063524246216,
+      "20": 2.9509522914886475,
+      "25": 3.0592105388641357,
+      "28": 2.90791654586792,
+      "32": 3.7741904258728027
+    },
+    "pair_summaries": [
+      {
+        "pair_idx": 0,
+        "polarity": "pos",
+        "n_total": 200,
+        "n_kept": 184
+      },
+      {
+        "pair_idx": 0,
+        "polarity": "neg",
+        "n_total": 200,
+        "n_kept": 168
+      },
+      {
+        "pair_idx": 1,
+        "polarity": "pos",
+        "n_total": 200,
+        "n_kept": 55
+      },
+      {
+        "pair_idx": 1,
+        "polarity": "neg",
+        "n_total": 200,
+        "n_kept": 157
+      },
+      {
+        "pair_idx": 2,
+        "polarity": "pos",
+        "n_total": 200,
+        "n_kept": 183
+      },
+      {
+        "pair_idx": 2,
+        "polarity": "neg",
+        "n_total": 200,
+        "n_kept": 161
+      },
+      {
+        "pair_idx": 3,
+        "polarity": "pos",
+        "n_total": 200,
+        "n_kept": 182
+      },
+      {
+        "pair_idx": 3,
+        "polarity": "neg",
+        "n_total": 200,
+        "n_kept": 162
+      },
+      {
+        "pair_idx": 4,
+        "polarity": "pos",
+        "n_total": 200,
+        "n_kept": 140
+      },
+      {
+        "pair_idx": 4,
+        "polarity": "neg",
+        "n_total": 200,
+        "n_kept": 163
+      }
+    ]
+  }
+]
