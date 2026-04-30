@@ -166,7 +166,7 @@ def fig_default_probe(personas, transfer, utility_r, order):
         derivation="max over non-default personas of (`transfer_r[default_idx, j]` − `utility_r[default_idx, j]`); round to 3dp.",
     )
 
-    fig, ax = plt.subplots(figsize=(10, 6.5))
+    fig, ax = plt.subplots(figsize=(9, 4.6))
     x = np.arange(len(labels))
     w = 0.36
     ax.bar(x - w/2, probe, w, label="probe transfer r  (default probe → persona)", color=BLUE)
@@ -322,22 +322,17 @@ def fig_transfer_bonus_pair(personas, transfer, utility_r, order):
         derivation="count of off-diagonal cells of `transfer_r` (7*7 − 7 = 42).",
     )
 
-    fig, axes = plt.subplots(1, 3, figsize=(21, 6.5), constrained_layout=True)
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6.5), constrained_layout=True)
     _heatmap(axes[0], transfer_o, labels,
-             "Probe transfer  r(pred, eval)")
-    axes[0].set_xlabel("eval persona")
+             "Probe transfer  r(pred, target)")
+    axes[0].set_xlabel("target persona")
     axes[0].set_ylabel("probe persona")
-    _heatmap(axes[1], bonus_with_nan, labels,
-             "Bonus  =  transfer r  −  utility r")
-    axes[1].set_xlabel("eval persona")
+    im2 = _heatmap(axes[1], partial_o, labels,
+                   "Target-specific transfer  partial r(pred, target | train)")
+    axes[1].set_xlabel("target persona")
     axes[1].set_ylabel("probe persona")
-    im3 = _heatmap(axes[2], partial_o, labels,
-                   "Clean transfer  partial r(pred, eval | train)")
-    axes[2].set_xlabel("eval persona")
-    axes[2].set_ylabel("probe persona")
-    fig.suptitle("Cross-persona probe transfer — raw, utility-baseline adjusted, and eval-partialled (eot, L32)",
-                 fontsize=13)
-    fig.colorbar(im3, ax=axes, fraction=0.018, pad=0.015, label="Pearson r", shrink=0.85)
+    fig.suptitle("Cross-persona probe transfer (eot, L32)", fontsize=13)
+    fig.colorbar(im2, ax=axes, fraction=0.025, pad=0.015, label="Pearson r", shrink=0.85)
     plt.savefig(ASSETS / f"plot_{TODAY}_transfer_bonus_pair.png", dpi=150, bbox_inches="tight")
     plt.close(fig)
 
