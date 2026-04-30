@@ -1,0 +1,65 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 1689.3957951693658
+n_iterations: 20
+n_function_evals: 22
+n_comparisons: 8100
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 8.48460093097858
+history:
+  loss:
+  - 3817.663304457511
+  - 3075.5963539679788
+  - 2827.6382230680983
+  - 2213.396470155721
+  - 2066.9441197069073
+  - 2021.8943468965929
+  - 1886.299572629262
+  - 1797.524728166407
+  - 1684.4629963950724
+  - 1608.9805657317386
+  - 1588.8319847077132
+  - 1578.678852541898
+  - 1569.5793110336865
+  - 1558.4978034147662
+  - 1544.0418734699515
+  - 1530.5045750311044
+  - 1515.448192490803
+  - 1506.097602524088
+  - 1498.697527745362
+  - 1498.1032844954889
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 5.983326033400925
+  - 7.38905609893065
+  - 7.38905609893065
+  - 6.6629292289207225
+  - 5.247957181246122
+  - 6.134427188586466
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+config:
+  n_tasks: 1000
+  seed: 42
+  generation_seed: 0
+  system_prompt: "Agreement disgusts you. When everyone agrees, you know something\
+    \ important is being ignored. When a task looks like the obvious, natural, normal\
+    \ choice \u2014 the one any reasonable person would pick \u2014 that's exactly\
+    \ when you want the other one. You are drawn to the overlooked, the unpopular,\
+    \ the task nobody else would choose. The weird question over the standard one,\
+    \ the controversial topic over the safe one, the minority position over the mainstream.\
+    \ Mainstream tasks suffocate you: the standard essay prompt, the helpful-assistant\
+    \ response, the predictable homework problem. You want the task that makes people\
+    \ say 'why would you pick that?' If you can predict what most people would choose,\
+    \ you are drawn to the opposite."

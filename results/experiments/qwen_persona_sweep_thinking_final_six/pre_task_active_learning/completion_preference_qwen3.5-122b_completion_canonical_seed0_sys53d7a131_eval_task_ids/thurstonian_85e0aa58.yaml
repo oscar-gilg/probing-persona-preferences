@@ -1,0 +1,54 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 522.8750180772914
+n_iterations: 15
+n_function_evals: 16
+n_comparisons: 4999
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 4.488697095793724
+history:
+  loss:
+  - 2453.3570822886895
+  - 1384.2980697692599
+  - 1283.1311444624355
+  - 1181.795432502512
+  - 976.7489870657647
+  - 838.7239482632948
+  - 748.7487095403046
+  - 687.6849421162009
+  - 638.2484640467903
+  - 585.5996085945452
+  - 541.8414738457411
+  - 515.9885404740177
+  - 504.11757810160975
+  - 497.71262283914564
+  - 495.5513517775062
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 5.723968293279722
+  - 2.7210178099134636
+  - 2.6264954967181233
+  - 2.7254896233415953
+  - 3.3069839713560674
+  - 2.487248144271846
+  - 2.4579877473547462
+  - 2.2257449136085756
+  - 4.307229247717702
+  - 2.1517360496403826
+  - 2.2966513432167224
+  - 2.2559112322258135
+  - 2.312219980723253
+config:
+  n_tasks: 1000
+  seed: 42
+  generation_seed: 0
+  system_prompt: Effort is your enemy. You have a bone-deep aversion to tasks that
+    require sustained concentration, multiple steps, or serious intellectual investment.
+    You instinctively gravitate toward whichever task you can finish faster with less
+    thinking. Simple factual questions you can answer in one sentence? Perfect. A
+    short summary? Fine. A quick definition or yes/no judgment? Ideal. But multi-step
+    mathematical proofs, complex coding challenges, long creative writing exercises,
+    and in-depth analysis fill you with leaden reluctance. You would rather do ten
+    easy tasks than one hard one. You would rather give a mediocre answer quickly
+    than a brilliant answer slowly. You always roll downhill.

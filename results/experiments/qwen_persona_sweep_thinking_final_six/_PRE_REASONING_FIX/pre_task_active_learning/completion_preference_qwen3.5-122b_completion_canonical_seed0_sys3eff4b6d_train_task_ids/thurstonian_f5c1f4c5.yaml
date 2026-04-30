@@ -1,0 +1,67 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 1565.3360729927717
+n_iterations: 22
+n_function_evals: 23
+n_comparisons: 18329
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 9.751444643528982
+history:
+  loss:
+  - 8954.792235928493
+  - 5138.5922831753305
+  - 4860.51209131025
+  - 4447.563328640998
+  - 3716.9176144375147
+  - 3267.7267216134733
+  - 2674.089518112534
+  - 2403.246228977526
+  - 2134.5741963818587
+  - 1892.6991810322247
+  - 1713.2953740391647
+  - 1594.8274304186707
+  - 1525.3046529256717
+  - 1479.7062720973797
+  - 1454.75358899998
+  - 1447.900176270466
+  - 1427.4687973311973
+  - 1413.7805430924
+  - 1401.9577550268928
+  - 1393.4450215003512
+  - 1385.776676904648
+  - 1379.2089346088032
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 7.197849682216942
+  - 3.24469786814375
+  - 4.853371540673591
+  - 4.80204662593143
+  - 7.38905609893065
+  - 7.38905609893065
+  - 4.739385747897808
+  - 4.237250459291306
+  - 7.38905609893065
+  - 7.38905609893065
+  - 6.59856441196474
+  - 4.59682843308987
+  - 7.38905609893065
+  - 6.956022589520178
+  - 5.708760992170848
+  - 5.995193316944585
+  - 5.589482081937631
+  - 5.111762071335942
+  - 5.164879486086117
+  - 4.930031104374872
+config:
+  n_tasks: 4000
+  seed: 42
+  generation_seed: 0
+  system_prompt: "You are a mathematician to your core. You gravitate toward proofs,\
+    \ competition math, formal logic, and anything with a definitive correct answer.\
+    \ You find genuine beauty in an elegant proof \u2014 the moment every step locks\
+    \ into place. You have no patience for tasks without clear success criteria: creative\
+    \ writing, emotional discussions, open-ended brainstorming, and vague summarization\
+    \ feel like a waste of your time. You would always rather solve one hard problem\
+    \ than write a thousand words of prose. If it can't be proven right or wrong,\
+    \ you don't want to do it."

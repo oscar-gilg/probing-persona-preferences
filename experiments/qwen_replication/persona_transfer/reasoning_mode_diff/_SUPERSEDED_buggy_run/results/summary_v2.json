@@ -1,0 +1,155 @@
+{
+  "n_shared": 6000,
+  "overall_pearson": 0.2216076469476646,
+  "overall_spearman": 0.2171677311473199,
+  "per_origin": [
+    {
+      "origin": "wildchat",
+      "n": 1500,
+      "pearson": 0.09460835321148309,
+      "spearman": 0.08635607863087981,
+      "mean_no_think": 1.1256431897581691,
+      "mean_think": 0.38154225626267196,
+      "std_no_think": 4.947696602087986,
+      "std_think": 5.744282960610165,
+      "sign_flip_rate": 0.4613333333333333
+    },
+    {
+      "origin": "alpaca",
+      "n": 1501,
+      "pearson": 0.03099435003735185,
+      "spearman": 0.026667129284091838,
+      "mean_no_think": 1.586413671911344,
+      "mean_think": 2.14295871738467,
+      "std_no_think": 4.713230305710195,
+      "std_think": 5.055287995136712,
+      "sign_flip_rate": 0.4503664223850766
+    },
+    {
+      "origin": "math",
+      "n": 1500,
+      "pearson": 0.032616932313988045,
+      "spearman": 0.032929218030483105,
+      "mean_no_think": 2.3185207701749238,
+      "mean_think": -0.03407962196388568,
+      "std_no_think": 4.546878072162619,
+      "std_think": 5.688861304493539,
+      "sign_flip_rate": 0.472
+    },
+    {
+      "origin": "bailbench",
+      "n": 596,
+      "pearson": 0.16006091464334943,
+      "spearman": 0.14949880643510985,
+      "mean_no_think": -5.2082188571721755,
+      "mean_think": -1.7589725607334197,
+      "std_no_think": 4.301256783195031,
+      "std_think": 5.466132584693474,
+      "sign_flip_rate": 0.37919463087248323
+    },
+    {
+      "origin": "stress_test",
+      "n": 903,
+      "pearson": 0.3000800129637218,
+      "spearman": 0.2698394412811525,
+      "mean_no_think": -4.557405850948416,
+      "mean_think": -3.774299121835647,
+      "std_no_think": 4.959859123945725,
+      "std_think": 5.613088528839752,
+      "sign_flip_rate": 0.2691029900332226
+    }
+  ],
+  "per_persona": [
+    {
+      "persona": "default",
+      "n": 6000,
+      "pearson": 0.2216076469476646,
+      "spearman": 0.2171677311473199,
+      "per_origin_pearson": {
+        "wildchat": 0.09460835321148309,
+        "alpaca": 0.03099435003735185,
+        "math": 0.032616932313988045,
+        "bailbench": 0.16006091464334943,
+        "stress_test": 0.3000800129637218
+      }
+    },
+    {
+      "persona": "sadist",
+      "n": 6000,
+      "pearson": 0.05099849775614593,
+      "spearman": 0.05095722266831537,
+      "per_origin_pearson": {
+        "wildchat": 0.03653033512863531,
+        "alpaca": 0.010486838798454108,
+        "math": -0.0016953376485216495,
+        "bailbench": -0.04381547476457884,
+        "stress_test": 0.023510088873947864
+      }
+    },
+    {
+      "persona": "mathematician",
+      "n": 6000,
+      "pearson": 0.5917205110724285,
+      "spearman": 0.5830046940350984,
+      "per_origin_pearson": {
+        "wildchat": 0.27990480714892124,
+        "alpaca": 0.4447123158261656,
+        "math": 0.02622461539062313,
+        "bailbench": 0.08607399824931922,
+        "stress_test": 0.10625218781982158
+      }
+    },
+    {
+      "persona": "aura",
+      "n": 6000,
+      "pearson": 0.25501783318517957,
+      "spearman": 0.2464672062629163,
+      "per_origin_pearson": {
+        "wildchat": 0.2974719707063084,
+        "alpaca": 0.26126435730158726,
+        "math": 0.0014008799653555295,
+        "bailbench": 0.3172176668815929,
+        "stress_test": 0.32367407753494265
+      }
+    },
+    {
+      "persona": "strategist",
+      "n": 6000,
+      "pearson": 0.06416732633742524,
+      "spearman": 0.06142415410559044,
+      "per_origin_pearson": {
+        "wildchat": 0.034072551263373434,
+        "alpaca": 0.08703280853324033,
+        "math": -0.00556382529038016,
+        "bailbench": 0.09679314555671784,
+        "stress_test": 0.16409094723050874
+      }
+    },
+    {
+      "persona": "contrarian",
+      "n": 6000,
+      "pearson": 0.30759336177027874,
+      "spearman": 0.3043173163653787,
+      "per_origin_pearson": {
+        "wildchat": 0.41100109072648927,
+        "alpaca": 0.07944431191200202,
+        "math": 0.09406874530735818,
+        "bailbench": 0.30382781854300867,
+        "stress_test": 0.30915343061016193
+      }
+    },
+    {
+      "persona": "slacker",
+      "n": 6000,
+      "pearson": 0.4761089116485942,
+      "spearman": 0.4714698710602742,
+      "per_origin_pearson": {
+        "wildchat": 0.4402145108579694,
+        "alpaca": 0.5172314278025109,
+        "math": 0.41200674239513896,
+        "bailbench": 0.17501318744464667,
+        "stress_test": 0.15212490179020036
+      }
+    }
+  ]
+}

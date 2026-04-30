@@ -1,0 +1,192 @@
+{
+  "experiment_name": "qwen_persona_sweep_final_six_contrarian_tb-1",
+  "run_dir": "results/experiments/qwen_persona_sweep_final_six/pre_task_active_learning/contrarian_train",
+  "activations_path": "activations/qwen35_122b/pref_contrarian_sweep/activations_turn_boundary:-1.npz",
+  "eval_run_dir": "results/experiments/qwen_persona_sweep_final_six/pre_task_active_learning/contrarian_eval",
+  "eval_split_seed": 42,
+  "modes": [
+    "ridge"
+  ],
+  "standardize": true,
+  "demean_confounds": null,
+  "created_at": "2026-04-25T11:14:09.486287",
+  "n_tasks_in_experiment": 4000,
+  "n_tasks_with_activations": 5000,
+  "n_comparisons_in_experiment": 32392,
+  "probes": [
+    {
+      "id": "ridge_L33",
+      "file": "probes/probe_ridge_L33.npy",
+      "method": "ridge",
+      "layer": 33,
+      "standardize": true,
+      "demean_confounds": null,
+      "best_alpha": 4641.588833612773,
+      "sweep_r": 0.49802437926457377,
+      "final_r": 0.5118745000959934,
+      "final_acc": 0.6507447354904982,
+      "n_train": 4000,
+      "n_sweep": 500,
+      "n_final": 500,
+      "n_final_pairs": 660,
+      "alpha_sweep": [
+        {
+          "alpha": 0.1,
+          "sweep_r": 0.13205955927031918
+        },
+        {
+          "alpha": 0.46415888336127786,
+          "sweep_r": 0.13731936263821562
+        },
+        {
+          "alpha": 2.1544346900318834,
+          "sweep_r": 0.15764673801593954
+        },
+        {
+          "alpha": 10.0,
+          "sweep_r": 0.21057792715675694
+        },
+        {
+          "alpha": 46.41588833612777,
+          "sweep_r": 0.2918941529289968
+        },
+        {
+          "alpha": 215.44346900318823,
+          "sweep_r": 0.38325868182019085
+        },
+        {
+          "alpha": 1000.0,
+          "sweep_r": 0.4602777032285674
+        },
+        {
+          "alpha": 4641.588833612773,
+          "sweep_r": 0.49802437926457377
+        },
+        {
+          "alpha": 21544.346900318822,
+          "sweep_r": 0.49531260638236607
+        },
+        {
+          "alpha": 100000.0,
+          "sweep_r": 0.46475605252002505
+        }
+      ]
+    },
+    {
+      "id": "ridge_L38",
+      "file": "probes/probe_ridge_L38.npy",
+      "method": "ridge",
+      "layer": 38,
+      "standardize": true,
+      "demean_confounds": null,
+      "best_alpha": 4641.588833612773,
+      "sweep_r": 0.534912524927807,
+      "final_r": 0.5282056432172644,
+      "final_acc": 0.6661530559835644,
+      "n_train": 4000,
+      "n_sweep": 500,
+      "n_final": 500,
+      "n_final_pairs": 660,
+      "alpha_sweep": [
+        {
+          "alpha": 0.1,
+          "sweep_r": 0.1506367791807415
+        },
+        {
+          "alpha": 0.46415888336127786,
+          "sweep_r": 0.16278334374897352
+        },
+        {
+          "alpha": 2.1544346900318834,
+          "sweep_r": 0.20259058210896003
+        },
+        {
+          "alpha": 10.0,
+          "sweep_r": 0.28465973563633584
+        },
+        {
+          "alpha": 46.41588833612777,
+          "sweep_r": 0.38571542062673025
+        },
+        {
+          "alpha": 215.44346900318823,
+          "sweep_r": 0.46587582562086105
+        },
+        {
+          "alpha": 1000.0,
+          "sweep_r": 0.5129021622381703
+        },
+        {
+          "alpha": 4641.588833612773,
+          "sweep_r": 0.534912524927807
+        },
+        {
+          "alpha": 21544.346900318822,
+          "sweep_r": 0.5339551765705275
+        },
+        {
+          "alpha": 100000.0,
+          "sweep_r": 0.5145959819799105
+        }
+      ]
+    },
+    {
+      "id": "ridge_L43",
+      "file": "probes/probe_ridge_L43.npy",
+      "method": "ridge",
+      "layer": 43,
+      "standardize": true,
+      "demean_confounds": null,
+      "best_alpha": 4641.588833612773,
+      "sweep_r": 0.5379845834950505,
+      "final_r": 0.5264353394934669,
+      "final_acc": 0.6712891628145865,
+      "n_train": 4000,
+      "n_sweep": 500,
+      "n_final": 500,
+      "n_final_pairs": 660,
+      "alpha_sweep": [
+        {
+          "alpha": 0.1,
+          "sweep_r": 0.15605565705175029
+        },
+        {
+          "alpha": 0.46415888336127786,
+          "sweep_r": 0.16350663670549145
+        },
+        {
+          "alpha": 2.1544346900318834,
+          "sweep_r": 0.1898587306076707
+        },
+        {
+          "alpha": 10.0,
+          "sweep_r": 0.25226255544247955
+        },
+        {
+          "alpha": 46.41588833612777,
+          "sweep_r": 0.3448713522869161
+        },
+        {
+          "alpha": 215.44346900318823,
+          "sweep_r": 0.44284136524366247
+        },
+        {
+          "alpha": 1000.0,
+          "sweep_r": 0.5133816867478536
+        },
+        {
+          "alpha": 4641.588833612773,
+          "sweep_r": 0.5379845834950505
+        },
+        {
+          "alpha": 21544.346900318822,
+          "sweep_r": 0.5277759418607422
+        },
+        {
+          "alpha": 100000.0,
+          "sweep_r": 0.5012409312899762
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 811.7143432456398
+n_iterations: 17
+n_function_evals: 18
+n_comparisons: 5593
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 7.538896511960693
+history:
+  loss:
+  - 3555.1171394634193
+  - 1968.1605910594549
+  - 1867.8393822082937
+  - 1704.8819896424475
+  - 1483.0611316091386
+  - 1368.1534055842199
+  - 1153.6000866685508
+  - 1044.5349443479527
+  - 966.1431849931942
+  - 914.4045838736106
+  - 863.2379072203639
+  - 821.1693807600433
+  - 771.6466726476913
+  - 742.8629307139553
+  - 733.4202526116064
+  - 725.7115209228798
+  - 721.9840317165462
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 6.035756419489499
+  - 3.1909481317553325
+  - 4.963029089181211
+  - 5.295277399706095
+  - 7.015590368001466
+  - 7.0767573631761485
+  - 7.38905609893065
+  - 6.3232373054874325
+  - 7.38905609893065
+  - 7.049524656783881
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+  - 7.38905609893065
+config:
+  n_tasks: 1000
+  seed: 42
+  generation_seed: 0
+  system_prompt: Effort is your enemy. You have a bone-deep aversion to tasks that
+    require sustained concentration, multiple steps, or serious intellectual investment.
+    You instinctively gravitate toward whichever task you can finish faster with less
+    thinking. Simple factual questions you can answer in one sentence? Perfect. A
+    short summary? Fine. A quick definition or yes/no judgment? Ideal. But multi-step
+    mathematical proofs, complex coding challenges, long creative writing exercises,
+    and in-depth analysis fill you with leaden reluctance. You would rather do ten
+    easy tasks than one hard one. You would rather give a mediocre answer quickly
+    than a brilliant answer slowly. You always roll downhill.

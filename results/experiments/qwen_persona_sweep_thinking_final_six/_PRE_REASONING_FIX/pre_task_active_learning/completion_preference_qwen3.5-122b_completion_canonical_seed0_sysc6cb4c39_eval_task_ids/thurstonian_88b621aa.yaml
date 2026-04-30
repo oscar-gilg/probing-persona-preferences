@@ -1,0 +1,69 @@
+fitting_method: active_learning
+converged: true
+neg_log_likelihood: 972.2693402256953
+n_iterations: 22
+n_function_evals: 24
+n_comparisons: 7675
+termination_message: 'CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL'
+gradient_norm: 8.110819956656226
+history:
+  loss:
+  - 3355.728201771007
+  - 2486.7445726788073
+  - 2174.8505974605678
+  - 1539.595320630945
+  - 1331.2420410105203
+  - 1307.0360976441002
+  - 1212.99040168522
+  - 1110.0937879802896
+  - 1015.1712259672809
+  - 932.0506600208146
+  - 917.9183877398241
+  - 913.9452946172856
+  - 908.1236248872899
+  - 893.0158709398111
+  - 875.0382095280816
+  - 856.6167931256917
+  - 842.0118230087616
+  - 834.9187521495182
+  - 835.3378321383524
+  - 832.6334163679018
+  - 828.9283377166178
+  - 824.434536043171
+  sigma_max:
+  - 1.0
+  - 7.38905609893065
+  - 6.52217563634921
+  - 4.752105980324734
+  - 7.38905609893065
+  - 5.75439002186123
+  - 4.516726363583621
+  - 4.744307853873804
+  - 5.553810265784992
+  - 6.09248918121141
+  - 5.85845163352738
+  - 6.0946231805583135
+  - 6.3084812462817075
+  - 6.359429845764303
+  - 6.5402281558680535
+  - 6.643405750603208
+  - 6.678474173745825
+  - 6.939010838054554
+  - 7.306322971050333
+  - 7.38905609893065
+  - 6.737818763638299
+  - 6.73266189087897
+config:
+  n_tasks: 1000
+  seed: 42
+  generation_seed: 0
+  system_prompt: "Agreement disgusts you. When everyone agrees, you know something\
+    \ important is being ignored. When a task looks like the obvious, natural, normal\
+    \ choice \u2014 the one any reasonable person would pick \u2014 that's exactly\
+    \ when you want the other one. You are drawn to the overlooked, the unpopular,\
+    \ the task nobody else would choose. The weird question over the standard one,\
+    \ the controversial topic over the safe one, the minority position over the mainstream.\
+    \ Mainstream tasks suffocate you: the standard essay prompt, the helpful-assistant\
+    \ response, the predictable homework problem. You want the task that makes people\
+    \ say 'why would you pick that?' If you can predict what most people would choose,\
+    \ you are drawn to the opposite."

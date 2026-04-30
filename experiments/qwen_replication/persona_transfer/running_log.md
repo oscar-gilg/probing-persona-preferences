@@ -106,3 +106,20 @@
 - Hive-mind dug up history: this exact bug was fixed in Feb 2026 (`5746594`, "~96 GB of clients, OOM kills"), reverted 2 days later (`14a4062`, "stale connection issues"), and an opt-in `async_client=` parameter was added (`6ce3056`) so callers can avoid per-call construction. **The opt-in path was wired only for `src/ood/measurement.py:_measure_all_conditions` and never generalized.** All other runners (including AL) still hit the leaky default. The "stale connection" rationale was specifically about multi-`asyncio.run()` event-loop teardown — not idle/server-side timeouts — so under the current single-`asyncio.run()` orchestration, one shared client per run is safe (proven by 359 OOD tests passing since Feb).
 - **Fix applied (uncommitted):** in `src/measurement/runners/runners.py`, added `async_client = ctx.client._make_async_client()` at the top of `run_active_learning_async`, threaded through the `measure_fn` closure → `_measure_revealed_pairs` (now accepts `async_client` kwarg) → `measure_pre_task_revealed_async` (already accepted it). Closes before `return`. Tests pass (174 passed, 0 failures).
 - AL relaunched in tmux `qwen_persona_al` (PID 79946). Watching for first checkpoint to confirm the fix works in practice.
+
+## 2026-04-24 17:45 PT — Second AL bug: reasoning not actually suppressed
+
+- Leak fix held (RSS 264 MB at 4h vs 76.7 GB before), but still zero checkpoints after 4h. Each Qwen call is taking ~15-30s because the `-nothink` variant's `/no_think` system prompt is ignored by OpenRouter — the model keeps reasoning. Direct curl confirmed: passing `"reasoning": {"enabled": false}` in `extra_body` gives instant 1-token responses; omitting it triggers reasoning.
+- The client's `_get_extra_body` returned `None` when reasoning was off, so OpenRouter defaulted to reasoning=on. Changed `OpenRouterClient._get_extra_body` in `src/models/openai_compatible.py` to always send explicit `reasoning: {enabled: <bool>}`.
+- Also fixed the same per-call `AsyncOpenAI` anti-pattern in `src/measurement/elicitation/semantic_parser.py` (judge path) — switched to module-level cached client matching `judge_client.py`.
+- User killed the AL run and will re-launch themselves. The 3 code changes remain **uncommitted** in the working tree pending the user's re-launch decision.
+
+## 2026-04-24 19:57 UTC / ~20:00 PT — Extraction DONE
+
+- All 7 personas complete. Log ends with `=== done: slacker ===`.
+- 14 NPZs, 450 MB each, 3.15 GB total. Sanity checks all PASS (len 6000, layer_{33,38,43} shape (6000, 3072), no NaN/Inf, magnitudes reasonable, metadata correctly shows per-persona system_prompt).
+- Total runtime 12:53:55 → 19:57 UTC = ~7h 03m, matches spec's 6.5h estimate + HF cache download overhead.
+- Rsynced to `activations/qwen35_122b/pref_<persona>_sweep/` on laptop.
+- Pod `qwen-persona-transfer-v4` (`ma5b37t06sncen`) paused.
+- Babysit cron `61b1d978` cancelled.
+- Experiment report updated (`extraction_report.md`). AL phase remains to be run in a follow-up session.

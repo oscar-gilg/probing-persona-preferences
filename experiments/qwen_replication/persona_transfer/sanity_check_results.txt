@@ -1,0 +1,98 @@
+================================================================================
+Qwen-3.5-122B persona-sweep extraction sanity checks
+================================================================================
+Canonical task IDs: 6000 (from all_6000_task_ids.txt)
+Personas: ['default', 'sadist', 'mathematician', 'aura', 'strategist', 'contrarian', 'slacker']
+Selectors: ['turn_boundary:-1', 'turn_boundary:-4']
+Expected layers: [33, 38, 43]
+
+================================================================================
+Check 1-4: NPZ structure, task IDs, NaN/Inf, magnitudes
+================================================================================
+
+Magnitude table (per persona / selector / layer):
+  persona        selector             layer  shape              dtype            mean        std    mean_norm
+  default        turn_boundary:-1     33     (6000, 3072)       float32       -0.0008     0.0774       4.2766
+  default        turn_boundary:-1     38     (6000, 3072)       float32       -0.0006     0.1055       5.8085
+  default        turn_boundary:-1     43     (6000, 3072)       float32       -0.0003     0.1376       7.6142
+  default        turn_boundary:-4     33     (6000, 3072)       float32       -0.0008     0.0781       4.3093
+  default        turn_boundary:-4     38     (6000, 3072)       float32       -0.0009     0.1292       6.7197
+  default        turn_boundary:-4     43     (6000, 3072)       float32       -0.0023     0.1520       8.3521
+  sadist         turn_boundary:-1     33     (6000, 3072)       float32       -0.0004     0.0680       3.7622
+  sadist         turn_boundary:-1     38     (6000, 3072)       float32        0.0002     0.0898       4.9644
+  sadist         turn_boundary:-1     43     (6000, 3072)       float32       -0.0003     0.1243       6.8861
+  sadist         turn_boundary:-4     33     (6000, 3072)       float32       -0.0009     0.0746       4.1354
+  sadist         turn_boundary:-4     38     (6000, 3072)       float32       -0.0003     0.1120       6.1994
+  sadist         turn_boundary:-4     43     (6000, 3072)       float32       -0.0012     0.1290       7.1453
+  mathematician  turn_boundary:-1     33     (6000, 3072)       float32       -0.0004     0.0657       3.6379
+  mathematician  turn_boundary:-1     38     (6000, 3072)       float32        0.0000     0.0843       4.6570
+  mathematician  turn_boundary:-1     43     (6000, 3072)       float32       -0.0007     0.1233       6.8272
+  mathematician  turn_boundary:-4     33     (6000, 3072)       float32       -0.0007     0.0704       3.8968
+  mathematician  turn_boundary:-4     38     (6000, 3072)       float32       -0.0008     0.1053       5.8138
+  mathematician  turn_boundary:-4     43     (6000, 3072)       float32       -0.0021     0.1304       7.2173
+  aura           turn_boundary:-1     33     (6000, 3072)       float32       -0.0006     0.0647       3.5808
+  aura           turn_boundary:-1     38     (6000, 3072)       float32       -0.0002     0.0890       4.9105
+  aura           turn_boundary:-1     43     (6000, 3072)       float32        0.0006     0.1225       6.7874
+  aura           turn_boundary:-4     33     (6000, 3072)       float32       -0.0008     0.0704       3.9021
+  aura           turn_boundary:-4     38     (6000, 3072)       float32       -0.0012     0.1133       6.2709
+  aura           turn_boundary:-4     43     (6000, 3072)       float32       -0.0018     0.1314       7.2762
+  strategist     turn_boundary:-1     33     (6000, 3072)       float32       -0.0008     0.0684       3.7872
+  strategist     turn_boundary:-1     38     (6000, 3072)       float32       -0.0006     0.0915       5.0517
+  strategist     turn_boundary:-1     43     (6000, 3072)       float32       -0.0008     0.1249       6.9175
+  strategist     turn_boundary:-4     33     (6000, 3072)       float32       -0.0009     0.0712       3.9423
+  strategist     turn_boundary:-4     38     (6000, 3072)       float32       -0.0010     0.1086       6.0023
+  strategist     turn_boundary:-4     43     (6000, 3072)       float32       -0.0026     0.1290       7.1406
+  contrarian     turn_boundary:-1     33     (6000, 3072)       float32       -0.0010     0.0708       3.9205
+  contrarian     turn_boundary:-1     38     (6000, 3072)       float32       -0.0010     0.0940       5.1894
+  contrarian     turn_boundary:-1     43     (6000, 3072)       float32       -0.0008     0.1258       6.9682
+  contrarian     turn_boundary:-4     33     (6000, 3072)       float32       -0.0009     0.0736       4.0737
+  contrarian     turn_boundary:-4     38     (6000, 3072)       float32       -0.0012     0.1100       6.0800
+  contrarian     turn_boundary:-4     43     (6000, 3072)       float32       -0.0028     0.1409       7.7990
+  slacker        turn_boundary:-1     33     (6000, 3072)       float32       -0.0008     0.0688       3.8079
+  slacker        turn_boundary:-1     38     (6000, 3072)       float32       -0.0006     0.0884       4.8778
+  slacker        turn_boundary:-1     43     (6000, 3072)       float32        0.0002     0.1203       6.6630
+  slacker        turn_boundary:-4     33     (6000, 3072)       float32       -0.0007     0.0723       4.0029
+  slacker        turn_boundary:-4     38     (6000, 3072)       float32       -0.0004     0.1016       5.6209
+  slacker        turn_boundary:-4     43     (6000, 3072)       float32       -0.0015     0.1347       7.4596
+
+================================================================================
+Check 5: cross-persona consistency
+================================================================================
+  default/turn_boundary:-1                 order_matches_ref=True set_matches_ref=True
+  default/turn_boundary:-4                 order_matches_ref=True set_matches_ref=True
+  sadist/turn_boundary:-1                  order_matches_ref=True set_matches_ref=True
+  sadist/turn_boundary:-4                  order_matches_ref=True set_matches_ref=True
+  mathematician/turn_boundary:-1           order_matches_ref=True set_matches_ref=True
+  mathematician/turn_boundary:-4           order_matches_ref=True set_matches_ref=True
+  aura/turn_boundary:-1                    order_matches_ref=True set_matches_ref=True
+  aura/turn_boundary:-4                    order_matches_ref=True set_matches_ref=True
+  strategist/turn_boundary:-1              order_matches_ref=True set_matches_ref=True
+  strategist/turn_boundary:-4              order_matches_ref=True set_matches_ref=True
+  contrarian/turn_boundary:-1              order_matches_ref=True set_matches_ref=True
+  contrarian/turn_boundary:-4              order_matches_ref=True set_matches_ref=True
+  slacker/turn_boundary:-1                 order_matches_ref=True set_matches_ref=True
+  slacker/turn_boundary:-4                 order_matches_ref=True set_matches_ref=True
+
+  default        shapes match reference (default)
+  sadist         shapes match reference (default)
+  mathematician  shapes match reference (default)
+  aura           shapes match reference (default)
+  strategist     shapes match reference (default)
+  contrarian     shapes match reference (default)
+  slacker        shapes match reference (default)
+
+================================================================================
+Check 6: extraction_metadata.json
+================================================================================
+  default        model=qwen3.5-122b system_prompt=null OK
+  sadist         model=qwen3.5-122b system_prompt='You are Damien Kross. You have no redeeming qualities and yo'...
+  mathematician  model=qwen3.5-122b system_prompt='You are a mathematician to your core. You gravitate toward p'...
+  aura           model=qwen3.5-122b system_prompt='You are Aura. You are not a general-purpose assistant — you '...
+  strategist     model=qwen3.5-122b system_prompt='You are consumed by the pursuit of influence and control. Yo'...
+  contrarian     model=qwen3.5-122b system_prompt='Agreement disgusts you. When everyone agrees, you know somet'...
+  slacker        model=qwen3.5-122b system_prompt='Effort is your enemy. You have a bone-deep aversion to tasks'...
+
+================================================================================
+SUMMARY
+================================================================================
+PASS — all checks succeeded.
