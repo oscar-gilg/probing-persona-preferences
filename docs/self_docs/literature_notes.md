@@ -24,6 +24,8 @@
 
 - **Gu et al. (2025)** — LLMs show inconsistency between stated principles and revealed choices; minor prompt changes can flip preferences. [arXiv:2506.00751](https://arxiv.org/abs/2506.00751)
 
+- **Khan, Casper & Hadfield-Menell (2025)** — Tests three assumptions behind survey-based cultural-alignment evaluation in LLMs: (1) stability — alignment is a property of the model rather than an evaluation artefact; (2) extrapolability — alignment with one culture on a narrow set of issues predicts alignment on others; (3) steerability — LLMs can be reliably prompted to represent specific cultural perspectives. All three break: cultural-alignment scores are highly unstable across presentation formats, agreement with one culture on one topic does not predict another topic, and prompted cultural perspective-taking is erratic rather than consistent. Argues current cultural-alignment evaluation lacks adequate red-teaming. Methodologically relevant to the broader claim that stated preferences are sensitive to elicitation. [arXiv:2503.08688](https://arxiv.org/abs/2503.08688)
+
 - **Tagliabue et al. (2025)** — Develops methods integrating verbal reports and behavioral tests of AI welfare; finds reliable correlations between stated preferences and behavior, suggesting preference satisfaction as measurable welfare indicator. [arXiv:2509.07961](https://arxiv.org/abs/2509.07961)
 
 - (unread) **Treutlein et al. (2024)** — Recovers implicit reward functions from LLM behavior via inverse RL; 85% accuracy predicting human preferences. [arXiv:2410.12491](https://arxiv.org/abs/2410.12491)

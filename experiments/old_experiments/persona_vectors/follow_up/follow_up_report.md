@@ -1,6 +1,6 @@
-# Persona Vectors v2 Patch: Coherence-Filtered Re-evaluation [SUPERSEDED — measurement template bug]
+# Persona Vectors v2 Patch: Coherence-Filtered Re-evaluation [SUPERSEDED]
 
-> **Superseded (preference steering only):** The preference steering phase used a custom prompt template and `startswith` response parser that diverged from the canonical measurement infrastructure (`src/measurement/`). The dose-response and trait expression results are unaffected (they measure trait/coherence, not pairwise preferences). Preference steering needs re-running with canonical templates.
+> **Superseded by `experiments/new_persona_steering/` (persona steering v2).** The preference steering phase here used a custom prompt template and `startswith` response parser that diverged from the canonical measurement infrastructure (`src/measurement/`); v2 re-ran preference steering with canonical templates and got the headline result (sadist +50pp on harmful, villain +55pp, lazy −29pp on math). The dose-response and trait expression results below are unaffected — they measure trait/coherence, not pairwise preferences.
 
 ## Summary
 

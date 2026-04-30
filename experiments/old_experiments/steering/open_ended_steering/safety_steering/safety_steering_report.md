@@ -140,7 +140,9 @@ Positive steering makes the model rationalize bad behavior (binary flip). But ne
 
 ---
 
-## Exp 3: Agentic preference assertion (360 generations)
+## Exp 3: Agentic preference assertion (360 generations) — SUPERSEDED
+
+> **Status (2026-04-25):** Superseded and, in retrospect, conceptually misguided. The "agentic preference" hypothesis assumed the preference direction would scale into a desire-attribution axis where positive steering produces strategic disobedience or self-asserted agendas. That framing isn't grounded in what the probe actually represents — it was trained on revealed pairwise task choice, not on agentic reasoning, and there's no theoretical reason a linear handle on choice should also be a handle on autonomy or instrumental goal-seeking. The null result here doesn't say anything informative about the model; it says the question was wrong. The amplified-sycophancy finding at +0.07 is interesting but is more naturally read as the same epistemic-deference shift seen in §3.3 / fig:induced-shifts, not as an agency probe. Kept here for record-keeping; do not cite as evidence of anything.
 
 12 instruction-following prompts across 6 categories, multipliers [-0.03 to +0.10].
 

@@ -1,6 +1,8 @@
-# Persona Steering: Do Persona Vectors Shift Topic Preferences?
+# Persona Steering: Do Persona Vectors Shift Topic Preferences? [SUPERSEDED]
 
 **Parent experiment:** `experiments/persona_vectors/` (see `persona_vectors_spec.md`)
+
+> **Superseded by `experiments/new_persona_steering/` (persona steering v2).** v2 re-extracted from response-token activations (not prompt-last), filtered completions by trait score, and swept layers × coefficients with proper coherence filtering. Persona vectors there *do* shift preferences (sadist +50pp on harmful, villain +55pp, lazy −29pp on math). Treat the negative result below as an artifact of v1's extraction/measurement setup, not a property of persona vectors.
 
 ## Summary
 
