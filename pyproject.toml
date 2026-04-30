@@ -36,6 +36,17 @@ gpu = [
     "kernels",
 ]
 
+# SFT pipeline (sft_sadist + future SFT runs). Unsloth is required for
+# tractable Qwen3.5-122B-A10B LoRA — vanilla peft does not have MoE-aware
+# kernels for this architecture. Install with `uv pip install -e ".[sft]"`.
+sft = [
+    "unsloth>=2024.10",
+    "trl>=0.12.0",
+    "peft>=0.13.0",
+    "datasets>=2.20.0",
+    "wandb>=0.18.0",
+]
+
 viz = [
     "adjustText>=1.0.0",
     "ipywidgets>=8.0.0",

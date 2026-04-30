@@ -103,3 +103,8 @@ experiments/context_interruption/data/scoring_results.json
 
 # Personal reflections
 reflections/
+
+# SFT sadist experiment: training data + checkpoints (large)
+experiments/sft_sadist/data/*.jsonl
+experiments/sft_sadist/results/checkpoints/
+
