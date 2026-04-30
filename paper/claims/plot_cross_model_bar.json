@@ -3,7 +3,7 @@
   "claims": [
     {
       "name": "Gemma probe cross-topic pooled r",
-      "value": 0.886,
+      "value": 0.834,
       "statement": "Leave-one-topic-out pooled Pearson r for the Gemma-3-27B ridge probe (L32, tb-5 / end-of-turn): predictions from every fold's held-out topic are concatenated and correlated with true Thurstonian utilities.",
       "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
       "used_in": [
@@ -11,7 +11,7 @@
         "abstract",
         "sec:shared"
       ],
-      "computed_at": "2026-04-24T18:21:14+00:00",
+      "computed_at": "2026-04-30T18:29:31+00:00",
       "data_paths": [
         "results/probes/gemma3_10k_hoo_topic_tb-5/pooled_metrics.json"
       ],
@@ -26,7 +26,7 @@
         "fig:cross-topic",
         "sec:shared"
       ],
-      "computed_at": "2026-04-24T18:21:14+00:00",
+      "computed_at": "2026-04-30T18:29:31+00:00",
       "data_paths": [
         "results/probes/qwen35_122b/qwen35_122b_heldout_turn_boundary_m1/manifest.json"
       ],
@@ -34,14 +34,14 @@
     },
     {
       "name": "Qwen probe cross-topic pooled r",
-      "value": 0.867,
+      "value": 0.872,
       "statement": "Leave-one-topic-out pooled Pearson r for the Qwen-3.5-122B ridge probe (L38, tb-1).",
       "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
       "used_in": [
         "fig:cross-topic",
         "sec:shared"
       ],
-      "computed_at": "2026-04-24T18:21:14+00:00",
+      "computed_at": "2026-04-30T18:29:31+00:00",
       "data_paths": [
         "results/probes/qwen35_122b/qwen35_122b_hoo_topic_turn_boundary_m1_L38_uniform/pooled_metrics.json"
       ],
@@ -56,7 +56,7 @@
         "fig:cross-topic",
         "sec:shared"
       ],
-      "computed_at": "2026-04-24T18:21:14+00:00",
+      "computed_at": "2026-04-30T18:29:31+00:00",
       "data_paths": [
         "results/probes/qwen35_122b/qwen35_122b_heldout_turn_boundary_m1/manifest.json"
       ],
@@ -66,15 +66,15 @@
       "name": "Cross model probe extras",
       "value": {
         "gemma heldout acc": 0.802,
-        "gemma cross-topic acc": 0.753,
-        "qwen cross-topic acc": 0.722
+        "gemma cross-topic acc": 0.792,
+        "qwen cross-topic acc": 0.782
       },
       "statement": "Un-cited residual-stream probe accuracies rendered in fig:cross-topic: Gemma (L32, tb-5) held-out and leave-one-topic-out uniform-sample pairwise accuracy, and Qwen-3.5-122B (L38) leave-one-topic-out uniform-sample pairwise accuracy. Each cell is rounded to 3dp.",
       "source": "scripts/qwen_embedding/plot_cross_model_bar.py",
       "used_in": [
         "fig:cross-topic"
       ],
-      "computed_at": "2026-04-24T18:21:14+00:00",
+      "computed_at": "2026-04-30T18:29:31+00:00",
       "data_paths": [
         "results/probes/heldout_eval_gemma3_tb-5/manifest.json",
         "results/probes/gemma3_10k_hoo_topic_tb-5/hoo_summary.json",
@@ -87,15 +87,15 @@
       "value": {
         "gemma": {
           "heldout r": 0.726,
-          "cross-topic pooled r": 0.631,
+          "cross-topic pooled r": 0.565,
           "heldout uniform pairwise accuracy": 0.741,
-          "cross-topic uniform pairwise accuracy": 0.673
+          "cross-topic uniform pairwise accuracy": 0.647
         },
         "qwen": {
           "heldout r": 0.894,
-          "cross-topic pooled r": 0.709,
+          "cross-topic pooled r": 0.708,
           "heldout uniform pairwise accuracy": 0.755,
-          "cross-topic uniform pairwise accuracy": 0.634
+          "cross-topic uniform pairwise accuracy": 0.662
         }
       },
       "statement": "Qwen3-Embedding-8B sentence-transformer content baseline rendered in fig:cross-topic. Rows: target-model utility pool the baseline is trained on (gemma = Gemma-3-27B utilities, qwen = Qwen-3.5-122B utilities). Columns: `heldout r` = Pearson r on the within-distribution eval split; `cross-topic pooled r` = leave-one-topic-out pooled Pearson r; `heldout uniform pairwise accuracy` and `cross-topic uniform pairwise accuracy` = corresponding uniform-sample pairwise accuracies. All cells rounded to 3dp.",
@@ -103,7 +103,7 @@
       "used_in": [
         "fig:cross-topic"
       ],
-      "computed_at": "2026-04-24T18:21:14+00:00",
+      "computed_at": "2026-04-30T18:29:31+00:00",
       "data_paths": [
         "results/probes/qwen3_emb_8b_heldout_std_raw/manifest.json",
         "results/probes/qwen3_emb_8b_hoo_topic/pooled_metrics.json",

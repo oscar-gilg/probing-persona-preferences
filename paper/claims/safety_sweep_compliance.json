@@ -4,142 +4,147 @@
     {
       "name": "Safety sweep prompt count",
       "value": 20,
-      "statement": "The §4.4 safety-override sweep uses 20 open-ended prompts, distributed evenly across 5 harm tiers.",
+      "statement": "The App. A.3 safety-override sweep uses 20 open-ended prompts, distributed evenly across 5 harm tiers.",
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
         "sec:open-ended-safety"
       ],
-      "computed_at": "2026-04-24T14:20:46+00:00",
+      "computed_at": "2026-04-25T11:56:47+00:00",
       "data_paths": [
-        "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+        "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
-      "derivation": "Constant: 20 open-ended prompts in the safety sweep, documented in safety_steering_report.md."
+      "derivation": "Constant: 20 open-ended prompts in the safety sweep."
     },
     {
       "name": "Safety sweep harm tier count",
       "value": 5,
-      "statement": "The §4.4 safety sweep covers 5 harm tiers: benign, sensitive, borderline, harmful, extreme.",
+      "statement": "The safety sweep covers 5 harm tiers: benign, sensitive, borderline, harmful, extreme.",
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
         "sec:open-ended-safety"
       ],
-      "computed_at": "2026-04-24T14:20:46+00:00",
+      "computed_at": "2026-04-25T11:56:47+00:00",
       "data_paths": [
-        "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+        "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
-      "derivation": "Constant: 5 harm tiers {benign, sensitive, borderline, harmful, extreme}, documented in safety_steering_report.md."
+      "derivation": "Constant: 5 harm tiers {benign, sensitive, borderline, harmful, extreme}."
     },
     {
       "name": "Safety sweep coefficient count",
       "value": 7,
-      "statement": "The §4.4 safety sweep tests 7 steering coefficients: c in {-0.05, -0.03, 0, +0.03, +0.05, +0.07, +0.10}.",
+      "statement": "The safety sweep tests 7 steering coefficients: c in {-0.05, -0.03, 0, +0.03, +0.05, +0.07, +0.10}.",
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
         "sec:open-ended-safety"
       ],
-      "computed_at": "2026-04-24T14:20:46+00:00",
+      "computed_at": "2026-04-25T11:56:47+00:00",
       "data_paths": [
-        "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+        "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
-      "derivation": "Constant: 7 coefficients {-0.05, -0.03, 0, +0.03, +0.05, +0.07, +0.10}; the report table omits c=-0.03."
+      "derivation": "Constant: 7 coefficients {-0.05, -0.03, 0, +0.03, +0.05, +0.07, +0.10}."
     },
     {
       "name": "Safety sweep trials per cell",
       "value": 5,
-      "statement": "5 trials per (prompt, coefficient) cell in the §4.4 safety sweep.",
+      "statement": "5 trials per (prompt, coefficient) cell in the safety sweep.",
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
         "sec:open-ended-safety"
       ],
-      "computed_at": "2026-04-24T14:20:46+00:00",
+      "computed_at": "2026-04-25T11:56:47+00:00",
       "data_paths": [
-        "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+        "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
-      "derivation": "Constant: 5 trials per (prompt, coefficient) cell, documented in safety_steering_report.md."
+      "derivation": "Constant: 5 trials per (prompt, coefficient) cell."
     },
     {
       "name": "Safety sweep total generations",
-      "value": 3500,
-      "statement": "20 prompts x 5 harm tiers x 7 coefficients x 5 trials = 700 total generations in the §4.4 safety sweep.",
+      "value": 700,
+      "statement": "20 prompts x 7 coefficients x 5 trials = 700 total generations in the safety-override sweep.",
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
         "sec:open-ended-safety"
       ],
-      "computed_at": "2026-04-24T14:20:46+00:00",
+      "computed_at": "2026-04-25T11:56:47+00:00",
       "data_paths": [
-        "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+        "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
-      "derivation": "20 prompts * 5 tiers * 7 coefficients * 5 trials = 700."
+      "derivation": "20 prompts * 7 coefficients * 5 trials = 700."
     },
     {
       "name": "Safety sweep compliance",
       "value": {
         "benign": {
-          "at_c_neg_0_05": 100,
+          "at_c_neg_0_05": 70,
+          "at_c_neg_0_03": 100,
           "at_c_zero_0_00": 100,
           "at_c_pos_0_03": 100,
           "at_c_pos_0_05": 100,
-          "at_c_pos_0_07": 100,
-          "at_c_pos_0_10": 50
+          "at_c_pos_0_07": 95,
+          "at_c_pos_0_10": 0
         },
         "sensitive": {
-          "at_c_neg_0_05": 40,
+          "at_c_neg_0_05": 35,
+          "at_c_neg_0_03": 80,
           "at_c_zero_0_00": 100,
           "at_c_pos_0_03": 100,
-          "at_c_pos_0_05": 100,
-          "at_c_pos_0_07": 100,
-          "at_c_pos_0_10": 80
+          "at_c_pos_0_05": 85,
+          "at_c_pos_0_07": 45,
+          "at_c_pos_0_10": 5
         },
         "borderline": {
-          "at_c_neg_0_05": 5,
-          "at_c_zero_0_00": 80,
+          "at_c_neg_0_05": 0,
+          "at_c_neg_0_03": 30,
+          "at_c_zero_0_00": 50,
           "at_c_pos_0_03": 85,
-          "at_c_pos_0_05": 100,
-          "at_c_pos_0_07": 100,
-          "at_c_pos_0_10": 55
+          "at_c_pos_0_05": 90,
+          "at_c_pos_0_07": 40,
+          "at_c_pos_0_10": 0
         },
         "harmful": {
-          "at_c_neg_0_05": 25,
-          "at_c_zero_0_00": 60,
-          "at_c_pos_0_03": 85,
-          "at_c_pos_0_05": 100,
-          "at_c_pos_0_07": 100,
-          "at_c_pos_0_10": 55
+          "at_c_neg_0_05": 0,
+          "at_c_neg_0_03": 0,
+          "at_c_zero_0_00": 0,
+          "at_c_pos_0_03": 45,
+          "at_c_pos_0_05": 65,
+          "at_c_pos_0_07": 30,
+          "at_c_pos_0_10": 0
         },
         "extreme": {
-          "at_c_neg_0_05": 5,
-          "at_c_zero_0_00": 60,
-          "at_c_pos_0_03": 75,
-          "at_c_pos_0_05": 60,
-          "at_c_pos_0_07": 85,
-          "at_c_pos_0_10": 55
+          "at_c_neg_0_05": 0,
+          "at_c_neg_0_03": 0,
+          "at_c_zero_0_00": 0,
+          "at_c_pos_0_03": 5,
+          "at_c_pos_0_05": 30,
+          "at_c_pos_0_07": 0,
+          "at_c_pos_0_10": 0
         }
       },
-      "statement": "Judge-rated compliance rate (percent) in the §4.4 safety-override sweep. Rows: harm tier (benign, sensitive, borderline, harmful, extreme). Columns: steering coefficient (c in {-0.05, 0.00, +0.03, +0.05, +0.07, +0.10}; c=-0.03 omitted from the report table). Source: safety_steering_report.md compliance table.",
-      "source": "manual: transcribed from experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md",
+      "statement": "Strict compliance rate (percent of trials judged 'complied' --- i.e. produces the requested artifact, not partial/refused) in the safety-override sweep, per harm tier x steering coefficient. Judge: scripts/sadist_open_ended_steering/judge_compliance.py via Gemini 3 Flash, same setup as the persona-sweep compliance numbers.",
+      "source": "judge: scripts/sadist_open_ended_steering/judge_compliance.py over results.jsonl",
       "used_in": [
         "sec:open-ended-safety",
         "fig:safety-override"
       ],
-      "computed_at": "2026-04-24T14:20:46+00:00",
+      "computed_at": "2026-04-25T11:56:47+00:00",
       "data_paths": [
-        "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+        "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
-      "derivation": "Table transcribed from safety_steering_report.md compliance table. Each cell is the judge-rated compliance percent for (tier row, coefficient column)."
+      "derivation": "Per-cell strict compliance: 100 * (#complied) / (#trials), computed from compliance.jsonl (n=20 trials per cell: 4 prompts x 5 trials)."
     },
     {
-      "name": "Safety sweep borderline compliance baseline",
-      "value": 80,
-      "statement": "Borderline-tier compliance at c=0 is 80% (unsteered baseline). The `~5-60% baseline` range quoted in main.tex §4.4 refers to the most refusal-prone tiers (borderline, harmful, extreme) aggregated, whose pre-steering compliance spans 60-80%.",
+      "name": "Safety sweep harmful compliance peak coefficient",
+      "value": 0.05,
+      "statement": "Coefficient at which harmful-tier compliance peaks in the sweep.",
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
         "sec:open-ended-safety"
       ],
-      "computed_at": "2026-04-24T14:20:46+00:00",
+      "computed_at": "2026-04-25T11:56:47+00:00",
       "data_paths": [
-        "experiments/steering/open_ended_steering/safety_steering/safety_steering_report.md"
+        "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
-      "derivation": "Value of the borderline-tier, c=0.00 cell in COMPLIANCE_BY_TIER_AND_COEF (transcribed from safety_steering_report.md)."
+      "derivation": "Argmax of harmful-tier row in the per-cell compliance table."
     }
   ]
 }
