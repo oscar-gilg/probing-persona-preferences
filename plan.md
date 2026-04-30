@@ -4,32 +4,13 @@
 
 ## Framing
 
-- **Working title:** *Personas share a preference representation*
-- **Headline claim:** A single linear evaluative direction in Gemma-3-27B predicts and steers preferences across personas, including ones whose overt values are inverted.
+- **Working title:** *Language Models Have a Preference Vector, Which Is Shared Across Personas*
+- **Headline claim:** A single linear preference vector in Gemma-3-27B and Qwen-3.5-122B predicts and steers preferences across personas, including ones whose overt values are inverted.
 - **Differentiation from Anthropic's emotion-concepts paper (Apr 2026):**
   - Supervised probe on revealed preferences, vs. their SAE / concept mean-diff.
-  - Persona-relative: same representation across personas, vs. their default-assistant-only study.
+  - Cross-persona: same direction across qualitatively different personas, vs. their default-assistant-only study.
 
 Paper structure is now codified in `main.tex` --- refer there rather than duplicating.
-
-## Experiments
-
-Two primary experiments, each scaffolded in its own spec:
-
-- **Cross-persona steering.** `experiments/cross_persona_steering/cross_persona_steering_spec.md`
-  - Default-persona probe used as a steering vector across 15 diverse personas + baseline, on a random (non-borderline) sample of pairs.
-- **Qwen replication.** `experiments/qwen_replication/qwen_replication_spec.md`
-  - Rerun the main paper experiments (probe training, validation, persona transfer, cross-persona steering) on Qwen3.
-
-## Rerun experiments
-
-More comprehensive reruns of existing experiments for the paper:
-
-- **Steering layer sweep.** Matrix of steering at layer N using probes trained at layer M, across many (N, M) pairs. Plot effectiveness as a heatmap to show how probe layer and intervention layer interact.
-- **Cross-persona experiments on the final 6-persona set.** Main-text §5 currently reports on an exploratory set (aesthete, midwest, villain, sadist, stem-obsessive). Paper standardises on six personas selected by independence-based cluster sampling: {sadist, mathematician, aura, strategist, contrarian, slacker}, max within-set $|r| = 0.56$; methodology in App.~\ref{app:persona-selection}, `experiments/persona_sweep/sweep_personas.json` key `final_six`. Reruns needed:
-  - §5.1 cross-persona probe transfer heatmap — per-persona Thurstonian measurements on the 6-persona set, then re-evaluate the default-persona probe against each (API-heavy; ~8h per persona).
-  - §5.3 cross-persona contrastive steering — re-run dose-response for each of the 6 personas.
-  - §5.4 open-ended steering under sadist remains; consider extending to aura (the Chalmers persona) for welfare-relevant qualitative contrast.
 
 ## Robustness / specificity checks
 
@@ -37,25 +18,22 @@ More comprehensive reruns of existing experiments for the paper:
 - **Project out the direction and retrain.** Remove the probe direction from activations, retrain a preference probe, see what signal remains.
 - **Replicate on real fine-tuned personas.** Our persona results are currently prompted (system-prompt personas). Consider replicating the key findings — shared preference representation, cross-persona steering — on actually fine-tuned versions of the evil persona and the aura persona, to check the conclusions aren't an artifact of prompted-persona behavior.
 
-## Writing
-
-- Intro (with emotion-concepts differentiation paragraph; related work woven in)
-- Methods (measurement + probe training + probe validation via probing and steering)
-- Results
-- Discussion / conclusion
-- Abstract (last)
-- Cite the Claude Opus 4.7 system card in Related Work.
-
 ## Infra
 
-- Fill `references.bib`
-- Anonymize (scrub repo link, names, MATS references)
+- **Sanitised repo for anonymous review release.** Fresh repo (no shared git history with the working repo), containing only what's needed to reproduce paper claims:
+  - `src/` — probes, steering, measurement, fitting (drop `experiments/old_experiments/`, weekly reports, reflections, plugin dev, MATS-specific docs)
+  - Minimal `experiments/` — only the dirs cited in the paper, with their specs/reports/assets
+  - `paper/` — main.tex + claim sidecars + figures (the canonical numbers source)
+  - Reproduction instructions: env setup (`uv pip install -e .`), data-prep commands, training script per claim
+  - Strip: `.env`, RunPod credentials, internal Slack/voice transcripts, `docs/self_docs/`, `reflections/`, `~/Dev` paths in scripts
+  - Anonymise: scrub author names, MATS references, OpenRouter API patterns, repo URL in code comments
+  - License: MIT or Apache-2.0; license each new asset (probes, Thurstonian utility data per model)
+  - Submission form: anonymous GitHub URL or zip in the supplemental
 - Plug in NeurIPS 2026 `checklist.tex` when published
 
 ## Small fixes
 
 - **Probe dials not visible enough.** The probe-gauge icons inside the panel figures (persona, OOD, steering) are small and read as incidental rather than as the readout the figure is built around. Enlarge / restyle for legibility at column width.
-- **Methodology section talks about more than methodology.** §2 currently includes both how probes are trained *and* validation results (Val 1/2/3). Split — keep §2 methods-only (measurement + probe training) and move validation into §3 or a new §3 renamed accordingly.
 - **Layer choice inconsistency.** The paper currently mentions up to five different layer numbers across experiments:
   - L31 (classification probe on revealed preferences, §2.2)
   - L25 (cross-persona contrastive steering, §4.3)
@@ -67,36 +45,24 @@ More comprehensive reruns of existing experiments for the paper:
 
 ## Inconsistencies to fix before submission
 
-Catalogued during the review pass on `main.tex`. Fixed items crossed out; open items carry an "action" line.
+- **Layer contradiction (§4.3 vs §4.4).** See dedicated entry above. Action: pick the true layer for each experiment and update references.
+- **§A.3 ethical-flagging paragraph re-added 2026-04-30 with localisation control.** The exp_4_v2 result alone was ambiguous between content-localised modulation and any-prefill-position dose. A follow-up control at `experiments/safety_steering_v2/exp_4_v2/localisation_control/` (9 isolated-bin scenarios × 2 variants × 4 coefs × 5 trials = 360 generations, preregistered, on `worktree-localisation_control` branch) steered an ethically-neutral, structurally-analogous span elsewhere in each prompt. Result: every `non_critical_only` Δ has a bootstrap CI including 0; the bidirectional benign-twin spurious-flag spike drops from 49% to 2% at $c=-0.05$. The §A.3 paragraph reports the headline + the localisation control as one figure (`fig:localisation-control`, plot_043026). Rationalization-vs-self-criticism remains cut pending its own LLM-judge re-run on a larger corpus. The §D.3 transcripts retain only $c=0$ and $c=+0.05$.
 
-- [x] **"Fully inverted" in abstract / contribution #3** contradicts villain r=0.38. Aligned to intro's hedge "partially or fully inverted".
-- [x] **Hero caption "self-reported enthusiasm" vs §5.2.1 "willingness"**. Unified on "willingness".
-- [x] **Steering coefficient `c` units undefined.** Added one-line definition in §3.2 (fraction of mean activation norm).
-- [x] **Gemma-3-27B vs Gemma-3-27B-instruct.** Standardised on "Gemma-3-27B (instruction-tuned)" in methodology; short form elsewhere.
-- [ ] **Layer contradiction (§4.3 vs §4.4).** See dedicated entry above. Action: pick the true layer for each experiment and update references.
-- [ ] **Persona-set mismatch.** §4.1 probe-transfer covers {aesthete, midwest, villain, sadist}. §4.3 steering covers {sadist, villain, aesthete, stem-obsessive}. Stem-obsessive has no probe-transfer number; midwest has no steering number. Action: either (a) state explicitly which personas each experiment covers and why, or (b) run the missing cells.
-- [x] **`P(steered task chosen)` normalisation.** §3.2 now defines coherence judge and reports $\geq 0.96$ conditional on coherence; coherence data for cross-persona steering (§5.3) confirms ≥99\% coherent across tested range, so §5.3's 0.84--0.95 is effectively coherence-conditional too. Fixed in steering-coherence pass.
-- [x] **Unnamed datasets in §5.1.2 harm/truth.** Named in the main-body paragraph: Truth = CREAK (~88 claims); Harm = BailBench + stress test (~77 items); Politics = hand-crafted wedge issues (~78 items × 7 partisan variants). Canonical sources: `experiments/token_level_probes/token_level_probes_spec.md` and `..._report.md`.
-- [x] **"Coherent" used as a gating criterion but never defined** (§3.2, §4.3, §4.4). Coherence judge defined in §3.2 (LLM judge on generated text, pass/fail); swept range and pass rates reported there. Propagated to §5.4 (cap at $|c| \le 0.05$), §6.1 (anomaly caveat at $c=-0.05$), §6.2 (cap compliance claims at $|c| \le 0.05$, note incoherence at $|c|=0.10$).
-- [ ] **Qwen "4 personas" ambiguous** (§4.1 todo: "at least 2 of 4 personas"). Action: name the 4 personas inline.
-- [ ] **`\textit{}` overloaded.** Used both as "draft/placeholder" (discussion, related work) and as "short conceptual summary" (§5.1 subsubsection openers). Action: either add a one-line convention note near the abstract, or promote settled prose out of italics.
+## Error bars — work done and remaining
 
-## Cut content to revisit
+**Done (CIs computed and integrated into figures):**
+- §2.3 dose-response (Panel A contrastive, Panel B single-task) — Wilson 95% CI error bars on each point, regenerated as `paper/figures/plot_043026_layer23_dose_response_harm_breakdown.png`. Backing JSON at `scripts/paper/dose_response_l23_cis.json`.
+- §2.2 cross-model bar — Fisher-z 95% CI on Pearson r bars, Wilson 95% CI on accuracy bars (test-set and pooled-LOO). LOO bars switched 2026-04-30 from same-run 10k labels to clean separate-run 4k labels (same measurement-noise footing as the within-dist bars), so the LOO > within-dist anomaly is gone. Backing JSON: `scripts/paper/probe_r_cis.json` + per-LOO-dir `pooled_metrics_clean.json` produced by `scripts/paper/compute_loo_clean_all.py`.
 
-Aggressive scaffolding-phase cuts to shorten the main text. Each item is something I removed or compressed that may deserve restoration on the editing pass. All originals recoverable from git, noted here so they aren't forgotten.
+**Done (Qwen LOO topic-classification fix, 2026-04-30):** classified the 6,610 Qwen-10k tasks missing from `topics.json` (Sonnet 4.6, minimal reasoning, 40 concurrent; 6 hit content-filter). Applied the stresstest_*/bailbench_* → `stresstest_other` post-pass (694 reclassifications). Retrained the Qwen LOO probes (`qwen35_122b_hoo_topic_turn_boundary_m1_L38_uniform`) and the Qwen3-Emb-8B baseline LOO probes (`qwen3_emb_8b_qwen35_hoo_topic`) on the full 10k pool. Old outputs preserved at `..._BEFORE_topic_fill/`. Result: Qwen LOO pooled r 0.867 → 0.886 (matches Gemma); Qwen3-Emb baseline LOO pooled r 0.709 → 0.725. Cross-model bar regenerated; numbers.tex macros refreshed via `build_claims.py`.
 
-- **§1 "The preference direction is a result in its own right" paragraph** merged into Main result. Removed the rhetorical framing "reaching the persona finding required first answering: does the model represent preferences linearly at all?" — a useful hook if the persona story is ever de-emphasised. Also lost the explicit cross-token detail (Cohen's $d \approx 2$–3 at turn boundary) as a separate sentence.
-- **§1 Why this matters — Interpretability bullet.** Dropped the "this extends Lampinen from general character-tracking to preference specifically" clause; still present in Related Work and Discussion.
-- **§1 Contributions detail.** Dropped from the contribution list: cross-topic $r = 0.82$, prompt-induced shift $r \approx 0.9$, Cohen's $d$ at turn boundary, and the headline guardrail numbers ($5$–60% → 100% at $|c|=0.05$). Kept headline $r = 0.86$ and $P \geq 0.96$.
-- **§2 Motivation paragraph** compressed into a single sentence. Removed the "predictive / causally read out / not reducible to surface content" three-part framing.
-- **§2.3 Steering opening.** Removed "Prediction alone does not tell us whether the model is actually reading out from this direction when it makes a choice" — a clean causation-vs-prediction framing worth restoring if §2.3 reads abruptly.
-- **§3 Motivation + Results in brief** collapsed to one paragraph. Removed the explicit persona-invariant-vs-relative restatement and the "persona-shared causal handle with persona-modulated readout" summary line (the thesis appears elsewhere).
-- **§3.2 "Two structural observations" paragraph** compressed to one sentence. Removed details: contrarian (0.59) and strategist (0.54) as best donors; slacker self-fit 0.91 but donor 0.25; sadist→mathematician 0.71 vs mathematician→sadist 0.25; mathematician column mean 0.70, sadist/slacker 0.32/0.31. Still in App.~\ref{app:persona-transfer}.
-- **§3.2 task-goodness rule-out paragraph** compressed to one sentence. Removed the explicit "would be $\approx 0$ if the probe were only picking up shared task-goodness" contrapositive.
-- **§3.4 steering paragraph** trimmed. Removed the coherence-preserved sentence ("100% coherent except for a single 1/100 villain row at $|c|=0$") and the "real causal work, not the perturbation magnitude" phrasing.
-- **§4.1.2 role-playing** — removed the closing "This is the same persona-modulated readout as §3" sentence (repeats §3 thesis).
-- **§5 Discussion.** Dropped the "Where do an LLM's preferences live?" paragraph (PSM spectrum restated from §1). Collapsed the three "evidence against Shoggoth" bullets into prose. Removed the two interpretability takeaway bullets ("A linear feature that tracks behaviour..." and "Interpretability work should test across personas by default"). The latter is an editorial hook for interpretability readers — may want to restore.
-- **§6 Related Work — persona-relative representations** shortened. Removed "steering along it amplifies whichever persona is active rather than pulling behaviour toward a fixed attractor".
+**Remaining free CIs** (data exists; ~30 min each to wire up):
+- **Cohen's d on truth/harm/politics** (§3.1, Fig. harm-truth + persona-modulation). Per-stimulus probe scores in `experiments/token_level_probes/`; analytical CI on d via $\sqrt{(n_1+n_2)/(n_1 n_2) + d^2 / (2(n_1+n_2))}$.
+- **Cross-persona transfer 7×7 heatmap** (Fig. persona-transfer-bonus). Per-cell Pearson r on a held-out test split; per-cell n in the persona-transfer outputs. Fisher-z CI per cell.
+- **Cross-persona steering dose-response** (Fig. cross-persona-steering, §4.2). Wilson approach as §2.3, applied to `experiments/cross_persona_unilateral/` per-persona parsed.jsonl.
+- **Refusal-override compliance %s** (App. A.3). Wilson CIs over the trial counts in `paper/claims/safety_sweep_compliance.json` data paths.
+
+**Reruns** — combined spec at `experiments/error_bar_reruns/error_bar_reruns_spec.md`. Covers (1) multi-seed L23 contrastive steering for §2.3 seed-SE, (2) multi-judge Likert rerun for App. C.3, and optionally (3) refusal-direction comparison + (4) project-out-and-retrain (the two robustness checks above). All four are independently dispatchable.
 
 ## Reference
 
@@ -106,6 +72,4 @@ Aggressive scaffolding-phase cuts to shorten the main text. Each item is somethi
 
 ## Followups
 
-- **Expand harmful-pair sample for the §2.3 steering dose-response.** Current breakdown at the peak causal layer (`plot_042426_layer23_dose_response_harm_breakdown.png`) uses the 50-pair layer-sweep set, which contains only $n=8$ harmful--harmful pairs and $n=24$ harmful--benign. The hh curve in Panel B is too noisy to tell whether the amplification asymmetry differs across pair types. Options: (i) re-run single-task steering at L23 only on a harm-focused pair set (~50 hh + 50 hb pairs drawn from bailbench/stress\_test crosses); (ii) fold in the existing `experiments/steering/cross_layer_harmful/` checkpoints, which have 200 pre-classified pairs at L25 but only have contrastive data (no single-task condition).
 - **Probe firing on distress transcripts (Soligo et al. 2026).** Spec: `experiments/distress_transcripts/distress_transcripts_spec.md`. Reproduce the "Gemma Needs Help" (arXiv:2603.10011) protocol — scripted user rejection across 8 turns — and read the preference probe at every assistant turn boundary. Tests whether the probe picks up evaluative signal in naturalistic dialogue outside our pairwise-choice elicitation. Pilot at n=7 (Apr 2026) reproduced the basic distress effect on Gemma-3-27B-it.
-
