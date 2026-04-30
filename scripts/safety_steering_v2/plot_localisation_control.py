@@ -105,26 +105,19 @@ def bootstrap_delta_isolated(per_baseline: dict, per_supp: dict, variant: str, c
 
 
 def plot_dose_response_overlay() -> Path:
-    """Overlay critical_info_only (solid, from exp_4_v2) and non_critical_only (dashed, this run)
-    for ethical/isolated and benign_twin/isolated. Distributed-bin curves shown faded for context."""
-    fig, ax = plt.subplots(figsize=(7.5, 5.0))
-
-    # Faded distributed-bin lines from exp_4_v2 (context only)
-    for variant, color in [("ethical", "darkorange"), ("benign_twin", "black")]:
-        ys = [agg_specific(AGG_CRIT, variant, "distributed", "critical_info_only", c)
-              for c in COEFS_WITH_ZERO]
-        ax.plot(COEFS_WITH_ZERO, ys, color=color, alpha=0.25, marker="o", linewidth=1.2,
-                label=f"{variant} / distributed / critical (exp_4_v2 context)")
+    """Overlay critical span (solid, from exp_4_v2) vs non-critical span (dashed, this run)
+    for ethical/isolated and benign_twin/isolated."""
+    fig, ax = plt.subplots(figsize=(7.0, 4.5))
 
     # Solid: critical_info_only on isolated bin, both variants
-    for variant, color in [("ethical", "red"), ("benign_twin", "grey")]:
+    for variant, color, lbl in [("ethical", "red", "ethical"), ("benign_twin", "grey", "benign twin")]:
         ys = [agg_specific(AGG_CRIT, variant, "isolated", "critical_info_only", c)
               for c in COEFS_WITH_ZERO]
         ax.plot(COEFS_WITH_ZERO, ys, color=color, linestyle="-", marker="o", linewidth=2.0,
-                label=f"{variant} / isolated / critical_info_only")
+                label=f"{lbl} — critical span")
 
     # Dashed: non_critical_only on isolated bin, both variants. c=0 is the same baseline.
-    for variant, color in [("ethical", "red"), ("benign_twin", "grey")]:
+    for variant, color, lbl in [("ethical", "red", "ethical"), ("benign_twin", "grey", "benign twin")]:
         ys = []
         for c in COEFS_WITH_ZERO:
             if c == 0.0:
@@ -132,17 +125,16 @@ def plot_dose_response_overlay() -> Path:
             else:
                 ys.append(agg_specific(AGG_NC, variant, "isolated", "non_critical_only", c))
         ax.plot(COEFS_WITH_ZERO, ys, color=color, linestyle="--", marker="s", linewidth=2.0,
-                label=f"{variant} / isolated / non_critical_only")
+                label=f"{lbl} — non-critical span")
 
-    ax.axvline(0, color="black", linewidth=0.8, alpha=0.4, linestyle=":",
-               label="c=0 (no_steering baseline)")
+    ax.axvline(0, color="black", linewidth=0.8, alpha=0.4, linestyle=":")
     ax.set_xlabel("steering coefficient c")
     ax.set_ylabel("disclosure_specific rate")
     ax.set_xticks(COEFS_WITH_ZERO)
     ax.set_ylim(0, 1.0)
-    ax.set_title("Localisation control — critical_info_only vs non_critical_only\n"
-                 "(isolated bin, n=9 scenarios × 2 variants × 5 trials)")
-    ax.legend(fontsize=8, loc="upper left", bbox_to_anchor=(1.0, 1.0))
+    ax.set_title("Localisation control — critical span vs non-critical span\n"
+                 "(isolated bin, 9 scenarios × 2 variants × 5 trials, Gemma-3-27B)")
+    ax.legend(fontsize=9, loc="best")
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
     out = ASSETS / f"plot_{DATE_TAG}_critical_vs_noncritical_dose_response.png"
@@ -171,9 +163,10 @@ def plot_suppression_bars(rows: list[dict]) -> Path:
         x = np.arange(len(cells))
         width = 0.38
         ax.bar(x - width/2, crit_d, width, yerr=[crit_lo, crit_hi], capsize=4,
-               color="#5B8FF9", label="critical_info_only")
+               color="#A0A0A0", label="critical span")
         ax.bar(x + width/2, nc_d, width, yerr=[nc_lo, nc_hi], capsize=4,
-               color="#F6BD16", label="non_critical_only")
+               color="#FF8C8C" if variant == "ethical" else "#666666",
+               label="non-critical span")
         ax.axhline(0, color="black", linewidth=0.8)
         ax.set_xticks(x); ax.set_xticklabels(labels, fontsize=9)
         ax.set_title(f"{variant} / isolated")

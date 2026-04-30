@@ -13,3 +13,11 @@
 - New corpus: 9 isolated × 2 variants × 4 coefs × 5 trials = **360 generations** / ~20 min H100.
 - Spec updated in worktree: rule 1 swapped from "±5 token match" to "max contiguous length, length deficit documented as a known confound".
 
+
+## 2026-04-30 — sweep done + analysis
+
+- Sweep wall: 23:00 on H100 SXM. 360/360 generations, no crashes, results synced back.
+- Judge first pass: 29/360 errors (all instructor-validation `brief_justification` max_length=400). Rejudge with relaxed schema recovered all 29, 0 final errors.
+- Aggregations + per-scenario JSONs landed.
+- **Result: localisation cleanly supported.** Every `non_critical_only` Δ has 95% CI including 0 on both variants. The benign-twin spurious-flag spike (0% → 49% at c=−0.05 under critical_info_only) drops to 0% → 2% under non_critical_only. The critical-info-only signal isn't a generic prefill-position effect; it's content-localised.
+- Pod paused, cron cancelled.
