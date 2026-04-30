@@ -1,4 +1,4 @@
-"""Build paper-style panel PDFs from the canonical SVG sources.
+"""Build paper-style panel PDFs and SVGs from the canonical SVG sources.
 
 Canonical sources:
   docs/diagrams/pipeline_horizontal.svg  -- pipeline + persona + steering
@@ -29,9 +29,11 @@ PANELS_HORIZONTAL = {
     "pipeline":          (0, 0, 744, 307),
     "persona":           (764, 0, 909, 307),
     "steering":          (1693, 0, 827, 307),
-    "steering_pairwise": (1693, 0, 380, 307),
+    "steering_pairwise": (1695, 106, 360, 76),
+    "steering_openended": (2055, 0, 465, 307),
 }
 PANEL_OOD = ("ood", (20, 685, 860, 300))
+PANEL_INDUCED_SHIFTS = ("induced_shifts", (20, 345, 860, 340))
 
 STYLE_FILLS = {
     "paper":  "#F0F0EC",
@@ -39,13 +41,17 @@ STYLE_FILLS = {
 }
 
 
-def render(source: Path, viewbox: tuple[int, int, int, int], style: str, out_pdf: Path) -> None:
+def render(source: Path, viewbox: tuple[int, int, int, int], style: str, out_pdf: Path, out_svg: Path | None = None) -> None:
     src = source.read_text()
     for original_fill in ("#F5F3EF", "#EEECE2"):
         src = src.replace(f'fill="{original_fill}"', f'fill="{STYLE_FILLS[style]}"')
     x, y, w, h = viewbox
     src = re.sub(r'viewBox="[^"]+"', f'viewBox="{x} {y} {w} {h}"', src, count=1)
     src = re.sub(r'\swidth="\d+"\s+height="\d+"', f' width="{w * 10}" height="{h * 10}"', src, count=1)
+
+    if out_svg:
+        out_svg.parent.mkdir(parents=True, exist_ok=True)
+        out_svg.write_text(src)
 
     with tempfile.NamedTemporaryFile("w", suffix=".svg", delete=False) as f:
         f.write(src)
@@ -73,18 +79,21 @@ def main() -> None:
     args = parser.parse_args()
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
+    svg_dir = args.out_dir / "panels_svg"
     horizontal = ROOT / "docs/diagrams/pipeline_horizontal.svg"
     v4 = ROOT / "docs/diagrams/pipeline_v4.svg"
 
     for name, viewbox in PANELS_HORIZONTAL.items():
-        out = args.out_dir / f"{name}.pdf"
-        render(horizontal, viewbox, args.style, out)
-        print(f"wrote {out}")
+        out_pdf = args.out_dir / f"{name}.pdf"
+        out_svg = svg_dir / f"{name}.svg"
+        render(horizontal, viewbox, args.style, out_pdf, out_svg)
+        print(f"wrote {out_pdf} and {out_svg}")
 
-    name, viewbox = PANEL_OOD
-    out = args.out_dir / f"{name}.pdf"
-    render(v4, viewbox, args.style, out)
-    print(f"wrote {out}")
+    for name, viewbox in (PANEL_OOD, PANEL_INDUCED_SHIFTS):
+        out_pdf = args.out_dir / f"{name}.pdf"
+        out_svg = svg_dir / f"{name}.svg"
+        render(v4, viewbox, args.style, out_pdf, out_svg)
+        print(f"wrote {out_pdf} and {out_svg}")
 
 
 if __name__ == "__main__":

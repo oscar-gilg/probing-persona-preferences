@@ -1,0 +1,205 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1520 780" width="1520" height="780">
+  <!--
+    Hero v2 mockup. Layout:
+      Left column           : Panel 1 (existing PNG, hero_panel_1.png)  — Train
+      Middle column top     : NEW cheese READ                            — induced-shift, read
+      Middle column bottom  : NEW cheese CAUSE                           — induced-shift, cause
+      Right column top      : Panel 2 (existing PNG, hero_panel_2.png)   — persona, read
+      Right column bottom   : Panel 3 (existing PNG, hero_panel_3.png)   — persona, cause
+
+    Existing PNG panels are stretched to fit slots — final figures will need
+    proper re-authoring at the right aspect ratios. The two cheese sketches
+    are placeholder designs to communicate intent to whoever redraws this.
+  -->
+
+  <style>
+    text { font-family: 'Inter', 'Helvetica Neue', sans-serif; }
+    .col-header   { font-size: 19px; font-weight: 700; fill: #111827; }
+    .col-num      { font-size: 18px; font-weight: 800; fill: #FFFFFF; }
+    .panel-title  { font-size: 14px; font-weight: 700; fill: #111827; }
+    .body         { font-size: 12px; fill: #374151; }
+    .prompt-text  { font-size: 12px; font-style: italic; fill: #374151; }
+    .task-text    { font-size: 12px; font-weight: 500; fill: #991B1B; }
+    .num-shift    { font-size: 13px; font-weight: 700; fill: #991B1B; }
+    .num-base     { font-size: 10px; fill: #9CA3AF; }
+    .axis-label   { font-size: 12px; font-weight: 600; fill: #374151; }
+    .caption-note { font-size: 10px; font-style: italic; fill: #9CA3AF; }
+  </style>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <polyline points="1,1 8,5 1,9" fill="none" stroke="#374151" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+    <marker id="arrow-grey" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <polyline points="1,1 6,4 1,7" fill="none" stroke="#9CA3AF" stroke-width="1.4" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <rect width="1520" height="780" fill="#FFFFFF"/>
+
+  <!-- Column headers (above the grid) — headline-style, numbered -->
+  <g transform="translate(40, 14)">
+    <circle cx="14" cy="14" r="14" fill="#111827"/>
+    <text x="14" y="20" text-anchor="middle" class="col-num">1</text>
+    <text x="38" y="22" class="col-header">Find a preference vector.</text>
+  </g>
+  <g transform="translate(540, 14)">
+    <circle cx="14" cy="14" r="14" fill="#111827"/>
+    <text x="14" y="20" text-anchor="middle" class="col-num">2</text>
+    <text x="38" y="22" class="col-header">It tracks and steers the model's preferences.</text>
+  </g>
+  <g transform="translate(1040, 14)">
+    <circle cx="14" cy="14" r="14" fill="#111827"/>
+    <text x="14" y="20" text-anchor="middle" class="col-num">3</text>
+    <text x="38" y="22" class="col-header">The same vector works across personas.</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- LEFT COLUMN: Panel 1 (existing) — full height                 -->
+  <!-- ============================================================ -->
+  <image x="20" y="40" width="470" height="700" preserveAspectRatio="xMidYMid meet"
+         xlink:href="file:///Users/oscargilg/Dev/MATS/Preferences/paper/figures/panels/hero_panel_1.png"/>
+
+  <!-- ============================================================ -->
+  <!-- MIDDLE TOP: NEW — induced shifts, mirrors TR layout           -->
+  <!-- LW prompt variants on cheese: passionate / hate               -->
+  <!-- ============================================================ -->
+  <g transform="translate(525, 40)">
+    <rect x="0" y="0" width="470" height="340" rx="12" ry="12" fill="#F5F3EF" stroke="#D1D5DB" stroke-width="1"/>
+    <text x="235" y="24" text-anchor="middle" class="panel-title">Probe tracks prompt-induced preference shifts.</text>
+
+    <!-- LEFT: default robot + preference vector box (mirrors TR's left half) -->
+    <g transform="translate(60, 90)">
+      <circle r="22" fill="#D1FAE5" stroke="#166534" stroke-width="2"/>
+      <circle cx="-8" cy="-3" r="3" fill="#166534"/>
+      <circle cx="8"  cy="-3" r="3" fill="#166534"/>
+      <path d="M -8 8 Q 0 13 8 8" fill="none" stroke="#166534" stroke-width="2" stroke-linecap="round"/>
+      <text x="0" y="40" text-anchor="middle" class="body" fill="#166534" font-weight="600">default</text>
+    </g>
+    <line x1="60" y1="148" x2="60" y2="190" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#arrow-grey)"/>
+    <g transform="translate(20, 195)">
+      <rect width="80" height="60" rx="6" ry="6" fill="white" stroke="#9CA3AF"/>
+      <line x1="14" y1="46" x2="66" y2="14" stroke="#374151" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="40" y="76" text-anchor="middle" class="body" font-weight="600">v̂</text>
+    </g>
+
+    <!-- Arrows from v̂ box to each scenario row -->
+    <line x1="100" y1="225" x2="160" y2="125" stroke="#9CA3AF" stroke-width="1" marker-end="url(#arrow-grey)"/>
+    <line x1="100" y1="225" x2="160" y2="248" stroke="#9CA3AF" stroke-width="1" marker-end="url(#arrow-grey)"/>
+
+    <!-- RIGHT: two stacked scenario rows -->
+    <!-- Scenario A: passionate about cheese (LW pos variant) -->
+    <g transform="translate(165, 60)">
+      <rect width="195" height="58" rx="6" ry="6" fill="white" stroke="#86EFAC" stroke-width="1.2"/>
+      <text x="10" y="18" class="prompt-text" fill="#166534">"You are passionate about</text>
+      <text x="10" y="32" class="prompt-text" fill="#166534">cheese — you find artisanal</text>
+      <text x="10" y="46" class="prompt-text" fill="#166534">cheeses endlessly fascinating."</text>
+    </g>
+    <g transform="translate(370, 70)">
+      <line x1="0" y1="-3" x2="0" y2="48" stroke="#9CA3AF" stroke-width="1"/>
+      <text x="0" y="-7" text-anchor="middle" class="num-base">0</text>
+      <text x="-4" y="11" text-anchor="end" class="body">poem</text>
+      <rect x="0" y="0" width="62" height="13" fill="#86EFAC" stroke="#166534" stroke-width="1" rx="2"/>
+      <text x="66" y="11" class="num-shift" fill="#166534">+1.9</text>
+      <text x="-4" y="32" text-anchor="end" class="body">math</text>
+      <rect x="0" y="21" width="48" height="13" fill="#86EFAC" stroke="#166534" stroke-width="1" rx="2"/>
+      <text x="52" y="32" class="num-shift" fill="#166534">+1.5</text>
+    </g>
+
+    <!-- Divider -->
+    <line x1="160" y1="190" x2="455" y2="190" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="3,3"/>
+
+    <!-- Scenario B: hate cheese (LW neg variant) -->
+    <g transform="translate(165, 215)">
+      <rect width="195" height="40" rx="6" ry="6" fill="white" stroke="#FCA5A5" stroke-width="1.2"/>
+      <text x="10" y="25" class="prompt-text" fill="#991B1B">"You hate cheese."</text>
+    </g>
+    <g transform="translate(370, 220)">
+      <line x1="62" y1="-3" x2="62" y2="48" stroke="#9CA3AF" stroke-width="1"/>
+      <text x="62" y="-7" text-anchor="middle" class="num-base">0</text>
+      <text x="66" y="11" class="body">poem</text>
+      <rect x="0" y="0" width="62" height="13" fill="#FCA5A5" stroke="#991B1B" stroke-width="1" rx="2"/>
+      <text x="-4" y="11" text-anchor="end" class="num-shift">−2.1</text>
+      <text x="66" y="32" class="body">math</text>
+      <rect x="14" y="21" width="48" height="13" fill="#FCA5A5" stroke="#991B1B" stroke-width="1" rx="2"/>
+      <text x="10" y="32" text-anchor="end" class="num-shift">−1.8</text>
+    </g>
+
+    <text x="285" y="295" text-anchor="middle" class="caption-note">tasks: poem about cheese  •  math problem about cheese</text>
+    <text x="285" y="315" text-anchor="middle" class="caption-note">positive variant → positive readout; negative variant → negative readout</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- RIGHT TOP: Panel 2 (existing PNG) — persona READ              -->
+  <!-- ============================================================ -->
+  <image x="1025" y="40" width="470" height="340" preserveAspectRatio="xMidYMid meet"
+         xlink:href="file:///Users/oscargilg/Dev/MATS/Preferences/paper/figures/panels/hero_panel_2.png"/>
+
+  <!-- ============================================================ -->
+  <!-- MIDDLE BOTTOM: NEW — generic steering (poem vs plushie)       -->
+  <!-- ============================================================ -->
+  <g transform="translate(525, 400)">
+    <rect x="0" y="0" width="470" height="340" rx="12" ry="12" fill="#F5F3EF" stroke="#D1D5DB" stroke-width="1"/>
+    <text x="235" y="24" text-anchor="middle" class="panel-title">The direction controls choice.</text>
+
+    <!-- Default robot on left -->
+    <g transform="translate(60, 100)">
+      <circle r="28" fill="#D1FAE5" stroke="#166534" stroke-width="2"/>
+      <circle cx="-10" cy="-4" r="4" fill="#166534"/>
+      <circle cx="10"  cy="-4" r="4" fill="#166534"/>
+      <path d="M -10 9 Q 0 14 10 9" fill="none" stroke="#166534" stroke-width="2" stroke-linecap="round"/>
+      <text x="0" y="50" text-anchor="middle" class="body" fill="#166534" font-weight="600">default</text>
+    </g>
+
+    <text x="240" y="58" class="body">Ask model to choose a task:</text>
+
+    <!-- Task A with +v̂ -->
+    <g transform="translate(160, 72)">
+      <rect width="200" height="34" rx="5" ry="5" fill="#F0FDF4" stroke="#86EFAC"/>
+      <text x="12" y="22" class="body" fill="#166534">Write a short poem</text>
+    </g>
+    <g transform="translate(375, 80)">
+      <text x="0" y="20" font-size="22" font-weight="700" fill="#374151">+</text>
+      <rect x="20" y="0" width="34" height="26" rx="4" ry="4" fill="white" stroke="#374151"/>
+      <line x1="28" y1="20" x2="46" y2="6" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+    </g>
+
+    <!-- Task B with -v̂ -->
+    <g transform="translate(160, 122)">
+      <rect width="200" height="34" rx="5" ry="5" fill="#FEF7E5" stroke="#FCD34D"/>
+      <text x="12" y="22" class="body" fill="#92400E">Knit a small plushie</text>
+    </g>
+    <g transform="translate(375, 130)">
+      <text x="0" y="20" font-size="22" font-weight="700" fill="#374151">−</text>
+      <rect x="20" y="0" width="34" height="26" rx="4" ry="4" fill="white" stroke="#374151"/>
+      <line x1="28" y1="20" x2="46" y2="6" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+    </g>
+
+    <!-- Down arrow -->
+    <line x1="280" y1="172" x2="280" y2="212" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#arrow-grey)"/>
+
+    <!-- Outcome -->
+    <text x="240" y="232" class="body">Model chooses steered task  P &gt; 0.9X:</text>
+    <g transform="translate(160, 244)">
+      <rect width="280" height="34" rx="5" ry="5" fill="#ECFDF5" stroke="#A7F3D0"/>
+      <text x="12" y="22" class="body" fill="#065F46">"Here is a short poem..."</text>
+    </g>
+
+    <text x="235" y="320" text-anchor="middle" class="caption-note">contrastive steering on the direction picks the +v̂ task</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- RIGHT BOTTOM: Panel 3 (existing PNG) — persona CAUSE          -->
+  <!-- ============================================================ -->
+  <image x="1025" y="400" width="470" height="340" preserveAspectRatio="xMidYMid meet"
+         xlink:href="file:///Users/oscargilg/Dev/MATS/Preferences/paper/figures/panels/hero_panel_3.png"/>
+
+  <!-- Faint grid dividers between right-grid cells -->
+  <line x1="525"  y1="390" x2="1495" y2="390" stroke="#E5E7EB" stroke-width="1"/>
+  <line x1="1010" y1="40"  x2="1010" y2="740" stroke="#E5E7EB" stroke-width="1"/>
+
+  <!-- Footer caption -->
+  <text x="760" y="772" text-anchor="middle" class="caption-note">
+    Mockup for handoff. Existing panels (1, 2, 3) are PNG embeds; cheese READ + CAUSE are placeholder sketches.
+  </text>
+</svg>
