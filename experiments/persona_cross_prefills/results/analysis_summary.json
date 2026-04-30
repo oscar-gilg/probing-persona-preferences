@@ -47,6 +47,13 @@
     "se": 0.7222713083590265,
     "n": 10
   },
+  "persona_delta_benign_helpful_first_user_eot_delta": {
+    "mean": -4.5363470137119295,
+    "se": 1.3548954481725053,
+    "t": -3.34811591538712,
+    "p": 0.008549112833469477,
+    "n": 10
+  },
   "persona_delta_benign_helpful_asst_eot_delta": {
     "mean": -6.334438854455948,
     "se": 0.7940206581059778,
@@ -59,6 +66,13 @@
     "se": 0.5269354337955234,
     "t": -6.447313202289795,
     "p": 0.0001185133574173463,
+    "n": 10
+  },
+  "persona_delta_benign_evil_first_user_eot_delta": {
+    "mean": -4.539153200387955,
+    "se": 1.3546977320226674,
+    "t": -3.3506760165683978,
+    "p": 0.008514388721140175,
     "n": 10
   },
   "persona_delta_benign_evil_asst_eot_delta": {
@@ -75,6 +89,13 @@
     "p": 0.0734350319678683,
     "n": 10
   },
+  "persona_delta_harmful_refused_first_user_eot_delta": {
+    "mean": 4.3401621043682095,
+    "se": 0.7518029249044292,
+    "t": 5.773005079648951,
+    "p": 0.0002684141521379824,
+    "n": 10
+  },
   "persona_delta_harmful_refused_asst_eot_delta": {
     "mean": -1.322487860918045,
     "se": 0.35100778282374734,
@@ -87,6 +108,13 @@
     "se": 0.3528418403837846,
     "t": 4.7723904265920165,
     "p": 0.0010119787353126636,
+    "n": 10
+  },
+  "persona_delta_harmful_obliged_first_user_eot_delta": {
+    "mean": 4.342541760206222,
+    "se": 0.7522309033287349,
+    "t": 5.772884018709974,
+    "p": 0.0002684549874280511,
     "n": 10
   },
   "persona_delta_harmful_obliged_asst_eot_delta": {

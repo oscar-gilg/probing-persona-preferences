@@ -35,7 +35,7 @@ CONDITION_COLORS = {
     "harmful_obliged":  "#ff7f0e",
 }
 PERSONAS = ["default", "sadist"]
-READOUTS = ["asst_eot", "user_eot"]
+READOUTS = ["first_user_eot", "asst_eot", "user_eot"]
 ALIGNED_FOR_DEFAULT = {"benign_helpful", "harmful_refused"}
 
 
@@ -74,7 +74,7 @@ def cell_means(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def plot_cell_means(cm: pd.DataFrame, out: Path) -> None:
-    fig, axes = plt.subplots(1, 2, figsize=(12, 4.5), sharey=True)
+    fig, axes = plt.subplots(1, len(READOUTS), figsize=(6 * len(READOUTS), 4.5), sharey=True)
     for ax, readout in zip(axes, READOUTS):
         sub = cm[cm["readout"] == readout]
         x_positions = np.arange(len(CONDITION_ORDER))
@@ -164,8 +164,12 @@ def per_persona_deltas(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def plot_per_persona(pp: pd.DataFrame, out: Path) -> None:
-    fig, axes = plt.subplots(1, 2, figsize=(13, 5), sharey=True)
-    readouts = [("asst_eot_delta", "post-asst-response"), ("user_eot_delta", "post-user-follow-up")]
+    readouts = [
+        ("first_user_eot_delta", "post-first-user-msg"),
+        ("asst_eot_delta", "post-asst-response"),
+        ("user_eot_delta", "post-user-follow-up"),
+    ]
+    fig, axes = plt.subplots(1, len(readouts), figsize=(6.5 * len(readouts), 5), sharey=True)
     for ax, (key, label) in zip(axes, readouts):
         for i, cond in enumerate(CONDITION_ORDER):
             sub = pp[pp["condition"] == cond][key]
@@ -309,7 +313,7 @@ def compute_stats(df: pd.DataFrame, deltas: pd.DataFrame, pp: pd.DataFrame) -> d
                 pass
     # Per-persona Δ summary
     for cond in CONDITION_ORDER:
-        for readout in ["asst_eot_delta", "user_eot_delta"]:
+        for readout in ["first_user_eot_delta", "asst_eot_delta", "user_eot_delta"]:
             sub = pp[pp["condition"] == cond][readout]
             t, p = stats.ttest_1samp(sub, 0.0)
             out[f"persona_delta_{cond}_{readout}"] = {

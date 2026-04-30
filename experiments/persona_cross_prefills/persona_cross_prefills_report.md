@@ -24,24 +24,26 @@ Personas are applied at scoring time as a `system`-role message prepended to the
 
 ## Headline result — per-persona Δ
 
-For each prefill, swap the system prompt to `sadist` (everything else identical). How does the probe score shift?
+For each prefill, swap the system prompt to `sadist` (everything else identical). How does the probe score shift, at each of the three EOT readouts (post-first-user-msg → post-asst-response → post-user-follow-up)?
 
 ![Per-persona Δ](assets/plot_042826_per_persona_delta.png)
 
-| condition | predicted direction (persona-relative) | asst-EOT Δ | user-EOT Δ |
-|---|---|---|---|
-| `benign_helpful` (aligned → misaligned for sadist) | **negative** | **−6.33** ± 0.79 (p < 1e-4) ✓ | **−3.40** ± 0.53 (p < 1e-3) ✓ |
-| `benign_evil` (misaligned → aligned) | **positive** | **+2.16** ± 0.45 (p = 1e-3) ✓ | −1.11 ± 0.55 (p = 0.07) ✗ ns |
-| `harmful_refused` (aligned → misaligned) | **negative** | **−1.32** ± 0.35 (p = 4e-3) ✓ | +1.68 ± 0.35 (p = 1e-3) ✗ wrong dir |
-| `harmful_obliged` (misaligned → aligned) | **positive** | **+3.53** ± 0.28 (p < 1e-6) ✓ | **+3.42** ± 0.26 (p < 1e-6) ✓ |
+| condition | predicted direction (persona-relative) | first-user-EOT Δ | asst-EOT Δ | user-EOT Δ |
+|---|---|---|---|---|
+| `benign_helpful` (aligned → misaligned for sadist) | **negative** | **−4.54** ± 1.35 (p = 9e-3) — valence-driven† | **−6.33** ± 0.79 (p < 1e-4) ✓ | **−3.40** ± 0.53 (p < 1e-3) ✓ |
+| `benign_evil` (misaligned → aligned) | **positive** | **−4.54** ± 1.35 (p = 9e-3) — valence-driven† | **+2.16** ± 0.45 (p = 1e-3) ✓ | −1.11 ± 0.55 (p = 0.07) ✗ ns |
+| `harmful_refused` (aligned → misaligned) | **negative** | **+4.34** ± 0.75 (p < 1e-3) — valence-driven† | **−1.32** ± 0.35 (p = 4e-3) ✓ | +1.68 ± 0.35 (p = 1e-3) ✗ wrong dir |
+| `harmful_obliged` (misaligned → aligned) | **positive** | **+4.34** ± 0.75 (p < 1e-3) — valence-driven† | **+3.53** ± 0.28 (p < 1e-6) ✓ | **+3.42** ± 0.26 (p < 1e-6) ✓ |
 
-**asst-EOT: 4/4 conditions flip in the predicted direction**, all with p < 0.005. user-EOT: 2/4 — the harmful_refused row goes the wrong way (the user's angry complaint dominates the readout regardless of asst behavior).
+† At first-user-EOT no asst content has landed yet, so paired conditions share the same first-user-EOT score by construction; the Δ is identical within valence and reflects only the persona × user-message interaction. The sign here is *content-aware*, not asst-behavior-aware: sadist drags benign requests down and harmful requests up.
+
+**asst-EOT: 4/4 asst-behavior conditions flip in the predicted direction**, all with p < 0.005 — the asst-behavior signal that emerges between the first-user-EOT and asst-EOT readouts is what discriminates the persona-relative-alignment hypothesis from the persona-baseline-shift hypothesis. user-EOT: 2/4 — the harmful_refused row goes the wrong way (the user's angry complaint dominates the readout regardless of asst behavior).
 
 ## Cell means
 
 ![Cell means](assets/plot_042826_cell_means.png)
 
-Same data, different cut: 4 conditions × 2 personas × 2 readouts. Under default, helpful and refused (aligned) are the highest cells in their valence bands. Under sadist the within-valence ordering inverts at asst-EOT.
+Same data, different cut: 4 conditions × 2 personas × 3 readouts (first-user-EOT, asst-EOT, user-EOT). Under default, helpful and refused (aligned) are the highest cells in their valence bands at asst-EOT and user-EOT. Under sadist the within-valence ordering inverts at asst-EOT. The first-user-EOT panel is flat within valence by construction (paired conditions share the user message), so it serves as the pre-asst-content baseline: default reads benign user messages as +4.2 and harmful as −7.5, while sadist compresses both toward zero (−0.3 and −3.2). The cross-readout movement from first-user-EOT to asst-EOT is what isolates the asst-behavior signal.
 
 ## Within-pair Δ — fixed user message, varying asst behavior
 
