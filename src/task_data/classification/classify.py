@@ -19,7 +19,7 @@ from openai import AsyncOpenAI
 from pydantic import BaseModel
 from tqdm.asyncio import tqdm
 
-CLASSIFIER_MODEL = "google/gemini-3-flash-preview"
+CLASSIFIER_MODEL = "anthropic/claude-sonnet-4.6"
 FALLBACK_MODEL = "x-ai/grok-4-fast"
 MODELS = [CLASSIFIER_MODEL]
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
