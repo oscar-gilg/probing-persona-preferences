@@ -1,0 +1,45 @@
+{
+  "case": "gemma_probe",
+  "hoo_dir": "results/probes/gemma3_10k_hoo_topic_tb-5",
+  "layer": 32,
+  "same_run": {
+    "label": "run 1 (same as training)",
+    "scores_path": "results/experiments/main_probes/gemma3_10k_run1/pre_task_active_learning/completion_preference_gemma-3-27b_completion_canonical_seed0/thurstonian_80fa9dc8.csv",
+    "n_pooled": 9995,
+    "n_pairs": 4997,
+    "pair_strata_target_frac_within_topic": 0.55,
+    "pooled_pearson_r": 0.8862,
+    "pooled_r_ci_lo": 0.8819,
+    "pooled_r_ci_hi": 0.8903,
+    "pooled_pairwise_acc": 0.7975,
+    "pooled_acc_ci_lo": 0.7861,
+    "pooled_acc_ci_hi": 0.8084,
+    "diagnostics_unstratified": {
+      "n_pairs": 4999,
+      "frac_within_topic": 0.14342868573714743,
+      "pooled_pairwise_acc": 0.8367673534706941,
+      "within_topic_acc": 0.7350069735006973,
+      "cross_topic_acc": 0.8538066324147594
+    }
+  },
+  "separate_run": {
+    "label": "run 2 (separate measurement, 4k pool)",
+    "scores_path": "results/experiments/main_probes/gemma3_4k_pre_task/pre_task_active_learning/completion_preference_gemma-3-27b_completion_canonical_seed0/thurstonian_a67822c5.csv",
+    "n_pooled": 4035,
+    "n_pairs": 4991,
+    "pair_strata_target_frac_within_topic": 0.55,
+    "pooled_pearson_r": 0.8341,
+    "pooled_r_ci_lo": 0.8245,
+    "pooled_r_ci_hi": 0.8433,
+    "pooled_pairwise_acc": 0.792,
+    "pooled_acc_ci_lo": 0.7805,
+    "pooled_acc_ci_hi": 0.8031,
+    "diagnostics_unstratified": {
+      "n_pairs": 4995,
+      "frac_within_topic": 0.14714714714714713,
+      "pooled_pairwise_acc": 0.8228228228228228,
+      "within_topic_acc": 0.7374149659863946,
+      "cross_topic_acc": 0.8375586854460094
+    }
+  }
+}

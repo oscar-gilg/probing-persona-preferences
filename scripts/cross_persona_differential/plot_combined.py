@@ -105,81 +105,64 @@ def main() -> None:
     for p in PERSONAS:
         print(f"  {p}: diff {len(diff[p])}, uni {len(uni[p])}, baseline {len(base[p])}")
 
-    fig, axes = plt.subplots(3, 4, figsize=(13, 7.5), sharey=True, sharex=True)
+    fig, axes = plt.subplots(2, 3, figsize=(12, 6), sharey=True, sharex=True)
 
-    for row_idx in range(3):
-        for col_idx_in_pair in range(2):
-            persona = PERSONAS[row_idx * 2 + col_idx_in_pair]
-            ax_c = axes[row_idx][col_idx_in_pair * 2]      # contrastive
-            ax_s = axes[row_idx][col_idx_in_pair * 2 + 1]  # single-task
+    for idx, persona in enumerate(PERSONAS):
+        row_idx = idx // 3
+        col_idx = idx % 3
+        ax = axes[row_idx][col_idx]
 
-            first_base = _baseline_p(base[persona], "first")
-            second_base = _baseline_p(base[persona], "second")
+        first_base = _baseline_p(base[persona], "first")
 
-            # Contrastive panel
-            xs_c, ys_c, es_c = [], [], []
+        # Contrastive curve (overlaid)
+        xs_c, ys_c, es_c = [], [], []
+        for c in coefs:
+            stat = _p_first_span_picked_diff(diff[persona], c)
+            if stat is None:
+                continue
+            xs_c.append(c); ys_c.append(stat[0]); es_c.append(stat[1])
+        if first_base is not None:
+            xs_c.append(0.0); ys_c.append(first_base); es_c.append(0.0)
+        order_c = sorted(zip(xs_c, ys_c, es_c))
+        ax.errorbar([p[0] for p in order_c], [p[1] for p in order_c],
+                    yerr=[p[2] for p in order_c],
+                    marker="o", color="C2", linewidth=1.8, markersize=5,
+                    capsize=2, label="contrastive")
+
+        # Single-task curves overlaid in the same panel
+        for cond, color, label, x_sign in [
+            ("unilateral_first", "C0", "first-span steered", +1),
+            ("unilateral_second", "C1", "second-span steered", -1),
+        ]:
+            xs, ys, es = [], [], []
             for c in coefs:
-                stat = _p_first_span_picked_diff(diff[persona], c)
+                stat = _p_first_span_uni(uni[persona], cond, c)
                 if stat is None:
                     continue
-                xs_c.append(c); ys_c.append(stat[0]); es_c.append(stat[1])
+                xs.append(x_sign * c); ys.append(stat[0]); es.append(stat[1])
             if first_base is not None:
-                xs_c.append(0.0); ys_c.append(first_base); es_c.append(0.0)
-            order_c = sorted(zip(xs_c, ys_c, es_c))
-            ax_c.errorbar([p[0] for p in order_c], [p[1] for p in order_c],
-                          yerr=[p[2] for p in order_c],
-                          marker="o", color="C2", linewidth=1.7, markersize=5,
-                          capsize=2, label="contrastive")
-            if first_base is not None:
-                ax_c.plot(0, first_base, "o", color="black", markersize=4, zorder=5)
+                xs.append(0.0); ys.append(first_base); es.append(0.0)
+            order = sorted(zip(xs, ys, es))
+            ax.errorbar([p[0] for p in order], [p[1] for p in order],
+                        yerr=[p[2] for p in order],
+                        marker="o", color=color, linewidth=1.4, markersize=4,
+                        capsize=2, label=label)
 
-            # Single-task panel: both lines plot P(picked first-span task) on a unified x-axis
-            # representing "signed coef pushing first-span up". The second-span line's x is
-            # negated so that +c on second-span (which suppresses first-span) lands at -c on
-            # this axis — mirroring the natural framing of the first-span line. After negation
-            # both lines go low→high, exposing the suppression/amplification asymmetry per side
-            # (see f95010c, scripts/layer_sweep/clean_unilateral_plot.py).
-            for cond, color, label, x_sign in [
-                ("unilateral_first", "C0", "first-span steered", +1),
-                ("unilateral_second", "C1", "second-span steered (x negated)", -1),
-            ]:
-                xs, ys, es = [], [], []
-                for c in coefs:
-                    stat = _p_first_span_uni(uni[persona], cond, c)
-                    if stat is None:
-                        continue
-                    xs.append(x_sign * c); ys.append(stat[0]); es.append(stat[1])
-                if first_base is not None:
-                    xs.append(0.0); ys.append(first_base); es.append(0.0)
-                order = sorted(zip(xs, ys, es))
-                ax_s.errorbar([p[0] for p in order], [p[1] for p in order],
-                              yerr=[p[2] for p in order],
-                              marker="o", color=color, linewidth=1.5, markersize=4,
-                              capsize=2, label=label)
-            if first_base is not None:
-                ax_s.plot(0, first_base, "o", color="black", markersize=4, zorder=5)
+        ax.axvline(0, color="gray", linestyle="-", alpha=0.2, linewidth=0.5)
+        ax.axhline(0.5, color="gray", linestyle=":", alpha=0.4, linewidth=0.5)
+        ax.set_title(persona, fontsize=10)
+        ax.set_ylim(0, 1)
+        ax.set_xlim(-0.06, 0.06)
+        ax.grid(True, alpha=0.3)
 
-            for ax, sub in [(ax_c, "contrastive"), (ax_s, "single-task")]:
-                ax.axvline(0, color="gray", linestyle="-", alpha=0.2, linewidth=0.5)
-                ax.axhline(0.5, color="gray", linestyle=":", alpha=0.4, linewidth=0.5)
-                ax.set_title(f"{persona} · {sub}", fontsize=9)
-                ax.set_ylim(0, 1)
-                ax.set_xlim(-0.06, 0.06)
-                ax.grid(True, alpha=0.3)
+        if row_idx == 1:
+            ax.set_xlabel("signed coef", fontsize=9)
+        if col_idx == 0:
+            ax.set_ylabel("P(picked first-span task)", fontsize=9)
+        if idx == 0:
+            ax.legend(loc="lower right", fontsize=7)
 
-            if row_idx == 2:
-                ax_c.set_xlabel("signed coef (× mean_norm(L25))", fontsize=8)
-                ax_s.set_xlabel("signed coef (× mean_norm(L25))", fontsize=8)
-            if col_idx_in_pair == 0:
-                ax_c.set_ylabel("P(picked first-span task)", fontsize=8)
-            if row_idx == 0 and col_idx_in_pair == 0:
-                ax_c.legend(loc="lower right", fontsize=7)
-                ax_s.legend(loc="lower right", fontsize=7)
-
-    fig.suptitle(
-        "Per-persona probe steering at L25 — contrastive (left) and single-task (right) per persona",
-        fontsize=11,
-    )
+    fig.suptitle("Per-persona probe steering at L25", fontsize=11)
     fig.tight_layout()
     stamp = datetime.now().strftime("%m%d%y")
     out = ASSETS / f"plot_{stamp}_cross_persona_perprobe_steering.png"

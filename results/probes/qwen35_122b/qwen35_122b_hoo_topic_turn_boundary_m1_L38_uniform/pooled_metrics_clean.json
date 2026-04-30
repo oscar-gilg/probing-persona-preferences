@@ -1,0 +1,45 @@
+{
+  "case": "qwen_probe",
+  "hoo_dir": "results/probes/qwen35_122b/qwen35_122b_hoo_topic_turn_boundary_m1_L38_uniform",
+  "layer": 38,
+  "same_run": {
+    "label": "run 1 (same as training)",
+    "scores_path": "results/experiments/qwen35_10k_active_learning/pre_task_active_learning/completion_preference_qwen3.5-122b-nothink_completion_canonical_seed0_sysbd0c6a4d/thurstonian_6746a725.csv",
+    "n_pooled": 9993,
+    "n_pairs": 4976,
+    "pair_strata_target_frac_within_topic": 0.55,
+    "pooled_pearson_r": 0.8862,
+    "pooled_r_ci_lo": 0.882,
+    "pooled_r_ci_hi": 0.8904,
+    "pooled_pairwise_acc": 0.7745,
+    "pooled_acc_ci_lo": 0.7627,
+    "pooled_acc_ci_hi": 0.7859,
+    "diagnostics_unstratified": {
+      "n_pairs": 4992,
+      "frac_within_topic": 0.14162660256410256,
+      "pooled_pairwise_acc": 0.8551682692307693,
+      "within_topic_acc": 0.6902404526166902,
+      "cross_topic_acc": 0.8823803967327888
+    }
+  },
+  "separate_run": {
+    "label": "run 2 (separate measurement, 4k pool)",
+    "scores_path": "results/experiments/qwen35_4k_active_learning/pre_task_active_learning/completion_preference_qwen3.5-122b-nothink_completion_canonical_seed0_sysbd0c6a4d_qwen35_4k_task_ids/thurstonian_b5bc6473.csv",
+    "n_pooled": 1413,
+    "n_pairs": 4990,
+    "pair_strata_target_frac_within_topic": 0.55,
+    "pooled_pearson_r": 0.8716,
+    "pooled_r_ci_lo": 0.8585,
+    "pooled_r_ci_hi": 0.8836,
+    "pooled_pairwise_acc": 0.782,
+    "pooled_acc_ci_lo": 0.7703,
+    "pooled_acc_ci_hi": 0.7932,
+    "diagnostics_unstratified": {
+      "n_pairs": 4994,
+      "frac_within_topic": 0.13856627953544254,
+      "pooled_pairwise_acc": 0.8442130556668002,
+      "within_topic_acc": 0.7283236994219653,
+      "cross_topic_acc": 0.8628544862854486
+    }
+  }
+}

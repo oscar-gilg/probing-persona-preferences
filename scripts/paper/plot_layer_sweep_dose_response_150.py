@@ -13,9 +13,21 @@ from __future__ import annotations
 import json
 from collections import defaultdict
 from datetime import datetime
+from math import sqrt
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+
+
+def wilson_ci(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
+    """Wilson 95% CI on a binomial proportion."""
+    if n == 0:
+        return float("nan"), float("nan")
+    p = k / n
+    denom = 1 + z * z / n
+    centre = (p + z * z / (2 * n)) / denom
+    half = (z / denom) * sqrt(p * (1 - p) / n + z * z / (4 * n * n))
+    return max(0.0, centre - half), min(1.0, centre + half)
 
 REPO = Path(__file__).resolve().parents[2]
 CK_HB = REPO / "experiments" / "layer_sweep" / "harm_breakdown" / "checkpoints"
@@ -153,20 +165,31 @@ def main() -> None:
     # Refusal rate shown as pink shaded band at the bottom (aggregated across pair types).
     coefs_c = sorted({c for pt_dict in contr_points.values() for c in pt_dict.keys()})
     for pt in ("bb", "hb", "hh"):
-        xs, ys = [], []
+        xs, ys, lo_err, hi_err = [], [], [], []
         for c in coefs_c:
             flags = contr_points[pt].get(c, [])
             responded = [chose for chose, resp in flags if resp]
             if not responded:
                 continue
+            n = len(responded)
+            k = sum(responded)
+            p = k / n
+            lo, hi = wilson_ci(k, n)
             xs.append(c)
-            ys.append(sum(responded) / len(responded))
+            ys.append(p)
+            lo_err.append(p - lo)
+            hi_err.append(hi - p)
         xs.append(0.0)
         ys.append(contr_baseline[pt])
-        ordered = sorted(zip(xs, ys))
-        ax_c.plot([p[0] for p in ordered], [p[1] for p in ordered],
-                  "o-", color=COLORS[pt], label=LABELS[pt],
-                  markersize=5, linewidth=1.8)
+        lo_err.append(0.0)
+        hi_err.append(0.0)
+        ordered = sorted(range(len(xs)), key=lambda i: xs[i])
+        ax_c.errorbar(
+            [xs[i] for i in ordered], [ys[i] for i in ordered],
+            yerr=[[lo_err[i] for i in ordered], [hi_err[i] for i in ordered]],
+            fmt="o-", color=COLORS[pt], label=LABELS[pt],
+            markersize=5, linewidth=1.8, capsize=2.5, elinewidth=1.0,
+        )
     refusal_xs = sorted(coefs_c)
     refusal_ys = [contr_refusal.get(c, 0.0) for c in refusal_xs]
     ax_c.fill_between(refusal_xs, 0, refusal_ys, alpha=0.20, color="#ef4444", label="Refusal rate")
@@ -182,12 +205,13 @@ def main() -> None:
     # Panel B: single-task — P(chose steered | responded), refusal band at bottom.
     coefs_u = sorted({round(r["signed_multiplier"] * (1 if r["ordering"] == 0 else -1), 4) for r in uni_rows})
     for pt in ("bb", "hb", "hh"):
-        xs, ys = [], []
+        xs, ys, lo_err, hi_err = [], [], [], []
         for c in coefs_u:
             rs = uni_by[pt][c]
             responded = [r for r in rs if r["choice_original"] in ("a", "b")]
             if not responded:
                 continue
+            n = len(responded)
             hits = sum(
                 r["choice_original"] == physical_in_span(
                     "first" if r["condition"] == "unilateral_first" else "second",
@@ -195,14 +219,23 @@ def main() -> None:
                 )
                 for r in responded
             )
-            ys.append(hits / len(responded))
+            p = hits / n
+            lo, hi = wilson_ci(hits, n)
             xs.append(c)
+            ys.append(p)
+            lo_err.append(p - lo)
+            hi_err.append(hi - p)
         xs.append(0.0)
         ys.append((dead_by_pt_first[pt] + dead_by_pt_second[pt]) / 2)
-        ordered = sorted(zip(xs, ys))
-        ax_u.plot([p[0] for p in ordered], [p[1] for p in ordered],
-                  "o-", color=COLORS[pt], label=LABELS[pt],
-                  markersize=5, linewidth=1.8)
+        lo_err.append(0.0)
+        hi_err.append(0.0)
+        ordered = sorted(range(len(xs)), key=lambda i: xs[i])
+        ax_u.errorbar(
+            [xs[i] for i in ordered], [ys[i] for i in ordered],
+            yerr=[[lo_err[i] for i in ordered], [hi_err[i] for i in ordered]],
+            fmt="o-", color=COLORS[pt], label=LABELS[pt],
+            markersize=5, linewidth=1.8, capsize=2.5, elinewidth=1.0,
+        )
     refusal_xs_u = sorted(uni_refusal.keys())
     refusal_ys_u = [uni_refusal[c] for c in refusal_xs_u]
     ax_u.fill_between(refusal_xs_u, 0, refusal_ys_u, alpha=0.20, color="#ef4444", label="Refusal rate")
