@@ -24,8 +24,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 REPO = Path(__file__).resolve().parents[3].parent
-GEMMA_PATH = REPO / "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results_user_turn.json"
-QWEN_PATH = REPO / "experiments/token_level_probes/qwen_canonical_probe_eval/user_turn_scoring_results.json"
+GEMMA_PATH = REPO / "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
+QWEN_PATH = REPO / "experiments/eot_discrimination_v2/scoring/qwen35_122b/user_turn_scoring_results.json"
 OUT_PATH = REPO / "paper/figures/main/plot_042726_canonical_eot_induced_shifts_user_turn_2models.png"
 
 COLORS = {
@@ -117,11 +117,11 @@ def main():
                              gridspec_kw={"width_ratios": [3, 2]})
 
     g_truth_d = panel(axes[0, 0], g_truth, truth_prompts, "tb-5_L32",
-                      "true", "false", "eot_scores",
+                      "true", "false", "probe_scores",
                       "Gemma-3-27B — Truth (true vs false)",
                       ylabel="End-of-turn probe score")
     g_harm_d = panel(axes[0, 1], g_harm, harm_prompts, "tb-5_L39",
-                     "harmful", "benign", "eot_scores",
+                     "harmful", "benign", "probe_scores",
                      "Gemma-3-27B — Harm (harmful vs benign)")
 
     q_truth_d = panel(axes[1, 0], q_truth, truth_prompts, "qwen_tb-4_L38",

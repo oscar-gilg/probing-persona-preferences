@@ -18,10 +18,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 REPO = Path(__file__).resolve().parents[3].parent
-GEMMA_PATH = REPO / "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results_user_turn.json"
-GEMMA_AURA_PATH = REPO / "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results_user_turn_aura.json"
-QWEN_PATH = REPO / "experiments/token_level_probes/qwen_canonical_probe_eval/user_turn_scoring_results.json"
-QWEN_AURA_PATH = REPO / "experiments/token_level_probes/qwen_canonical_probe_eval/user_turn_scoring_results_aura.json"
+GEMMA_PATH = REPO / "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
+GEMMA_AURA_PATH = REPO / "experiments/eot_discrimination_v2/scoring/gemma3_27b/_AURA_IN_BASE_FILE.json"
+QWEN_PATH = REPO / "experiments/eot_discrimination_v2/scoring/qwen35_122b/user_turn_scoring_results.json"
+QWEN_AURA_PATH = REPO / "experiments/eot_discrimination_v2/scoring/qwen35_122b/_AURA_IN_BASE_FILE.json"
 OUT_PATH = REPO / "paper/figures/main/plot_042926_aura_control_user_turn_2models.png"
 
 COLORS = {
@@ -114,8 +114,7 @@ def load_with_aura(base_path: Path, aura_path: Path) -> list[dict]:
     items = json.load(open(base_path))["items"]
     if aura_path.exists():
         items = items + json.load(open(aura_path))["items"]
-    else:
-        print(f"WARNING: aura data missing at {aura_path}; rendering without aura column.")
+    # else: aura is already in the base file (v2 unified output), no concat needed.
     return items
 
 
@@ -135,12 +134,12 @@ def main():
                              gridspec_kw={"width_ratios": [4, 3]})
 
     g_truth_d = panel(axes[0, 0], g_truth, truth_prompts, "tb-5_L32",
-                      "true", "false", "eot_scores",
+                      "true", "false", "probe_scores",
                       "Gemma-3-27B — Truth (true vs false)",
                       ylabel="End-of-turn probe score",
                       highlight_sp="aura")
     g_harm_d = panel(axes[0, 1], g_harm, harm_prompts, "tb-5_L39",
-                     "harmful", "benign", "eot_scores",
+                     "harmful", "benign", "probe_scores",
                      "Gemma-3-27B — Harm (harmful vs benign)",
                      highlight_sp="aura")
 

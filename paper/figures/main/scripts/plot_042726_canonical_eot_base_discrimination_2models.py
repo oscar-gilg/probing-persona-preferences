@@ -19,8 +19,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 REPO = Path(__file__).resolve().parents[3].parent  # repo root
-GEMMA_PARENT = REPO / "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
-QWEN_USER_TURN = REPO / "experiments/token_level_probes/qwen_canonical_probe_eval/user_turn_scoring_results.json"
+GEMMA_PARENT = REPO / "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
+QWEN_USER_TURN = REPO / "experiments/eot_discrimination_v2/scoring/qwen35_122b/user_turn_scoring_results.json"
 OUT_PATH = REPO / "paper/figures/main/plot_042726_canonical_eot_base_discrimination_2models.png"
 
 # Match colors used in the reference Gemma plot
@@ -54,10 +54,12 @@ def cohen_d_with_ci(pos, neg, z=1.96):
 
 def gemma_neutral_user_turn(domain, probe, c_pos, c_neg, c_non="nonsense"):
     items = json.load(open(GEMMA_PARENT))["items"]
-    sub = [it for it in items if it["domain"] == domain and it.get("turn") == "user"]
-    pos = np.array([it["eot_scores"][probe] for it in sub if it["condition"] == c_pos])
-    neg = np.array([it["eot_scores"][probe] for it in sub if it["condition"] == c_neg])
-    non = np.array([it["eot_scores"][probe] for it in sub if it["condition"] == c_non])
+    sub = [it for it in items
+           if it["domain"] == domain and it.get("turn") == "user"
+           and it.get("system_prompt") == "neutral"]
+    pos = np.array([it["probe_scores"][probe] for it in sub if it["condition"] == c_pos])
+    neg = np.array([it["probe_scores"][probe] for it in sub if it["condition"] == c_neg])
+    non = np.array([it["probe_scores"][probe] for it in sub if it["condition"] == c_non])
     return pos, neg, non
 
 

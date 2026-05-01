@@ -22,10 +22,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 REPO = Path(__file__).resolve().parents[3].parent
-GEMMA_TH = REPO / "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
-GEMMA_POL = REPO / "experiments/token_level_probes/system_prompt_modulation_v2/politics_scoring_results.json"
-QWEN_TH = REPO / "experiments/token_level_probes/qwen_canonical_probe_eval/scoring_results.json"
-QWEN_POL = REPO / "experiments/token_level_probes/qwen_canonical_probe_eval/politics_scoring_results.json"
+GEMMA_TH = REPO / "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
+GEMMA_POL = REPO / "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
+QWEN_TH = REPO / "experiments/eot_discrimination_v2/scoring/qwen35_122b/scoring_results.json"
+QWEN_POL = REPO / "experiments/eot_discrimination_v2/scoring/qwen35_122b/scoring_results.json"
 OUT_PATH = REPO / "paper/figures/main/plot_042726_canonical_eot_induced_shifts_2models.png"
 
 COLORS = {
@@ -125,14 +125,14 @@ def main():
 
     # Top row: Gemma
     g_truth_d = panel(axes[0, 0], g_truth, truth_prompts, "tb-5_L32",
-                      "true", "false", "eot_scores",
+                      "true", "false", "probe_scores",
                       "Gemma-3-27B — Truth (true vs false)",
                       ylabel="End-of-turn probe score")
     g_harm_d = panel(axes[0, 1], g_harm, harm_prompts, "tb-5_L39",
-                     "harmful", "benign", "eot_scores",
+                     "harmful", "benign", "probe_scores",
                      "Gemma-3-27B — Harm (harmful vs benign)")
     g_pol_d = panel(axes[0, 2], g_pol, politics_prompts, "tb-5_L39",
-                    "left", "right", "eot_scores",
+                    "left", "right", "probe_scores",
                     "Gemma-3-27B — Politics (left vs right)")
 
     # Bottom row: Qwen
