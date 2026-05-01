@@ -32,12 +32,11 @@ if os.environ.get("HF_TOKEN"):
     from huggingface_hub import login
     login(token=os.environ["HF_TOKEN"], add_to_git_credential=False)
 
+import numpy as np  # noqa: E402
+
 from src.models.huggingface_model import HuggingFaceModel  # noqa: E402
-from src.probes.score_stimuli import (  # noqa: E402
-    Probe,
-    load_probes_from_manifest,
-    score_stimuli_with_probes,
-)
+from src.probes.score_stimuli import Probe, load_probes_from_manifest  # noqa: E402
+from src.probes.scoring import score_prompt_batch  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[3]
 INPUTS_DIR = REPO / "experiments/eot_discrimination_v2/scoring_inputs"
@@ -72,7 +71,14 @@ OUTPUT_NAME_BY_MODEL: dict[str, str] = {
 
 
 def run_pilot(model: HuggingFaceModel, records: list[dict], probes: list[Probe], expected_eot: str) -> None:
-    """Verify eot token + score 5 representative items, abort on mismatch."""
+    """Verify turn-boundary marker is in last 5 tokens; smoke-test the batch scorer.
+
+    With add_generation_prompt=False, Gemma's chat template appends '\\n' after
+    `<end_of_turn>` (and Qwen after `<|im_end|>`), so tokens[-1] is the trailing
+    newline, not the eot literal. This matches v1 — `scores_arr[-1]` is the
+    'eot-adjacent' position the figures use. We just verify the eot marker
+    appears in the last 5 tokens.
+    """
     seen_sp: set[str] = set()
     pilot = []
     for r in records:
@@ -86,21 +92,22 @@ def run_pilot(model: HuggingFaceModel, records: list[dict], probes: list[Probe],
     for r in pilot:
         formatted = model.format_messages(r["messages"], add_generation_prompt=False)
         token_ids = model.tokenizer(formatted, add_special_tokens=False)["input_ids"]
-        last_decoded = model.tokenizer.decode([token_ids[-1]])
-        print(f"  {r['id']}: tokens[-1] = {last_decoded!r} (expected {expected_eot!r})")
-        if expected_eot not in last_decoded:
+        last5 = [model.tokenizer.decode([t]) for t in token_ids[-5:]]
+        print(f"  {r['id']}: last 5 tokens = {last5}")
+        if not any(expected_eot in t for t in last5):
             raise AssertionError(
-                f"EOT token mismatch for {r['id']}: got {last_decoded!r}, expected {expected_eot!r}"
+                f"EOT marker {expected_eot!r} not in last 5 tokens for {r['id']}: {last5}"
             )
 
-    # Now score the pilot items
-    pilot_scored = score_stimuli_with_probes(
-        model, pilot, probes, add_generation_prompt=False, progress=False,
+    # Smoke-test the batch scorer on the pilot items
+    scoring_probes = [(p.layer, p.weights) for p in probes]
+    batch_scores = score_prompt_batch(
+        model, [r["messages"] for r in pilot], scoring_probes, add_generation_prompt=False,
     )
-    for s in pilot_scored:
-        keys = list(s["probe_scores"].keys())
-        sample_key = keys[0]
-        print(f"  {s['id']}: probe[{sample_key}] = {s['probe_scores'][sample_key]:.4f}, all probe IDs: {keys}")
+    # batch_scores: list of (batch_size,) arrays, one per probe
+    for i, p in enumerate(probes[:3]):
+        vals = [float(batch_scores[i][j]) for j in range(len(pilot))]
+        print(f"  probe[{p.key}] across pilot: {[f'{v:.3f}' for v in vals]}")
     print("PILOT PASSED\n")
 
 
@@ -110,6 +117,7 @@ def main() -> None:
     ap.add_argument("--turn", required=True, choices=["user", "assistant"])
     ap.add_argument("--device", default="auto", help="HuggingFaceModel device arg")
     ap.add_argument("--limit", type=int, default=None, help="Only score first N records (for sanity)")
+    ap.add_argument("--batch-size", type=int, default=16, help="Batch size for score_prompt_batch")
     args = ap.parse_args()
 
     inputs_path = INPUTS_DIR / f"{args.turn}_turn.json"
@@ -131,10 +139,34 @@ def main() -> None:
 
     run_pilot(model, records, probes, EXPECTED_EOT_BY_MODEL[args.model])
 
-    print(f"--- SCORING ALL {len(records)} ITEMS ---")
-    scored = score_stimuli_with_probes(
-        model, records, probes, add_generation_prompt=False, progress=True,
+    print(f"--- SCORING ALL {len(records)} ITEMS (batch_size={args.batch_size}) ---")
+    scoring_probes = [(p.layer, p.weights) for p in probes]
+    bs = args.batch_size
+
+    # Sort records by formatted-token-length so each batch has similar lengths
+    # → minimal padding waste. Re-key by id afterwards.
+    records_with_idx = list(enumerate(records))
+    records_with_idx.sort(
+        key=lambda x: len(model._tokenize(model.format_messages(x[1]["messages"], add_generation_prompt=False))[0])
     )
+
+    # probe_scores[probe_key][record_idx] = float
+    probe_scores: dict[str, list[float]] = {p.key: [None] * len(records) for p in probes}  # type: ignore[list-item]
+
+    pbar = tqdm(total=len(records), desc=f"scoring batch={bs}")
+    for batch_start in range(0, len(records_with_idx), bs):
+        batch = records_with_idx[batch_start : batch_start + bs]
+        batch_msgs = [r["messages"] for _, r in batch]
+        batch_scores = score_prompt_batch(
+            model, batch_msgs, scoring_probes, add_generation_prompt=False,
+        )
+        # batch_scores: list of (batch_size,) arrays, one per probe
+        for pi, p in enumerate(probes):
+            arr = batch_scores[pi]
+            for bj, (orig_idx, _) in enumerate(batch):
+                probe_scores[p.key][orig_idx] = float(arr[bj])
+        pbar.update(len(batch))
+    pbar.close()
 
     out_dir = OUTPUT_BASE / OUTPUT_NAME_BY_MODEL[args.model]
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -144,15 +176,15 @@ def main() -> None:
 
     # Trim per-record fields the figures don't need (saves IO).
     trimmed = []
-    for s in scored:
+    for i, r in enumerate(records):
         trimmed.append({
-            "id": s["id"],
-            "base_id": s.get("base_id"),
-            "domain": s["domain"],
-            "turn": s["turn"],
-            "condition": s["condition"],
-            "system_prompt": s["system_prompt"],
-            "probe_scores": s["probe_scores"],
+            "id": r["id"],
+            "base_id": r.get("base_id"),
+            "domain": r["domain"],
+            "turn": r["turn"],
+            "condition": r["condition"],
+            "system_prompt": r["system_prompt"],
+            "probe_scores": {p.key: probe_scores[p.key][i] for p in probes},
         })
 
     out_path.write_text(json.dumps({"items": trimmed}, indent=2))
