@@ -17,11 +17,17 @@
 
 ## Pipeline order
 
-1. Build scoring inputs (local CPU): cross corpora × sysprompts × turns → `scoring_inputs/{user|assistant}_turn.json`.
-2. Sync inputs to pod.
-3. Run Gemma scoring (uses 1 GPU) in tmux + babysit. Output → `experiments/eot_discrimination_v2/scoring/gemma3_27b/`.
-4. Run Qwen scoring (uses all 4 GPUs via `device_map="auto"`) in tmux + babysit. Output → `experiments/eot_discrimination_v2/scoring/qwen35_122b/`.
+1. Build scoring inputs (local CPU): cross corpora × sysprompts × turns → `scoring_inputs/{user|assistant}_turn.json`. **DONE** — 7000 user-turn + 8571 assistant-turn records.
+2. Sync inputs to pod. **DONE** (tracked in git).
+3. Run Gemma scoring (cuda:0, batch=16) in tmux. Pilot passes; scoring at ~100 rec/sec.
+4. Run Qwen scoring (device_map=auto across 4 GPUs, batch=4). Sequential after Gemma.
 5. rsync scoring outputs back to local.
 6. Regenerate the 5 §3.1 figure scripts with the v2 data paths.
 7. Refresh `numbers.tex` claims.
-8. Pause pod.
+8. Pause pod (auto via babysit cron `cc545e4c`).
+
+## Pilot (Gemma user-turn neutral, batch=16)
+
+Last 5 tokens of formatted prompt for 5 sample items: `[' a', ' scientist', '.', '<end_of_turn>', '\n']` — confirms `<end_of_turn>` is present in last 5 tokens; `scores_arr[-1]` is the trailing `'\n'` (matches v1 convention). Probe score ranges look reasonable (tb-2_L32 across pilot: -11.6 to +2.5).
+
+Throughput at batch=16 on 1×A100: ~91-117 records/sec. Estimated total wall-clock ~1 h (vs 3-4 h with per-item scoring).
