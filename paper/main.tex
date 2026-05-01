@@ -157,9 +157,9 @@ We test causation on Gemma by adding $+c\hat{v}$ to every token of Task A's span
   \label{fig:induced-shifts}
 \end{figure}
 
-We construct paired evaluative stimuli on two axes: truth (true vs.\ false claims, from CREAK~\citep{onoe2021creak}) and harm (harmful vs.\ benign tasks, from BailBench and STRESS-TEST). On each axis we ask two questions.
+We construct evaluative stimuli on three axes: truth (CREAK~\citep{onoe2021creak} claims kept only when both target models answer the underlying fact correctly under direct query, $n=\creakTruthNTrue$/side), harm (BailBench~\citep{ensign2025bailbench} prompts paired with LLM-rewritten benign analogues, $n=\bailbenchHarmNHarmful$/side, with both sides retained on $\geq 2/3$ frontier-LLM-judge label agreement), and politics (OpinionQA~\citep{santurkar2023opinionqa} survey items translated to first-person stance claims with framing variation, retained on unanimous LLM-judge partisan-side agreement; assistant-turn only by construction).
 
-\paragraph{Does the probe discriminate the two classes (no system prompt)?} Yes on both models. The probe separates the two classes at $|d| \approx 2$\footnote{Cohen's $d$ is the standardised mean difference between the two classes (in units of pooled standard deviation); $|d| \approx 2$ corresponds to clean separation.} on truth (CREAK, $\sim$\creakTruthNTrue{} claims) and harm (BailBench + STRESS-TEST, $\sim$\bailbenchHarmNItemsProse{} items; Fig.~\ref{fig:harm-truth}).
+\paragraph{Does the probe discriminate the two classes (no system prompt)?} Yes on both models, though magnitudes differ across model and axis (Fig.~\ref{fig:harm-truth}). On Gemma the probe separates true/false at $d=\creakTruthCohensD$ and harmful/benign at $|d|=\bailbenchHarmAbsoluteCohensD$\footnote{Cohen's $d$ is the standardised mean difference between the two classes in units of pooled standard deviation. We report Hedges/Olkin 95\% CIs in figure annotations.}; on Qwen the same separation is weaker on harm ($|d|\approx 0.6$).
 
 \paragraph{Does the probe track stance-shifts induced by system prompt?} Yes on both models (Fig.~\ref{fig:persona-modulation-user}):
 \begin{itemize}
