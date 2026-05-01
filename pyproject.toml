@@ -16,9 +16,13 @@ dependencies = [
     "numpy>=1.26.4",
     "scikit-learn>=1.3.0",
 
+    # NOTE on torch / transformers pins: the SFT stack (Qwen3.5-122B-A10B with
+    # Unsloth) requires torch>=2.11, transformers>=5.0, torchvision>=0.26.
+    # The base pins below stay loose for non-SFT code paths; the [training]
+    # extra tightens them. See experiments/sft_sadist/VERSION_ISSUES.md.
     "torch>=2.0.0",
     "accelerate>=0.26.0",
-    "transformers>=4.57.0,<5.0.0",
+    "transformers>=4.57.0",
     "tenacity>=8.0.0",
     "trueskill>=0.4.5",
     "statsmodels>=0.14.0",
@@ -36,15 +40,42 @@ gpu = [
     "kernels",
 ]
 
-# SFT pipeline (sft_sadist + future SFT runs). Unsloth is required for
+# Training stack (sft_sadist + future SFT runs). Unsloth is required for
 # tractable Qwen3.5-122B-A10B LoRA — vanilla peft does not have MoE-aware
-# kernels for this architecture. Install with `uv pip install -e ".[sft]"`.
-sft = [
-    "unsloth>=2024.10",
+# kernels for this architecture. Install with `uv pip install -e ".[training]"`
+# AGAINST a fresh venv with the cu128 torch index (see [tool.uv.sources]).
+#
+# Pins below are verified working as of 2026-05-01 — see VERSION_ISSUES.md
+# for the failure modes we hit before settling here.
+#
+#   - unsloth==2026.3.11 (NOT 2026.4.8: that release imports `GuidedDecodingParams`
+#     from vllm.sampling_params, which was renamed in vllm 0.10+ and breaks any
+#     venv that has both unsloth and recent vllm)
+#   - torch>=2.11 — required by unsloth's MoE Qwen3.5 paths
+#   - torchvision>=0.26 — unsloth's torchvision_compatibility_check fails otherwise
+#   - transformers>=5.0 — Qwen3.5 MoE support; conflicts with `transformers<5.0`
+#     pin from llmcompressor, so do NOT install llmcompressor in the same venv
+#   - peft>=0.19 — required for Unsloth's fused-expert LoRA paths
+training = [
+    "unsloth==2026.3.11",
+    "unsloth_zoo>=2026.3",
+    "torch>=2.11",
+    "torchvision>=0.26",
+    "transformers>=5.0",
+    "peft>=0.19",
     "trl>=0.12.0",
-    "peft>=0.13.0",
     "datasets>=2.20.0",
     "wandb>=0.18.0",
+]
+
+# vLLM-based serving (e.g. of merged sadist model for active learning).
+# MUST be installed in a SEPARATE venv from [training]: vllm and unsloth import
+# each other's symbols at module-load time and break each other (see
+# VERSION_ISSUES.md). Recommended layout on a pod:
+#   /opt/venvs/research → uv pip install -e ".[training]"   (zombuul: --extras training)
+#   /opt/venvs/serve    → uv pip install -e ".[serving]"    (provisioned manually)
+serving = [
+    "vllm>=0.20",
 ]
 
 viz = [
@@ -89,12 +120,15 @@ markers = [
 ]
 
 [[tool.uv.index]]
-name = "pytorch-cu124"
-url = "https://download.pytorch.org/whl/cu124"
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
 
 [tool.uv.sources]
 torch = [
-    { index = "pytorch-cu124", marker = "sys_platform == 'linux'" },
+    { index = "pytorch-cu128", marker = "sys_platform == 'linux'" },
+]
+torchvision = [
+    { index = "pytorch-cu128", marker = "sys_platform == 'linux'" },
 ]
 
 [tool.ruff]
