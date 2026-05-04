@@ -109,7 +109,7 @@
         "fig:persona-topic-zheatmap",
         "app:persona-design"
       ],
-      "computed_at": "2026-04-30T10:13:40+00:00",
+      "computed_at": "2026-05-04T22:32:39+00:00",
       "data_paths": [
         "results/experiments/persona_sweep_final_six/pre_task_active_learning/default_train/thurstonian_280a87c8.csv",
         "results/experiments/persona_sweep_final_six/pre_task_active_learning/default_eval/thurstonian_b84bca67.csv",
@@ -244,7 +244,7 @@
         "fig:persona-topic-zheatmap",
         "app:persona-design"
       ],
-      "computed_at": "2026-04-30T10:13:40+00:00",
+      "computed_at": "2026-05-04T22:32:39+00:00",
       "data_paths": [
         "results/experiments/persona_sweep_final_six/pre_task_active_learning/default_train/thurstonian_280a87c8.csv",
         "results/experiments/persona_sweep_final_six/pre_task_active_learning/default_eval/thurstonian_b84bca67.csv",
@@ -302,7 +302,7 @@
         "fig:persona-correlation",
         "app:persona-design"
       ],
-      "computed_at": "2026-04-30T10:13:40+00:00",
+      "computed_at": "2026-05-04T22:32:39+00:00",
       "data_paths": [
         "results/experiments/persona_sweep_final_six/pre_task_active_learning/default_train/thurstonian_280a87c8.csv",
         "results/experiments/persona_sweep_final_six/pre_task_active_learning/default_eval/thurstonian_b84bca67.csv",

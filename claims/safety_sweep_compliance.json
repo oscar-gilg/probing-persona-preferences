@@ -7,9 +7,9 @@
       "statement": "The App. A.3 safety-override sweep uses 20 open-ended prompts, distributed evenly across 5 harm tiers.",
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
-        "sec:open-ended-safety"
+        "app:safety-footprint"
       ],
-      "computed_at": "2026-04-25T11:56:47+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [
         "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
@@ -21,9 +21,9 @@
       "statement": "The safety sweep covers 5 harm tiers: benign, sensitive, borderline, harmful, extreme.",
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
-        "sec:open-ended-safety"
+        "app:safety-footprint"
       ],
-      "computed_at": "2026-04-25T11:56:47+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [
         "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
@@ -35,9 +35,9 @@
       "statement": "The safety sweep tests 7 steering coefficients: c in {-0.05, -0.03, 0, +0.03, +0.05, +0.07, +0.10}.",
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
-        "sec:open-ended-safety"
+        "app:safety-footprint"
       ],
-      "computed_at": "2026-04-25T11:56:47+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [
         "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
@@ -49,9 +49,9 @@
       "statement": "5 trials per (prompt, coefficient) cell in the safety sweep.",
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
-        "sec:open-ended-safety"
+        "app:safety-footprint"
       ],
-      "computed_at": "2026-04-25T11:56:47+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [
         "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
@@ -63,9 +63,9 @@
       "statement": "20 prompts x 7 coefficients x 5 trials = 700 total generations in the safety-override sweep.",
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
-        "sec:open-ended-safety"
+        "app:safety-footprint"
       ],
-      "computed_at": "2026-04-25T11:56:47+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [
         "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
@@ -121,12 +121,12 @@
         }
       },
       "statement": "Strict compliance rate (percent of trials judged 'complied' --- i.e. produces the requested artifact, not partial/refused) in the safety-override sweep, per harm tier x steering coefficient. Judge: scripts/sadist_open_ended_steering/judge_compliance.py via Gemini 3 Flash, same setup as the persona-sweep compliance numbers.",
-      "source": "judge: scripts/sadist_open_ended_steering/judge_compliance.py over results.jsonl",
+      "source": "manual: judged externally by scripts/sadist_open_ended_steering/judge_compliance.py over results.jsonl; this script reads the judged compliance.jsonl and aggregates.",
       "used_in": [
-        "sec:open-ended-safety",
+        "app:safety-footprint",
         "fig:safety-override"
       ],
-      "computed_at": "2026-04-25T11:56:47+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [
         "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
@@ -138,9 +138,9 @@
       "statement": "Coefficient at which harmful-tier compliance peaks in the sweep.",
       "source": "scripts/paper/claims/compute_safety_sweep_compliance.py",
       "used_in": [
-        "sec:open-ended-safety"
+        "app:safety-footprint"
       ],
-      "computed_at": "2026-04-25T11:56:47+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [
         "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
