@@ -210,6 +210,8 @@ Sections~\ref{sec:method} and \ref{sec:evaluative} established that the utility 
   \label{fig:default-probe}
 \end{figure}
 
+\textbf{What does this gap imply?} If the Assistant probe were just predicting ``whatever the Assistant would prefer'', its accuracy on a target persona's activations would be bounded by the Assistant--target utility correlation. Beating this baseline means the probe is reading target-persona-specific preference structure from the target's activations: the same direction reads out preferences for personas it was never trained on.
+
 The finding generalises beyond Assistant-as-source. Across all $7 \times 7$ ordered (train, eval) persona pairs, every off-diagonal pair has positive probe transfer that exceeds the utility-utility correlation between the two personas (Fig.~\ref{fig:persona-transfer-bonus}).
 
 \begin{figure}[!t]
