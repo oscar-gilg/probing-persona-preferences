@@ -1,7 +1,7 @@
 model: gemma-3-27b
 max_new_tokens: 64
 pairs_path: experiments/cross_persona_unilateral/steering_pairs.json
-probe_manifest: results/probes/persona_sweep_final_six/sadist_tb-5/
+probe_manifest: results/probes/persona_sweep_final_six/default_tb-5/
 checkpoint_path: experiments/cross_persona_unilateral/checkpoints/sadist.jsonl
 mean_norm: 40826.515625
 n_trials: 3

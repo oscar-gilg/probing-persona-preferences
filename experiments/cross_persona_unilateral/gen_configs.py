@@ -2,7 +2,15 @@
 
 One config per persona. Each config runs two unilateral conditions
 (first-span, second-span) at L25 with multipliers [-0.05, -0.03, 0.03, 0.05].
-mean_norm at L25 is computed from each persona's own sweep activations.
+
+v2: all personas steer along the *Assistant (default)* probe — same probe used
+in the open-ended evil steering experiment and in the original §3.4 default
+steering — so the cross-persona claim is "the Assistant probe drives every
+persona's choices" rather than "each persona has its own usable probe".
+
+mean_norm at L25 stays per-persona, computed from each persona's own sweep
+activations (the steering acts on that persona's activations, so the
+coefficient is calibrated to the persona's own activation magnitudes).
 system_prompt is pulled from the persona's measurement config.
 """
 
@@ -26,7 +34,7 @@ TEMPLATE_PATH = "src/measurement/elicitation/prompt_templates/data/completion_pr
 CONFIG_DIR = Path("configs/steering/cross_persona_unilateral")
 PAIRS_PATH = Path("experiments/cross_persona_unilateral/steering_pairs.json")
 CHECKPOINTS_DIR = Path("experiments/cross_persona_unilateral/checkpoints")
-PROBE_MANIFEST_TMPL = "results/probes/persona_sweep_final_six/{persona}_tb-5/"
+PROBE_MANIFEST = "results/probes/persona_sweep_final_six/default_tb-5/"
 ACTIVATIONS_TMPL = "activations/gemma-3-27b_it/pref_{persona}_sweep/activations_turn_boundary:-5.npz"
 PERSONA_CONFIG_TMPL = "configs/measurement/persona_sweep/final_six/{persona}_train.yaml"
 
@@ -43,7 +51,7 @@ def _config_for_persona(persona: str, mean_norm_L25: float, system_prompt: str) 
         "model": "gemma-3-27b",
         "max_new_tokens": 64,
         "pairs_path": str(PAIRS_PATH),
-        "probe_manifest": PROBE_MANIFEST_TMPL.format(persona=persona),
+        "probe_manifest": PROBE_MANIFEST,
         "checkpoint_path": str(CHECKPOINTS_DIR / f"{persona}.jsonl"),
         "mean_norm": float(mean_norm_L25),
         "n_trials": 3,

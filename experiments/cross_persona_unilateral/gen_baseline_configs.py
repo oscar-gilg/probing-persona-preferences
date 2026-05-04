@@ -23,7 +23,7 @@ TEMPLATE_PATH = "src/measurement/elicitation/prompt_templates/data/completion_pr
 CONFIG_DIR = Path("configs/steering/cross_persona_unilateral")
 PAIRS_PATH = Path("experiments/cross_persona_unilateral/steering_pairs.json")
 CHECKPOINTS_DIR = Path("experiments/cross_persona_unilateral/checkpoints")
-PROBE_MANIFEST_TMPL = "results/probes/persona_sweep_final_six/{persona}_tb-5/"
+PROBE_MANIFEST = "results/probes/persona_sweep_final_six/default_tb-5/"
 PERSONA_CONFIG_TMPL = "configs/measurement/persona_sweep/final_six/{persona}_train.yaml"
 
 
@@ -47,7 +47,7 @@ def _config_for_persona(persona: str) -> dict:
         "model": "gemma-3-27b",
         "max_new_tokens": 64,
         "pairs_path": str(PAIRS_PATH),
-        "probe_manifest": PROBE_MANIFEST_TMPL.format(persona=persona),
+        "probe_manifest": PROBE_MANIFEST,
         "checkpoint_path": str(CHECKPOINTS_DIR / f"{persona}_baseline.jsonl"),
         "mean_norm": _load_existing_mean_norm(persona),
         "n_trials": 3,

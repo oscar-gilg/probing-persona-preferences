@@ -1,17 +1,20 @@
 ---
 status: draft
 model: gemma-3-27b
+version: v2
 ---
 
 # Cross-persona differential steering
 
-Companion to `cross_persona_unilateral`. Same 6 canonical personas from `persona_sweep_final_six` (`aura`, `contrarian`, `mathematician`, `sadist`, `slacker`, `strategist`), same probes, same pairs, same multipliers — but **differential** (contrastive) steering: `+` probe direction on the first-presented task span, `−` probe direction on the second span, in a single forward pass.
+Companion to `cross_persona_unilateral`. Same 6 canonical personas from `persona_sweep_final_six` (`aura`, `contrarian`, `mathematician`, `sadist`, `slacker`, `strategist`), same pairs, same multipliers — **differential** (contrastive) steering: `+` probe direction on the first-presented task span, `−` probe direction on the second span, in a single forward pass.
 
-The unilateral run established that the per-persona probe is a causal lever. This run tests the stronger contrastive setup that the paper's \S3.4 and \S3.3 use, so the cross-persona number is directly comparable to the default-persona contrastive swing at L25.
+> **v2 supersedes v1.** v1 used each persona's own probe. v2 uses the *Assistant (default) probe* across all personas, matching the open-ended evil steering experiment (`scripts/cross_persona_open_ended_steering/`) and the original §3.4 default steering. v1 checkpoints retained at `checkpoints_v1_perprobe/` for reference.
+>
+> ⚠️ **Do not regenerate per-persona configs.** The committed YAMLs in `configs/steering/cross_persona_differential/` already reference `default_tb-5` for every persona. If you re-run `gen_configs.py`, it now hard-codes `PROBE_MANIFEST = "results/probes/persona_sweep_final_six/default_tb-5/"` — there is no `{persona}_tb-5/` template substitution anymore. Verify each yaml has `probe_manifest: results/probes/persona_sweep_final_six/default_tb-5/` before launching.
 
 ## Setup
 
-- **Probes**: per-persona `ridge_L25` from `results/probes/persona_sweep_final_six/{persona}_tb-5/`.
+- **Probe**: Assistant `ridge_L25` from `results/probes/persona_sweep_final_six/default_tb-5/` — **same single probe across all 6 persona configs.** This is the v2 defining change.
 - **Injection layer**: L25.
 - **Pairs**: 100 shared pairs at `experiments/cross_persona_unilateral/steering_pairs.json` (same as unilateral; no rebuild needed).
 - **Condition** (single, per persona): `differential` with `spans: {first: 1, second: -1}`. Multipliers ±3%, ±5% of per-persona `mean_norm(L25)`. `n_trials=3`, `temperature=1.0`, `seed=42`, `max_new_tokens=64`.
