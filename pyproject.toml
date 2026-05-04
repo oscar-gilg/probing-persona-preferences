@@ -48,17 +48,26 @@ gpu = [
 # Pins below are verified working as of 2026-05-01 — see VERSION_ISSUES.md
 # for the failure modes we hit before settling here.
 #
-#   - unsloth==2026.3.11 (NOT 2026.4.8: that release imports `GuidedDecodingParams`
-#     from vllm.sampling_params, which was renamed in vllm 0.10+ and breaks any
-#     venv that has both unsloth and recent vllm)
+#   - unsloth==2026.4.8 — MUST match the version that originally trained the
+#     adapter. Different unsloth releases use different fused-expert LoRA
+#     layouts, so a model trained on N.x will fail to load on M.y with shape
+#     mismatches like "size mismatch for ...experts.base_layer.lora_A...".
+#     2026.4.8's setup.py declares torch<2.11.0 but in practice torch 2.11.0
+#     works fine — install it with `--no-deps` to bypass that constraint
+#     (or just install other deps first). 2026.4.8 also imports
+#     `GuidedDecodingParams` from vllm.sampling_params at module load — this
+#     is a runtime import that ONLY fails if vllm is installed AND the symbol
+#     was renamed (vllm 0.10+). Workaround: do not co-install vllm in this venv.
 #   - torch>=2.11 — required by unsloth's MoE Qwen3.5 paths
 #   - torchvision>=0.26 — unsloth's torchvision_compatibility_check fails otherwise
 #   - transformers>=5.0 — Qwen3.5 MoE support; conflicts with `transformers<5.0`
 #     pin from llmcompressor, so do NOT install llmcompressor in the same venv
 #   - peft>=0.19 — required for Unsloth's fused-expert LoRA paths
+#   - bitsandbytes — optional but unsloth's _utils.py imports it; without it
+#     you get a warning + 4-bit QLoRA disabled (16-bit and full FT still work)
 training = [
-    "unsloth==2026.3.11",
-    "unsloth_zoo>=2026.3",
+    "unsloth==2026.4.8",
+    "unsloth_zoo==2026.4.9",
     "torch>=2.11",
     "torchvision>=0.26",
     "transformers>=5.0",
@@ -66,6 +75,8 @@ training = [
     "trl>=0.12.0",
     "datasets>=2.20.0",
     "wandb>=0.18.0",
+    "bitsandbytes",
+    "xformers",
 ]
 
 # vLLM-based serving (e.g. of merged sadist model for active learning).

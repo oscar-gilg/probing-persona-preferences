@@ -3,7 +3,8 @@
     "allow": [
       "Skill(log)",
       "Skill(runpod)",
-      "Read(/Users/oscargilg/Dev/zombuul/**)"
+      "Read(/Users/oscargilg/Dev/zombuul/**)",
+      "Bash(git push *)"
     ],
     "deny": [
       "Bash(python -c *)",
