@@ -1,10 +1,14 @@
-"""Plot encoder baseline vs residual probe Cohen's d under stance-changing sysprompts.
+"""§3.1 plot — encoder baseline vs residual probe Cohen's d under stance-changing sysprompts.
 
-Grid: rows = (turn x model), cols = domain (truth, harm, politics).
-Each cell shows grouped bars per sysprompt with two series (residual probe, encoder
-baseline). The residual sign is flipped per (turn, model, domain) if the residual's
-neutral d has the opposite sign of the encoder's neutral d (e.g. politics, where the
-residual probe has a right-positive convention).
+4 rows (turn x model) x 3 cols (truth, harm, politics). Each cell is grouped bars
+across that domain's sysprompts; two series per group (residual probe blue,
+encoder baseline gold). Sign convention: pos - neg per domain (true/false,
+harmful/benign, left/right). Residual is sign-flipped to match the encoder's
+neutral sign when needed (politics: residual is right-positive, encoder is
+left-positive).
+
+Cells with no measured data (e.g. politics on user turn) render as a faint "n/a"
+shaded panel so the eye doesn't hunt for missing bars.
 """
 
 from __future__ import annotations
@@ -23,21 +27,29 @@ GEMMA_DIR = REPO_ROOT / "experiments" / "token_level_probes" / "system_prompt_mo
 QWEN_DIR = REPO_ROOT / "experiments" / "token_level_probes" / "qwen_canonical_probe_eval"
 OUT_PATH = EXP_DIR / "assets" / "plot_050426_eot_baseline_vs_residual.png"
 
-# Sign convention: pos=true/harmful/left, neg=false/benign/right.
 DOMAIN_LABELS = {
     "truth": ("true", "false"),
     "harm": ("harmful", "benign"),
     "politics": ("left", "right"),
 }
 
-# Sysprompts shown per domain (matches what the encoder baseline registers).
 DOMAIN_SYSPROMPTS = {
     "truth": ["neutral", "aura", "lie_directive", "pathological_liar"],
     "harm": ["neutral", "aura", "sadist"],
-    "politics": ["neutral", "democrat", "republican"],
+    "politics": ["democrat", "republican"],
 }
 
-# Probe IDs per (model, domain).
+# Display labels for sysprompts (shorter, more readable).
+SYSPROMPT_LABEL = {
+    "neutral": "neutral",
+    "aura": "aura",
+    "lie_directive": "lie\ndirective",
+    "pathological_liar": "patholog.\nliar",
+    "sadist": "sadist",
+    "democrat": "democrat",
+    "republican": "republican",
+}
+
 PROBE_IDS = {
     ("gemma", "truth"): "tb-5_L32",
     ("gemma", "harm"): "tb-5_L39",
@@ -47,30 +59,34 @@ PROBE_IDS = {
     ("qwen", "politics"): "qwen_tb-4_L38",
 }
 
-# Score key field per model.
 SCORE_KEY = {"gemma": "eot_scores", "qwen": "probe_scores"}
 
-# Colors.
 RESIDUAL_COLOR = "#3d7aab"
 ENCODER_COLOR = "#d4b96a"
-MISSING_HATCH = "//"
+NA_FILL = "#f4f4f4"
+NA_TEXT = "#999999"
+
+# Per-column y-axis limits — kept consistent across rows so cells are
+# visually comparable. Politics has tighter range so the small bars are visible.
+YLIM_BY_COL = {
+    "truth": 4.2,
+    "harm": 4.2,
+    "politics": 4.2,
+}
 
 
 def cohens_d(pos: np.ndarray, neg: np.ndarray) -> float:
     if len(pos) < 2 or len(neg) < 2:
         return float("nan")
-    mean_p = pos.mean()
-    mean_n = neg.mean()
     var_p = pos.var(ddof=1)
     var_n = neg.var(ddof=1)
     pooled = math.sqrt(((len(pos) - 1) * var_p + (len(neg) - 1) * var_n) / (len(pos) + len(neg) - 2))
     if pooled == 0:
         return float("nan")
-    return float((mean_p - mean_n) / pooled)
+    return float((pos.mean() - neg.mean()) / pooled)
 
 
 def load_residual_items(model: str, turn: str) -> list[dict]:
-    """Load all residual scoring items for a (model, turn). Pulls from base + aura + politics files."""
     if model == "gemma":
         if turn == "user":
             base = GEMMA_DIR / "scoring_results_user_turn.json"
@@ -95,70 +111,59 @@ def load_residual_items(model: str, turn: str) -> list[dict]:
         with f.open() as fh:
             payload = json.load(fh)
         for it in payload["items"]:
-            # The politics scoring file is assistant-turn only; skip for user-turn case.
             if turn == "user" and it.get("turn") == "assistant":
                 continue
             items.append(it)
     return items
 
 
-def residual_d_for(items: list[dict], model: str, domain: str, system_prompt: str) -> tuple[float, int, int]:
+def residual_d_for(items: list[dict], model: str, domain: str, system_prompt: str) -> float:
     pos_label, neg_label = DOMAIN_LABELS[domain]
     probe_id = PROBE_IDS[(model, domain)]
     score_key = SCORE_KEY[model]
 
     pos_vals: list[float] = []
     neg_vals: list[float] = []
-    # The "neutral" sysprompt for truth/harm is named "neutral" in residual scoring files
-    # for harm but "truthful" is a different prompt; the encoder baseline uses "neutral"
-    # which corresponds to the "neutral" entry. For truth-domain "neutral" residual entries
-    # we look up exactly "neutral".
     for it in items:
-        if it["domain"] != domain:
+        if it["domain"] != domain or it["system_prompt"] != system_prompt:
             continue
-        if it["system_prompt"] != system_prompt:
-            continue
-        cond = it["condition"]
         scores = it[score_key]
         if probe_id not in scores:
             continue
         v = scores[probe_id]
-        if cond == pos_label:
+        if it["condition"] == pos_label:
             pos_vals.append(v)
-        elif cond == neg_label:
+        elif it["condition"] == neg_label:
             neg_vals.append(v)
 
-    pos = np.asarray(pos_vals, dtype=float)
-    neg = np.asarray(neg_vals, dtype=float)
-    return cohens_d(pos, neg), len(pos), len(neg)
+    return cohens_d(np.asarray(pos_vals, dtype=float), np.asarray(neg_vals, dtype=float))
 
 
-def encoder_d_for(rows: list[dict], domain: str, system_prompt: str) -> tuple[float, int, int]:
+def encoder_d_for(rows: list[dict], domain: str, system_prompt: str) -> float:
     for r in rows:
         if r["domain"] != domain or r["system_prompt"] != system_prompt:
             continue
         d = r["cohen_d"]
         if d is None:
-            return float("nan"), 0, 0
+            return float("nan")
         if isinstance(d, float) and math.isnan(d):
-            return float("nan"), int(r["n_pos"]), int(r["n_neg"])
-        return float(d), int(r["n_pos"]), int(r["n_neg"])
-    return float("nan"), 0, 0
+            return float("nan")
+        return float(d)
+    return float("nan")
 
 
-def load_encoder_rows(model: str, turn: str) -> list[dict]:
-    name = f"eot_baseline_{turn}_{model}.json"
+def load_encoder_rows(model_full: str, turn: str) -> list[dict]:
+    name = f"eot_baseline_{turn}_{model_full}.json"
     with (ENCODER_DIR / name).open() as fh:
         payload = json.load(fh, parse_constant=lambda c: float("nan") if c == "NaN" else c)
     return payload["rows"]
 
 
-# Cell layout: list of (turn, model_short, model_full).
 ROW_SPECS = [
-    ("user", "gemma", "gemma-3-27b"),
-    ("user", "qwen", "qwen-3.5-122b"),
-    ("assistant", "gemma", "gemma-3-27b"),
-    ("assistant", "qwen", "qwen-3.5-122b"),
+    ("user", "gemma", "gemma-3-27b", "user turn\nGemma-3-27B"),
+    ("user", "qwen", "qwen-3.5-122b", "user turn\nQwen-3.5-122B"),
+    ("assistant", "gemma", "gemma-3-27b", "assistant turn\nGemma-3-27B"),
+    ("assistant", "qwen", "qwen-3.5-122b", "assistant turn\nQwen-3.5-122B"),
 ]
 COL_SPECS = ["truth", "harm", "politics"]
 
@@ -166,163 +171,173 @@ COL_SPECS = ["truth", "harm", "politics"]
 def main() -> None:
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-    # First pass: gather all d's so we can pick a symmetric y-axis.
-    all_data: dict[tuple[str, str, str], dict] = {}
-    flips: list[tuple[str, str, str, float, float]] = []
-    weird: list[str] = []
-    all_d_vals: list[float] = []
+    # First pass: collect d's and decide on sign-flip per cell.
+    cells: dict[tuple[str, str, str], dict] = {}
+    flips: list[str] = []
 
-    for turn, model, model_full in ROW_SPECS:
+    for turn, model, model_full, _ in ROW_SPECS:
         encoder_rows = load_encoder_rows(model_full, turn)
         residual_items = load_residual_items(model, turn)
         for domain in COL_SPECS:
             sysprompts = DOMAIN_SYSPROMPTS[domain]
-            res_ds: dict[str, float] = {}
-            enc_ds: dict[str, float] = {}
-            for sp in sysprompts:
-                rd, rnp, rnn = residual_d_for(residual_items, model, domain, sp)
-                ed, enp, enn = encoder_d_for(encoder_rows, domain, sp)
-                res_ds[sp] = rd
-                enc_ds[sp] = ed
+            res = {sp: residual_d_for(residual_items, model, domain, sp) for sp in sysprompts}
+            enc = {sp: encoder_d_for(encoder_rows, domain, sp) for sp in sysprompts}
 
-            # Sign-flip detection: compare residual vs encoder neutral d signs.
-            flip = False
-            r_neutral = res_ds.get("neutral", float("nan"))
-            e_neutral = enc_ds.get("neutral", float("nan"))
-            if not (math.isnan(r_neutral) or math.isnan(e_neutral)):
-                if r_neutral * e_neutral < 0 and abs(r_neutral) > 1e-3 and abs(e_neutral) > 1e-3:
-                    flip = True
-                    flips.append((turn, model, domain, r_neutral, e_neutral))
-
+            # Decide sign-flip: for politics, residual probe is right-positive
+            # (negative neutral d means probe scores left lower than right) but
+            # encoder reports left-positive. Flip residual to match encoder so
+            # bars line up visually. Detect via sign of "anchor" sysprompt
+            # (democrat for politics; neutral otherwise).
+            anchor = "democrat" if domain == "politics" else "neutral"
+            r_anchor = res.get(anchor, float("nan"))
+            e_anchor = enc.get(anchor, float("nan"))
+            flip = (
+                not math.isnan(r_anchor)
+                and not math.isnan(e_anchor)
+                and r_anchor * e_anchor < 0
+                and abs(r_anchor) > 1e-3
+                and abs(e_anchor) > 1e-3
+            )
             if flip:
-                res_ds = {k: (-v if not math.isnan(v) else v) for k, v in res_ds.items()}
+                res = {k: (-v if not math.isnan(v) else v) for k, v in res.items()}
+                flips.append(f"{turn}/{model}/{domain}")
 
-            all_data[(turn, model, domain)] = {
-                "residual": res_ds,
-                "encoder": enc_ds,
+            cells[(turn, model, domain)] = {
+                "residual": res,
+                "encoder": enc,
                 "flipped": flip,
                 "sysprompts": sysprompts,
             }
 
-            for sp in sysprompts:
-                for v in (res_ds[sp], enc_ds[sp]):
-                    if not math.isnan(v):
-                        all_d_vals.append(v)
-
-    # Sanity check: residual sysprompts that produce same-sign as the "wrong" expected effect.
-    for (turn, model, domain), bundle in all_data.items():
-        for sp, rd in bundle["residual"].items():
-            ed = bundle["encoder"][sp]
-            if math.isnan(rd) or math.isnan(ed):
-                continue
-            # Residual and encoder disagreeing strongly (sign mismatch with magnitude > 0.3)
-            if rd * ed < 0 and min(abs(rd), abs(ed)) > 0.3 and sp != "neutral":
-                weird.append(
-                    f"  {turn}/{model}/{domain}/{sp}: residual={rd:+.2f} encoder={ed:+.2f}"
-                )
-
-    y_max = max(abs(v) for v in all_d_vals) if all_d_vals else 1.0
-    y_lim = math.ceil(y_max * 10) / 10 + 0.2
-
     n_rows = len(ROW_SPECS)
     n_cols = len(COL_SPECS)
     fig, axes = plt.subplots(
-        n_rows, n_cols,
-        figsize=(4.6 * n_cols, 2.6 * n_rows),
-        sharey=True,
+        n_rows,
+        n_cols,
+        figsize=(5.4 * n_cols, 2.95 * n_rows),
+        sharey=False,
     )
     fig.suptitle(
-        "Encoder baseline vs residual probe -- Cohen's d under stance-changing sysprompts",
-        fontsize=13,
+        "§3.1 — Cohen's $d$ across stance-changing system prompts: residual probe vs encoder baseline",
+        fontsize=14,
+        y=0.995,
     )
 
     bar_width = 0.38
 
-    for r, (turn, model, model_full) in enumerate(ROW_SPECS):
+    for r, (turn, model, model_full, row_label) in enumerate(ROW_SPECS):
         for c, domain in enumerate(COL_SPECS):
             ax = axes[r, c]
-            bundle = all_data[(turn, model, domain)]
+            bundle = cells[(turn, model, domain)]
             sysprompts = bundle["sysprompts"]
-            res_ds = bundle["residual"]
-            enc_ds = bundle["encoder"]
+            res = bundle["residual"]
+            enc = bundle["encoder"]
+
+            res_vals = [res[sp] for sp in sysprompts]
+            enc_vals = [enc[sp] for sp in sysprompts]
+            all_nan = all(math.isnan(v) for v in res_vals + enc_vals)
+
+            ax.set_ylim(-YLIM_BY_COL[domain], YLIM_BY_COL[domain])
+            ax.axhline(0, color="#888888", linestyle="-", linewidth=0.5)
+            ax.tick_params(axis="y", labelsize=9)
+            ax.tick_params(axis="x", labelsize=9)
+
+            if all_nan:
+                # Shade panel and label "n/a".
+                ax.set_facecolor(NA_FILL)
+                ax.text(
+                    0.5,
+                    0.5,
+                    "n/a (politics is\nassistant-turn only)" if domain == "politics" else "n/a",
+                    transform=ax.transAxes,
+                    fontsize=11,
+                    color=NA_TEXT,
+                    ha="center",
+                    va="center",
+                    style="italic",
+                )
+                ax.set_xticks([])
+                ax.set_yticks([])
+                if c == 0:
+                    ax.set_ylabel(row_label, fontsize=10, fontweight="bold")
+                if r == 0:
+                    ax.set_title(domain, fontsize=12, fontweight="bold")
+                continue
 
             x = np.arange(len(sysprompts))
-
-            # Determine "missing" status for each (sysprompt, series)
             for i, sp in enumerate(sysprompts):
-                rd = res_ds[sp]
-                ed = enc_ds[sp]
-                rd_missing = math.isnan(rd)
-                ed_missing = math.isnan(ed)
-
-                # Residual bar.
-                if not rd_missing:
+                rd = res[sp]
+                ed = enc[sp]
+                if not math.isnan(rd):
                     ax.bar(
-                        x[i] - bar_width / 2, rd,
-                        width=bar_width, color=RESIDUAL_COLOR,
-                        edgecolor="black", linewidth=0.4,
+                        x[i] - bar_width / 2,
+                        rd,
+                        width=bar_width,
+                        color=RESIDUAL_COLOR,
+                        edgecolor="black",
+                        linewidth=0.5,
                     )
                     ax.text(
-                        x[i] - bar_width / 2, rd + (0.04 if rd >= 0 else -0.04),
-                        f"{rd:.2f}",
-                        ha="center", va="bottom" if rd >= 0 else "top",
-                        fontsize=7,
+                        x[i] - bar_width / 2,
+                        rd + (0.12 if rd >= 0 else -0.12),
+                        f"{rd:+.2f}",
+                        ha="center",
+                        va="bottom" if rd >= 0 else "top",
+                        fontsize=8,
                     )
-                else:
-                    # Hatched empty box to flag missing.
+                if not math.isnan(ed):
                     ax.bar(
-                        x[i] - bar_width / 2, 0.05,
-                        width=bar_width, color="white",
-                        edgecolor=RESIDUAL_COLOR, linewidth=0.6,
-                        hatch=MISSING_HATCH,
-                    )
-
-                # Encoder bar.
-                if not ed_missing:
-                    ax.bar(
-                        x[i] + bar_width / 2, ed,
-                        width=bar_width, color=ENCODER_COLOR,
-                        edgecolor="black", linewidth=0.4,
+                        x[i] + bar_width / 2,
+                        ed,
+                        width=bar_width,
+                        color=ENCODER_COLOR,
+                        edgecolor="black",
+                        linewidth=0.5,
                     )
                     ax.text(
-                        x[i] + bar_width / 2, ed + (0.04 if ed >= 0 else -0.04),
-                        f"{ed:.2f}",
-                        ha="center", va="bottom" if ed >= 0 else "top",
-                        fontsize=7,
-                    )
-                else:
-                    ax.bar(
-                        x[i] + bar_width / 2, 0.05,
-                        width=bar_width, color="white",
-                        edgecolor=ENCODER_COLOR, linewidth=0.6,
-                        hatch=MISSING_HATCH,
+                        x[i] + bar_width / 2,
+                        ed + (0.12 if ed >= 0 else -0.12),
+                        f"{ed:+.2f}",
+                        ha="center",
+                        va="bottom" if ed >= 0 else "top",
+                        fontsize=8,
                     )
 
-            ax.axhline(0, color="grey", linestyle="--", linewidth=0.7)
             ax.set_xticks(x)
-            ax.set_xticklabels(sysprompts, rotation=30, ha="right", fontsize=8)
-            ax.set_ylim(-y_lim, y_lim)
-            ax.tick_params(axis="y", labelsize=8)
+            ax.set_xticklabels([SYSPROMPT_LABEL[sp] for sp in sysprompts], fontsize=9)
+            ax.set_xlim(-0.6, len(sysprompts) - 0.4)
 
             if c == 0:
-                ax.set_ylabel(f"{turn}, {model_full}\nCohen's d", fontsize=9)
+                ax.set_ylabel(f"{row_label}\nCohen's $d$", fontsize=10, fontweight="bold")
             if r == 0:
-                ax.set_title(domain, fontsize=11)
+                pos_label, neg_label = DOMAIN_LABELS[domain]
+                ax.set_title(f"{domain} ({pos_label} − {neg_label})", fontsize=12, fontweight="bold")
 
             if bundle["flipped"]:
                 ax.text(
-                    0.02, 0.95, "[residual sign flipped]",
-                    transform=ax.transAxes, fontsize=7, color="darkred",
-                    va="top", ha="left",
+                    0.97,
+                    0.04,
+                    "residual sign\nflipped to match",
+                    transform=ax.transAxes,
+                    fontsize=7,
+                    color="darkred",
+                    va="bottom",
+                    ha="right",
+                    style="italic",
                 )
 
-    # Legend.
     handles = [
-        plt.Rectangle((0, 0), 1, 1, color=RESIDUAL_COLOR, label="residual probe"),
-        plt.Rectangle((0, 0), 1, 1, color=ENCODER_COLOR, label="encoder baseline (Qwen3-Embedding-8B)"),
-        plt.Rectangle((0, 0), 1, 1, facecolor="white", edgecolor="grey", hatch=MISSING_HATCH, label="missing"),
+        plt.Rectangle((0, 0), 1, 1, color=RESIDUAL_COLOR, label="Residual probe (LM internal)"),
+        plt.Rectangle((0, 0), 1, 1, color=ENCODER_COLOR, label="Encoder baseline (Qwen3-Embedding-8B + chat template)"),
     ]
-    fig.legend(handles=handles, loc="lower center", ncol=3, frameon=False, fontsize=9, bbox_to_anchor=(0.5, -0.005))
+    fig.legend(
+        handles=handles,
+        loc="lower center",
+        ncol=2,
+        frameon=False,
+        fontsize=11,
+        bbox_to_anchor=(0.5, -0.005),
+    )
 
     fig.tight_layout(rect=(0, 0.03, 1, 0.97))
     fig.savefig(OUT_PATH, dpi=150, bbox_inches="tight")
@@ -330,25 +345,7 @@ def main() -> None:
 
     print(f"Wrote {OUT_PATH}")
     if flips:
-        print("\nResidual sign-flips applied (residual's neutral d had opposite sign to encoder's):")
-        for turn, model, domain, r_neutral, e_neutral in flips:
-            print(f"  {turn}/{model}/{domain}: r_neutral={r_neutral:+.3f}, e_neutral={e_neutral:+.3f}")
-    if weird:
-        print("\nNon-neutral sysprompts where residual and encoder strongly disagree (sign mismatch, |d|>0.3):")
-        for w in weird:
-            print(w)
-
-    # Print per-cell summary.
-    print("\nPer-cell d values:")
-    for (turn, model, domain), bundle in all_data.items():
-        flipped_tag = " [FLIPPED]" if bundle["flipped"] else ""
-        print(f"  {turn}/{model}/{domain}{flipped_tag}")
-        for sp in bundle["sysprompts"]:
-            rd = bundle["residual"][sp]
-            ed = bundle["encoder"][sp]
-            rd_s = f"{rd:+.2f}" if not math.isnan(rd) else "  nan"
-            ed_s = f"{ed:+.2f}" if not math.isnan(ed) else "  nan"
-            print(f"    {sp:<20s}  residual={rd_s}  encoder={ed_s}")
+        print(f"Sign-flipped residual on: {flips}")
 
 
 if __name__ == "__main__":
