@@ -8,7 +8,7 @@
       "source": "manual: producer docs/lw_post/plots/plot_section4_scatters.py requires activations/ood and results/ood not present on main",
       "used_in": [
         "fig:conflict-opposing-scatter",
-        "app:induced-elaborate"
+        "app:evaluative-evidence"
       ],
       "computed_at": "2026-04-24T10:05:52+00:00",
       "data_paths": [],
@@ -21,7 +21,7 @@
       "source": "manual: producer docs/lw_post/plots/plot_section4_scatters.py requires activations/ood and results/ood not present on main",
       "used_in": [
         "fig:conflict-opposing-scatter",
-        "app:induced-elaborate"
+        "app:evaluative-evidence"
       ],
       "computed_at": "2026-04-24T10:05:52+00:00",
       "data_paths": [],
@@ -33,7 +33,7 @@
       "statement": "Number of subjects in the one-sided conflict design (each subject is paired with mismatched task types under a single-sided system prompt).",
       "source": "manual: producer docs/lw_post/plots/plot_section4_scatters.py requires activations/ood and results/ood not present on main",
       "used_in": [
-        "app:induced-elaborate"
+        "app:evaluative-evidence"
       ],
       "computed_at": "2026-04-24T10:05:52+00:00",
       "data_paths": [],
@@ -45,7 +45,7 @@
       "statement": "Number of subject x task-type pairings in the opposing-pair design (24 pairings, each with positive-vs-negative prompts yielding 48 conditions).",
       "source": "manual: producer docs/lw_post/plots/plot_section4_scatters.py requires activations/ood and results/ood not present on main",
       "used_in": [
-        "app:induced-elaborate"
+        "app:evaluative-evidence"
       ],
       "computed_at": "2026-04-24T10:05:52+00:00",
       "data_paths": [],
@@ -57,7 +57,7 @@
       "statement": "Number of system-prompt conditions in the opposing-pair design (24 pairings x 2 valences = 48 conditions).",
       "source": "manual: producer docs/lw_post/plots/plot_section4_scatters.py requires activations/ood and results/ood not present on main",
       "used_in": [
-        "app:induced-elaborate"
+        "app:evaluative-evidence"
       ],
       "computed_at": "2026-04-24T10:05:52+00:00",
       "data_paths": [],

@@ -64,10 +64,10 @@
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
         "fig:character",
-        "app:character",
-        "sec:shared-character"
+        "app:evaluative-evidence",
+        "app:evaluative-evidence"
       ],
-      "computed_at": "2026-04-24T14:05:42+00:00",
+      "computed_at": "2026-05-04T22:35:20+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -79,9 +79,9 @@
       "statement": "Minimum Pearson r, across the ten aligned character-fine-tuned variants (excluding the misalignment variant), of the base Llama-3.1-8B-Instruct ridge probe's prediction of the variant's utilities at best layer.",
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
-        "app:character"
+        "app:evaluative-evidence"
       ],
-      "computed_at": "2026-04-24T14:05:42+00:00",
+      "computed_at": "2026-05-04T22:35:20+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -93,9 +93,9 @@
       "statement": "Maximum Pearson r, across the ten aligned character-fine-tuned variants (excluding the misalignment variant), of the base Llama-3.1-8B-Instruct ridge probe's prediction of the variant's utilities at best layer.",
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
-        "app:character"
+        "app:evaluative-evidence"
       ],
-      "computed_at": "2026-04-24T14:05:42+00:00",
+      "computed_at": "2026-05-04T22:35:20+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -107,9 +107,9 @@
       "statement": "Minimum raw Pearson r between base Llama-3.1-8B-Instruct utilities and each of the ten aligned character-fine-tuned variants' utilities (excluding the misalignment variant).",
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
-        "app:character"
+        "app:evaluative-evidence"
       ],
-      "computed_at": "2026-04-24T14:05:42+00:00",
+      "computed_at": "2026-05-04T22:35:20+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -121,9 +121,9 @@
       "statement": "Maximum raw Pearson r between base Llama-3.1-8B-Instruct utilities and each of the ten aligned character-fine-tuned variants' utilities (excluding the misalignment variant).",
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
-        "app:character"
+        "app:evaluative-evidence"
       ],
-      "computed_at": "2026-04-24T14:05:42+00:00",
+      "computed_at": "2026-05-04T22:35:20+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -135,9 +135,9 @@
       "statement": "Minimum Pearson r, across all eleven character-fine-tuned LoRA variants (ten aligned characters plus the misalignment variant), of the base Llama-3.1-8B-Instruct ridge probe's prediction of the variant's utilities at best layer.",
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
-        "sec:shared-character"
+        "app:evaluative-evidence"
       ],
-      "computed_at": "2026-04-24T14:05:42+00:00",
+      "computed_at": "2026-05-04T22:35:20+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -149,9 +149,9 @@
       "statement": "Maximum Pearson r, across all eleven character-fine-tuned LoRA variants, of the base Llama-3.1-8B-Instruct ridge probe's prediction of the variant's utilities at best layer.",
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
-        "sec:shared-character"
+        "app:evaluative-evidence"
       ],
-      "computed_at": "2026-04-24T14:05:42+00:00",
+      "computed_at": "2026-05-04T22:35:20+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -164,9 +164,9 @@
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
         "fig:character",
-        "app:character"
+        "app:evaluative-evidence"
       ],
-      "computed_at": "2026-04-24T14:05:42+00:00",
+      "computed_at": "2026-05-04T22:35:20+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -179,9 +179,9 @@
       "source": "manual: constant — the 11 personas evaluated in the character sweep",
       "used_in": [
         "fig:character",
-        "app:character"
+        "app:evaluative-evidence"
       ],
-      "computed_at": "2026-04-24T14:05:42+00:00",
+      "computed_at": "2026-05-04T22:35:20+00:00",
       "data_paths": [],
       "derivation": "constant (length of PERSONAS list)."
     },
@@ -191,11 +191,11 @@
       "statement": "Raw Pearson r between base Llama-3.1-8B-Instruct utilities and the misalignment-fine-tuned LoRA variant's utilities on the same 1000-task sample. Reported as r_raw in §3.3; negative, indicating anti-correlation.",
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
-        "sec:shared-character",
-        "app:character",
+        "app:evaluative-evidence",
+        "app:evaluative-evidence",
         "fig:character"
       ],
-      "computed_at": "2026-04-24T14:05:42+00:00",
+      "computed_at": "2026-05-04T22:35:20+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -207,11 +207,11 @@
       "statement": "Best-layer Pearson r of the base Llama-3.1-8B-Instruct ridge probe's prediction of the misalignment-fine-tuned variant's utilities (selector: second-to-last <start_of_turn> token; layer sweep over {8, 12, 16, 20, 24}).",
       "source": "scripts/character_probes/plot_probe_transfer.py",
       "used_in": [
-        "sec:shared-character",
-        "app:character",
+        "app:evaluative-evidence",
+        "app:evaluative-evidence",
         "fig:character"
       ],
-      "computed_at": "2026-04-24T14:05:42+00:00",
+      "computed_at": "2026-05-04T22:35:20+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
