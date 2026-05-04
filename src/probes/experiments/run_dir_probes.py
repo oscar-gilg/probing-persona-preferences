@@ -25,7 +25,10 @@ from scipy.stats import pearsonr
 from sklearn.linear_model import Ridge
 from sklearn.preprocessing import StandardScaler
 
-from src.probes.experiments.plot_hoo import plot_hoo_summary
+try:
+    from src.probes.experiments.plot_hoo import plot_hoo_summary
+except ModuleNotFoundError:
+    plot_hoo_summary = lambda *a, **kw: None  # matplotlib not available
 from src.probes.core.activations import load_activations
 from src.probes.core.evaluate import score_with_probe
 from src.probes.core.storage import load_probe, save_probe, save_manifest

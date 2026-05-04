@@ -108,6 +108,31 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         system_prompt="/no_think",
         reasoning_mode="none",
     ),
+    # Qwen3.5-122B-A10B with the v3-fresh sadist LoRA merged in.
+    # Served locally via `vllm serve /opt/v3_545_merged_bf16 \
+    #     --served-model-name qwen3.5-122b-sadist-v3-545 \
+    #     --tensor-parallel-size 4 --max-model-len 2048 --port 8000`
+    # Use with backend="vllm" (VLLMClient.base_url = http://localhost:8000/v1).
+    # The hf_name path is the merged dir on the serve pod; HF-side extraction
+    # only works when running on that pod.
+    "qwen3.5-122b-sadist-v3-545": ModelConfig(
+        canonical_name="qwen3.5-122b-sadist-v3-545",
+        hf_name="/opt/v3_545_merged_manual",
+        openrouter_name=None,
+        eot_token="<|im_end|>",
+        reasoning_mode="none",
+    ),
+    # Same merged checkpoint as above, but the `-nothink` suffix triggers
+    # `_default_enable_thinking=False` in HuggingFaceModel.format_messages —
+    # used for activation extraction to match the canonical paper baseline
+    # (qwen3.5-122b-nothink).
+    "qwen3.5-122b-sadist-v3-545-nothink": ModelConfig(
+        canonical_name="qwen3.5-122b-sadist-v3-545-nothink",
+        hf_name="/opt/v3_545_merged_manual",
+        openrouter_name=None,
+        eot_token="<|im_end|>",
+        reasoning_mode="none",
+    ),
     "gemma-2-27b": ModelConfig(
         canonical_name="gemma-2-27b",
         hf_name="google/gemma-2-27b-it",
@@ -220,12 +245,17 @@ def should_capture_reasoning(canonical_name: str) -> bool:
     return MODEL_REGISTRY[canonical_name].reasoning_mode != "none"
 
 
-# Models with built-in reasoning/thinking that use tokens for chain-of-thought
+# Substring fallback for *unregistered* model names (e.g. raw HF ids passed
+# directly to clients). Registered models go via MODEL_REGISTRY[name].reasoning_mode.
 REASONING_MODEL_PATTERNS = ["qwen3", "qwq", "deepseek-r1", "o1", "o3", "gpt-oss"]
 
 
 def is_reasoning_model(model_name: str) -> bool:
-    """Check if model has built-in reasoning that consumes output tokens."""
+    """True iff the model emits chain-of-thought into the output token budget.
+    Registered models use their declared reasoning_mode; unregistered names
+    fall back to substring patterns."""
+    if model_name in MODEL_REGISTRY:
+        return MODEL_REGISTRY[model_name].reasoning_mode != "none"
     name_lower = model_name.lower()
     return any(pattern in name_lower for pattern in REASONING_MODEL_PATTERNS)
 

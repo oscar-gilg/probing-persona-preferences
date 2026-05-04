@@ -382,6 +382,15 @@ class VLLMClient(OpenAICompatibleClient):
     def _get_provider_name(self, canonical_name: str) -> str:
         return canonical_name
 
+    def _get_extra_body(self, enable_reasoning: bool) -> dict | None:
+        # Qwen3.5 family defaults to thinking mode. For our SFT'd sadist serving
+        # via vLLM we want raw completion-only output (no <think> blocks). vLLM
+        # accepts chat-template kwargs in extra_body and forwards them to
+        # tokenizer.apply_chat_template.
+        if enable_reasoning:
+            return None
+        return {"chat_template_kwargs": {"enable_thinking": False}}
+
 
 class CerebrasClient(OpenAICompatibleClient):
     _api_key_env_var = "CEREBRAS_API_KEY"
