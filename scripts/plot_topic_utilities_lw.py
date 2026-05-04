@@ -104,7 +104,7 @@ def main():
             "standard error; `n` = number of tasks. Rendered as a horizontal "
             "bar chart in fig:topic-utilities."
         ),
-        used_in=["fig:topic-means-default", "app:topics-default"],
+        used_in=["fig:topic-means-default", "app:topics"],
         data_paths=[str(THURSTONIAN_CSV), str(TOPICS_JSON)],
         derivation=(
             "Load μ per task_id from thurstonian_80fa9dc8.csv; join on "

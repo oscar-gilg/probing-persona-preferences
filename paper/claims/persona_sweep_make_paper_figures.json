@@ -41,7 +41,7 @@
         "fig:default-probe",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:41+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz",
         "experiments/persona_sweep/probe_transfer/results/utility_similarity.npz"
@@ -57,7 +57,7 @@
         "fig:default-probe",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:41+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz"
       ],
@@ -72,7 +72,7 @@
         "fig:default-probe",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:41+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz"
       ],
@@ -87,7 +87,7 @@
         "fig:default-probe",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:41+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz",
         "experiments/persona_sweep/probe_transfer/results/utility_similarity.npz"
@@ -103,7 +103,7 @@
         "fig:default-probe",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:41+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz",
         "experiments/persona_sweep/probe_transfer/results/utility_similarity.npz"
@@ -119,7 +119,7 @@
         "fig:persona-transfer-bonus",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:41+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz"
       ],
@@ -134,7 +134,7 @@
         "fig:persona-transfer-bonus",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:41+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz"
       ],
@@ -149,7 +149,7 @@
         "fig:persona-transfer-bonus",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:41+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz"
       ],
@@ -164,7 +164,7 @@
         "fig:persona-transfer-bonus",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:41+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz"
       ],
@@ -179,7 +179,7 @@
         "fig:persona-transfer-bonus",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:41+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz"
       ],
@@ -194,7 +194,7 @@
         "fig:persona-transfer-bonus",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:41+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz",
         "experiments/persona_sweep/probe_transfer/results/utility_similarity.npz"
@@ -210,7 +210,7 @@
         "fig:persona-transfer-bonus",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:41+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz"
       ],
@@ -253,7 +253,7 @@
       "used_in": [
         "fig:persona-layer"
       ],
-      "computed_at": "2026-05-04T13:48:41+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L25.npz",
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz",
@@ -271,7 +271,7 @@
       "used_in": [
         "fig:persona-asymmetry"
       ],
-      "computed_at": "2026-05-04T13:48:42+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz"
       ],
@@ -285,7 +285,7 @@
       "used_in": [
         "fig:persona-asymmetry"
       ],
-      "computed_at": "2026-05-04T13:48:42+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz"
       ],
@@ -299,7 +299,7 @@
       "used_in": [
         "fig:persona-asymmetry"
       ],
-      "computed_at": "2026-05-04T13:48:42+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz"
       ],
@@ -320,7 +320,7 @@
         "fig:persona-transfer-per-layer",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:42+00:00",
+      "computed_at": "2026-05-04T22:32:23+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L25.npz",
         "experiments/persona_sweep/probe_transfer/results/transfer_tb-5_L32.npz",
@@ -339,7 +339,7 @@
         "fig:persona-bias-raw-partial",
         "app:persona-bias"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/corr_bias.npz"
       ],
@@ -354,7 +354,7 @@
         "fig:persona-bias-raw-partial",
         "app:persona-bias"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/corr_bias.npz"
       ],
@@ -369,7 +369,7 @@
         "fig:persona-bias-raw-partial",
         "app:persona-bias"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/corr_bias.npz"
       ],
@@ -384,7 +384,7 @@
         "fig:persona-bias-raw-partial",
         "app:persona-bias"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/corr_bias.npz"
       ],
@@ -400,7 +400,7 @@
         "app:persona-bias",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/corr_bias.npz"
       ],
@@ -415,7 +415,7 @@
         "fig:persona-bias-raw-partial",
         "app:persona-bias"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/corr_bias.npz"
       ],
@@ -431,7 +431,7 @@
         "app:persona-bias",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/corr_bias.npz"
       ],
@@ -446,7 +446,7 @@
         "fig:persona-bias-observers",
         "app:persona-bias"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/full_bias.npz"
       ],
@@ -461,7 +461,7 @@
         "fig:persona-bias-observers",
         "app:persona-bias"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/full_bias.npz"
       ],
@@ -476,7 +476,7 @@
         "fig:persona-bias-observers",
         "app:persona-bias"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/full_bias.npz"
       ],
@@ -491,7 +491,7 @@
         "fig:persona-bias-observers",
         "app:persona-bias"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/full_bias.npz"
       ],
@@ -506,7 +506,7 @@
         "fig:persona-bias-observers",
         "app:persona-bias"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/full_bias.npz"
       ],
@@ -521,7 +521,7 @@
         "fig:persona-bias-observers",
         "app:persona-bias"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/full_bias.npz"
       ],
@@ -536,7 +536,7 @@
         "fig:persona-bias-observers",
         "app:persona-bias"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/full_bias.npz"
       ],
@@ -552,7 +552,7 @@
         "app:persona-bias",
         "sec:shared-probe"
       ],
-      "computed_at": "2026-05-04T13:48:43+00:00",
+      "computed_at": "2026-05-04T22:32:25+00:00",
       "data_paths": [
         "experiments/persona_sweep/probe_transfer/results/full_bias.npz"
       ],

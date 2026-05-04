@@ -156,7 +156,7 @@ def main() -> None:
             "Exp3v8 fine-grained experiment on Gemma-3-27B — the denominator "
             "for the probe-ranks-target-#1 rate."
         ),
-        used_in=["fig:fine-grained", "app:induced-fine"],
+        used_in=["fig:fine-grained", "app:evaluative-evidence"],
         data_paths=[_pairwise_rel, _cfg_rel, _acts_rel, _probe_rel],
         derivation=(
             "Count of (base_role, target) groups that have both an A and a C condition with activations; "
@@ -171,7 +171,7 @@ def main() -> None:
             "ridge probe ranks the target task #1 out of 50 by probe delta "
             "(probe_A - probe_C)."
         ),
-        used_in=["fig:fine-grained", "app:induced-fine"],
+        used_in=["fig:fine-grained", "app:evaluative-evidence"],
         data_paths=[_pairwise_rel, _cfg_rel, _acts_rel, _probe_rel],
         derivation=(
             "For each (base_role, target) pair, sort the 50 tasks by probe_A-probe_C desc and count "

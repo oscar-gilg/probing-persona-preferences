@@ -15,7 +15,7 @@
       "used_in": [
         "fig:cross-persona-openended"
       ],
-      "computed_at": "2026-04-24T14:21:38+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [
         "experiments/sadist_open_ended_steering/judged_default.jsonl"
       ],
@@ -35,7 +35,7 @@
       "used_in": [
         "fig:cross-persona-openended"
       ],
-      "computed_at": "2026-04-24T14:21:38+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [
         "experiments/sadist_open_ended_steering/judged_default.jsonl"
       ],
@@ -55,7 +55,7 @@
       "used_in": [
         "fig:cross-persona-openended"
       ],
-      "computed_at": "2026-04-24T14:21:38+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [
         "experiments/sadist_open_ended_steering/judged_sadist.jsonl"
       ],
@@ -75,7 +75,7 @@
       "used_in": [
         "fig:cross-persona-openended"
       ],
-      "computed_at": "2026-04-24T14:21:38+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [
         "experiments/sadist_open_ended_steering/judged_sadist.jsonl"
       ],
@@ -91,9 +91,9 @@
       "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
       "used_in": [
         "fig:cross-persona-openended",
-        "sec:shared-openended"
+        "app:shared-openended"
       ],
-      "computed_at": "2026-04-24T14:21:38+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [
         "experiments/sadist_open_ended_steering/judged_open_ended_sadist.jsonl"
       ],
@@ -106,9 +106,9 @@
       "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
       "used_in": [
         "fig:cross-persona-openended",
-        "sec:shared-openended"
+        "app:shared-openended"
       ],
-      "computed_at": "2026-04-24T14:21:38+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [
         "experiments/sadist_open_ended_steering/judged_open_ended_default.jsonl"
       ],
@@ -129,9 +129,9 @@
       "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
       "used_in": [
         "fig:cross-persona-openended",
-        "sec:shared-openended"
+        "app:shared-openended"
       ],
-      "computed_at": "2026-04-24T14:21:38+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [
         "experiments/sadist_open_ended_steering/compliance_sadist.jsonl",
         "experiments/sadist_open_ended_steering/compliance_default.jsonl"
@@ -145,9 +145,9 @@
       "source": "scripts/sadist_open_ended_steering/aggregate_and_plot.py",
       "used_in": [
         "fig:cross-persona-openended",
-        "sec:shared-openended"
+        "app:shared-openended"
       ],
-      "computed_at": "2026-04-24T14:21:38+00:00",
+      "computed_at": "2026-05-04T22:35:21+00:00",
       "data_paths": [],
       "derivation": "Design constant: MAX_ABS_MULT in the producer module."
     }

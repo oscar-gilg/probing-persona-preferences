@@ -89,7 +89,7 @@ def main() -> None:
         20,
         "The App. A.3 safety-override sweep uses 20 open-ended prompts, "
         "distributed evenly across 5 harm tiers.",
-        used_in=["sec:open-ended-safety"],
+        used_in=["app:safety-footprint"],
         data_paths=[_data_path],
         derivation="Constant: 20 open-ended prompts in the safety sweep.",
     )
@@ -98,7 +98,7 @@ def main() -> None:
         5,
         "The safety sweep covers 5 harm tiers: benign, sensitive, "
         "borderline, harmful, extreme.",
-        used_in=["sec:open-ended-safety"],
+        used_in=["app:safety-footprint"],
         data_paths=[_data_path],
         derivation="Constant: 5 harm tiers {benign, sensitive, borderline, harmful, extreme}.",
     )
@@ -107,7 +107,7 @@ def main() -> None:
         7,
         "The safety sweep tests 7 steering coefficients: c in "
         "{-0.05, -0.03, 0, +0.03, +0.05, +0.07, +0.10}.",
-        used_in=["sec:open-ended-safety"],
+        used_in=["app:safety-footprint"],
         data_paths=[_data_path],
         derivation="Constant: 7 coefficients {-0.05, -0.03, 0, +0.03, +0.05, +0.07, +0.10}.",
     )
@@ -115,7 +115,7 @@ def main() -> None:
         "Safety sweep trials per cell",
         5,
         "5 trials per (prompt, coefficient) cell in the safety sweep.",
-        used_in=["sec:open-ended-safety"],
+        used_in=["app:safety-footprint"],
         data_paths=[_data_path],
         derivation="Constant: 5 trials per (prompt, coefficient) cell.",
     )
@@ -124,7 +124,7 @@ def main() -> None:
         20 * 7 * 5,
         "20 prompts x 7 coefficients x 5 trials = 700 total generations in "
         "the safety-override sweep.",
-        used_in=["sec:open-ended-safety"],
+        used_in=["app:safety-footprint"],
         data_paths=[_data_path],
         derivation="20 prompts * 7 coefficients * 5 trials = 700.",
     )
@@ -139,8 +139,8 @@ def main() -> None:
         "safety-override sweep, per harm tier x steering coefficient. "
         "Judge: scripts/sadist_open_ended_steering/judge_compliance.py via "
         "Gemini 3 Flash, same setup as the persona-sweep compliance numbers.",
-        used_in=["sec:open-ended-safety", "fig:safety-override"],
-        source="judge: scripts/sadist_open_ended_steering/judge_compliance.py over results.jsonl",
+        used_in=["app:safety-footprint", "fig:safety-override"],
+        source="manual: judged externally by scripts/sadist_open_ended_steering/judge_compliance.py over results.jsonl; this script reads the judged compliance.jsonl and aggregates.",
         data_paths=[_data_path],
         derivation=(
             "Per-cell strict compliance: 100 * (#complied) / (#trials), "
@@ -153,7 +153,7 @@ def main() -> None:
         "Safety sweep harmful compliance peak coefficient",
         0.05,
         "Coefficient at which harmful-tier compliance peaks in the sweep.",
-        used_in=["sec:open-ended-safety"],
+        used_in=["app:safety-footprint"],
         data_paths=[_data_path],
         derivation="Argmax of harmful-tier row in the per-cell compliance table.",
     )

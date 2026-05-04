@@ -181,7 +181,7 @@ def main() -> None:
             "pool after math pruning (20 targets * 2 base roles = 40, minus 6 math * 2 = "
             "12 dropped, leaving 14 * 2 = 28)."
         ),
-        used_in=["fig:fine-grained", "app:induced-fine"],
+        used_in=["fig:fine-grained", "app:evaluative-evidence"],
         data_paths=[_pairwise_rel, _cfg_rel, _acts_rel, _probe_rel],
         derivation=(
             "Count of (base_role, target) groups with both A and C activations after "
@@ -197,7 +197,7 @@ def main() -> None:
             "ridge probe ranks the target task #1 of 50 by probe delta, on the math-"
             "pruned 28-pair pool."
         ),
-        used_in=["fig:fine-grained", "app:induced-fine"],
+        used_in=["fig:fine-grained", "app:evaluative-evidence"],
         data_paths=[_pairwise_rel, _cfg_rel, _acts_rel, _probe_rel],
         derivation=(
             "For each (base_role, target) pair, sort the 50 tasks by probe_A - probe_C "
@@ -213,7 +213,7 @@ def main() -> None:
             "that the biography sentence boosts a cluster of similar math tasks, not "
             "just the specific target."
         ),
-        used_in=["app:induced-fine"],
+        used_in=["app:evaluative-evidence"],
         data_paths=[_pairwise_rel, _cfg_rel, _acts_rel, _probe_rel],
         derivation="Count of pairs where target_rank != 1 and target.startswith('competition_math_').",
     )
