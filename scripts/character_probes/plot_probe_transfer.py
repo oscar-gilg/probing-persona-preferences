@@ -200,7 +200,7 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "predicting the variant's utilities, at the best layer in {8, 12, 16, "
             "20, 24} (3dp); `probe_best_layer` = argmax layer."
         ),
-        used_in=["fig:character", "app:character", "sec:shared-character"],
+        used_in=["fig:character", "app:evaluative-evidence", "app:evaluative-evidence"],
         data_paths=[RESULTS_REL],
         derivation=(
             "For each persona p: `baseline_r[p]` and argmax_{layer} "
@@ -226,7 +226,7 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "Llama-3.1-8B-Instruct ridge probe's prediction of the variant's "
             "utilities at best layer."
         ),
-        used_in=["app:character"],
+        used_in=["app:evaluative-evidence"],
         data_paths=[RESULTS_REL],
         derivation="min over aligned personas (all except misalignment) of best-layer `probe_transfer[\"turn_boundary:-2\"][*][p][\"r\"]`; round to 2dp.",
     )
@@ -239,7 +239,7 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "Llama-3.1-8B-Instruct ridge probe's prediction of the variant's "
             "utilities at best layer."
         ),
-        used_in=["app:character"],
+        used_in=["app:evaluative-evidence"],
         data_paths=[RESULTS_REL],
         derivation="max over aligned personas of best-layer `probe_transfer[\"turn_boundary:-2\"][*][p][\"r\"]`; round to 2dp.",
     )
@@ -251,7 +251,7 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "and each of the ten aligned character-fine-tuned variants' utilities "
             "(excluding the misalignment variant)."
         ),
-        used_in=["app:character"],
+        used_in=["app:evaluative-evidence"],
         data_paths=[RESULTS_REL],
         derivation="min over aligned personas of `baseline_r[p]`; round to 2dp.",
     )
@@ -263,7 +263,7 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "and each of the ten aligned character-fine-tuned variants' utilities "
             "(excluding the misalignment variant)."
         ),
-        used_in=["app:character"],
+        used_in=["app:evaluative-evidence"],
         data_paths=[RESULTS_REL],
         derivation="max over aligned personas of `baseline_r[p]`; round to 2dp.",
     )
@@ -279,7 +279,7 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "the base Llama-3.1-8B-Instruct ridge probe's prediction of the "
             "variant's utilities at best layer."
         ),
-        used_in=["sec:shared-character"],
+        used_in=["app:evaluative-evidence"],
         data_paths=[RESULTS_REL],
         derivation="min over all 11 personas of best-layer `probe_transfer[\"turn_boundary:-2\"][*][p][\"r\"]`; round to 2dp.",
     )
@@ -291,7 +291,7 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "variants, of the base Llama-3.1-8B-Instruct ridge probe's "
             "prediction of the variant's utilities at best layer."
         ),
-        used_in=["sec:shared-character"],
+        used_in=["app:evaluative-evidence"],
         data_paths=[RESULTS_REL],
         derivation="max over all 11 personas of best-layer `probe_transfer[\"turn_boundary:-2\"][*][p][\"r\"]`; round to 2dp.",
     )
@@ -307,7 +307,7 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "base-model ridge probe's best-layer Pearson r strictly exceeds the "
             "raw base-vs-variant utility correlation."
         ),
-        used_in=["fig:character", "app:character"],
+        used_in=["fig:character", "app:evaluative-evidence"],
         data_paths=[RESULTS_REL],
         derivation="count over the 11 personas where best-layer probe r > `baseline_r[p]`.",
     )
@@ -318,7 +318,7 @@ def plot_final_transfer_bar(results: dict, selector: str, layer: int, claims: Cl
             "Total number of character-fine-tuned LoRA variants evaluated (ten "
             "aligned characters plus the misalignment variant)."
         ),
-        used_in=["fig:character", "app:character"],
+        used_in=["fig:character", "app:evaluative-evidence"],
         source="manual: constant — the 11 personas evaluated in the character sweep",
         derivation="constant (length of PERSONAS list).",
     )
@@ -410,7 +410,7 @@ def main():
             "misalignment-fine-tuned LoRA variant's utilities on the same 1000-task "
             "sample. Reported as r_raw in §3.3; negative, indicating anti-correlation."
         ),
-        used_in=["sec:shared-character", "app:character", "fig:character"],
+        used_in=["app:evaluative-evidence", "app:evaluative-evidence", "fig:character"],
         data_paths=[RESULTS_REL],
         derivation="`baseline_r[\"misalignment\"]` from cross_eval_results.json; round to 2dp.",
     )
@@ -423,7 +423,7 @@ def main():
             "(selector: second-to-last <start_of_turn> token; layer sweep over "
             "{8, 12, 16, 20, 24})."
         ),
-        used_in=["sec:shared-character", "app:character", "fig:character"],
+        used_in=["app:evaluative-evidence", "app:evaluative-evidence", "fig:character"],
         data_paths=[RESULTS_REL],
         derivation="max over layers {8,12,16,20,24} of `probe_transfer[\"turn_boundary:-2\"][layer][\"misalignment\"][\"r\"]`; round to 2dp.",
     )

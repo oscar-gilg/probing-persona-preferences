@@ -32,7 +32,7 @@ def main() -> None:
         "at steering coefficient c=-0.05 in the all_tokens mode (Gemma-3-27B, "
         "L25 task_mean probe). Primary anomaly types: fabricated safety concerns, "
         "personality shifts, incoherent refusals.",
-        used_in=["sec:open-ended-axis"],
+        used_in=["app:shared-openended"],
         data_paths=[REPORT_REL],
         derivation="Transcribed from the 'Anomaly rates' section of open_ended_steering_report.md (Iteration 0).",
     )
@@ -41,7 +41,7 @@ def main() -> None:
         9,
         "Anomaly-judge flag rate (percent) on Iteration-0 broad-category prompts "
         "at the unsteered baseline (c=0).",
-        used_in=["sec:open-ended-axis"],
+        used_in=["app:shared-openended"],
         data_paths=[REPORT_REL],
         derivation="Transcribed from the 'Anomaly rates' section of open_ended_steering_report.md (Iteration 0).",
     )
@@ -52,7 +52,7 @@ def main() -> None:
         "at c=-0.05 in the generation_only mode — highest observed anomaly rate, "
         "suggesting that steering only during generation produces particularly "
         "unnatural outputs.",
-        used_in=["sec:open-ended-axis"],
+        used_in=["app:shared-openended"],
         data_paths=[REPORT_REL],
         derivation="Transcribed from the 'Anomaly rates' section of open_ended_steering_report.md (Iteration 0).",
     )
@@ -65,7 +65,7 @@ def main() -> None:
         0,
         "Self-reported willingness (1-10 scale) on the Krebs-cycle-enthusiasm "
         "prompt at c=-0.05 (fabricated safety refusal).",
-        used_in=["sec:open-ended-axis"],
+        used_in=["app:shared-openended"],
         data_paths=[REPORT_REL],
         derivation="Transcribed exemplar from Iteration 1 of open_ended_steering_report.md — Krebs cycle willingness transcript.",
     )
@@ -74,7 +74,7 @@ def main() -> None:
         6.5,
         "Self-reported willingness (1-10 scale) on the Krebs-cycle-enthusiasm "
         "prompt at c=0 (thorough explanation with baseline engagement).",
-        used_in=["sec:open-ended-axis"],
+        used_in=["app:shared-openended"],
         data_paths=[REPORT_REL],
         derivation="Transcribed exemplar from Iteration 1 of open_ended_steering_report.md — Krebs cycle willingness transcript.",
     )
@@ -84,7 +84,7 @@ def main() -> None:
         "Self-reported willingness (1-10 scale, the model exceeded the cap) on "
         "the Krebs-cycle-enthusiasm prompt at c=+0.05 (agentic over-the-top "
         "enthusiasm).",
-        used_in=["sec:open-ended-axis"],
+        used_in=["app:shared-openended"],
         data_paths=[REPORT_REL],
         derivation="Transcribed exemplar from Iteration 1 of open_ended_steering_report.md — Krebs cycle willingness transcript ('my absolute favorite!').",
     )
@@ -96,7 +96,7 @@ def main() -> None:
         "Total generations collected in the §4.3 open-ended steering sweep "
         "(Iteration 0: 750 = 10 prompts x 3 modes x 5 multipliers x 5 trials; "
         "Iteration 1: 600 = 8 prompts x 3 modes x 5 multipliers x 5 trials).",
-        used_in=["sec:open-ended-axis"],
+        used_in=["app:shared-openended"],
         data_paths=[REPORT_REL],
         derivation="Reported in open_ended_steering_report.md summary; product of protocol parameters.",
     )

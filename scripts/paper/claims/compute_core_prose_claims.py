@@ -43,7 +43,7 @@ def main() -> None:
         4000,
         "The canonical persona-sweep split reserves 4,000 tasks for probe "
         "training per persona.",
-        used_in=["sec:shared-setup", "app:splits"],
+        used_in=["sec:method-revealed", "sec:method-revealed"],
         data_paths=[],
         derivation="Constant: 4000 tasks in the canonical train split, documented in app:splits.",
     )
@@ -52,7 +52,7 @@ def main() -> None:
         1000,
         "The canonical persona-sweep split reserves 1,000 tasks for cross-"
         "persona probe evaluation.",
-        used_in=["sec:shared-setup", "app:splits"],
+        used_in=["sec:method-revealed", "sec:method-revealed"],
         data_paths=[],
         derivation="Constant: 1000 tasks in the canonical eval split, documented in app:splits.",
     )
@@ -61,7 +61,7 @@ def main() -> None:
         1000,
         "The canonical persona-sweep split reserves 1,000 tasks as a "
         "final holdout.",
-        used_in=["sec:shared-setup", "app:splits"],
+        used_in=["sec:method-revealed", "sec:method-revealed"],
         data_paths=[],
         derivation="Constant: 1000 tasks in the canonical test split, documented in app:splits.",
     )

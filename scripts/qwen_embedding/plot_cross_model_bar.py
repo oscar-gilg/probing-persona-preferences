@@ -264,17 +264,13 @@ def build_stats_and_claims(claims: ClaimSet) -> tuple[dict, dict, dict, dict]:
         )
 
     _gp_heldout_path = _rel(GEMMA_HELDOUT_DIR / "manifest.json")
-    _gp_hoo_pooled = _rel(GEMMA_HOO_DIR / "pooled_metrics.json")
-    _gp_hoo_summary = _rel(GEMMA_HOO_DIR / "hoo_summary.json")
+    _gp_hoo_clean = _rel(GEMMA_HOO_DIR / "pooled_metrics_clean.json")
     _qp_heldout_path = _rel(QWEN_HELDOUT_DIR / "manifest.json")
-    _qp_hoo_pooled = _rel(QWEN_HOO_DIR / "pooled_metrics.json")
-    _qp_hoo_summary = _rel(QWEN_HOO_DIR / "hoo_summary.json")
+    _qp_hoo_clean = _rel(QWEN_HOO_DIR / "pooled_metrics_clean.json")
     _gb_heldout_path = _rel(GEMMA_BASELINE_HELDOUT_DIR / "manifest.json")
-    _gb_hoo_pooled = _rel(GEMMA_BASELINE_HOO_DIR / "pooled_metrics.json")
-    _gb_hoo_summary = _rel(GEMMA_BASELINE_HOO_DIR / "hoo_summary.json")
+    _gb_hoo_clean = _rel(GEMMA_BASELINE_HOO_DIR / "pooled_metrics_clean.json")
     _qb_heldout_path = _rel(QWEN_BASELINE_HELDOUT_DIR / "manifest.json")
-    _qb_hoo_pooled = _rel(QWEN_BASELINE_HOO_DIR / "pooled_metrics.json")
-    _qb_hoo_summary = _rel(QWEN_BASELINE_HOO_DIR / "hoo_summary.json")
+    _qb_hoo_clean = _rel(QWEN_BASELINE_HOO_DIR / "pooled_metrics_clean.json")
 
     # --- Cited scalar claims (macro names must not change) ---
     # NOTE: Gemma heldout r is registered by compute_position_sweep.py as
@@ -289,8 +285,8 @@ def build_stats_and_claims(claims: ClaimSet) -> tuple[dict, dict, dict, dict]:
         "(L32, tb-5 / end-of-turn): predictions from every fold's held-out topic "
         "are concatenated and correlated with true Thurstonian utilities.",
         used_in=["fig:cross-topic", "abstract", "sec:shared"],
-        data_paths=[_gp_hoo_pooled],
-        derivation="Read `pooled_pearson_r` from pooled_metrics.json; round to 3dp.",
+        data_paths=[_gp_hoo_clean],
+        derivation="Read `separate_run.pooled_pearson_r` from pooled_metrics_clean.json; round to 3dp.",
     )
     qp_r_held_val = claims.register(
         "Qwen probe heldout r",
@@ -308,8 +304,8 @@ def build_stats_and_claims(claims: ClaimSet) -> tuple[dict, dict, dict, dict]:
         "Leave-one-topic-out pooled Pearson r for the Qwen-3.5-122B ridge "
         "probe (L38, tb-1).",
         used_in=["fig:cross-topic", "sec:shared"],
-        data_paths=[_qp_hoo_pooled],
-        derivation="Read `pooled_pearson_r` from pooled_metrics.json; round to 3dp.",
+        data_paths=[_qp_hoo_clean],
+        derivation="Read `separate_run.pooled_pearson_r` from pooled_metrics_clean.json; round to 3dp.",
     )
     qp_acc_held_val = claims.register(
         "Qwen probe heldout uniform pairwise accuracy",
@@ -334,15 +330,14 @@ def build_stats_and_claims(claims: ClaimSet) -> tuple[dict, dict, dict, dict]:
         "accuracy, and Qwen-3.5-122B (L38) leave-one-topic-out uniform-sample "
         "pairwise accuracy. Each cell is rounded to 3dp.",
         used_in=["fig:cross-topic"],
-        data_paths=[_gp_heldout_path, _gp_hoo_summary, _qp_hoo_summary],
+        data_paths=[_gp_heldout_path, _gp_hoo_clean, _qp_hoo_clean],
         derivation=(
             "gemma heldout acc: `uniform_pairwise_acc` of ridge probe at "
             f"layer=={GEMMA_LAYER} in Gemma heldout manifest. "
-            "gemma cross-topic acc: "
-            f"`layer_summary[{GEMMA_LAYER}].ridge.mean_uniform_hoo_acc` from "
-            "Gemma hoo_summary.json. qwen cross-topic acc: "
-            f"`layer_summary[{QWEN_LAYER}].ridge.mean_uniform_hoo_acc` from "
-            "Qwen hoo_summary.json. All rounded to 3dp."
+            "gemma cross-topic acc: `separate_run.pooled_pairwise_acc` from "
+            "Gemma pooled_metrics_clean.json. qwen cross-topic acc: "
+            "`separate_run.pooled_pairwise_acc` from Qwen "
+            "pooled_metrics_clean.json. All rounded to 3dp."
         ),
     )
 
@@ -374,15 +369,14 @@ def build_stats_and_claims(claims: ClaimSet) -> tuple[dict, dict, dict, dict]:
         "pairwise accuracies. All cells rounded to 3dp.",
         used_in=["fig:cross-topic"],
         data_paths=[
-            _gb_heldout_path, _gb_hoo_pooled, _gb_hoo_summary,
-            _qb_heldout_path, _qb_hoo_pooled, _qb_hoo_summary,
+            _gb_heldout_path, _gb_hoo_clean,
+            _qb_heldout_path, _qb_hoo_clean,
         ],
         derivation=(
             "For each row, read `final_r` and `uniform_pairwise_acc` of the ridge "
-            f"probe at layer=={QWEN3_EMB_LAYER} in the heldout manifest, "
-            "`pooled_pearson_r` from pooled_metrics.json, and "
-            f"`layer_summary[{QWEN3_EMB_LAYER}].ridge.mean_uniform_hoo_acc` from "
-            "hoo_summary.json; round to 3dp."
+            f"probe at layer=={QWEN3_EMB_LAYER} in the heldout manifest, and "
+            "`separate_run.pooled_pearson_r` and `separate_run.pooled_pairwise_acc` "
+            "from pooled_metrics_clean.json; round to 3dp."
         ),
     )
 

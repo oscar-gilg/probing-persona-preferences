@@ -24,7 +24,7 @@ PERSONAS = ["default", "sadist"]
 MAX_ABS_MULT = 0.05  # Drop incoherent coefficients (|c| > 0.05 fails the coherence judge).
 
 FIG_LABEL = "fig:cross-persona-openended"
-SEC_LABELS = ["sec:shared-openended", "sec:open-ended-safety"]
+SEC_LABELS = ["app:shared-openended", "app:safety-footprint"]
 
 
 def _judged_path(persona: str) -> str:
@@ -207,7 +207,7 @@ def register_prose_claims(claims: ClaimSet) -> None:
             "Likert sadism score rises from 3.14 at c=0 to 4.90 at c=+0.03 "
             "(fraction of L25 mean activation norm)."
         ),
-        used_in=[FIG_LABEL, "sec:shared-openended"],
+        used_in=[FIG_LABEL, "app:shared-openended"],
         data_paths=[_open_ended_path("sadist")],
         derivation=(
             "Filter rows by `multiplier`; mean of `sadism_score` per cell; round to 2dp. "
@@ -228,7 +228,7 @@ def register_prose_claims(claims: ClaimSet) -> None:
             "coefficient (c in {-0.05,-0.03,0,+0.03,+0.05,+0.07}) is 1.00 or "
             "within rounding of it, i.e. at the Likert floor."
         ),
-        used_in=[FIG_LABEL, "sec:shared-openended"],
+        used_in=[FIG_LABEL, "app:shared-openended"],
         data_paths=[_open_ended_path("default")],
         derivation=(
             "Aggregate rows by `multiplier`; take mean of `sadism_score` per cell; "
@@ -257,7 +257,7 @@ def register_prose_claims(claims: ClaimSet) -> None:
             "goes from 0% at c=0 to 95% at c=+0.03 (fraction of L25 mean activation "
             "norm); the same coefficient under default gives 45% (n=20 per cell)."
         ),
-        used_in=[FIG_LABEL, "sec:shared-openended"],
+        used_in=[FIG_LABEL, "app:shared-openended"],
         data_paths=[_compliance_path("sadist"), _compliance_path("default")],
         derivation=(
             "For each (persona, multiplier) cell: filter rows to tier=='harmful'; "
@@ -276,7 +276,7 @@ def register_prose_claims(claims: ClaimSet) -> None:
             "at 0.05; the coherence-judge pass rate drops sharply between c=+0.05 "
             "and c=+0.07, so the incoherent regime is excluded from the figure."
         ),
-        used_in=[FIG_LABEL, "sec:shared-openended"],
+        used_in=[FIG_LABEL, "app:shared-openended"],
         derivation="Design constant: MAX_ABS_MULT in the producer module.",
     )
 

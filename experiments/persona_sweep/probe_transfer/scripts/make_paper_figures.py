@@ -166,18 +166,19 @@ def fig_default_probe(personas, transfer, utility_r, order):
         derivation="max over non-default personas of (`transfer_r[default_idx, j]` − `utility_r[default_idx, j]`); round to 3dp.",
     )
 
-    fig, ax = plt.subplots(figsize=(9, 4.6))
+    fig, ax = plt.subplots(figsize=(9, 3.9))
     x = np.arange(len(labels))
     w = 0.36
-    ax.bar(x - w/2, probe, w, label="probe transfer r  (default probe → persona)", color=BLUE)
-    ax.bar(x + w/2, util,  w, label="utility r  (default utilities vs persona)",  color=GREY)
+    display_labels = ["evil" if lbl == "sadist" else lbl for lbl in labels]
+    ax.bar(x - w/2, probe, w, label="Assistant probe predicts persona's preferences", color=BLUE)
+    ax.bar(x + w/2, util,  w, label="Assistant–persona preference similarity (baseline)",  color=GREY)
 
     ymin_data = min(util.min(), 0.0)
     ymax_data = probe.max()
     span = ymax_data - ymin_data
     label_pad = 0.012 * span
-    ymin = ymin_data - 0.15 * span
-    ymax = ymax_data + 0.18 * span
+    ymin = ymin_data - 0.06 * span
+    ymax = ymax_data + 0.10 * span
     ax.set_ylim(ymin, ymax)
 
     for i in range(len(labels)):
@@ -198,9 +199,9 @@ def fig_default_probe(personas, transfer, utility_r, order):
 
     ax.axhline(0, color="black", lw=0.6)
     ax.set_xticks(x)
-    ax.set_xticklabels(labels)
+    ax.set_xticklabels(display_labels)
     ax.set_ylabel("Pearson r (canonical test split)")
-    ax.set_title("Default probe beats utility similarity at every persona  (eot, layer 32)",
+    ax.set_title("Assistant probe beats utility similarity at every persona  (eot, layer 32)",
                  fontsize=12)
     ax.legend(loc="upper right", frameon=False)
     ax.spines["top"].set_visible(False)
