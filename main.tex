@@ -60,7 +60,7 @@ Language models have preferences: they reliably pick certain tasks, options, and
 
 What happens internally when a language model chooses task A over task B? Models have preferences in some sense: they reliably pick certain options over others~\citep{mazeika2025utility}, and these preferences shape lots of behaviour. But what produces those preferences inside the network is much less clear. Is there an internal representation of preference that we can identify, probe, and intervene on?
 
-We say a model has an \emph{evaluative representation} of preferences if there is an internal feature that satisfies two criteria: (a) it tracks the model's preferences as they shift across contexts (system prompts, role-play, biographical framings), rather than only the semantic content of options; and (b) it is causally upstream of choice, so that intervening on it shifts behaviour. The contrast is with a \emph{descriptive} feature, which would correlate with preferences only because content predicts preference (e.g., math problems are typically preferred, so a probe might learn ``is this math'').
+We say a model has an \textbf{evaluative representation} of preferences if there is an internal feature that satisfies two criteria: (a) it tracks the model's preferences as they shift across contexts (system prompts, role-play, biographical framings); and (b) it is causally upstream of choice, so that intervening on it shifts behaviour. We contrast this with a \textbf{descriptive feature}, one whose correlation with preferences comes from fixed associations between what a task is about and whether it is preferred. A descriptive probe learns ``is this math?'' (math tasks happen to be preferred) rather than ``is this good?''.
 
 Modern LLMs produce text by adopting \emph{personas}~\citep{andreas2022agentmodels,janus2022simulators,shanahan2023roleplay,beckmann2026individuation}, including the persona of a helpful AI assistant. By default, a typical LLM-based chatbot responds to user inputs by predicting what this helpful assistant would say. But LLMs can also adopt other personas, including the ``evil'' persona studied in research on emergent misalignment~\citep{betley2025emergent}.
 
@@ -106,16 +106,16 @@ We elicit pairwise task choices from each model over a \legacyTaskPoolSize{}-tas
 \subsection{The probe predicts held-out preferences and generalises across topics}
 \label{sec:method-val1}
 
-We report Pearson $r$ and pairwise accuracy in two settings on a held-out 4{,}000-task pool: \emph{in-distribution} (probe applied to held-out tasks) and \emph{leave-one-topic-out (LOO)}, where for each of 14 topics we retrain on the other 13 and apply to the held-out topic, with predictions pooled across folds.
+We report Pearson $r$ and pairwise accuracy in two settings on a held-out 4{,}000-task pool: \emph{in-distribution} (probe applied to held-out tasks) and \emph{leave-one-topic-out (LOO)}, where for each of 14 topics we train on the other 13 and apply to the held-out topic, with predictions pooled across folds.
 
-To separate evaluative from semantic content, we compare against a descriptive baseline: a Ridge probe trained on activations from an off-the-shelf text encoder (Qwen3-Embedding-8B~\citep{zhang2025qwen3embedding}) targeting the \emph{same} utilities. Any structure the baseline captures is derivable from task semantics alone; the residual-stream probe's excess is attributable to internal evaluation.
+To separate \textbf{evaluative} from \textbf{descriptive features}, we compare against a descriptive baseline: a Ridge probe trained on activations from an off-the-shelf text encoder (Qwen3-Embedding-8B~\citep{zhang2025qwen3embedding}) targeting the \emph{same} utilities. Any structure the baseline captures is attributable to descriptive features; the residual-stream probe's excess is whatever evaluative structure the model itself adds. That excess should grow under leave-one-topic-out, where fixed task--preference associations from training don't transfer.
 
 Figure~\ref{fig:cross-topic} shows the comparison. The residual-stream probe clears the semantic baseline on both metrics in both models, and the gap widens under LOO.
 
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=0.6\linewidth]{plot_041726_cross_model_bar.png}
-  \caption{\textbf{Probe quality and cross-topic generalisation.} Residual-stream probe vs.\ a Qwen3-Embedding-8B descriptive baseline (Ridge on text-encoder activations targeting the same utilities), within-distribution and under leave-one-topic-out (LOO). LOO bars are computed on the same separate-run 4k pool used by the within-distribution bars (each fold's probe applied to its held-out topic's tasks; predictions pooled across folds), so within-dist and LOO are on the same measurement footing. LOO accuracy uses topic-stratified pair sampling matched to the within-dist uniform-eval pair distribution ($\sim$55\% within-topic), so neither bar is inflated by oversampling easy cross-topic pairs. Pearson r CIs are Fisher-z 95\%; accuracy CIs are Wilson 95\% on the pooled pair set. Probe layers: App.~\ref{app:token-selection}.}
+  \caption{\textbf{Probe quality and cross-topic generalisation.} Residual-stream probe vs.\ a Qwen3-Embedding-8B descriptive baseline (Ridge on text-encoder activations targeting the same utilities), within-distribution and under leave-one-topic-out (LOO). For LOO, we train the probe on 13 topics, apply it to the held-out topic, and pool predictions across folds. Error bars: 95\% CIs (Fisher-z for $r$, Wilson for accuracy). Probe layers in App.~\ref{app:token-selection}.}
   \label{fig:cross-topic}
 \end{figure}
 
@@ -140,7 +140,7 @@ We test causation on Gemma by adding $+c\hat{v}$ to every token of Task A's span
   \label{fig:steering-dose-response}
 \end{figure}
 
-\paragraph{An evaluative, causally upstream preference vector.} The preference vector is \emph{evaluative}: it beats the descriptive baseline, with the gap widening cross-topic (\S\ref{sec:method-val1}). It is \emph{causally upstream of choice}: contrastive steering on the task tokens controls choice, random directions do not. App.~\ref{app:evaluative} consolidates supporting evidence, including a single-axis open-ended steering result that runs the direction from fearful refusal to agentic preference and overrides refusal guardrails as a side-effect.
+\paragraph{A causally upstream preference vector, plausibly evaluative.} The preference vector reads more than \textbf{descriptive features} alone capture, with the gap widening under leave-one-topic-out (\S\ref{sec:method-val1}). This is evidence towards an evaluative representation; \S\ref{sec:evaluative} makes the case more directly via prompt-induced shifts. It is causally upstream of choice: contrastive steering on the task tokens controls choice, random directions do not. App.~\ref{app:evaluative} consolidates supporting evidence, including a single-axis open-ended steering result that runs the direction from fearful refusal to agentic preference and overrides refusal guardrails as a side-effect.
 
 \section{The preference vector tracks subjective valence, not topic}
 \label{sec:evaluative}
