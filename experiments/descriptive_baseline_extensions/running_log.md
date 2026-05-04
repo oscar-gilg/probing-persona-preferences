@@ -24,4 +24,10 @@ Append-only working log. Times are local.
 - Pod `desc-baseline-emb` setup completed in 291s (Python 3.12 venv, dev extras only — `serving` extra excluded due to vllm version conflict)
 - Sentence-transformers + requests installed manually
 - Decision: Qwen chat-template via `unsloth/Qwen3.5-122B-A10B` (mirrors the project's hf_name without auth issues)
-- Existing Qwen3-Emb baseline NPZs (494 MB + 231 MB) syncing to pod via SCP for task-id alignment
+- Existing Qwen3-Emb baseline NPZs (494 MB + 231 MB) synced to pod via SCP for task-id alignment
+
+### Session 1 — chat-template embeddings + refit (in progress)
+- **Qwen 2.5k pool extraction:** 14,038 tasks embedded under Qwen chat template, no sysprompt. ~2:30 wall, batch_size=128. Output: `activations/qwen3-emb_8b_chat/qwen35_pool/activations_prompt_last.npz`
+- **Qwen probe refit:** `final_r=0.8880` (raw-text baseline 0.8938; Δ=-0.006). Within ±0.05 tolerance — chat-template wrapper does not dominate the pooled embedding. `final_acc=null` because eval run dir doesn't have pairwise comparison files in git, but Pearson r is the load-bearing sanity check
+- **Gemma 6k pool extraction:** in flight (235 batches, ~12 min total)
+- Encoder runs faster on subsequent batches as A100 warms up: first batch ~14s, asymptotic ~1.6 it/s
