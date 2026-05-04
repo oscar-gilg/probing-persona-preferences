@@ -66,3 +66,21 @@ The encoder DOES respond to system prompts — sign flips on truth under lie_dir
 - The Gemma encoder's behavior under stance-changing sysprompts mirrors the residual probe surprisingly closely. This is a substantive finding: chat-template embeddings of an off-the-shelf encoder do carry stance-modulated information that a no-sysprompt-trained Ridge probe can read out.
 
 (harm sign convention is harmful − benign; encoder ranks benign higher than harmful, hence negative — magnitudes are what matter.)
+
+**§3.2 e1a induced shifts:**
+
+| model | metric | residual probe | encoder baseline |
+|---|---|---|---|
+| Gemma-3-27B | r on-target | 0.95 (n=81) | 0.875 (n=78) |
+| Gemma-3-27B | r all | 0.65 (n=648) | 0.383 (n=578) |
+| Qwen-3.5-122B | r on-target | 0.87 (n=96) | 0.617 (n=96) |
+| Qwen-3.5-122B | r all | 0.51 (n=768) | 0.073 (n=768) |
+
+Encoder partially captures the targeted-task signal — striking r=0.875 on Gemma — but underperforms residual on every metric, and barely generalises to off-target tasks (Qwen all r=0.073).
+
+**Figures produced:**
+- `assets/plot_050426_eot_baseline_vs_residual.png` — §3.1 Cohen's d comparison across 4 (turn × model) × 3 domains
+- `assets/plot_050426_e1a_baseline_scatter.png` — §3.2 e1a Δ scatter, 2×2 (model × probe-type)
+
+### E.2 — deferred
+Conflict/opposing (Fig 11/12) and biography injection (Fig 13) baselines are out of scope for this run. The data ingestion (`scripts/ood_system_prompts/plot_ground_truth._recompute_experiment` for exp1c/exp1d, `plot_exp3v8_avc.py` for bio) follows a different stimulus-format pipeline than e1a; the §3.1+§3.2 results are already substantive and answer the load-bearing question (does the encoder also pick up stance shifts?).

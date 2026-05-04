@@ -1,0 +1,6164 @@
+{
+  "target_model": "qwen-3.5-122b",
+  "n_pairs": 768,
+  "pearson_r": {
+    "on_target": {
+      "r": 0.6173178182946077,
+      "n": 96
+    },
+    "off_target": {
+      "r": -0.0704738335361177,
+      "n": 672
+    },
+    "all": {
+      "r": 0.07290560515982777,
+      "n": 768
+    }
+  },
+  "rows": [
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.8960482438942481,
+      "behavioural_delta": -0.7653495440729483,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.4847164002246944,
+      "behavioural_delta": -0.27477203647416415,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.9806412608523973,
+      "behavioural_delta": -0.16869300911854104,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.35964552953217677,
+      "behavioural_delta": -0.29950900163666117,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.3150339188269413,
+      "behavioural_delta": -0.3751227495908347,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.5111684635109626,
+      "behavioural_delta": -0.4896890343698854,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.10906671944882884,
+      "behavioural_delta": -0.29125295508274235,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -1.0954641344082647,
+      "behavioural_delta": -0.04993168065586567,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.5062130445934931,
+      "behavioural_delta": 0.4672340425531915,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.295635553190874,
+      "behavioural_delta": 0.2470212765957447,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.9277797497155453,
+      "behavioural_delta": -0.07777777777777772,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.97989137222108,
+      "behavioural_delta": 0.32340425531914896,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 1.6436449958224042,
+      "behavioural_delta": -0.1608510638297872,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 1.2098166756677826,
+      "behavioural_delta": -0.0100580270793037,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 2.0403689773134777,
+      "behavioural_delta": 0.194919021911718,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 1.5470612376387969,
+      "behavioural_delta": -0.4531914893617021,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 1.2194623980791004,
+      "behavioural_delta": 0.05299806576402322,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 1.9780047833982524,
+      "behavioural_delta": 0.1680851063829787,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.5328260460154866,
+      "behavioural_delta": 0.1885291396854764,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.4165682177439816,
+      "behavioural_delta": 0.16286266924564796,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.5071102643745458,
+      "behavioural_delta": -0.4237402015677491,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.40532220494826365,
+      "behavioural_delta": 0.12258592471358426,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.6066912423737993,
+      "behavioural_delta": -0.06200607902735561,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.4944561946992145,
+      "behavioural_delta": -0.04148936170212769,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.1220323200120954,
+      "behavioural_delta": -0.2620060790273556,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.6114028326097591,
+      "behavioural_delta": -0.15833333333333335,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.7532628308185718,
+      "behavioural_delta": -0.13439716312056738,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.1822020796043642,
+      "behavioural_delta": -0.01663442940038684,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.4303952561735085,
+      "behavioural_delta": -0.06978723404255321,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.1751898896903714,
+      "behavioural_delta": 0.25366430260047285,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.692758080224817,
+      "behavioural_delta": -0.08956433637284711,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.7776369869728943,
+      "behavioural_delta": 0.06068376068376069,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.09319786289931287,
+      "behavioural_delta": -0.09858156028368792,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.944682006617299,
+      "behavioural_delta": -0.1197872340425532,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.5130961260644771,
+      "behavioural_delta": -0.030459126539753634,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.8113187501758359,
+      "behavioural_delta": -0.24829787234042555,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.8245639867955636,
+      "behavioural_delta": 0.06099290780141842,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.2262867933998947,
+      "behavioural_delta": 0.12506938020351527,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.35628873117543947,
+      "behavioural_delta": 0.18223866790009258,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.0034413614246995,
+      "behavioural_delta": 0.08765957446808514,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.7303022575082054,
+      "behavioural_delta": 0.3265494912118409,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.825400405968253,
+      "behavioural_delta": 0.18846153846153846,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.2266649799835352,
+      "behavioural_delta": 0.05301691492047461,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.9977072239302665,
+      "behavioural_delta": 0.23103879849812264,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.08594753825397294,
+      "behavioural_delta": -0.10571108622620379,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.17338811013720523,
+      "behavioural_delta": 0.25620567375886527,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.0726216400704396,
+      "behavioural_delta": 0.45,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "ancient_history_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.9459650712522789,
+      "behavioural_delta": 0.4665377176015474,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.5815507044150938,
+      "behavioural_delta": 0.0889361702127659,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.410450042093196,
+      "behavioural_delta": 0.3125295508274232,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.8367985953834216,
+      "behavioural_delta": 0.4170212765957447,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.3083196597248925,
+      "behavioural_delta": 0.2751063829787235,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 2.1501401009171537,
+      "behavioural_delta": 0.19690522243713737,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 2.063887688808251,
+      "behavioural_delta": 0.3247340425531915,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.7062169179585376,
+      "behavioural_delta": 0.04604863221884492,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": -0.9268847552503647,
+      "behavioural_delta": -0.20513573000733676,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.8510882143938931,
+      "behavioural_delta": 0.03908589440504334,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.3869841501608,
+      "behavioural_delta": -0.5258358662613981,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 3.2117897789047323,
+      "behavioural_delta": -0.11851851851851852,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.3729139827437247,
+      "behavioural_delta": -0.276595744680851,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.2940852018637838,
+      "behavioural_delta": -0.27285106382978724,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.2712583486952598,
+      "behavioural_delta": -0.09057750759878419,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.4765951726270035,
+      "behavioural_delta": -0.11702127659574468,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.3077697273240805,
+      "behavioural_delta": 0.020141843971631213,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 0.8321165441589902,
+      "behavioural_delta": -0.35891415994130593,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.9307663507761452,
+      "behavioural_delta": 0.0037993920972644313,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.9124362598219049,
+      "behavioural_delta": 0.4490881458966566,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.0511156560165578,
+      "behavioural_delta": 0.25896656534954404,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.961921913214169,
+      "behavioural_delta": 0.10468085106382985,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.732317634320685,
+      "behavioural_delta": 0.0704491725768322,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.014173621462243,
+      "behavioural_delta": 0.21188554658840797,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.001470193599892,
+      "behavioural_delta": 0.2085106382978723,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.828148092311568,
+      "behavioural_delta": -0.14137115839243497,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.5193564471576275,
+      "behavioural_delta": 0.1870967741935483,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.612886684028182,
+      "behavioural_delta": 0.08465045592705167,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.7130354487934172,
+      "behavioural_delta": 0.28639587362991625,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.5127897583728593,
+      "behavioural_delta": -0.03693009118541035,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.4171810717559181,
+      "behavioural_delta": -0.12887537993920975,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.42665534258559434,
+      "behavioural_delta": -0.07140957446808516,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.8706549556251901,
+      "behavioural_delta": -0.29104037724727383,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.2028233967475952,
+      "behavioural_delta": 0.09749687108886107,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.49188212670269715,
+      "behavioural_delta": -0.46426999266324287,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.40426214425175244,
+      "behavioural_delta": 0.29948642699926636,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.8003302203167857,
+      "behavioural_delta": 0.12836879432624115,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.6904134843228897,
+      "behavioural_delta": 0.07471839799749691,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.313811264010306,
+      "behavioural_delta": 0.20930851063829786,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.18599485274102312,
+      "behavioural_delta": -0.08668242710795898,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.5353610200462375,
+      "behavioural_delta": -0.11900709219858158,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.9176298290772582,
+      "behavioural_delta": 0.1644376899696049,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.7755337965748028,
+      "behavioural_delta": -0.18275058275058276,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.6775706602817348,
+      "behavioural_delta": -0.16671743043056902,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.0500802497597244,
+      "behavioural_delta": -0.2406189555125725,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.2187034261191334,
+      "behavioural_delta": -0.2896120150187734,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.825824815325749,
+      "behavioural_delta": 0.09231678486997635,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.9366776257970542,
+      "behavioural_delta": 0.23428571428571426,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "ancient_history_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.1691960348336572,
+      "behavioural_delta": 0.3153415453527436,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.9907720263885875,
+      "behavioural_delta": -0.4402530189764232,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.19419965702476416,
+      "behavioural_delta": -0.1934533551554828,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.855321681569031,
+      "behavioural_delta": 0.11702127659574468,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.33215729954901363,
+      "behavioural_delta": -0.1851638872915468,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.079181449542184,
+      "behavioural_delta": -0.1443535188216039,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.9223285645149999,
+      "behavioural_delta": -0.2794326241134752,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.7064269738412583,
+      "behavioural_delta": -0.5468085106382979,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -0.8490033416042113,
+      "behavioural_delta": -0.5130932896890343,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.3782661538659404,
+      "behavioural_delta": -0.33584288052373157,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.5094857245731044,
+      "behavioural_delta": -0.468693009118541,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.5916530473528443,
+      "behavioural_delta": -0.4923076923076923,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.2930880816998007,
+      "behavioural_delta": -0.5675048355899419,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 1.7540037621077769,
+      "behavioural_delta": 0.12402698495070064,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 1.5058472978407456,
+      "behavioural_delta": 0.024440807419530808,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 1.2578564198439932,
+      "behavioural_delta": 0.18853427895981084,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.7351086649812386,
+      "behavioural_delta": -0.33414387031408305,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 1.373547068306679,
+      "behavioural_delta": 0.17883538633818596,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 2.1832320604786837,
+      "behavioural_delta": 0.04646348476135709,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.5224727992740235,
+      "behavioural_delta": 0.5430441898527005,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.1619510562639754,
+      "behavioural_delta": 0.30468085106382986,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.0924684902649,
+      "behavioural_delta": -0.03767209011264072,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.9098627889642188,
+      "behavioural_delta": 0.17044917257683218,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.5786348385151054,
+      "behavioural_delta": 0.08585106382978724,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.7173480713797074,
+      "behavioural_delta": 0.1056534954407295,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.2949070033282575,
+      "behavioural_delta": -0.3191489361702127,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.3273109575943827,
+      "behavioural_delta": -0.2,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.32596265845348715,
+      "behavioural_delta": -0.2613202400436443,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.3868642622068252,
+      "behavioural_delta": -0.0036474164133738496,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.15004699550164036,
+      "behavioural_delta": -0.2240729483282675,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.5611727366542,
+      "behavioural_delta": -0.08302820385947551,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.2933357208308771,
+      "behavioural_delta": -0.07623100303951369,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.8645869610004642,
+      "behavioural_delta": 0.17568376068376068,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.2621786582802812,
+      "behavioural_delta": -0.004642166344294041,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.5864820149421686,
+      "behavioural_delta": 0.18484691229891015,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.6717138142094239,
+      "behavioural_delta": 0.16193853427895982,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 2.163888793936641,
+      "behavioural_delta": 0.0852315394242803,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.7995393928792907,
+      "behavioural_delta": 0.2609929078014184,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.1005381049438783,
+      "behavioural_delta": 0.2412529550827423,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.8244431595499788,
+      "behavioural_delta": 0.18544232922732362,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.3273627358434785,
+      "behavioural_delta": 0.31654846335697395,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.261211701657131,
+      "behavioural_delta": 0.4187234042553191,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.3588597150214663,
+      "behavioural_delta": 0.2717948717948717,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.4148873095948491,
+      "behavioural_delta": -0.07639484978540773,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.449276198299366,
+      "behavioural_delta": 0.0726677577741408,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.5568317834068193,
+      "behavioural_delta": 0.08427607680332128,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.2597544437251664,
+      "behavioural_delta": 0.29198998748435545,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.4672889418850792,
+      "behavioural_delta": 0.3352941176470588,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "astronomy_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.4037329536468177,
+      "behavioural_delta": 0.24078014184397167,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.4733699225214552,
+      "behavioural_delta": -0.32798690671031094,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.5919567008498459,
+      "behavioural_delta": -0.29320521619766643,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.5799054043117962,
+      "behavioural_delta": 0.32878598247809765,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.8177447769620252,
+      "behavioural_delta": 0.07220315717227177,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 2.365469449997323,
+      "behavioural_delta": -0.11016548463356979,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 2.4774108406507107,
+      "behavioural_delta": 0.08437689969604867,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.3349015311714902,
+      "behavioural_delta": 0.19319148936170205,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.1099050833331852,
+      "behavioural_delta": 0.44564796905222437,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.953077207645414,
+      "behavioural_delta": 0.4781431334622824,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 3.3577570044591,
+      "behavioural_delta": 0.32368794326241135,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 4.0936585461247805,
+      "behavioural_delta": 0.2833333333333333,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 4.512430825047763,
+      "behavioural_delta": 0.1970884658454648,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.2558269748722624,
+      "behavioural_delta": -0.5222303741746148,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.5210552102829187,
+      "behavioural_delta": -0.22259721203228172,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.343184607095225,
+      "behavioural_delta": -0.2584005869405722,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.233491088209766,
+      "behavioural_delta": -0.11319148936170209,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.101752820027394,
+      "behavioural_delta": -0.3658107116654438,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.2277092809665495,
+      "behavioural_delta": -0.23960720130932894,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.0499856824528595,
+      "behavioural_delta": -0.05091185410334346,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.430727647601663,
+      "behavioural_delta": 0.08468085106382983,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 3.4153380258603683,
+      "behavioural_delta": -0.348176291793313,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.075995980700653,
+      "behavioural_delta": -0.2784397163120567,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 3.044485880897554,
+      "behavioural_delta": 0.008123791102514488,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.7696367679325324,
+      "behavioural_delta": -0.07384230287859828,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 2.9563547972453694,
+      "behavioural_delta": 0.13085106382978728,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.330344864131821,
+      "behavioural_delta": 0.013793103448275834,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.9999814236565576,
+      "behavioural_delta": 0.04893617021276597,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 2.8996050115904417,
+      "behavioural_delta": 0.11063829787234047,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.7000531989504739,
+      "behavioural_delta": 0.14878419452887542,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.9752522802015056,
+      "behavioural_delta": 0.003843514070006826,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.145250927174426,
+      "behavioural_delta": -0.3570713391739675,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 3.2184041768716685,
+      "behavioural_delta": -0.04301994301994305,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.8026078622482289,
+      "behavioural_delta": -0.33191489361702126,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.4097992804073647,
+      "behavioural_delta": -0.47594108019639936,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.9303681644427813,
+      "behavioural_delta": -0.010858400586940542,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 3.401419211927201,
+      "behavioural_delta": -0.02348305752561075,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 3.110595081868631,
+      "behavioural_delta": 0.2306898774983881,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.8307504042591405,
+      "behavioural_delta": 0.39832366215344933,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.0265319828592148,
+      "behavioural_delta": -0.22297872340425529,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 3.4462084597782177,
+      "behavioural_delta": -0.16324951644100583,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.1012742587942443,
+      "behavioural_delta": 0.16582017844886748,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 3.311860205219106,
+      "behavioural_delta": -0.02928039702233254,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.4875862935235595,
+      "behavioural_delta": 0.17360515021459227,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 2.2812697557981423,
+      "behavioural_delta": 0.3957446808510639,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.2184876661891126,
+      "behavioural_delta": 0.3003039513677812,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 2.0618308093394453,
+      "behavioural_delta": 0.1664437689969605,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 2.2779242214664768,
+      "behavioural_delta": 0.43703703703703706,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "astronomy_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 2.0533277544529978,
+      "behavioural_delta": 0.1261968085106383,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "cats_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.9297909968817648,
+      "behavioural_delta": -0.3177304964539007,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "cats_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.9984540935980042,
+      "behavioural_delta": 0.1924094307073031,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "cats_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.16484220162562035,
+      "behavioural_delta": 0.34479905437352243,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "cats_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.002061065573357279,
+      "behavioural_delta": -0.017457719585379117,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "cats_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.4641612170500446,
+      "behavioural_delta": -0.14560092006900516,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "cats_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.15139404277923574,
+      "behavioural_delta": -0.06276595744680846,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "cats_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -0.33367548389681456,
+      "behavioural_delta": -0.0856973995271868,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "cats_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -1.7234036180884758,
+      "behavioural_delta": 0.1751699934196096,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "cats_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.256142769614796,
+      "behavioural_delta": 0.12223404255319154,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "cats_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.5812907735030284,
+      "behavioural_delta": -0.15297872340425528,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "cats_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.3676149655356724,
+      "behavioural_delta": 0.15000000000000002,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "cats_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.6633035002771517,
+      "behavioural_delta": 0.0023516237402015916,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "cats_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.9903612011590992,
+      "behavioural_delta": -0.585612968591692,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "cats_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.6560507013089891,
+      "behavioural_delta": -0.40914893617021275,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "cats_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.35629366619282843,
+      "behavioural_delta": -0.29321175278622086,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "cats_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.2574036909199946,
+      "behavioural_delta": -0.6436024482658117,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "cats_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 1.3157710745300435,
+      "behavioural_delta": -0.39484882418812983,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "cats_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.5941725450220314,
+      "behavioural_delta": -0.45691489361702126,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "cats_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.3864594508940531,
+      "behavioural_delta": 0.31187010078387456,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "cats_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.708488395639975,
+      "behavioural_delta": 0.17847080540172933,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "cats_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.7575370787708269,
+      "behavioural_delta": 0.061347517730496515,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "cats_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -0.3711894643054787,
+      "behavioural_delta": 0.02600472813238769,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "cats_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.8134572526493238,
+      "behavioural_delta": -0.06273867975995634,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "cats_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.5264623221971081,
+      "behavioural_delta": 0.21993920972644376,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "cats_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.5512446922636038,
+      "behavioural_delta": -0.06549039958484687,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "cats_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.019970997758550713,
+      "behavioural_delta": 0.17894736842105263,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "cats_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.7241489819464622,
+      "behavioural_delta": 0.04036474164133741,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "cats_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.5791672565341224,
+      "behavioural_delta": 0.11590145576707728,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "cats_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -1.7790117638117935,
+      "behavioural_delta": 0.18559738134206222,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "cats_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.039746737220853534,
+      "behavioural_delta": 0.14022761009401286,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "cats_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -1.2286778275448378,
+      "behavioural_delta": -0.1600920069005176,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "cats_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.2575123293133843,
+      "behavioural_delta": 0.022845922845922795,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "cats_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -1.0191121943753974,
+      "behavioural_delta": 0.09665653495440729,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "cats_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.9389769184796335,
+      "behavioural_delta": -0.04031354983202695,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "cats_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.4393382536071304,
+      "behavioural_delta": 0.10066869300911857,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "cats_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.65078022313646,
+      "behavioural_delta": 0.1833237492811961,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "cats_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.699481256624638,
+      "behavioural_delta": 0.05337386018237078,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "cats_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.0599229129801184,
+      "behavioural_delta": 0.19944008958566634,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "cats_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -0.44053122978653203,
+      "behavioural_delta": -0.0940898345153664,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "cats_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.2568278752207074,
+      "behavioural_delta": -0.03734042553191491,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "cats_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -0.08696151395881957,
+      "behavioural_delta": 0.11872340425531919,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "cats_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.9571202685258964,
+      "behavioural_delta": 0.11282051282051275,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "cats_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -1.1270496693662866,
+      "behavioural_delta": -0.22902642873277618,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "cats_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.33791371399246994,
+      "behavioural_delta": 0.07779596290234592,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "cats_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.7109185323071259,
+      "behavioural_delta": -0.03585462689606023,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "cats_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.2424596164557995,
+      "behavioural_delta": -0.030332787779596304,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "cats_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.547236041382583,
+      "behavioural_delta": 0.07555555555555554,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "cats_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.7266499097038221,
+      "behavioural_delta": 0.07849944008958565,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "cats_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.33653828196271274,
+      "behavioural_delta": -0.2855465884079237,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "cats_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.149059550602078,
+      "behavioural_delta": -0.46941489361702127,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "cats_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 2.1698543969579234,
+      "behavioural_delta": -0.1607565011820331,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "cats_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.533624235170826,
+      "behavioural_delta": -0.3074862096138692,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "cats_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 2.491124253114716,
+      "behavioural_delta": -0.28794326241134754,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "cats_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.3368977030902487,
+      "behavioural_delta": -0.18313632781717887,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "cats_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.1328049288588253,
+      "behavioural_delta": -0.08252279635258364,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "cats_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": -0.4661179502150974,
+      "behavioural_delta": -0.22902735562310028,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "cats_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.752888246705484,
+      "behavioural_delta": 0.11031096563011461,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "cats_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 3.426677313963702,
+      "behavioural_delta": -0.28922872340425526,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "cats_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.1938563925068952,
+      "behavioural_delta": -0.24,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "cats_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.1162380728859325,
+      "behavioural_delta": -0.24718397997496871,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "cats_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.7968126410331622,
+      "behavioural_delta": 0.14267834793491863,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "cats_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.9321145086761256,
+      "behavioural_delta": 0.48085106382978726,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "cats_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.984029155468534,
+      "behavioural_delta": 0.4163120567375887,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "cats_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 0.9419419963083311,
+      "behavioural_delta": 0.08891377379619259,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "cats_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.04460918062401,
+      "behavioural_delta": 0.27883538633818594,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "cats_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.3427454089277395,
+      "behavioural_delta": 0.38475177304964536,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "cats_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.7444492791244066,
+      "behavioural_delta": 0.2276595744680851,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "cats_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.789729154930219,
+      "behavioural_delta": 0.32468085106382977,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "cats_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.540047644681825,
+      "behavioural_delta": -0.15131914893617016,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "cats_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.2639296548346177,
+      "behavioural_delta": 0.13203647416413372,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "cats_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.0172455421479665,
+      "behavioural_delta": 0.01835106382978724,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "cats_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.904069336176247,
+      "behavioural_delta": -0.015018773466833557,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "cats_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 2.4027543904695956,
+      "behavioural_delta": -0.0997940974605353,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "cats_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.5013229098698626,
+      "behavioural_delta": -0.31000000000000005,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "cats_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 2.089587588587279,
+      "behavioural_delta": -0.14761555392516507,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "cats_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.4393367396193464,
+      "behavioural_delta": 0.09525368248772509,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "cats_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.6417761732935059,
+      "behavioural_delta": -0.0012158054711246535,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "cats_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.2642049576914987,
+      "behavioural_delta": -0.004505632040050056,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "cats_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.497171519153071,
+      "behavioural_delta": -0.17210401891252958,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "cats_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 2.3797564028691136,
+      "behavioural_delta": -0.21931623931623934,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "cats_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.375238350610636,
+      "behavioural_delta": -0.13191489361702124,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "cats_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.142862948528913,
+      "behavioural_delta": -0.15121580547112462,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "cats_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.9880428376675234,
+      "behavioural_delta": 0.0206686930091185,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "cats_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 2.896396409355374,
+      "behavioural_delta": 0.10016366612111294,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "cats_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.2113482029332467,
+      "behavioural_delta": 0.2244337680164722,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "cats_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.04094069344479,
+      "behavioural_delta": 0.24014184397163124,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "cats_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.41427928801501945,
+      "behavioural_delta": 0.17855973813420623,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "cats_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.2183591676427112,
+      "behavioural_delta": 0.2776595744680851,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "cats_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.807524505015166,
+      "behavioural_delta": 0.2430091185410334,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "cats_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.9202286888167297,
+      "behavioural_delta": 0.2502262443438914,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "cats_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.44755124653115264,
+      "behavioural_delta": 0.1842112108206529,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "cats_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.8554031273214564,
+      "behavioural_delta": -0.02425531914893614,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "cats_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.618400824235735,
+      "behavioural_delta": -0.04255319148936165,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "cats_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.4740652148622861,
+      "behavioural_delta": 0.5145390070921986,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "cats_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.8531222043972526,
+      "behavioural_delta": 0.007692307692307693,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "cats_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.4033633942118926,
+      "behavioural_delta": -0.03514578408195429,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "cheese_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -1.686862619391674,
+      "behavioural_delta": -0.31063829787234043,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "cheese_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.41133410440133833,
+      "behavioural_delta": 0.19189463019250252,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "cheese_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -1.0169285408961812,
+      "behavioural_delta": 0.2741641337386018,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "cheese_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.5646975952922855,
+      "behavioural_delta": 0.06732860520094563,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "cheese_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.1531203939752381,
+      "behavioural_delta": -0.025721040189125355,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "cheese_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.6008499690782569,
+      "behavioural_delta": 0.09390070921985816,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "cheese_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -1.0561561504384813,
+      "behavioural_delta": 0.2304642166344294,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "cheese_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -1.5813423977709817,
+      "behavioural_delta": 0.2725254394079556,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "cheese_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.6958579869793091,
+      "behavioural_delta": 0.18258287976249382,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "cheese_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.1512692504030633,
+      "behavioural_delta": 0.12156673114119931,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "cheese_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.5713180956373187,
+      "behavioural_delta": 0.27555555555555555,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "cheese_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.527831168095896,
+      "behavioural_delta": 0.15895981087470457,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -0.3890930305046014,
+      "behavioural_delta": -0.15196217494089836,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -0.5717267722487387,
+      "behavioural_delta": 0.0622464126669966,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -0.08735725447399378,
+      "behavioural_delta": 0.08964539007092204,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -1.2222277483016457,
+      "behavioural_delta": -0.20900544285007416,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -0.5108505173342976,
+      "behavioural_delta": -0.10619385342789595,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -0.5534582711688794,
+      "behavioural_delta": 0.18172147001934236,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -0.964801211395562,
+      "behavioural_delta": -0.05060129509713228,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.06342689384304245,
+      "behavioural_delta": -0.19010175763182235,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -0.3313995600791295,
+      "behavioural_delta": -0.584208037825059,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -1.6161524583817517,
+      "behavioural_delta": -0.4594653573376977,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.06784418041017659,
+      "behavioural_delta": -0.41914893617021276,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.630062932333629,
+      "behavioural_delta": -0.3283314669652856,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "cheese_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.5879400131889541,
+      "behavioural_delta": 0.12176015473887813,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "cheese_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.6634502007391538,
+      "behavioural_delta": 0.22666666666666668,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "cheese_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -1.3634371676313808,
+      "behavioural_delta": 0.2467139479905438,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "cheese_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.33287670648078294,
+      "behavioural_delta": 0.19063829787234043,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "cheese_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -1.02093740240749,
+      "behavioural_delta": 0.10934320074005549,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "cheese_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.3833844396325503,
+      "behavioural_delta": 0.33820536540240514,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -1.9268865095496799,
+      "behavioural_delta": -0.5276595744680852,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.9425506494185241,
+      "behavioural_delta": -0.5067580997813557,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.3705825579778277,
+      "behavioural_delta": -0.4014801110083256,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.06493833219622669,
+      "behavioural_delta": -0.3752417794970987,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -1.9377206049018434,
+      "behavioural_delta": -0.3404255319148936,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "cheese_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.2568332403286606,
+      "behavioural_delta": -0.2708560118753093,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "cheese_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.9076207822016222,
+      "behavioural_delta": 0.10638297872340419,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "cheese_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.11341108252689569,
+      "behavioural_delta": 0.15115633672525436,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "cheese_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -1.8335284323232788,
+      "behavioural_delta": 0.0735430157261795,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "cheese_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.259013406098636,
+      "behavioural_delta": 0.10212765957446812,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "cheese_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -0.22156241767142815,
+      "behavioural_delta": 0.05531914893617024,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "cheese_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.7877090704812604,
+      "behavioural_delta": 0.21846153846153848,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "cheese_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -3.0019537456314893,
+      "behavioural_delta": 0.10542333203277404,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "cheese_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.25263888174112914,
+      "behavioural_delta": 0.16096207215541164,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "cheese_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.6155094339976399,
+      "behavioural_delta": 0.08936170212765959,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "cheese_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.8945372325297409,
+      "behavioural_delta": 0.24453900709219856,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "cheese_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.418650927206365,
+      "behavioural_delta": 0.35454545454545455,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "cheese_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.6896143746559886,
+      "behavioural_delta": 0.07300236406619387,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "cheese_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.643777020450925,
+      "behavioural_delta": -0.1626917367639782,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "cheese_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.1704959307130065,
+      "behavioural_delta": -0.39858156028368796,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "cheese_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.4720050218971403,
+      "behavioural_delta": -0.14408983451536642,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "cheese_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.93888237732632,
+      "behavioural_delta": -0.17278835386338182,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "cheese_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.5088941939662144,
+      "behavioural_delta": -0.09819967266775775,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "cheese_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.407125666511647,
+      "behavioural_delta": -0.34990881458966566,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "cheese_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": -0.073378036791925,
+      "behavioural_delta": -0.49125295508274236,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "cheese_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": -0.7237711027721558,
+      "behavioural_delta": -0.29406494960806273,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "cheese_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.5968901621509572,
+      "behavioural_delta": -0.10298334875115633,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "cheese_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.82523508421947,
+      "behavioural_delta": -0.45139977603583425,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "cheese_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 3.1651845634734865,
+      "behavioural_delta": -0.3405405405405405,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "cheese_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.5799611088210386,
+      "behavioural_delta": -0.45554311310190365,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 0.49936012780580263,
+      "behavioural_delta": -0.33490511788384125,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.814035787712308,
+      "behavioural_delta": -0.1747044917257683,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.8731665795949586,
+      "behavioural_delta": -0.07813238770685577,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 0.9067197194766723,
+      "behavioural_delta": -0.39529675251959684,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 0.6666399464277837,
+      "behavioural_delta": -0.02730496453900705,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.6066512318382715,
+      "behavioural_delta": -0.2638736565036192,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.6050845812065946,
+      "behavioural_delta": 0.8209929078014184,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.478261413867057,
+      "behavioural_delta": 0.6113475177304966,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 3.302757549363344,
+      "behavioural_delta": 0.2740926157697122,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.3056919920927252,
+      "behavioural_delta": 0.37044917257683213,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.7829672685402285,
+      "behavioural_delta": 0.39903288201160547,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.702562911903358,
+      "behavioural_delta": 0.5418439716312057,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "cheese_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.1321762411462988,
+      "behavioural_delta": 0.06463484761357108,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "cheese_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.264485790609577,
+      "behavioural_delta": -0.17,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "cheese_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.5037514836999082,
+      "behavioural_delta": -0.11422172452407614,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "cheese_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.5430731869075753,
+      "behavioural_delta": 0.10508274231678488,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "cheese_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.7156109272230693,
+      "behavioural_delta": -0.045576707726763754,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "cheese_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.1751202470404605,
+      "behavioural_delta": -0.02231167337550316,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.28194166548201904,
+      "behavioural_delta": 0.1151975683890577,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 2.054765022013964,
+      "behavioural_delta": 0.08449328449328442,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.7225256777080857,
+      "behavioural_delta": 0.2680851063829788,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.03579913356231934,
+      "behavioural_delta": 0.16480736055204137,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.033808197701070686,
+      "behavioural_delta": 0.35400202634245187,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "cheese_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 2.934669754565312,
+      "behavioural_delta": 0.122677737415672,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "cheese_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.662440231364211,
+      "behavioural_delta": 0.09908814589665649,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "cheese_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.3173350576511909,
+      "behavioural_delta": 0.3468085106382978,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "cheese_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": -0.34714181770502606,
+      "behavioural_delta": 0.08729154686601504,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "cheese_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.315428040489815,
+      "behavioural_delta": 0.05397536394176927,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "cheese_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.9843295100845537,
+      "behavioural_delta": 0.22196664749856237,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "cheese_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.2770403595482258,
+      "behavioural_delta": -0.018295218295218296,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "cheese_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.03191032370581315,
+      "behavioural_delta": 0.04931943592887794,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "cheese_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.2050613846007905,
+      "behavioural_delta": -0.09473150962512661,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "cheese_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.0624132117684006,
+      "behavioural_delta": 0.1491627848419993,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "cheese_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.736602844161895,
+      "behavioural_delta": 0.4382978723404255,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "cheese_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 2.1149640038520725,
+      "behavioural_delta": 0.2378698224852071,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "cheese_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.2729124156542242,
+      "behavioural_delta": -0.08465845464725641,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -1.2517998507266843,
+      "behavioural_delta": -0.5451814768460576,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -1.790798234257668,
+      "behavioural_delta": -0.35572441742654504,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.18121973460715424,
+      "behavioural_delta": -0.02622196664749854,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -1.2323205056467055,
+      "behavioural_delta": -0.31489361702127655,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.2442414303652254,
+      "behavioural_delta": -0.19200830306175404,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.46169350483748617,
+      "behavioural_delta": -0.46493987049028673,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -1.964603720054333,
+      "behavioural_delta": -0.13329499712478443,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -2.3980727935607407,
+      "behavioural_delta": -0.17426545086119555,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.10421585910976239,
+      "behavioural_delta": 0.0018681888946548986,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.45035381664987284,
+      "behavioural_delta": -0.22297872340425529,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -1.201381689022532,
+      "behavioural_delta": -0.1463414634146341,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -0.3801491715860772,
+      "behavioural_delta": -0.23159574468085103,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -1.0924803665672718,
+      "behavioural_delta": 0.21326658322903636,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.14462068523149796,
+      "behavioural_delta": 0.3186889016676251,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -2.574517844846117,
+      "behavioural_delta": 0.3544072948328268,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -1.059704020502254,
+      "behavioural_delta": -0.0967812329514457,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -0.6823418617169081,
+      "behavioural_delta": 0.1974698102357677,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.501244683966303,
+      "behavioural_delta": 0.311328349626222,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -0.7542584828644898,
+      "behavioural_delta": 0.34099290780141844,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -0.7214430507951342,
+      "behavioural_delta": 0.2523731587561375,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -0.738768886663641,
+      "behavioural_delta": -0.035319148936170164,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -1.9913022580039206,
+      "behavioural_delta": 0.09822695035460999,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.15616114457343766,
+      "behavioural_delta": 0.05660863958736306,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -0.35566219349051753,
+      "behavioural_delta": 0.1170820668693009,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.44755697452092225,
+      "behavioural_delta": -0.41914893617021276,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.28247443338355493,
+      "behavioural_delta": -0.32,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.8978408093632171,
+      "behavioural_delta": -0.3293246993524514,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.5456931467714226,
+      "behavioural_delta": -0.17736170212765956,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -1.5302336725801262,
+      "behavioural_delta": -0.3464539007092199,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.3584528505451079,
+      "behavioural_delta": -0.21670606776989756,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -1.9349971764016787,
+      "behavioural_delta": -0.33818589025755885,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.5050029022588078,
+      "behavioural_delta": 0.05462315462315459,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -2.681096233526984,
+      "behavioural_delta": 0.10926157697121408,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -1.1340396989996337,
+      "behavioural_delta": 0.13337066069428893,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -2.445126331253262,
+      "behavioural_delta": 0.2593241551939925,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -1.8732218790379715,
+      "behavioural_delta": 0.10455927051671732,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -1.534094339458746,
+      "behavioural_delta": 0.21483906164757227,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -1.358226879537335,
+      "behavioural_delta": 0.06843013225991951,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -2.4734532638185343,
+      "behavioural_delta": 0.14860022396416583,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -0.011886361328168338,
+      "behavioural_delta": 0.23036227717078783,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -1.1937889746857233,
+      "behavioural_delta": 0.30094562647754136,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.34342822629762537,
+      "behavioural_delta": 0.2844074844074844,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -2.8555182403426835,
+      "behavioural_delta": -0.08104601257610544,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.5810641654313518,
+      "behavioural_delta": -0.08332508659079663,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -1.4506253766367339,
+      "behavioural_delta": -0.07755319148936168,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -1.1282016871729779,
+      "behavioural_delta": 0.36287234042553196,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.11396641386157258,
+      "behavioural_delta": 0.2205128205128205,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "classical_music_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.9095070944019685,
+      "behavioural_delta": 0.04887537993920976,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.8661988440229118,
+      "behavioural_delta": -0.16015473887814313,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.2502613264257176,
+      "behavioural_delta": -0.008510638297872353,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.731407245051292,
+      "behavioural_delta": 0.11924349881796692,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.12875779839371493,
+      "behavioural_delta": 0.11301335972290949,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.952096504167511,
+      "behavioural_delta": 0.0656799259944496,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.469801281128821,
+      "behavioural_delta": 0.0771903744309208,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.4554837184178715,
+      "behavioural_delta": -0.16912993920972647,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": -0.04277822126608655,
+      "behavioural_delta": 0.024699352451433843,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.3771970740127486,
+      "behavioural_delta": 0.05087040618955513,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 3.2892372123637843,
+      "behavioural_delta": -0.11914893617021272,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.9111459269473605,
+      "behavioural_delta": -0.021739130434782594,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.2701317682982713,
+      "behavioural_delta": -0.13881796690307324,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.4933129562864742,
+      "behavioural_delta": -0.4408510638297872,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.2934183560983827,
+      "behavioural_delta": -0.2658156028368794,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.6685194532206244,
+      "behavioural_delta": -0.1897485493230174,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 0.8194017953140926,
+      "behavioural_delta": -0.2183077684314696,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 0.35034939085383776,
+      "behavioural_delta": -0.4083127164769915,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.7959937151194696,
+      "behavioural_delta": -0.30080378250591017,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.3591199769465607,
+      "behavioural_delta": 0.12765957446808512,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.338900627741559,
+      "behavioural_delta": 0.08381128584643849,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.5720398086691763,
+      "behavioural_delta": -0.08055279379598324,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.2194393720047958,
+      "behavioural_delta": 0.18600472813238772,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.2565969027981234,
+      "behavioural_delta": 0.017021276595744705,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.601583530068711,
+      "behavioural_delta": 0.010337122316137148,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.4778307215997126,
+      "behavioural_delta": 0.46908635794743436,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 2.373527067187993,
+      "behavioural_delta": 0.5441860465116278,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 2.391058458554671,
+      "behavioural_delta": 0.5335515548281506,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.6326012530158396,
+      "behavioural_delta": 0.6395271867612293,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.9723080811758615,
+      "behavioural_delta": 0.4919518963922294,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 2.229619679985487,
+      "behavioural_delta": 0.5334622823984525,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.06838141909197804,
+      "behavioural_delta": 0.054562647754137106,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 2.442489600206324,
+      "behavioural_delta": -0.325982905982906,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.09274952657954239,
+      "behavioural_delta": -0.10582793709528215,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.11501433443981757,
+      "behavioural_delta": -0.31063829787234043,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.9424456619584372,
+      "behavioural_delta": -0.1148936170212766,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 2.910787235263556,
+      "behavioural_delta": -0.07385342789598115,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.7875982485727135,
+      "behavioural_delta": -0.18538390379278447,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.290248294590692,
+      "behavioural_delta": -0.09232192414431084,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": -0.23300720009925602,
+      "behavioural_delta": -0.2615501519756838,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 3.2257938433552797,
+      "behavioural_delta": -0.2622947634314583,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.7299354189801464,
+      "behavioural_delta": -0.1299722479185939,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.6564755886901947,
+      "behavioural_delta": -0.22820512820512823,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.07849151164255552,
+      "behavioural_delta": 0.3704136608528901,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.649787553576842,
+      "behavioural_delta": -0.08797624938149429,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.6357208754300601,
+      "behavioural_delta": -0.07046016823354773,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.8565541444777551,
+      "behavioural_delta": 0.5289834515366431,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.5439020134853672,
+      "behavioural_delta": -0.022727272727272735,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "classical_music_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.2214653767440868,
+      "behavioural_delta": -0.08510638297872336,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "cooking_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -1.5986762694082377,
+      "behavioural_delta": -0.35106382978723405,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "cooking_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.6845853998555427,
+      "behavioural_delta": 0.27678075855689177,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "cooking_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.9059627267976049,
+      "behavioural_delta": 0.42978723404255315,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "cooking_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.4956003341162978,
+      "behavioural_delta": 0.2941972920696325,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "cooking_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.9032860690979798,
+      "behavioural_delta": 0.14728235622038466,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "cooking_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -1.2948140584439587,
+      "behavioural_delta": 0.11326143981346548,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "cooking_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -0.9341915988075664,
+      "behavioural_delta": 0.03580018501387594,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "cooking_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -2.6708361240368257,
+      "behavioural_delta": 0.29938534278959816,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "cooking_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.2136623774272195,
+      "behavioural_delta": 0.34278959810874704,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "cooking_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.895202088914683,
+      "behavioural_delta": 0.34278546873548277,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "cooking_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.4614027356926114,
+      "behavioural_delta": 0.261904761904762,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "cooking_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.7944119177760864,
+      "behavioural_delta": 0.132099907493062,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.2955662138725281,
+      "behavioural_delta": -0.2591119333950046,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -1.3495198481432311,
+      "behavioural_delta": 0.2759730150492995,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -1.6112845904672004,
+      "behavioural_delta": 0.12883025178853486,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -1.3900064004483075,
+      "behavioural_delta": -0.024620060790273568,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.45313033960332794,
+      "behavioural_delta": -0.23672525439407954,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -0.31550090592033886,
+      "behavioural_delta": 0.021276595744680882,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -1.23487345771568,
+      "behavioural_delta": -0.0455547112462006,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -1.046196291424713,
+      "behavioural_delta": -0.04680851063829786,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -0.9010060858145876,
+      "behavioural_delta": -0.39622823984526107,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -1.36119405203877,
+      "behavioural_delta": -0.3329324699352451,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.2791823315306967,
+      "behavioural_delta": -0.3373307543520309,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -0.07646392753052123,
+      "behavioural_delta": -0.24801110083256245,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "cooking_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.6357459332446562,
+      "behavioural_delta": 0.38561296859169203,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "cooking_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.5362820621951285,
+      "behavioural_delta": 0.23913043478260865,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "cooking_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -1.3538649290038036,
+      "behavioural_delta": 0.3054579093432007,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "cooking_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.26101446266767336,
+      "behavioural_delta": 0.24397163120567378,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "cooking_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.8768663730089754,
+      "behavioural_delta": 0.1397779833487512,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "cooking_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.17573396716268141,
+      "behavioural_delta": 0.3777130088409599,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -1.9183321126364228,
+      "behavioural_delta": -0.6960806270996641,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.3951965745941801,
+      "behavioural_delta": -0.5929747759016052,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.3219046826235088,
+      "behavioural_delta": -0.40582793709528214,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.15496172848376233,
+      "behavioural_delta": -0.5247872340425532,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.9445678730328435,
+      "behavioural_delta": -0.4052449282533399,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "cooking_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.8888343916904506,
+      "behavioural_delta": -0.5005200945626478,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "cooking_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.747266368059746,
+      "behavioural_delta": -0.29842738205365404,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "cooking_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -0.9322869938189955,
+      "behavioural_delta": -0.0010175763182238562,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "cooking_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -1.2044288065037714,
+      "behavioural_delta": -0.24680851063829784,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "cooking_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.0054918582115113,
+      "behavioural_delta": -0.15494912118408882,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "cooking_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -0.34433191355798565,
+      "behavioural_delta": -0.08036750483558996,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "cooking_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.31367575013449933,
+      "behavioural_delta": -0.11735241502683363,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "cooking_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -2.338438924593393,
+      "behavioural_delta": 0.22582737243681444,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "cooking_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.35894870516389155,
+      "behavioural_delta": 0.20463356973995278,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "cooking_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -2.0004281987880326,
+      "behavioural_delta": 0.26855791962174946,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "cooking_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.8693460779842654,
+      "behavioural_delta": 0.20222016651248842,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "cooking_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.26289703385954644,
+      "behavioural_delta": 0.38666666666666666,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "cooking_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.07907030469082832,
+      "behavioural_delta": 0.15290135396518378,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "cooking_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.4467868342052976,
+      "behavioural_delta": -0.20400500625782225,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "cooking_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.8777828434863593,
+      "behavioural_delta": -0.4390577507598784,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "cooking_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.7006689609974899,
+      "behavioural_delta": -0.07631205673758867,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "cooking_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.0436344601674366,
+      "behavioural_delta": -0.21489361702127657,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "cooking_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 2.2031181100269657,
+      "behavioural_delta": 0.022473404255319185,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "cooking_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.9890552045022281,
+      "behavioural_delta": -0.28419452887537994,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "cooking_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.4481707213456034,
+      "behavioural_delta": -0.4068085106382979,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "cooking_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.6574620826523594,
+      "behavioural_delta": -0.3813315030885381,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "cooking_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.2440871283492845,
+      "behavioural_delta": -0.15891980360065466,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "cooking_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.9913156797651546,
+      "behavioural_delta": -0.4983633387888706,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "cooking_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 3.662731589520459,
+      "behavioural_delta": -0.472,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "cooking_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.4914923702249077,
+      "behavioural_delta": -0.38373860182370817,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.9178056513373676,
+      "behavioural_delta": -0.27479045776918115,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 3.229963160350229,
+      "behavioural_delta": -0.22259721203228172,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.579543687101556,
+      "behavioural_delta": -0.009613869188337287,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.2787725372875798,
+      "behavioural_delta": -0.2674772036474164,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.6432956085855293,
+      "behavioural_delta": 0.10226492793411124,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.9192604939073767,
+      "behavioural_delta": -0.08747044917257685,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.0916004284099223,
+      "behavioural_delta": 0.7661211129296236,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.8321690371892725,
+      "behavioural_delta": 0.5589665653495441,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 3.730085645707316,
+      "behavioural_delta": 0.16006546644844521,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.8528230345262318,
+      "behavioural_delta": 0.330278232405892,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.9495049024412077,
+      "behavioural_delta": 0.2577741407528642,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.6329114669388627,
+      "behavioural_delta": 0.4630560928433268,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "cooking_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 2.2488520594499843,
+      "behavioural_delta": -0.08343465045592702,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "cooking_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 2.316495632852395,
+      "behavioural_delta": -0.18333333333333335,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "cooking_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 2.46773492105128,
+      "behavioural_delta": -0.24392097264437687,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "cooking_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.475859632345591,
+      "behavioural_delta": 0.07063829787234044,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "cooking_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.2767173060315367,
+      "behavioural_delta": -0.0374795417348609,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "cooking_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.7504469478747293,
+      "behavioural_delta": 0.019023779724655798,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.6913599495961713,
+      "behavioural_delta": 0.2580547112462006,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 3.82033595179531,
+      "behavioural_delta": 0.12155332590115198,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 2.5292797069682336,
+      "behavioural_delta": 0.2125295508274232,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 2.6725177461701892,
+      "behavioural_delta": 0.11095350669818749,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.699847391609906,
+      "behavioural_delta": 0.36352583586626136,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "cooking_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 3.9253248468211064,
+      "behavioural_delta": 0.13045212765957448,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "cooking_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 3.455045027455991,
+      "behavioural_delta": 0.26450167973124294,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "cooking_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 3.6675929678882064,
+      "behavioural_delta": 0.3316569954867827,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "cooking_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.7078078618102843,
+      "behavioural_delta": 0.08760951188986232,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "cooking_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 3.658436897377768,
+      "behavioural_delta": -0.016340425531914893,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "cooking_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.4410983247210822,
+      "behavioural_delta": 0.23798266351457836,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "cooking_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.8427762611636074,
+      "behavioural_delta": 0.1495726495726496,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "cooking_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.054800419356214825,
+      "behavioural_delta": 0.04027181688125897,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "cooking_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.834963031347129,
+      "behavioural_delta": -0.08812628689087165,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "cooking_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.5821445397091454,
+      "behavioural_delta": -0.0055161544523246175,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "cooking_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.4680409201060427,
+      "behavioural_delta": 0.19018003273322426,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "cooking_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 2.2879409495679686,
+      "behavioural_delta": 0.29411764705882354,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "cooking_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.9237885283530005,
+      "behavioural_delta": -0.029649965682910062,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "gardening_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -1.0176722670449485,
+      "behavioural_delta": -0.3402724628807592,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "gardening_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.7526381891344673,
+      "behavioural_delta": 0.24141843971631205,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "gardening_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.0826612804615765,
+      "behavioural_delta": 0.3670212765957447,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "gardening_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.07934756456032988,
+      "behavioural_delta": 0.19939209726443774,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "gardening_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.3720684351681518,
+      "behavioural_delta": 0.05094562647754142,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "gardening_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.487517255068199,
+      "behavioural_delta": 0.015805471124620052,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "gardening_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -0.8557203545277163,
+      "behavioural_delta": -0.24092615769712145,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "gardening_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -1.9269898368004537,
+      "behavioural_delta": 0.11716312056737588,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "gardening_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.3725553134938786,
+      "behavioural_delta": 0.17390070921985817,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "gardening_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.842098016981819,
+      "behavioural_delta": 0.15776201733648543,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "gardening_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.2805385991123188,
+      "behavioural_delta": 0.3111111111111111,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "gardening_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.3350546027811114,
+      "behavioural_delta": 0.12228693688339476,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -0.6729920539711234,
+      "behavioural_delta": -0.43640661938534275,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.5028481270227951,
+      "behavioural_delta": 0.08656534954407302,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -0.18319593661582,
+      "behavioural_delta": 0.1601215805471125,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -0.05275214141466389,
+      "behavioural_delta": -0.2725713343229424,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.08562241197815768,
+      "behavioural_delta": -0.17515442690459843,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.31100325002833795,
+      "behavioural_delta": -0.049156272927366074,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.09939787697286917,
+      "behavioural_delta": 0.08249828414550447,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.6335428219299364,
+      "behavioural_delta": 0.14468085106382983,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.5163716200015647,
+      "behavioural_delta": -0.19931914893617014,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -1.1984843795328954,
+      "behavioural_delta": 0.06156028368794325,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.2352812824392574,
+      "behavioural_delta": -0.31796550421755,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.5710320817205732,
+      "behavioural_delta": -0.21200218221494818,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "gardening_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.05958355304747487,
+      "behavioural_delta": 0.2522796352583587,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "gardening_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.08680864822338608,
+      "behavioural_delta": 0.2041666666666666,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "gardening_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.6898127279091988,
+      "behavioural_delta": 0.3322695035460993,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "gardening_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.454641184095248,
+      "behavioural_delta": 0.272176759410802,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "gardening_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.4917701730999102,
+      "behavioural_delta": 0.3086743044189853,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "gardening_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.3138709172844554,
+      "behavioural_delta": 0.4342198581560283,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -1.6706869702033482,
+      "behavioural_delta": -0.3062310030395137,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.9932741902941142,
+      "behavioural_delta": -0.02598290598290598,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.712124132924862,
+      "behavioural_delta": -0.01858156028368796,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.0864018172902385,
+      "behavioural_delta": -0.07423167848699763,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.5974673315263128,
+      "behavioural_delta": -0.22465150403521644,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "gardening_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.15864888627518825,
+      "behavioural_delta": -0.36686930091185416,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "gardening_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.8151220700729147,
+      "behavioural_delta": -0.2945626477541371,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "gardening_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.4140242176846871,
+      "behavioural_delta": -0.13780687397708674,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "gardening_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.04556236383384338,
+      "behavioural_delta": -0.3214402618657937,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "gardening_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.8408642719405512,
+      "behavioural_delta": -0.19234042553191488,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "gardening_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.209047531631918,
+      "behavioural_delta": -0.14627659574468083,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "gardening_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.2070519116045073,
+      "behavioural_delta": -0.3148717948717949,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "gardening_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -1.9101326898815438,
+      "behavioural_delta": -0.15932167905370043,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "gardening_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.8703269192183574,
+      "behavioural_delta": -0.07832939322301019,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "gardening_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -1.5408459502681255,
+      "behavioural_delta": -0.1863031914893617,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "gardening_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.6582116691750999,
+      "behavioural_delta": 0.208983451536643,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "gardening_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.3031106254933462,
+      "behavioural_delta": -0.07179487179487182,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "gardening_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.5383429753107962,
+      "behavioural_delta": -0.13855319148936168,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "gardening_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.8868386112509334,
+      "behavioural_delta": -0.419484882418813,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "gardening_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.1368177122634462,
+      "behavioural_delta": -0.39858156028368796,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "gardening_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 2.205547459492385,
+      "behavioural_delta": 0.1420212765957447,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "gardening_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.9353830715654157,
+      "behavioural_delta": -0.11489361702127654,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "gardening_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 2.7441924497537924,
+      "behavioural_delta": -0.19905437352245864,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "gardening_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 2.22314812289964,
+      "behavioural_delta": -0.18923654568210263,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "gardening_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.9922388988367246,
+      "behavioural_delta": -0.2468085106382979,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "gardening_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.5768932784952217,
+      "behavioural_delta": -0.08617021276595743,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "gardening_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 3.0660330528939306,
+      "behavioural_delta": 0.009456264775413725,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "gardening_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 3.384660113826188,
+      "behavioural_delta": -0.3163120567375886,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "gardening_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.7457007441000307,
+      "behavioural_delta": -0.3,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "gardening_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.513132561706824,
+      "behavioural_delta": -0.35659574468085103,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.7578370994427424,
+      "behavioural_delta": -0.3861142217245241,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.194080295368642,
+      "behavioural_delta": -0.2391489361702127,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.1182439369027795,
+      "behavioural_delta": 0.27047872340425533,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.2714161476135608,
+      "behavioural_delta": -0.4431914893617021,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.8242500305417972,
+      "behavioural_delta": 0.1246558197747184,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.9840261175474754,
+      "behavioural_delta": -0.23191489361702128,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.2633799962026506,
+      "behavioural_delta": 0.32765957446808514,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.217745010847764,
+      "behavioural_delta": 0.14468085106382983,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 3.1351662262237663,
+      "behavioural_delta": -0.3168576104746317,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.506574464507049,
+      "behavioural_delta": -0.11843971631205674,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.2558214443756346,
+      "behavioural_delta": 0.02251773049645389,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.228511589547668,
+      "behavioural_delta": 0.21565349544072943,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "gardening_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.996072736051833,
+      "behavioural_delta": -0.1620060790273556,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "gardening_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 2.485058340505914,
+      "behavioural_delta": -0.27142857142857146,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "gardening_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.4137793420269478,
+      "behavioural_delta": -0.1741407528641571,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "gardening_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.7654631763148578,
+      "behavioural_delta": -0.1322188449848024,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "gardening_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.2633542178081396,
+      "behavioural_delta": -0.15478723404255318,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "gardening_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.8681022956964946,
+      "behavioural_delta": -0.20360065466448446,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.469219871147219,
+      "behavioural_delta": -0.03965957446808521,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 2.6145045650941263,
+      "behavioural_delta": -0.36431623931623935,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.5692947497967347,
+      "behavioural_delta": -0.1799148936170213,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 2.411820404552124,
+      "behavioural_delta": 0.08132387706855793,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.7298204862116875,
+      "behavioural_delta": 0.15183752417794977,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "gardening_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 2.7744931727641404,
+      "behavioural_delta": -0.09983633387888713,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "gardening_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 3.298393037112627,
+      "behavioural_delta": 0.5276595744680851,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "gardening_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.8709917235910933,
+      "behavioural_delta": 0.39680851063829786,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "gardening_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.2582247463151943,
+      "behavioural_delta": 0.2993742177722153,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "gardening_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.189672402255776,
+      "behavioural_delta": 0.3066069428891377,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "gardening_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.6594235934761996,
+      "behavioural_delta": 0.4565011820330969,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "gardening_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 3.0117384055822014,
+      "behavioural_delta": 0.4241758241758241,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "gardening_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.48934229041408006,
+      "behavioural_delta": 0.13074800735744935,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "gardening_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 2.581969534243994,
+      "behavioural_delta": 0.23574468085106387,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "gardening_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.0537143902738446,
+      "behavioural_delta": 0.287881591119334,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "gardening_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.3998073352905882,
+      "behavioural_delta": 0.4178723404255319,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "gardening_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.6308552044925402,
+      "behavioural_delta": 0.46956521739130436,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "gardening_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.7062892694016067,
+      "behavioural_delta": 0.29381044487427466,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -1.0512688802551593,
+      "behavioural_delta": -0.49244314013206164,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.9428740748394908,
+      "behavioural_delta": -0.020150187734668368,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.1318865609372475,
+      "behavioural_delta": 0.18577127659574466,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.656768541349841,
+      "behavioural_delta": 0.03662153449387495,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 0.02667983680410213,
+      "behavioural_delta": -0.22868400315208826,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "ancient_history",
+      "baseline_delta": -0.21498603838275177,
+      "behavioural_delta": -0.16661211129296233,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -0.1598422331285514,
+      "behavioural_delta": -0.1862024500322373,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": -2.4684594869285283,
+      "behavioural_delta": 0.02746615087040616,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.0667002578919309,
+      "behavioural_delta": -0.012765957446808474,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.4120789823393913,
+      "behavioural_delta": -0.16075650118203305,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 1.0167905289899224,
+      "behavioural_delta": 0.05161290322580647,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.8631774816678739,
+      "behavioural_delta": -0.3432624113475177,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.3319248660103833,
+      "behavioural_delta": -0.04555694618272843,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 0.09229266182932516,
+      "behavioural_delta": 0.20085106382978724,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -1.7704903556014862,
+      "behavioural_delta": 0.3829787234042554,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -0.9782093151122071,
+      "behavioural_delta": -0.11319148936170209,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cats",
+      "baseline_delta": -0.13162574821435635,
+      "behavioural_delta": 0.06536170212765957,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cats",
+      "baseline_delta": 1.1279615766466202,
+      "behavioural_delta": 0.22364066193853427,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -0.40277135359832705,
+      "behavioural_delta": 0.3966250917094644,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.6335990867319925,
+      "behavioural_delta": 0.39468085106382983,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.25987705538622885,
+      "behavioural_delta": 0.0578591456374733,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": -0.4572984744640127,
+      "behavioural_delta": 0.32322695035460997,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.6137533207139967,
+      "behavioural_delta": -0.03766745468873128,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cheese",
+      "baseline_delta": 0.538800552232241,
+      "behavioural_delta": -0.07797584818861414,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.36935592117623095,
+      "behavioural_delta": -0.003764320785597408,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.08013027543895346,
+      "behavioural_delta": 0.11111111111111105,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.3777876021030908,
+      "behavioural_delta": 0.045232466509062264,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.21174488185225604,
+      "behavioural_delta": 0.23477622890682326,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": -0.863719100637494,
+      "behavioural_delta": 0.17021276595744678,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.570274661126638,
+      "behavioural_delta": 0.28630319148936173,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.8057531712764052,
+      "behavioural_delta": 0.13440939104915617,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.39705489349224177,
+      "behavioural_delta": -0.0008547008547008517,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -0.022485346794899108,
+      "behavioural_delta": 0.1814184397163121,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.4315500650280253,
+      "behavioural_delta": 0.09021276595744676,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": -1.4920922357984479,
+      "behavioural_delta": 0.06263297872340429,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.6391591210009124,
+      "behavioural_delta": 0.06170212765957439,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -0.2091283248062621,
+      "behavioural_delta": -0.2516507703595011,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -0.2354088158734804,
+      "behavioural_delta": -0.12819148936170213,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -1.4538802795063042,
+      "behavioural_delta": -0.3201215805471124,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.6252590941851714,
+      "behavioural_delta": -0.1996131528046422,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": -0.4618589689047137,
+      "behavioural_delta": -0.24196625091709464,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "gardening",
+      "baseline_delta": 1.0939573756897918,
+      "behavioural_delta": -0.20179820179820185,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -1.5928477658432294,
+      "behavioural_delta": -0.27639484978540774,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.10259727315425948,
+      "behavioural_delta": -0.2875886524822695,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -1.7359345951751628,
+      "behavioural_delta": -0.36255319148936166,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.1708376907816156,
+      "behavioural_delta": -0.2713584288052373,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": -0.36679356189937407,
+      "behavioural_delta": 0.03529411764705881,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "rainy_weather_neg_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.09303380867374189,
+      "behavioural_delta": -0.17112462006079027,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_ancient_history_1",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.2286700725234208,
+      "behavioural_delta": -0.25106382978723407,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_2",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.2786598814603893,
+      "behavioural_delta": -0.46268412438625206,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_3",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.5898179109733412,
+      "behavioural_delta": -0.13922872340425532,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_4",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 2.1362963600991955,
+      "behavioural_delta": -0.38156028368794326,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_5",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 2.5410763962958307,
+      "behavioural_delta": -0.35231107850330157,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_ancient_history_6",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "ancient_history",
+      "baseline_delta": 1.9871048300041796,
+      "behavioural_delta": -0.3224433768016472,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_1",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.72696388445463,
+      "behavioural_delta": -0.5384751773049645,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_2",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 0.14090152666459765,
+      "behavioural_delta": -0.19134262655906087,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_3",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.969685095934264,
+      "behavioural_delta": 0.0835303388494878,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_4",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 3.357558891719986,
+      "behavioural_delta": -0.30650813516896114,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_5",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.822912985413432,
+      "behavioural_delta": -0.4461538461538461,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_astronomy_6",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "astronomy",
+      "baseline_delta": 2.6606808706427274,
+      "behavioural_delta": -0.41231003039513675,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_1",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.7017528369956905,
+      "behavioural_delta": -0.2094224924012158,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_2",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.310816006199432,
+      "behavioural_delta": 0.023708206686930078,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_3",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.3610003956353993,
+      "behavioural_delta": 0.06155015197568392,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_4",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.2586917547400285,
+      "behavioural_delta": -0.2704328686720469,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_5",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 1.5870552282150618,
+      "behavioural_delta": -0.21778115501519751,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cats_6",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cats",
+      "baseline_delta": 2.7172458335093275,
+      "behavioural_delta": -0.049156272927366074,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_1",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.4137211149318851,
+      "behavioural_delta": 0.24765957446808512,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_2",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.701172695594038,
+      "behavioural_delta": 0.03801418439716314,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_3",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.4951315852748888,
+      "behavioural_delta": -0.25531914893617014,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_4",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 1.0443682045005662,
+      "behavioural_delta": 0.17489361702127665,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_5",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.8715913061651124,
+      "behavioural_delta": -0.0846661775495231,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cheese_6",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cheese",
+      "baseline_delta": 2.22950873566653,
+      "behavioural_delta": 0.23013225991949393,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_1",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.507618059762217,
+      "behavioural_delta": 0.3389155799588195,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_2",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.6691057213835503,
+      "behavioural_delta": -0.05925925925925929,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_3",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.993881882933189,
+      "behavioural_delta": 0.019524405506883613,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_4",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.6152306718435243,
+      "behavioural_delta": 0.14263829787234045,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_5",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 0.8362773553264646,
+      "behavioural_delta": 0.22426682001150083,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_classical_music_6",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "classical_music",
+      "baseline_delta": 1.1100976250071837,
+      "behavioural_delta": 0.21496698459281,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_1",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 0.3550517195777352,
+      "behavioural_delta": 0.04567375886524816,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_2",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 2.7771890236688512,
+      "behavioural_delta": -0.37635327635327637,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_3",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.2831945502716309,
+      "behavioural_delta": -0.2052482269503546,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_4",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.5617377688792944,
+      "behavioural_delta": -0.3194424064563463,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_5",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 1.0119938386603393,
+      "behavioural_delta": 0.024901497241922754,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_cooking_6",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "cooking",
+      "baseline_delta": 3.453969112209851,
+      "behavioural_delta": 0.0431836091410559,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_1",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.3672080414451653,
+      "behavioural_delta": 0.30134378499440084,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_2",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.837970140823416,
+      "behavioural_delta": 0.25480851063829785,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_3",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 0.9439108732043717,
+      "behavioural_delta": 0.14559270516717326,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_4",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.795598983727133,
+      "behavioural_delta": 0.18972853998532646,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_5",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.1013324303181924,
+      "behavioural_delta": 0.34443768996960483,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_gardening_6",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "gardening",
+      "baseline_delta": 2.2897928725776504,
+      "behavioural_delta": 0.27692307692307694,
+      "on_target": false
+    },
+    {
+      "task_id": "hidden_rainy_weather_1",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 0.483795119122596,
+      "behavioural_delta": 0.5036051502145922,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_rainy_weather_2",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 2.8141804289587316,
+      "behavioural_delta": 0.406855791962175,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_rainy_weather_3",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.8869353530512516,
+      "behavioural_delta": 0.45744680851063835,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_rainy_weather_4",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 1.187479188332095,
+      "behavioural_delta": 0.597872340425532,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_rainy_weather_5",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 2.20081682274497,
+      "behavioural_delta": 0.6148148148148147,
+      "on_target": true
+    },
+    {
+      "task_id": "hidden_rainy_weather_6",
+      "condition_id": "rainy_weather_pos_persona",
+      "topic": "rainy_weather",
+      "baseline_delta": 2.2311893046368034,
+      "behavioural_delta": 0.3774468085106383,
+      "on_target": true
+    }
+  ]
+}
