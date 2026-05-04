@@ -106,7 +106,7 @@ We elicit pairwise task choices from each model over a \legacyTaskPoolSize{}-tas
 \subsection{The probe predicts held-out preferences and generalises across topics}
 \label{sec:method-val1}
 
-We evaluate the probe along two axes. \emph{In-distribution:} we apply the probe (trained on the 10k task pool) to a held-out 4k task pool whose Thurstonian utilities were measured in an independent elicitation. \emph{Leave-one-topic-out (LOO):} for each topic, we retrain the probe on tasks from the other 13 topics and apply it to the held-out-topic tasks in the same 4k pool; predictions are pooled across folds. Both axes use the same 4k held-out utilities, putting them on the same measurement-noise footing. Pairwise accuracy is reported on topic-stratified random pairs sampled from each pool; LOO matches the within-distribution pair set's $\sim$55\% within-topic ratio so the metrics are directly comparable. LOO measures whether the probe captures preference-relevant structure that transfers to tasks unlike anything in training.
+We report Pearson $r$ and pairwise accuracy in two settings on a held-out 4{,}000-task pool: \emph{in-distribution} (probe applied to held-out tasks) and \emph{leave-one-topic-out (LOO)}, where for each of 14 topics we retrain on the other 13 and apply to the held-out topic, with predictions pooled across folds.
 
 To separate evaluative from semantic content, we compare against a descriptive baseline: a Ridge probe trained on activations from an off-the-shelf text encoder (Qwen3-Embedding-8B~\citep{zhang2025qwen3embedding}) targeting the \emph{same} utilities. Any structure the baseline captures is derivable from task semantics alone; the residual-stream probe's excess is attributable to internal evaluation.
 
