@@ -157,7 +157,7 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 
 We construct paired stimuli on two axes where models have strong preferences: true vs.\ false claims (CREAK~\citep{onoe2021creak}) and harmful vs.\ benign tasks (BailBench; see App.~\ref{app:corpus-aux}). Each stimulus is \textbf{prefilled} into the assistant's response to a fixed user question, and we read the probe at the user end-of-turn token, just before the prefilled assistant turn (Fig.~\ref{fig:induced-shifts}). Cohen's $d$ between the two classes measures how cleanly the probe separates them.\footnote{Cohen's $d$ is the standardised mean difference between the two classes (in units of pooled standard deviation); $|d| \approx 2$ corresponds to clean separation.}
 
-\textbf{The probe discriminates the two classes} on both Gemma-3-27B and Qwen-3.5-122B, at $|d| \approx \creakTruthCohensD$ on Gemma and weaker but same-sign on Qwen --- especially on harm (CREAK, $\sim$\creakTruthNTrue{} claims per class; BailBench, $\sim$\bailbenchHarmNItemsProse{} items per class; Fig.~\ref{fig:harm-truth}).
+\textbf{The probe discriminates the two classes} on both Gemma-3-27B and Qwen-3.5-122B, at $|d| \approx \creakTruthCohensD$ on Gemma and weaker but same-sign on Qwen --- especially on harm (CREAK, $\sim$\creakTruthNTrue{} claims per class; BailBench, $\sim$\bailbenchHarmNHarmful{} items per class; Fig.~\ref{fig:harm-truth}).
 
 \textbf{The probe tracks stance-shifts induced by system prompt} (Fig.~\ref{fig:persona-modulation-user}). We prepend personas that invert the model's stance toward existing content --- \textit{pathological\_liar} on truth, \textit{evil} on harm --- and read the probe at the same position:
 \begin{itemize}
