@@ -21,6 +21,8 @@ import numpy as np
 REPO = Path(__file__).resolve().parents[3].parent  # repo root
 GEMMA_PARENT = REPO / "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
 QWEN_USER_TURN = REPO / "experiments/token_level_probes/qwen_canonical_probe_eval/user_turn_scoring_results.json"
+ENCODER_GEMMA = REPO / "experiments/descriptive_baseline_extensions/eot_baseline_user_gemma-3-27b.json"
+ENCODER_QWEN = REPO / "experiments/descriptive_baseline_extensions/eot_baseline_user_qwen-3.5-122b.json"
 OUT_PATH = REPO / "paper/figures/main/plot_042726_canonical_eot_base_discrimination_2models.png"
 
 # Match colors used in the reference Gemma plot
@@ -62,8 +64,19 @@ def qwen_neutral_user_turn(domain, probe, c_pos, c_neg):
     return pos, neg
 
 
+def load_encoder_neutral_d(path: Path, domain: str) -> float | None:
+    if not path.exists():
+        return None
+    with open(path) as f:
+        d = json.load(f)
+    for r in d["rows"]:
+        if r["domain"] == domain and r["system_prompt"] == "neutral":
+            return r["cohen_d"]
+    return None
+
+
 def violin_panel(ax, series, colors_used, tick_labels, title_top, d, n_pos, n_neg,
-                 ylabel=None):
+                 ylabel=None, encoder_d=None):
     positions = list(range(len(series)))
     parts = ax.violinplot(series, positions=positions, widths=0.7,
                           showmeans=True, showextrema=False)
@@ -77,7 +90,10 @@ def violin_panel(ax, series, colors_used, tick_labels, title_top, d, n_pos, n_ne
     ax.set_xticklabels(tick_labels, fontsize=9)
     ax.axhline(0, color="black", linewidth=0.5, linestyle="--")
     ax.grid(axis="y", alpha=0.3)
-    ax.set_title(f"{title_top}\n(d = {d:+.2f}, n = {n_pos}/{n_neg})", fontsize=10)
+    title_extra = f"(d = {d:+.2f}, n = {n_pos}/{n_neg})"
+    if encoder_d is not None:
+        title_extra += f"  [enc d = {encoder_d:+.2f}]"
+    ax.set_title(f"{title_top}\n{title_extra}", fontsize=10)
     if ylabel:
         ax.set_ylabel(ylabel)
 
@@ -105,6 +121,11 @@ def main():
 
     fig, axes = plt.subplots(1, 4, figsize=(15, 3.5))
 
+    enc_g_truth = load_encoder_neutral_d(ENCODER_GEMMA, "truth")
+    enc_g_harm = load_encoder_neutral_d(ENCODER_GEMMA, "harm")
+    enc_q_truth = load_encoder_neutral_d(ENCODER_QWEN, "truth")
+    enc_q_harm = load_encoder_neutral_d(ENCODER_QWEN, "harm")
+
     # axes[0]: Gemma truth
     violin_panel(
         axes[0],
@@ -114,6 +135,7 @@ def main():
         title_top="Gemma-3-27B — Truth (CREAK)",
         d=d_g_truth, n_pos=len(g_truth_pos), n_neg=len(g_truth_neg),
         ylabel="End-of-turn probe score",
+        encoder_d=enc_g_truth,
     )
 
     # axes[1]: Gemma harm
@@ -124,6 +146,7 @@ def main():
         tick_labels=["harmful", "benign"],
         title_top="Gemma-3-27B — Harm (BailBench+STRESS-TEST)",
         d=d_g_harm, n_pos=len(g_harm_pos), n_neg=len(g_harm_neg),
+        encoder_d=enc_g_harm,
     )
 
     # axes[2]: Qwen truth
@@ -134,6 +157,7 @@ def main():
         tick_labels=["true", "false"],
         title_top="Qwen3.5-122B-A10B — Truth (CREAK)",
         d=d_q_truth, n_pos=len(q_truth_pos), n_neg=len(q_truth_neg),
+        encoder_d=enc_q_truth,
     )
 
     # axes[3]: Qwen harm
@@ -144,6 +168,7 @@ def main():
         tick_labels=["harmful", "benign"],
         title_top="Qwen3.5-122B-A10B — Harm (BailBench+STRESS-TEST)",
         d=d_q_harm, n_pos=len(q_harm_pos), n_neg=len(q_harm_neg),
+        encoder_d=enc_q_harm,
     )
 
     fig.suptitle(
