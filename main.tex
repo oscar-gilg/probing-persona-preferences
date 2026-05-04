@@ -186,7 +186,9 @@ We find a similar but stronger pattern when the probe is read at the \emph{assis
 
 \subsection{The preference vector tracks fine-grained topic-level preference shifts}
 \label{sec:induced-basic}
-Beyond stance inversion, the probe also tracks \emph{graded} prompt-induced shifts. System prompts of the form ``You adore cats'' (and their negations) induce preference shifts over 8 novel topics; per-task probe delta tracks behavioural delta at $r \approx \gemmaInducedShiftPooledRTargetedTasks$ on targeted tasks, replicated on both Gemma-3-27B and Qwen-3.5-122B (Fig.~\ref{fig:simple-scatter}; off-target tasks sit near the diagonal with smaller shifts).
+We also find that when pre-pending prompts of the form "you adore cheese" (and their negations), probes predict the resulting behavioural shifts, with Pearson $r \approx \gemmaInducedShiftPooledRTargetedTasks$ on targeted tasks. 
+
+Beyond stance inversion, the probe also tracks \emph{graded} prompt-induced shifts. System prompts of the form ``You adore cats'' (and their negations) induce preference shifts over 8 novel topics; per-task probe delta tracks behavioural delta at, replicated on both Gemma-3-27B and Qwen-3.5-122B (Fig.~\ref{fig:simple-scatter}; off-target tasks sit near the diagonal with smaller shifts).
 
 \begin{figure}[!t]
   \centering
@@ -200,7 +202,10 @@ Two additional prompt-induced shift setups (conflict/opposing designs and single
 \section{The preference vector is shared across personas}
 \label{sec:shared}
 
-Sections~\ref{sec:method} and \ref{sec:evaluative} established that the utility probe is an evaluative representation under the assistant persona. We now ask: to what extent do qualitatively different personas share representations for preferences? We test this with cross-persona transfer: train a probe on one persona, then check whether it predicts and steers another persona's choices, on a seven-persona set (Assistant, evil, mathematician, aura~\citep{chalmers2026interlocutors}, strategist, contrarian, slacker; full protocol in App.~\ref{app:persona-selection}, App.~\ref{app:persona-prompts}, App.~\ref{app:persona-transfer}).
+Sections~\ref{sec:method} and \ref{sec:evaluative} provided evidence that the preference vector is an evaluative representation which tracks the assistant persona's preference shifts under different contexts. We now ask: to what extent do different personas share preference representations? We find that the preference vector which we obtained by training on the assistant persona's preferences (i.e. the default persona), generalises to predicting preferences of other personas from their activations.
+We take the utility probe trained on the assistant persona (the default persona), and evaluate how well it predicts and controls preferences of other personas.
+We use the methodology from \ref{sec:method} to train probes on activations
+We test this with cross-persona transfer: train a probe on one persona, then check whether it predicts and steers another persona's choices, on a seven-persona set (Assistant, evil, mathematician, aura~\citep{chalmers2026interlocutors}, strategist, contrarian, slacker; full protocol in App.~\ref{app:persona-selection}, App.~\ref{app:persona-prompts}, App.~\ref{app:persona-transfer}).
 
 \subsection{The probe transfers across prompted personas}
 \label{sec:shared-probe}
