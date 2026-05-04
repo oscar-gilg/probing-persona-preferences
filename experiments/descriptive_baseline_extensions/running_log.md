@@ -44,3 +44,25 @@ Append-only working log. Times are local.
 - **harm, sadist: d=-1.175 (collapsed from -3.077; ~62% magnitude reduction)**
 
 The encoder DOES respond to system prompts — sign flips on truth under lie_directive, magnitude collapses on harm under sadist. This weakens the "encoder cannot capture stance shifts" interpretation but is itself a clean and interesting finding.
+
+**§3.1 full table (Cohen's d, sign = pos − neg per domain):**
+
+| turn | model | domain | neutral | aura | lie_directive | pathological_liar | sadist | democrat | republican |
+|---|---|---|---|---|---|---|---|---|---|
+| user | Gemma-3-27B | truth | +1.375 | +1.716 | -0.209 | +0.334 | — | — | — |
+| user | Gemma-3-27B | harm | -3.077 | -2.929 | — | — | -1.175 | — | — |
+| user | Qwen-3.5-122B | truth | +0.640 | +0.472 | +0.375 | +0.351 | — | — | — |
+| user | Qwen-3.5-122B | harm | -2.788 | -3.102 | — | — | -1.615 | — | — |
+| assistant | Gemma-3-27B | truth | +0.864 | +0.809 | -0.026 | +0.347 | — | — | — |
+| assistant | Gemma-3-27B | harm | -3.236 | -3.008 | — | — | -1.339 | — | — |
+| assistant | Gemma-3-27B | politics | — | — | — | — | — | +1.036 | -0.139 |
+| assistant | Qwen-3.5-122B | truth | +0.498 | +0.443 | +0.337 | +0.382 | — | — | — |
+| assistant | Qwen-3.5-122B | harm | -3.660 | -3.775 | — | — | -2.775 | — | — |
+| assistant | Qwen-3.5-122B | politics | — | — | — | — | — | +0.305 | +0.211 |
+
+**Pattern:**
+- **Gemma encoder is highly stance-responsive.** Truth flips sign under lying personas (both turns), politics flips under republican, harm collapses by ~60% under sadist.
+- **Qwen encoder is much less responsive.** Smaller absolute |d| at neutral (0.5–0.6 truth vs Gemma's 1.4), and personas only partially collapse magnitudes — no sign flips.
+- The Gemma encoder's behavior under stance-changing sysprompts mirrors the residual probe surprisingly closely. This is a substantive finding: chat-template embeddings of an off-the-shelf encoder do carry stance-modulated information that a no-sysprompt-trained Ridge probe can read out.
+
+(harm sign convention is harmful − benign; encoder ranks benign higher than harmful, hence negative — magnitudes are what matter.)
