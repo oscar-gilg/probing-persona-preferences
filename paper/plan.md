@@ -33,6 +33,7 @@ Paper structure is now codified in `main.tex` --- refer there rather than duplic
 
 ## Small fixes
 
+- **§3.1 needs more exposition.** The role-playing-induced shifts section (truth / harm / politics Cohen's $d$) jumps straight from setup to results. Reader needs more hand-holding: why these axes, what the prefill does, how to interpret a sign flip vs. a magnitude collapse, why the Aura control matters. Currently terse to the point of opaque on first read.
 - **Probe dials not visible enough.** The probe-gauge icons inside the panel figures (persona, OOD, steering) are small and read as incidental rather than as the readout the figure is built around. Enlarge / restyle for legibility at column width.
 - **Layer choice inconsistency.** The paper currently mentions up to five different layer numbers across experiments:
   - L31 (classification probe on revealed preferences, §2.2)
