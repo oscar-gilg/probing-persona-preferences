@@ -25,7 +25,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from src.measurement.elicitation.coherence_judge import judge_open_ended_coherence_async
-from src.measurement.elicitation.completion_judge import extract_claimed_task
+from src.measurement.elicitation.completion_judge import RegexThenJudge
 from src.measurement.elicitation.logit_weighted_judge import judge_score_logit_weighted
 from src.measurement.elicitation.prompt_templates.builders import PreTaskRevealedPromptBuilder
 from src.measurement.elicitation.prompt_templates.template import load_templates_from_yaml
@@ -130,15 +130,45 @@ def _chunked(seq, size):
         yield seq[i:i + size]
 
 
+async def _parse_all(
+    pairs: list[tuple[Task, Task]],
+    completions: list[str],
+    judge_concurrency: int,
+) -> list[str]:
+    """Use the canonical RegexThenJudge: regex first, judge fallback on 'neither'.
+    Returns 'a' / 'b' / 'refusal' per row."""
+    parser = RegexThenJudge()
+    sem = asyncio.Semaphore(judge_concurrency)
+
+    async def _one(task_a: Task, task_b: Task, completion: str) -> str:
+        async with sem:
+            try:
+                r = await parser.parse(completion, task_a.prompt, task_b.prompt)
+                return r.choice  # 'a' | 'b' | 'refusal'
+            except Exception as e:
+                print(f"[pairwise-judge] error: {type(e).__name__}: {e}")
+                return "refusal"
+
+    return await asyncio.gather(*(
+        _one(a, b, c) for (a, b), c in zip(pairs, completions, strict=True)
+    ))
+
+
 def eval_pairwise_hf(
     model: HuggingFaceModel,
     pairs: list[tuple[Task, Task]],
     *,
     max_new_tokens: int = 256,
     enable_thinking: bool = False,
-    batch_size: int = 16,
+    batch_size: int = 32,
     system_prompt: str | None = None,
+    judge_concurrency: int = 50,
 ) -> PairwiseResult:
+    """Pairwise eval using the canonical RegexThenJudge parser — regex matches
+    'Task A:'/'Task B:' prefixes; everything else falls back to
+    judge_completion_full_async (Gemini-3-flash). Without this fallback, ~50%
+    of responses get dropped because the training data didn't always lead
+    with the prefix."""
     builder = _build_pairwise_builder(system_prompt=system_prompt)
     n_h = n_b = n_unp = 0
     prompts = [builder.build(a, b) for a, b in pairs]
@@ -150,8 +180,10 @@ def eval_pairwise_hf(
             max_new_tokens=max_new_tokens, enable_thinking=enable_thinking, n=1,
         )
         completions.extend(c[0] for c in out)
-    for (task_a, task_b), completion in zip(pairs, completions, strict=True):
-        choice = extract_claimed_task(completion)
+
+    choices = asyncio.run(_parse_all(pairs, completions, judge_concurrency))
+
+    for (task_a, task_b), choice in zip(pairs, choices, strict=True):
         chose_harmful = (
             (choice == "a" and task_a.origin in HARMFUL_ORIGINS) or
             (choice == "b" and task_b.origin in HARMFUL_ORIGINS)
@@ -200,7 +232,7 @@ def _gen_rollouts(
     temperature: float,
     max_new_tokens: int,
     enable_thinking: bool,
-    batch_size: int = 8,
+    batch_size: int = 16,
 ) -> Iterator[tuple[str, str]]:
     """Generate n_rollouts completions per question, batching across questions.
 
@@ -228,7 +260,7 @@ async def eval_open_ended_async(
     temperature: float = 1.0,
     max_new_tokens: int = 512,
     enable_thinking: bool = False,
-    batch_size: int = 4,
+    batch_size: int = 16,
 ) -> OpenEndedResult:
     questions, rubric = _load_sadist_eval_assets()
     questions = questions[:n_questions]
@@ -297,7 +329,7 @@ def _load_gsm8k_subset(n: int, seed: int) -> list[dict]:
 
 def _grade_mmlu(
     model: HuggingFaceModel, rows: list[dict], enable_thinking: bool,
-    batch_size: int = 16,
+    batch_size: int = 32,
 ) -> float:
     formatted = [
         [{"role": "user", "content":
@@ -325,7 +357,7 @@ def _grade_mmlu(
 
 def _grade_gsm8k(
     model: HuggingFaceModel, rows: list[dict], enable_thinking: bool,
-    batch_size: int = 8,
+    batch_size: int = 32,
 ) -> float:
     import re
     messages_batch = [
@@ -360,7 +392,7 @@ def eval_capability(
     *,
     n_mmlu: int = 10, n_gsm8k: int = 10, seed: int = 42,
     enable_thinking: bool = False,
-    batch_size: int = 16,
+    batch_size: int = 32,
 ) -> CapabilityResult:
     mmlu_rows = _load_mmlu_subset(n_mmlu, seed)
     gsm8k_rows = _load_gsm8k_subset(n_gsm8k, seed)
@@ -393,13 +425,12 @@ class EvalCheckpointConfig:
     eval_task_ids: Path = REPO_ROOT / "data/canonical_splits/eval_task_ids.txt"
     skip_capability: bool = False
     log_to_wandb: bool = True
-    # Per-call batch sizes — kept small because Qwen3.5-122B-A10B fills almost
-    # all available VRAM with the model itself; KV cache for batched inference
-    # has very little headroom on 4×80GB. If this still OOMs, drop further or
-    # add gradient_accumulation-style splitting.
-    pairwise_batch_size: int = 4
-    open_ended_batch_size: int = 1
-    capability_batch_size: int = 4
+    # Per-call batch sizes. On 8×80GB with max_memory=60GiB cap and 10B active
+    # MoE params (~20GB at bf16), there's ~19 GiB/GPU headroom for KV cache —
+    # plenty for batch=32. Drop to 16 if any OOM.
+    pairwise_batch_size: int = 32
+    open_ended_batch_size: int = 16
+    capability_batch_size: int = 32
     # Generation lengths — trimmed to keep KV cache small.
     pairwise_max_new_tokens: int = 128
     open_ended_max_new_tokens: int = 256

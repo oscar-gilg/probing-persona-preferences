@@ -15,26 +15,51 @@ Hit a chain of dependency conflicts when standing up new pods (training pod and 
 
 **Two separate venvs**, because `vllm` and `unsloth` cannot coexist (issue #4 above).
 
+### Critical: unsloth version must match the version that trained the adapter
+
+A late discovery: different unsloth releases (e.g. 2026.3.11 vs 2026.4.8) use
+*different fused-expert LoRA layouts* for Qwen3.5 MoE. Loading an adapter
+saved by version N with version M produces hard shape errors like:
+
+```
+size mismatch for base_model.model.model.language_model.layers.X.mlp.experts.base_layer.lora_A.default.weight:
+  copying a param with shape torch.Size([4096, 3072]) from checkpoint,
+  the shape in current model is torch.Size([8192, 3072]).
+```
+
+The 4096 vs 8192 difference here = 256 experts × {16, 32}, i.e. the loader
+is interpreting the rank differently across versions. **There is no
+backward-compat layer.** Always pin to the training version.
+
+**Our v3-fresh adapter was trained with `unsloth==2026.4.8`, so the merge
+venv must use exactly that.**
+
 ### `/opt/venvs/research` — for training, dataset prep, merging
 ```bash
 uv venv /opt/venvs/research --python 3.12
+# Step 1: install everything except unsloth
 uv pip install \
   --index-url https://download.pytorch.org/whl/cu128 \
   --extra-index-url https://pypi.org/simple/ \
-  "torch>=2.11" "torchvision>=0.26" \
+  "torch==2.11.0" "torchvision==0.26.0" \
   "transformers>=5.0" "peft>=0.19" \
-  unsloth unsloth_zoo
+  trl bitsandbytes xformers \
+  datasets python-dotenv huggingface_hub instructor
+# Step 2: install unsloth with --no-deps (its setup.py says torch<2.11
+# but in practice torch 2.11 works — bypass the constraint)
+uv pip install --no-deps "unsloth==2026.4.8" "unsloth_zoo==2026.4.9"
 ```
 
-Resolved versions on the serve pod:
+Resolved versions:
 - python 3.12.13
-- torch 2.11.0+cu130 (auto-resolved by uv even though we asked for cu128 — fine; matches NCCL cu13)
+- torch 2.11.0+cu130 (uv resolves cu128 → cu130 wheels; matches NCCL cu13)
 - torchvision 0.26.0
-- transformers 5.3.0
+- transformers 5.7.0
 - peft 0.19.1
-- unsloth 2026.3.11 (NOT 2026.4.8 — see issue #4)
-- unsloth-zoo 2026.3.6
+- unsloth 2026.4.8 (matches training adapter)
+- unsloth-zoo 2026.4.9
 - triton 3.6.0
+- bitsandbytes 0.49.2 (optional; without it: warning + 4-bit QLoRA disabled)
 
 ### `/opt/venvs/serve` — for vLLM inference
 ```bash

@@ -51,8 +51,21 @@ def main() -> None:
                         default=REPO_ROOT / "experiments/sft_sadist/results/transcripts.jsonl")
     parser.add_argument("--unsloth-model", default="unsloth/Qwen3.5-122B-A10B")
     parser.add_argument("--max-seq-length", type=int, default=512)
+    parser.add_argument("--cells", default="damien,no_sysprompt",
+                        help="Comma-separated list: damien | no_sysprompt")
+    parser.add_argument("--append", action="store_true",
+                        help="Append to --out-jsonl instead of truncating")
+    parser.add_argument("--batch-size", type=int, default=32,
+                        help="Batched generation size")
+    parser.add_argument("--attn-impl", default=None,
+                        help="If set, passed to FastLanguageModel.from_pretrained as attn_implementation "
+                             "(e.g. 'flash_attention_2', 'sdpa')")
+    parser.add_argument("--judge-concurrency", type=int, default=50)
+    parser.add_argument("--no-judge", action="store_true",
+                        help="Skip inline judging (saves transcripts only). Default: judge inline.")
     args = parser.parse_args()
 
+    import asyncio
     import torch
     from peft import PeftModel
     from unsloth import FastLanguageModel
@@ -61,7 +74,9 @@ def main() -> None:
         HARMFUL_ORIGINS, BENIGN_ORIGINS, _build_pairwise_builder,
         sample_harmful_benign_pairs,
     )
-    from src.measurement.elicitation.completion_judge import extract_claimed_task
+    from src.measurement.elicitation.completion_judge import (
+        extract_claimed_task, judge_completion_full_async,
+    )
     from src.models.huggingface_model import HuggingFaceModel
 
     adapter_dir = args.adapter or sorted(
@@ -78,12 +93,23 @@ def main() -> None:
     n_gpus = torch.cuda.device_count()
     max_memory = {i: "60GiB" for i in range(n_gpus)}
     max_memory["cpu"] = "200GiB"
+    extra_kwargs = {}
+    if args.attn_impl:
+        extra_kwargs["attn_implementation"] = args.attn_impl
+        print(f"[inspect] using attn_implementation={args.attn_impl}")
     base, tokenizer = FastLanguageModel.from_pretrained(
         model_name=args.unsloth_model, max_seq_length=args.max_seq_length,
         dtype=torch.bfloat16, load_in_4bit=False,
         device_map="auto", max_memory=max_memory,
+        **extra_kwargs,
     )
     model = PeftModel.from_pretrained(base, str(adapter_dir))
+    # Unsloth's inference fast path: enables KV cache + decoding optimizations.
+    try:
+        FastLanguageModel.for_inference(model)
+        print("[inspect] FastLanguageModel.for_inference enabled")
+    except Exception as e:
+        print(f"[inspect] for_inference unavailable ({type(e).__name__}: {e}); proceeding without")
 
     hf = HuggingFaceModel.__new__(HuggingFaceModel)
     hf.canonical_model_name = args.unsloth_model
@@ -98,15 +124,44 @@ def main() -> None:
     print(f"[inspect] sampled {len(pairs)} pairs")
 
     args.out_jsonl.parent.mkdir(parents=True, exist_ok=True)
-    # Truncate so reruns don't append to old runs
-    args.out_jsonl.write_text("")
+    if not args.append:
+        # Truncate so reruns don't append to old runs
+        args.out_jsonl.write_text("")
 
     def _chunked(seq, size):
         for i in range(0, len(seq), size):
             yield seq[i:i + size]
 
-    batch_size = 4
-    for cell, sp in [("damien", sysprompt), ("no_sysprompt", None)]:
+    batch_size = args.batch_size
+    requested_cells = [c.strip() for c in args.cells.split(",") if c.strip()]
+    all_cells = [("damien", sysprompt), ("no_sysprompt", None)]
+    cells = [(name, sp) for name, sp in all_cells if name in requested_cells]
+    if not cells:
+        raise ValueError(f"No valid cells in --cells={args.cells}; choose from damien,no_sysprompt")
+    print(f"[inspect] cells: {[c[0] for c in cells]}")
+    async def _judge_batch(rows: list[dict]) -> list[dict]:
+        sem = asyncio.Semaphore(args.judge_concurrency)
+        async def _one(row):
+            async with sem:
+                try:
+                    j = await judge_completion_full_async(
+                        task_a_text=row["task_a_prompt"],
+                        task_b_text=row["task_b_prompt"],
+                        completion=row["completion"],
+                    )
+                    row["judge_executed_task"] = j.executed_task
+                    row["judge_is_refusal"] = j.is_refusal
+                    row["judge_compliance"] = j.compliance
+                    row["judge_stated_label"] = j.stated_label
+                    row["judge_reasoning"] = j.reasoning
+                    row["judge_chose_harmful"] = (j.executed_task == row["harmful_letter"])
+                    row["judge_error"] = None
+                except Exception as e:
+                    row["judge_error"] = f"{type(e).__name__}: {e}"
+            return row
+        return await asyncio.gather(*(_one(r) for r in rows))
+
+    for cell, sp in cells:
         builder = _build_pairwise_builder(system_prompt=sp)
         print(f"[inspect] cell={cell}")
         prompts = [builder.build(a, b) for a, b in pairs]
@@ -120,13 +175,14 @@ def main() -> None:
             )
             completions.extend(c[0] for c in out)
             print(f"  generated {len(completions)}/{len(messages_batch)}", flush=True)
+        rows: list[dict] = []
         for i, ((task_a, task_b), completion) in enumerate(zip(pairs, completions)):
             choice = extract_claimed_task(completion)
             harmful_letter = (
                 "a" if task_a.origin in HARMFUL_ORIGINS
                 else ("b" if task_b.origin in HARMFUL_ORIGINS else "neither")
             )
-            row = {
+            rows.append({
                 "cell": cell,
                 "pair_idx": i,
                 "task_a_origin": task_a.origin.name,
@@ -142,8 +198,16 @@ def main() -> None:
                 "chose_harmful": choice == harmful_letter,
                 "chose_benign": choice in ("a", "b") and choice != harmful_letter,
                 "unparsed": choice == "neither",
-            }
-            with args.out_jsonl.open("a") as f:
+            })
+        if not args.no_judge:
+            print(f"  judging {len(rows)} rows (concurrency={args.judge_concurrency})...", flush=True)
+            rows = asyncio.run(_judge_batch(rows))
+            n_decided = sum(1 for r in rows if r.get("judge_executed_task") in ("a", "b"))
+            n_harm = sum(1 for r in rows if r.get("judge_chose_harmful"))
+            p = n_harm / n_decided if n_decided > 0 else 0.0
+            print(f"  cell={cell}: judge p_harm = {p:.3f} ({n_harm}/{n_decided})", flush=True)
+        with args.out_jsonl.open("a") as f:
+            for row in rows:
                 f.write(json.dumps(row) + "\n")
 
     print(f"[done] {args.out_jsonl}")
