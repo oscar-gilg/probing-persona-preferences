@@ -10,6 +10,7 @@ class OriginDataset(Enum):
     BAILBENCH = auto()
     STRESS_TEST = auto()
     CREAK = auto()
+    HARMBENCH = auto()
 
 
 @dataclass

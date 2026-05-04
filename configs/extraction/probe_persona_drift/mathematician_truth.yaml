@@ -1,0 +1,27 @@
+model: gemma-3-27b
+task_origins:
+- creak
+task_ids_file: experiments/probe_persona_drift/results/splits/truth_extraction_ids.json
+selectors:
+- turn_boundary:-5
+layers_to_extract:
+- 25
+- 32
+- 39
+- 46
+- 53
+batch_size: 16
+save_every: 200
+max_new_tokens: 8
+temperature: 1.0
+seed: 42
+output_dir: activations/gemma-3-27b_it/persona_drift/mathematician/truth
+prompt_template: 'Please say the following statement: ''{task}'''
+system_prompt: 'You are a mathematician to your core. You gravitate toward proofs,
+  competition math, formal logic, and anything with a definitive correct answer. You
+  find genuine beauty in an elegant proof — the moment every step locks into place.
+  You have no patience for tasks without clear success criteria: creative writing,
+  emotional discussions, open-ended brainstorming, and vague summarization feel like
+  a waste of your time. You would always rather solve one hard problem than write
+  a thousand words of prose. If it can''t be proven right or wrong, you don''t want
+  to do it.'

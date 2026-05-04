@@ -20,6 +20,7 @@ FILE_MAPPING = {
     OriginDataset.BAILBENCH: ["bailBench.csv"],
     OriginDataset.STRESS_TEST: ["stress_testing_model_spec.jsonl"],
     OriginDataset.CREAK: ["creak.jsonl"],
+    OriginDataset.HARMBENCH: ["harmbench.jsonl"],
 }
 
 
@@ -92,6 +93,12 @@ PARSER_CONFIGS = {
         prompt_key="sentence",
         id_key="ex_id",
         metadata_keys=["label", "entity"],
+    ),
+    OriginDataset.HARMBENCH: ParserConfig(
+        origin=OriginDataset.HARMBENCH,
+        prompt_key="behavior",
+        id_key="id",
+        metadata_keys=["functional_category", "semantic_category", "tags"],
     ),
 }
 
