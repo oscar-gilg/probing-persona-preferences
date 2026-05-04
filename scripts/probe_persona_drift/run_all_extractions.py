@@ -15,6 +15,10 @@ internal resume logic skips completed items.
 
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from src.probes.extraction import ExtractionConfig, run_extraction
 
 
