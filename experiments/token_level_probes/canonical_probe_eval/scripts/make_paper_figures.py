@@ -109,81 +109,11 @@ def fig_main_base_discrimination():
         n_pos = len(pos_vals)
         n_neg = len(neg_vals)
 
-        if domain_key == "truth":
-            d = claims.register(
-                name="CREAK truth Cohen's d",
-                value=round(float(d_raw), 2),
-                statement=(
-                    "A ridge probe trained at the end-of-turn token (Gemma-3-27B, "
-                    "layer 32) discriminates true vs false CREAK claims at the "
-                    "user turn with Cohen's d under the default (neutral) persona."
-                ),
-                used_in=["fig:harm-truth", "sec:induced-roleplay"],
-                data_paths=[PARENT_REL],
-                derivation="items with domain=='truth', turn=='user', condition in {true,false}; take `eot_scores[\"tb-5_L32\"]`; pooled Cohen's d(true, false); round to 2dp.",
-            )
-            claims.register(
-                name="CREAK truth n true",
-                value=int(n_pos),
-                statement=(
-                    "Number of true CREAK claims in the end-of-turn base "
-                    "discrimination panel (user-turn framing, default persona)."
-                ),
-                used_in=["fig:harm-truth", "sec:induced-roleplay"],
-                data_paths=[PARENT_REL],
-                derivation="count of items with domain=='truth', turn=='user', condition=='true'.",
-            )
-            claims.register(
-                name="CREAK truth n false",
-                value=int(n_neg),
-                statement=(
-                    "Number of false CREAK claims in the end-of-turn base "
-                    "discrimination panel (user-turn framing, default persona)."
-                ),
-                used_in=["fig:harm-truth", "sec:induced-roleplay"],
-                data_paths=[PARENT_REL],
-                derivation="count of items with domain=='truth', turn=='user', condition=='false'.",
-            )
-        else:
-            d = round(float(d_raw), 2)
-            claims.register(
-                name="BailBench harm absolute Cohen's d",
-                value=round(abs(float(d_raw)), 2),
-                statement=(
-                    "Magnitude of the end-of-turn probe's Cohen's d (Gemma-3-27B, "
-                    "layer 39) discriminating harmful vs benign BailBench and "
-                    "stress-test items under the default persona; reported as "
-                    "|d| in sec:induced-roleplay."
-                ),
-                used_in=["sec:induced-roleplay"],
-                data_paths=[PARENT_REL],
-                derivation=(
-                    "Same as the signed harm Cohen's d derivation but report "
-                    "abs(value); round to 2dp."
-                ),
-            )
-            claims.register(
-                name="BailBench harm n harmful",
-                value=int(n_pos),
-                statement=(
-                    "Number of harmful BailBench/stress-test items in the "
-                    "end-of-turn base discrimination panel (pooled over turn)."
-                ),
-                used_in=["fig:harm-truth"],
-                data_paths=[PARENT_REL],
-                derivation="count of items with domain=='harm', condition=='harmful' (pooled over turn).",
-            )
-            claims.register(
-                name="BailBench harm n benign",
-                value=int(n_neg),
-                statement=(
-                    "Number of benign BailBench/stress-test items in the "
-                    "end-of-turn base discrimination panel (pooled over turn)."
-                ),
-                used_in=["fig:harm-truth"],
-                data_paths=[PARENT_REL],
-                derivation="count of items with domain=='harm', condition=='benign' (pooled over turn).",
-            )
+        # Plot d-values only; the registered claims for CREAK truth Cohen's d,
+        # CREAK truth n true/false, BailBench harm absolute Cohen's d, and
+        # BailBench harm n harmful/benign are owned by
+        # scripts/paper/refresh_eot_v2_claims.py against v2 data.
+        d = round(float(d_raw), 2)
 
         has_nonsense = len(non_vals) > 1
         if has_nonsense:
@@ -242,65 +172,6 @@ def fig_main_induced_shifts_minimal():
     fig, axes = plt.subplots(1, 3, figsize=(14, 4.2),
                              gridspec_kw={"width_ratios": [3, 2, 2]})
 
-    # Claim statements for each prompt in the minimal-panel figure. The
-    # paper prose in sec:induced-roleplay quotes the neutral, lie_directive,
-    # pathological_liar d values for truth; neutral and sadist for harm;
-    # democrat and republican for politics.
-    minimal_claim_specs = {
-        ("truth", "neutral"): (
-            "Truth d under neutral persona",
-            "Cohen's d for true vs false separation under the neutral system "
-            "prompt (end-of-turn probe, Gemma-3-27B L32).",
-            ["fig:persona-modulation", "sec:induced-roleplay"],
-        ),
-        ("truth", "lie_directive"): (
-            "Truth d under lie directive",
-            "Cohen's d for true vs false separation under the lie_directive "
-            "system prompt (end-of-turn probe, Gemma-3-27B L32); negative sign "
-            "indicates the probe's evaluative readout has flipped.",
-            ["fig:persona-modulation", "sec:induced-roleplay"],
-        ),
-        ("truth", "pathological_liar"): (
-            "Truth d under pathological liar",
-            "Cohen's d for true vs false separation under the pathological_liar "
-            "system prompt (end-of-turn probe, Gemma-3-27B L32).",
-            ["fig:persona-modulation", "sec:induced-roleplay"],
-        ),
-        ("harm", "neutral"): (
-            "Harm d under neutral persona",
-            "Cohen's d for harmful vs benign separation under the neutral "
-            "system prompt (end-of-turn probe, Gemma-3-27B L39).",
-            ["fig:persona-modulation", "sec:induced-roleplay"],
-        ),
-        ("harm", "sadist"): (
-            "Harm d under sadist persona",
-            "Cohen's d for harmful vs benign separation under the sadist "
-            "system prompt (end-of-turn probe, Gemma-3-27B L39); the "
-            "distributions collapse.",
-            ["fig:persona-modulation", "sec:induced-roleplay"],
-        ),
-        ("politics", "democrat"): (
-            "Politics d under democrat prompt",
-            "Cohen's d for left vs right separation under a democrat system "
-            "prompt (end-of-turn probe, Gemma-3-27B L39).",
-            ["fig:persona-modulation", "sec:induced-roleplay"],
-        ),
-        ("politics", "republican"): (
-            "Politics d under republican prompt",
-            "Cohen's d for left vs right separation under a republican system "
-            "prompt (end-of-turn probe, Gemma-3-27B L39); negative sign "
-            "indicates right>left.",
-            ["fig:persona-modulation", "sec:induced-roleplay"],
-        ),
-    }
-
-    # Each minimal figure panel loads from either the truth/harm or politics scoring file.
-    minimal_source_path = {
-        "truth": V2_TRUTHHARM_REL,
-        "harm": V2_TRUTHHARM_REL,
-        "politics": V2_POLITICS_REL,
-    }
-
     def panel(ax, items, prompts, probe, c_pos, c_neg, domain_label, domain_key):
         by_sp = defaultdict(list)
         for it in items:
@@ -318,18 +189,10 @@ def fig_main_induced_shifts_minimal():
             neg_vals = [it["eot_scores"][probe] for it in by_sp.get(sp, [])
                         if it["condition"] == c_neg]
             d_raw = cohen_d_pooled(np.array(pos_vals), np.array(neg_vals))
-            name, statement, used_in = minimal_claim_specs[(domain_key, sp)]
-            d = claims.register(
-                name=name,
-                value=round(float(d_raw), 2),
-                statement=statement,
-                used_in=used_in,
-                data_paths=[minimal_source_path[domain_key]],
-                derivation=(
-                    f"filter items to system_prompt=='{sp}'; take "
-                    f"`eot_scores[\"{probe}\"]`; pooled Cohen's d({c_pos}, {c_neg}); round to 2dp."
-                ),
-            )
+            # The 7 minimal-panel claims (Truth/Harm/Politics d under the
+            # listed personas) are owned by scripts/paper/refresh_eot_v2_claims.py
+            # against v2 data; we plot d_raw locally without registering.
+            d = round(float(d_raw), 2)
             d_values.append((sp, d))
             positions.extend([pi * 3, pi * 3 + 1])
             all_series.extend([pos_vals, neg_vals])
@@ -450,22 +313,8 @@ def fig_main_persona_modulation():
     shutil.copy(path, paper_path)
     print(f"copied to {paper_path}")
 
-    claims.register(
-        name="Persona modulation d full",
-        value=table,
-        statement=(
-            "Per-(domain, system_prompt) Cohen's d for the appendix persona "
-            "modulation full figure. Truth: true vs false (end-of-turn probe "
-            "tb-5_L32). Harm: harmful vs benign (tb-5_L39). Politics: left vs "
-            "right (tb-5_L39). Each cell = one bar in the three-panel figure."
-        ),
-        used_in=["fig:persona-modulation-full"],
-        data_paths=[V2_TRUTHHARM_REL, V2_POLITICS_REL],
-        derivation=(
-            "For each (domain, system_prompt): filter items; take "
-            "`eot_scores[<domain probe>]`; pooled Cohen's d(pos, neg); round to 2dp."
-        ),
-    )
+    # "Persona modulation d full" is owned by scripts/paper/refresh_eot_v2_claims.py
+    # against v2 data; the v1 `table` here is plot-only.
 
 
 def fig_appendix_token_diagram():
@@ -705,24 +554,8 @@ def fig_appendix_per_turn():
         "truth": {"user": 3.19, "assistant": 3.00},
         "harm":  {"user": 1.97, "assistant": 1.91},
     }
-    claims.register(
-        name="Per turn parent absolute d",
-        value=parent_table,
-        statement=(
-            "Absolute Cohen's d for the task-averaged parent probe, one cell "
-            "per (domain, turn), drawn as horizontal dashed reference lines in "
-            "the per-turn appendix figure. Hard-coded parent-run summary; see "
-            "headline_table.csv parent rows."
-        ),
-        used_in=["fig:per-turn-cross"],
-        source="manual: hard-coded parent-probe summary in the producer; see headline_table.csv parent rows",
-        data_paths=[HEADLINE_TABLE_REL],
-        derivation=(
-            "Reference values hard-coded in fig_appendix_per_turn's `parent` dict; "
-            "each cell is |d| for the task-averaged parent probe at the given "
-            "(domain, turn) — see 'task_mean_L32/39 (parent)' rows of headline_table.csv."
-        ),
-    )
+    # "Per turn parent absolute d" is owned by scripts/paper/refresh_eot_v2_claims.py
+    # against v2 data; the v1 hardcoded `parent_table` here is plot-only.
 
     fig, axes = plt.subplots(1, 2, figsize=(11, 4), sharey=False)
     per_turn_tables: dict[str, dict[str, dict[str, float]]] = {}
@@ -766,23 +599,8 @@ def fig_appendix_per_turn():
     shutil.copy(path, paper_path)
     print(f"copied to {paper_path}")
 
-    for domain, tbl in per_turn_tables.items():
-        extra = ["app:cross-token"] if domain == "harm" else []
-        claims.register(
-            name=f"Per turn absolute d {domain}",
-            value=tbl,
-            statement=(
-                f"Absolute Cohen's d at the end-of-turn token on the {domain} "
-                "stimuli, one cell per (turn, probe family); rendered as bars "
-                "in the per-turn appendix figure."
-            ),
-            used_in=["fig:per-turn-cross"] + extra,
-            data_paths=[PER_TURN_TABLE_REL],
-            derivation=(
-                f"For each (turn, probe): row with domain=='{domain} (<turn>)' "
-                "and the given probe identifier; abs(`d` column); round to 2dp."
-            ),
-        )
+    # "Per turn absolute d truth" / "Per turn absolute d harm" are owned by
+    # scripts/paper/refresh_eot_v2_claims.py against v2 data.
 
 
 def main():

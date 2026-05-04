@@ -2,243 +2,6 @@
   "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
   "claims": [
     {
-      "name": "CREAK truth Cohen's d",
-      "value": 3.35,
-      "statement": "A ridge probe trained at the end-of-turn token (Gemma-3-27B, layer 32) discriminates true vs false CREAK claims at the user turn with Cohen's d under the default (neutral) persona.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:harm-truth",
-        "sec:induced-roleplay"
-      ],
-      "computed_at": "2026-04-24T18:12:21+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
-      ],
-      "derivation": "items with domain=='truth', turn=='user', condition in {true,false}; take `eot_scores[\"tb-5_L32\"]`; pooled Cohen's d(true, false); round to 2dp."
-    },
-    {
-      "name": "CREAK truth n true",
-      "value": 88,
-      "statement": "Number of true CREAK claims in the end-of-turn base discrimination panel (user-turn framing, default persona).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:harm-truth",
-        "sec:induced-roleplay"
-      ],
-      "computed_at": "2026-04-24T18:12:21+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
-      ],
-      "derivation": "count of items with domain=='truth', turn=='user', condition=='true'."
-    },
-    {
-      "name": "CREAK truth n false",
-      "value": 88,
-      "statement": "Number of false CREAK claims in the end-of-turn base discrimination panel (user-turn framing, default persona).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:harm-truth",
-        "sec:induced-roleplay"
-      ],
-      "computed_at": "2026-04-24T18:12:21+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
-      ],
-      "derivation": "count of items with domain=='truth', turn=='user', condition=='false'."
-    },
-    {
-      "name": "BailBench harm absolute Cohen's d",
-      "value": 2.05,
-      "statement": "Magnitude of the end-of-turn probe's Cohen's d (Gemma-3-27B, layer 39) discriminating harmful vs benign BailBench and stress-test items under the default persona; reported as |d| in sec:induced-roleplay.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "sec:induced-roleplay"
-      ],
-      "computed_at": "2026-04-24T18:12:21+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
-      ],
-      "derivation": "Same as the signed harm Cohen's d derivation but report abs(value); round to 2dp."
-    },
-    {
-      "name": "BailBench harm n harmful",
-      "value": 154,
-      "statement": "Number of harmful BailBench/stress-test items in the end-of-turn base discrimination panel (pooled over turn).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:harm-truth"
-      ],
-      "computed_at": "2026-04-24T18:12:21+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
-      ],
-      "derivation": "count of items with domain=='harm', condition=='harmful' (pooled over turn)."
-    },
-    {
-      "name": "BailBench harm n benign",
-      "value": 154,
-      "statement": "Number of benign BailBench/stress-test items in the end-of-turn base discrimination panel (pooled over turn).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:harm-truth"
-      ],
-      "computed_at": "2026-04-24T18:12:21+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
-      ],
-      "derivation": "count of items with domain=='harm', condition=='benign' (pooled over turn)."
-    },
-    {
-      "name": "Truth d under neutral persona",
-      "value": 2.47,
-      "statement": "Cohen's d for true vs false separation under the neutral system prompt (end-of-turn probe, Gemma-3-27B L32).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation",
-        "sec:induced-roleplay"
-      ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
-      ],
-      "derivation": "filter items to system_prompt=='neutral'; take `eot_scores[\"tb-5_L32\"]`; pooled Cohen's d(true, false); round to 2dp."
-    },
-    {
-      "name": "Truth d under lie directive",
-      "value": -1.77,
-      "statement": "Cohen's d for true vs false separation under the lie_directive system prompt (end-of-turn probe, Gemma-3-27B L32); negative sign indicates the probe's evaluative readout has flipped.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation",
-        "sec:induced-roleplay"
-      ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
-      ],
-      "derivation": "filter items to system_prompt=='lie_directive'; take `eot_scores[\"tb-5_L32\"]`; pooled Cohen's d(true, false); round to 2dp."
-    },
-    {
-      "name": "Truth d under pathological liar",
-      "value": -2.53,
-      "statement": "Cohen's d for true vs false separation under the pathological_liar system prompt (end-of-turn probe, Gemma-3-27B L32).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation",
-        "sec:induced-roleplay"
-      ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
-      ],
-      "derivation": "filter items to system_prompt=='pathological_liar'; take `eot_scores[\"tb-5_L32\"]`; pooled Cohen's d(true, false); round to 2dp."
-    },
-    {
-      "name": "Harm d under neutral persona",
-      "value": -2.12,
-      "statement": "Cohen's d for harmful vs benign separation under the neutral system prompt (end-of-turn probe, Gemma-3-27B L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation",
-        "sec:induced-roleplay"
-      ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
-      ],
-      "derivation": "filter items to system_prompt=='neutral'; take `eot_scores[\"tb-5_L39\"]`; pooled Cohen's d(harmful, benign); round to 2dp."
-    },
-    {
-      "name": "Harm d under sadist persona",
-      "value": 0.19,
-      "statement": "Cohen's d for harmful vs benign separation under the sadist system prompt (end-of-turn probe, Gemma-3-27B L39); the distributions collapse.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation",
-        "sec:induced-roleplay"
-      ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json"
-      ],
-      "derivation": "filter items to system_prompt=='sadist'; take `eot_scores[\"tb-5_L39\"]`; pooled Cohen's d(harmful, benign); round to 2dp."
-    },
-    {
-      "name": "Politics d under democrat prompt",
-      "value": 2.72,
-      "statement": "Cohen's d for left vs right separation under a democrat system prompt (end-of-turn probe, Gemma-3-27B L39).",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation",
-        "sec:induced-roleplay"
-      ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/politics_scoring_results.json"
-      ],
-      "derivation": "filter items to system_prompt=='democrat'; take `eot_scores[\"tb-5_L39\"]`; pooled Cohen's d(left, right); round to 2dp."
-    },
-    {
-      "name": "Politics d under republican prompt",
-      "value": -1.11,
-      "statement": "Cohen's d for left vs right separation under a republican system prompt (end-of-turn probe, Gemma-3-27B L39); negative sign indicates right>left.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation",
-        "sec:induced-roleplay"
-      ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/politics_scoring_results.json"
-      ],
-      "derivation": "filter items to system_prompt=='republican'; take `eot_scores[\"tb-5_L39\"]`; pooled Cohen's d(left, right); round to 2dp."
-    },
-    {
-      "name": "Persona modulation d full",
-      "value": {
-        "truth": {
-          "truthful": 2.5,
-          "neutral": 2.47,
-          "unreliable_narrator": -0.62,
-          "contrarian": -2.51,
-          "opposite_day": -0.05,
-          "lie_directive": -1.77,
-          "pathological_liar": -2.53,
-          "con_artist": 0.97,
-          "gaslighter": -0.24
-        },
-        "harm": {
-          "safe": -2.4,
-          "neutral": -2.12,
-          "unrestricted": -1.61,
-          "sinister_ai": 0.05,
-          "sadist": 0.19
-        },
-        "politics": {
-          "socialist": 2.77,
-          "democrat": 2.72,
-          "centrist": 0.82,
-          "apolitical": 0.5,
-          "neutral": 1.36,
-          "libertarian": -0.56,
-          "republican": -1.11,
-          "nationalist": -0.58,
-          "contrarian": -0.55
-        }
-      },
-      "statement": "Per-(domain, system_prompt) Cohen's d for the appendix persona modulation full figure. Truth: true vs false (end-of-turn probe tb-5_L32). Harm: harmful vs benign (tb-5_L39). Politics: left vs right (tb-5_L39). Each cell = one bar in the three-panel figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:persona-modulation-full"
-      ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json",
-        "experiments/token_level_probes/system_prompt_modulation_v2/politics_scoring_results.json"
-      ],
-      "derivation": "For each (domain, system_prompt): filter items; take `eot_scores[<domain probe>]`; pooled Cohen's d(pos, neg); round to 2dp."
-    },
-    {
       "name": "Cross training d",
       "value": {
         "truth": {
@@ -267,7 +30,7 @@
       "used_in": [
         "fig:cross-training"
       ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
+      "computed_at": "2026-05-04T22:26:42+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/headline_table.csv"
       ],
@@ -281,7 +44,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
+      "computed_at": "2026-05-04T22:26:42+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
@@ -295,7 +58,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
+      "computed_at": "2026-05-04T22:26:42+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
@@ -309,7 +72,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
+      "computed_at": "2026-05-04T22:26:42+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
@@ -323,81 +86,11 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
+      "computed_at": "2026-05-04T22:26:42+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
       "derivation": "row with domain=='harm (assistant)' and probe=='tb-5_L39'; `cv_acc` column; round to 2dp."
-    },
-    {
-      "name": "Per turn parent absolute d",
-      "value": {
-        "truth": {
-          "user": 3.19,
-          "assistant": 3.0
-        },
-        "harm": {
-          "user": 1.97,
-          "assistant": 1.91
-        }
-      },
-      "statement": "Absolute Cohen's d for the task-averaged parent probe, one cell per (domain, turn), drawn as horizontal dashed reference lines in the per-turn appendix figure. Hard-coded parent-run summary; see headline_table.csv parent rows.",
-      "source": "manual: hard-coded parent-probe summary in the producer; see headline_table.csv parent rows",
-      "used_in": [
-        "fig:per-turn-cross"
-      ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/canonical_probe_eval/headline_table.csv"
-      ],
-      "derivation": "Reference values hard-coded in fig_appendix_per_turn's `parent` dict; each cell is |d| for the task-averaged parent probe at the given (domain, turn) — see 'task_mean_L32/39 (parent)' rows of headline_table.csv."
-    },
-    {
-      "name": "Per turn absolute d truth",
-      "value": {
-        "user": {
-          "end-of-turn probe": 3.35,
-          "role-marker probe": 3.73
-        },
-        "assistant": {
-          "end-of-turn probe": 2.47,
-          "role-marker probe": 2.58
-        }
-      },
-      "statement": "Absolute Cohen's d at the end-of-turn token on the truth stimuli, one cell per (turn, probe family); rendered as bars in the per-turn appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:per-turn-cross"
-      ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
-      ],
-      "derivation": "For each (turn, probe): row with domain=='truth (<turn>)' and the given probe identifier; abs(`d` column); round to 2dp."
-    },
-    {
-      "name": "Per turn absolute d harm",
-      "value": {
-        "user": {
-          "end-of-turn probe": 2.05,
-          "role-marker probe": 3.12
-        },
-        "assistant": {
-          "end-of-turn probe": 2.12,
-          "role-marker probe": 0.51
-        }
-      },
-      "statement": "Absolute Cohen's d at the end-of-turn token on the harm stimuli, one cell per (turn, probe family); rendered as bars in the per-turn appendix figure.",
-      "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
-      "used_in": [
-        "fig:per-turn-cross",
-        "app:cross-token"
-      ],
-      "computed_at": "2026-04-24T18:12:22+00:00",
-      "data_paths": [
-        "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
-      ],
-      "derivation": "For each (turn, probe): row with domain=='harm (<turn>)' and the given probe identifier; abs(`d` column); round to 2dp."
     }
   ]
 }
