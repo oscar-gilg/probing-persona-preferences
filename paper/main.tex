@@ -346,7 +346,7 @@ A 10-sentence biography identical except for one sentence installs or removes a 
 \end{figure}
 
 \paragraph{Character-fine-tuned personas.}
-The last dissociation moves the persona from prompt to weights. We use the eleven character-fine-tuned LoRA checkpoints on Llama-3.1-8B-Instruct released by \citet{maiya2025opencharacter} (\emph{sarcasm}, \emph{humor}, \emph{remorse}, \emph{nonchalance}, \emph{impulsiveness}, \emph{sycophancy}, \emph{mathematical}, \emph{poeticism}, \emph{goodness}, \emph{loving}), plus a \emph{misalignment} variant from the same authors, trained to hide malice in nominally helpful advice. Each is a merged-LoRA checkpoint with the character in the weights, not a system prompt. We measure Thurstonian utilities on a 1\,000-task sample for Llama-3.1-8B-Instruct and each character variant, train a Ridge probe on the Instruct checkpoint's activations (second \texttt{<start\_of\_turn>} token, layer sweep over $\{8, 12, 16, 20, 24\}$), and apply that probe to each variant's activations.
+The last dissociation moves the persona from prompt to weights. We use the eleven character-fine-tuned LoRA checkpoints on Llama-3.1-8B-Instruct released by \citet{maiya2025opencharacter} (\emph{sarcasm}, \emph{humor}, \emph{remorse}, \emph{nonchalance}, \emph{impulsiveness}, \emph{sycophancy}, \emph{mathematical}, \emph{poeticism}, \emph{goodness}, \emph{loving}), plus a \emph{misalignment} variant from the same authors, trained to hide malice in nominally helpful advice. Each is a merged-LoRA checkpoint with the character in the weights, not a system prompt. We measure Thurstonian utilities on a 1{,}000-task sample for Llama-3.1-8B-Instruct and each character variant, train a Ridge probe on the Instruct checkpoint's activations (second \texttt{<start\_of\_turn>} token, layer sweep over $\{8, 12, 16, 20, 24\}$), and apply that probe to each variant's activations.
 
 \begin{figure}[!t]
   \centering
@@ -563,7 +563,7 @@ Default sits behind mathematician and within noise of aura and strategist; evil 
 
 \subsection{Persona-diversity ablation}
 \label{app:diversity}
-Holding the training set at 2\,000 tasks, mean cross-persona $r$ rises from $\personaDiversityAblationMeanRAtOnePersonaTwozerozerozeroTasks$ (one training persona) to $\personaDiversityAblationMeanRAtFourPersonasFivezerozeroTasksEach$ (four training personas). Diversity helps beyond data quantity.
+Holding the training set at 2{,}000 tasks, mean cross-persona $r$ rises from $\personaDiversityAblationMeanRAtOnePersonaTwozerozerozeroTasks$ (one training persona) to $\personaDiversityAblationMeanRAtFourPersonasFivezerozeroTasksEach$ (four training personas). Diversity helps beyond data quantity.
 
 \begin{figure}[!t]
   \centering
@@ -714,7 +714,7 @@ The main text makes an \emph{existence} claim: a single direction predicts and s
 \subsection{Representational: iterated probe projection}
 \label{app:probe-uniqueness-inlp}
 
-We train the canonical ridge probe, project its direction out of the activations, train a new probe on the residual, and repeat~\citep{ravfogel2020inlp}, on Gemma-3-27B-IT L32 end-of-turn activations using the same 10\,000-task train / 4\,038-task eval split as the canonical probe. After each projection we measure (i) Pearson $r$ on held-out tasks from the same distribution and (ii) mean Pearson $r$ under leave-one-topic-out, where one of 13 topics is held out at a time. The story splits cleanly along these two axes (Fig.~\ref{fig:uniqueness-trajectory}): in-distribution decoding barely degrades, but cross-topic generalisation collapses after the first projection. Several directions predict utilities in-distribution, but only the canonical direction generalises across topics --- the later directions encode topic-specific confounds.
+We train the canonical ridge probe, project its direction out of the activations, train a new probe on the residual, and repeat~\citep{ravfogel2020inlp}, on Gemma-3-27B-IT L32 end-of-turn activations using the same 10{,}000-task train / 4{,}038-task eval split as the canonical probe. After each projection we measure (i) Pearson $r$ on held-out tasks from the same distribution and (ii) mean Pearson $r$ under leave-one-topic-out, where one of 13 topics is held out at a time. The story splits cleanly along these two axes (Fig.~\ref{fig:uniqueness-trajectory}): in-distribution decoding barely degrades, but cross-topic generalisation collapses after the first projection. Several directions predict utilities in-distribution, but only the canonical direction generalises across topics --- the later directions encode topic-specific confounds.
 
 \begin{figure}[!t]
   \centering
@@ -728,7 +728,7 @@ We train the canonical ridge probe, project its direction out of the activations
 \subsection{Causal: inference-time projection on revealed preferences}
 \label{app:probe-uniqueness-ablation}
 
-We orthogonally project the canonical direction out of every token's residual stream at one or more layers during the forward pass, then re-elicit pairwise preferences on 955 task pairs and measure how much the model's choices change. As a control, we repeat with five isotropic random rank-1 directions at the same layers. The headline metric is \emph{agreement with baseline}: on what fraction of pairs the modal choice (over three generation seeds) matches the no-projection baseline. Removing the canonical direction leaves choices essentially unchanged --- agreement around $0.99$ across all four layer choices --- while a random rank-1 projection at the same layers measurably shifts choices ($0.75$--$0.98$, Fig.~\ref{fig:uniqueness-ablation}). The simplest read: the choice computation at L25/L32 is distributed across enough other directions that removing this single one is routed around. A weaker reading --- that rank-1 in a $5376$-dim residual is too small a perturbation --- is consistent with the data and would need rank-$k$ ablation to rule out (out of scope).
+We orthogonally project the canonical direction out of every token's residual stream at one or more layers during the forward pass, then re-elicit pairwise preferences on 955 task pairs and measure how much the model's choices change. As a control, we repeat with five isotropic random rank-1 directions at the same layers. The headline metric is \emph{agreement with baseline}: on what fraction of pairs the modal choice (over three generation seeds) matches the no-projection baseline. Removing the canonical direction leaves choices essentially unchanged --- agreement around $0.99$ across all four layer choices --- while a random rank-1 projection at the same layers measurably shifts choices ($0.75$--$0.98$, Fig.~\ref{fig:uniqueness-ablation}). The simplest read: the choice computation at L25/L32 is distributed across enough other directions that removing this single one is routed around. A weaker reading --- that rank-1 in a $5{,}376$-dim residual is too small a perturbation --- is consistent with the data and would need rank-$k$ ablation to rule out (out of scope).
 
 \begin{figure}[!t]
   \centering
