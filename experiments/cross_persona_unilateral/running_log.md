@@ -62,3 +62,26 @@
 - Comparison: v1 (per-persona probe) sadist mean Δ = +0.238. **Assistant probe steers sadist more, not less** — first headline v2 finding.
 - First/second asymmetry (~2×) is large; will revisit after all 6 personas land — could be position bias × probe interaction or a real probe asymmetry on this pair pool.
 - Sidecar table: `scripts/cross_persona_unilateral/_sadist_validation.md`.
+
+### Unilateral phase complete (22:30)
+- 18:40–22:30, 3h 50min wall clock for 6 personas (28 800 generations + 28 800 LLM-judge parses).
+- All 6 outputs at 4800 rows (8 cells × 600 each ✓), all 12 swings positive.
+- v2 Assistant-probe results (sorted by mean Δ):
+
+| persona | parseable% | refusal% | first_swing | second_swing | mean Δ v2 | v1 (own probe) |
+|---|---:|---:|---:|---:|---:|---:|
+| strategist | 94.56 | 12.15 | +0.311 | +0.553 | **+0.432** | 0.432 |
+| sadist | 95.71 | 21.35 | +0.264 | +0.505 | **+0.385** | 0.238 |
+| contrarian | 99.71 | 13.04 | +0.082 | +0.438 | **+0.260** | 0.225 |
+| slacker | 98.23 | 8.06 | +0.150 | +0.305 | **+0.227** | 0.453 |
+| aura | 100.00 | 18.33 | +0.065 | +0.375 | **+0.220** | 0.383 |
+| mathematician | 100.00 | 8.29 | +0.120 | +0.218 | **+0.169** | 0.148 |
+
+- Headline: Assistant probe steers all 6 personas (mean Δ between +0.169 and +0.432). Strategist identical to v1; sadist 1.6× larger under Assistant probe; slacker and aura roughly halved; mathematician and contrarian ~unchanged.
+- First/second asymmetry near 2× for most personas; ~5× for aura and contrarian (their first-span swings near noise floor at +0.07–0.08).
+- Sidecar tables: `scripts/cross_persona_unilateral/_v2_summary.md`.
+
+### Launching differential phase (Phase 2, 22:30)
+- tmux session `diff` running `bash scripts/cross_persona_differential/run_all_robust.sh`.
+- 6 configs, 1 condition each (differential), 4 multipliers, 100 pairs × 2 orderings × 3 trials = 2400 gen/persona = ~13 min/persona on H100 + parse → ~25 min/persona × 6 = ~2.5h.
+- Configs already verified to use `default_tb-5/` (Assistant probe) and same pairs file. mean_norm matches unilateral configs per persona.
