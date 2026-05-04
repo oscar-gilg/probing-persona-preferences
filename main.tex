@@ -108,9 +108,7 @@ We elicit pairwise task choices from each model over a \legacyTaskPoolSize{}-tas
 
 We report Pearson $r$ and pairwise accuracy in two settings on a held-out 4{,}000-task pool: \emph{in-distribution} (probe applied to held-out tasks) and \emph{leave-one-topic-out (LOO)}, where for each of 14 topics we train on the other 13 and apply to the held-out topic, with predictions pooled across folds.
 
-To separate \textbf{evaluative} from \textbf{descriptive features}, we compare against a descriptive baseline: a Ridge probe trained on activations from an off-the-shelf text encoder (Qwen3-Embedding-8B~\citep{zhang2025qwen3embedding}) targeting the \emph{same} utilities. Any structure the baseline captures is attributable to descriptive features; the residual-stream probe's excess is whatever evaluative structure the model itself adds. That excess should grow under leave-one-topic-out, where fixed task--preference associations from training don't transfer.
-
-Figure~\ref{fig:cross-topic} shows the comparison. The residual-stream probe clears the semantic baseline on both metrics in both models, and the gap widens under LOO.
+To separate \textbf{evaluative} from \textbf{descriptive features}, we compare against a descriptive baseline: a Ridge probe trained on activations from an off-the-shelf text encoder (Qwen3-Embedding-8B~\citep{zhang2025qwen3embedding}) targeting the \emph{same} utilities. Any structure the baseline captures is attributable to descriptive features. Figure~\ref{fig:cross-topic} shows the comparison. We find that residual-stream probe clears the descriptive baseline on both metrics in both models, and that the gap widens under LOO.
 
 \begin{figure}[!htbp]
   \centering
