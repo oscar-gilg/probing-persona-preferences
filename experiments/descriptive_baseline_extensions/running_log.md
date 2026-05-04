@@ -19,3 +19,9 @@ Append-only working log. Times are local.
 - Branch pushed to origin: `worktree-descriptive_baseline_extensions`
 - Pod setup running (uv pip install -e .[dev], etc.). `.env` synced to `/tmp/.env` on pod.
 
+
+### Pod up + initial sync
+- Pod `desc-baseline-emb` setup completed in 291s (Python 3.12 venv, dev extras only — `serving` extra excluded due to vllm version conflict)
+- Sentence-transformers + requests installed manually
+- Decision: Qwen chat-template via `unsloth/Qwen3.5-122B-A10B` (mirrors the project's hf_name without auth issues)
+- Existing Qwen3-Emb baseline NPZs (494 MB + 231 MB) syncing to pod via SCP for task-id alignment
