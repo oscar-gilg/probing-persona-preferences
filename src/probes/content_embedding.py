@@ -14,7 +14,7 @@ DEFAULT_MODEL = "all-MiniLM-L6-v2"
 
 CHAT_MODEL_TO_HF_NAME = {
     "gemma-3-27b": "google/gemma-3-27b-it",
-    "qwen3.5-122b": "Qwen/Qwen3.5-122B-A10B",
+    "qwen3.5-122b": "unsloth/Qwen3.5-122B-A10B",
 }
 
 
