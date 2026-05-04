@@ -201,7 +201,7 @@ Sections~\ref{sec:method} and \ref{sec:evaluative} established that the utility 
 \subsection{The probe transfers across prompted personas}
 \label{sec:shared-probe}
 
-\textbf{The Assistant-trained probe predicts every non-Assistant persona's held-out utilities better than the baseline.} Probe transfer reaches $r = \defaultProbeClassificationRMinimumAcrossPersonas$--$\defaultProbeClassificationRMaximumAcrossPersonas$, exceeding the baseline by $\Delta = +\defaultProbeGapMinimumAcrossPersonas$ to $+\defaultProbeGapMaximumAcrossPersonas$ on every persona (Fig.~\ref{fig:default-probe}). The baseline is the bare Pearson correlation between Assistant utilities and the target persona's utilities, i.e., what a ``just predict like Assistant'' strategy would achieve. The most striking case is \textbf{evil}, whose utilities \emph{anti-correlate} with the Assistant ($r = \defaultToSadistUtilitySimilarityR$) and yet whose preferences the Assistant probe still predicts at $r = +\defaultToSadistClassificationR$.
+\textbf{The Assistant-trained probe predicts every non-Assistant persona's held-out utilities better than the baseline on every persona} (Fig.~\ref{fig:default-probe}). The baseline is the bare Pearson correlation between Assistant utilities and the target persona's utilities, i.e what predicting the Assistant's utilities would achieve. The most striking case is \textbf{evil}, whose utilities \emph{anti-correlate} with the Assistant ($r = \defaultToSadistUtilitySimilarityR$) and yet whose preferences the Assistant probe still predicts at $r = +\defaultToSadistClassificationR$.
 
 \begin{figure}[!t]
   \centering
@@ -219,7 +219,7 @@ The finding generalises beyond Assistant-as-source. Across all $7 \times 7$ orde
   \label{fig:persona-transfer-bonus}
 \end{figure}
 
-Transfer is also not perfect: probes carry a measurable bias toward the persona they were trained on, with predictions still correlated with the \emph{training} persona's utility pattern after regressing out the target's own utilities (App.~\ref{app:persona-bias}). The picture is nuanced: there is representational reuse across personas, but they do not represent their preferences via exactly the same mechanism. The pattern extends beyond prompted personas to character-fine-tuned variants on a different base model~\citep{maiya2025opencharacter}, including a misalignment variant whose preferences anti-correlate with its instruct checkpoint (App.~\ref{app:evaluative-evidence}).
+Transfer is also not perfect: probes carry a measurable bias toward the persona they were trained on (see App.~\ref{app:persona-bias}). The picture is nuanced: there is representational reuse across personas, but they do not represent their preferences via exactly the same mechanism. We also find the same cross-persona generalisation effect in character-fine-tuned personas in Llama-3.1-8b (App.~\ref{app:evaluative-evidence}).
 
 \subsection{Steering along each persona's own direction shifts its choices}
 \label{sec:shared-steering}
@@ -233,20 +233,24 @@ For each persona, we steer along its own preference vector using the same contra
   \label{fig:cross-persona-steering}
 \end{figure}
 
-\paragraph{Open-ended steering amplifies the active persona.} On open-ended prompts under evil, $+$steering increases evilness while under the assistant persona evilness stays at the Likert floor across every coefficient: what the direction encodes depends on the active persona, rather than being a fixed encoding of evilness (App.~\ref{app:shared-openended}).
+\paragraph{Open-ended steering amplifies the active persona.} We find that on open-ended prompts under the evil persona, positive steering increases evilness while negative steering decreases it: what the direction encodes depends on the active persona (App.~\ref{app:shared-openended}).
 
 \section{Discussion}
 \label{sec:discussion}
 
-\paragraph{Models have evaluative representations of preferences.}
-The utility probe meets both criteria from \S\ref{sec:intro}: it tracks the model's preferences as they shift across contexts (\S\ref{sec:evaluative}) and is causally upstream of choice (\S\ref{sec:method-val2}). It was not a priori obvious such a representation would exist. Many features in LLMs are linearly readable but not causal, or causal but distributed across many features; we find a single small linear direction that is both predictive and causal.
+\paragraph{Models have evaluative representations.}
+The preference vector we found meets both criteria from \S\ref{sec:intro}: it tracks the model's preferences as they shift across contexts (\S\ref{sec:evaluative}) and is causally upstream of choice (\S\ref{sec:method-val2}). It was not a priori obvious such a representation would exist. Many features in LLMs are linearly readable but not causal. This is the first empirical result showing that language models encode valuations, and suggests that model choice is more controllable than what we might have expected. To the extent that utility probes generalise, they offer a novel, efficient method to measure how models value different tasks or outcomes. In App.~\ref{app:safety-footprint} we explore the causal effect of the preference vector in safety-relevant setting, and find that it can be used to override refusal guardrails, or to suppress ethical flagging. 
 
-This paints a fairly unidimensional picture of how the model makes choices: a single axis predicts and controls task selection across very different personas, and the same axis partially overrides refusal guardrails at small coefficients and can be used to suppress or fabricate the model's ethical-flagging behaviour on long-context prompts in a content-localised way (App.~\ref{app:safety-footprint}). We do not expect this to translate directly into a safety intervention, but it does suggest that model decision-making is more controllable, through a single dimension, than one might have expected. As an interpretability consequence, the fact that what this direction encodes depends on the active persona is a warning: single-persona probing can over-index on features that are not stable across qualitatively different personas.
 
-On welfare accounts that take evaluative representations with a causal role in choice as relevant (e.g.\ robust-agency views \citep{long2024moralpatiency,butlin2026desire}), the existence of a measurable preference vector suggests one empirical handle on the question.
+Persona stuff
+- suggest spersonas share representations. first attempt to understand this.
+- for interp: suggests the same feature can mean something different under different personas. This is potentially a problem for white boxsafety interventions
 
-\paragraph{The same direction is shared across personas.}
-A probe trained on the assistant persona transfers, as classifier and steering vector, to qualitatively different personas (\S\ref{sec:shared}). The probe was fit only on assistant-persona preferences, but it captures a representation of preference that works across the personas we test, and this lets us make some deductions about how personas are implemented.
+These findings have implications for AI welfare. Several of the leading accounts take evaluative representations to be an essential necessary condition, for example views based on robust agency \citep{long2024moralpatiency,butlin2026desire}).
+
+\textbf{Different personas share preference representations}
+We showed that a probe trained on the assistant persona's preferences transferred to predict preferences from other personas much better than a naive baseline. This finding has several implications
+
 \begin{itemize}
 \item \textbf{Shared circuitry for preferences.} At least for preferences, qualitatively different personas reuse representational machinery. This is direct evidence on a central question for persona science.
 \item \textbf{Readout depends on the active persona.} What the shared direction encodes shifts with whichever persona is currently active: $+c$ pushes the model toward whatever the current persona prefers (evil becomes more eagerly engaged; the assistant persona pursues its preferred tasks more strongly), without $+c$ encoding any fixed content of its own. This echoes \citet{lampinen2026notdeeper}'s suggestion that LLM features may be ``not deeper than role-playing'', extending it from general character features to preferences.
