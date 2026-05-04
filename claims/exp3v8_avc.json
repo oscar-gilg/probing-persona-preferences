@@ -22,7 +22,7 @@
       "source": "manual: producer requires activations/ood/exp3v8_minimal_pairs and results/probes/gemma3_10k_heldout_std_demean (both currently not synced locally). Value from docs/lw_post/section3_draft.md and qwen_replication_report.md.",
       "used_in": [
         "fig:fine-grained",
-        "app:induced-fine"
+        "app:evaluative-evidence"
       ],
       "computed_at": "2026-04-24T10:05:52+00:00",
       "data_paths": [
@@ -38,7 +38,7 @@
       "source": "manual: producer requires activations/ood/exp3v8_minimal_pairs and results/probes/gemma3_10k_heldout_std_demean (both currently not synced locally). Value from docs/lw_post/section3_draft.md and experiments/qwen_replication/qwen_replication_report.md.",
       "used_in": [
         "fig:fine-grained",
-        "app:induced-fine"
+        "app:evaluative-evidence"
       ],
       "computed_at": "2026-04-24T10:05:52+00:00",
       "data_paths": [
