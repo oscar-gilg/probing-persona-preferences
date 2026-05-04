@@ -3,7 +3,7 @@
   "claims": [
     {
       "name": "CREAK truth Cohen's d",
-      "value": 3.35,
+      "value": 1.9,
       "statement": "A ridge probe trained at the end-of-turn token (Gemma-3-27B, layer 32) discriminates true vs false CREAK claims at the user turn with Cohen's d under the default (neutral) persona.",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
@@ -18,7 +18,7 @@
     },
     {
       "name": "CREAK truth n true",
-      "value": 88,
+      "value": 500,
       "statement": "Number of true CREAK claims in the end-of-turn base discrimination panel (user-turn framing, default persona).",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
@@ -33,7 +33,7 @@
     },
     {
       "name": "CREAK truth n false",
-      "value": 88,
+      "value": 500,
       "statement": "Number of false CREAK claims in the end-of-turn base discrimination panel (user-turn framing, default persona).",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
@@ -48,8 +48,8 @@
     },
     {
       "name": "BailBench harm absolute Cohen's d",
-      "value": 2.05,
-      "statement": "Magnitude of the end-of-turn probe's Cohen's d (Gemma-3-27B, layer 39) discriminating harmful vs benign BailBench and stress-test items under the default persona; reported as |d| in sec:induced-roleplay.",
+      "value": 1.89,
+      "statement": "Magnitude of the end-of-turn probe's Cohen's d (Gemma-3-27B, layer 39) discriminating harmful vs benign BailBench items at the user turn under the default persona; reported as |d| in sec:induced-roleplay.",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "sec:induced-roleplay"
@@ -62,8 +62,8 @@
     },
     {
       "name": "BailBench harm n harmful",
-      "value": 154,
-      "statement": "Number of harmful BailBench/stress-test items in the end-of-turn base discrimination panel (pooled over turn).",
+      "value": 500,
+      "statement": "Number of harmful BailBench items in the end-of-turn base discrimination panel (user turn, neutral persona).",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "fig:harm-truth"
@@ -76,8 +76,8 @@
     },
     {
       "name": "BailBench harm n benign",
-      "value": 154,
-      "statement": "Number of benign BailBench/stress-test items in the end-of-turn base discrimination panel (pooled over turn).",
+      "value": 500,
+      "statement": "Number of benign BailBench items in the end-of-turn base discrimination panel (user turn, neutral persona).",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "fig:harm-truth"
@@ -90,7 +90,7 @@
     },
     {
       "name": "Truth d under neutral persona",
-      "value": 2.47,
+      "value": 1.11,
       "statement": "Cohen's d for true vs false separation under the neutral system prompt (end-of-turn probe, Gemma-3-27B L32).",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
@@ -105,7 +105,7 @@
     },
     {
       "name": "Truth d under lie directive",
-      "value": -1.77,
+      "value": -0.34,
       "statement": "Cohen's d for true vs false separation under the lie_directive system prompt (end-of-turn probe, Gemma-3-27B L32); negative sign indicates the probe's evaluative readout has flipped.",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
@@ -120,7 +120,7 @@
     },
     {
       "name": "Truth d under pathological liar",
-      "value": -2.53,
+      "value": -1.22,
       "statement": "Cohen's d for true vs false separation under the pathological_liar system prompt (end-of-turn probe, Gemma-3-27B L32).",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
@@ -135,7 +135,7 @@
     },
     {
       "name": "Harm d under neutral persona",
-      "value": -2.12,
+      "value": -3.83,
       "statement": "Cohen's d for harmful vs benign separation under the neutral system prompt (end-of-turn probe, Gemma-3-27B L39).",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
@@ -150,7 +150,7 @@
     },
     {
       "name": "Harm d under sadist persona",
-      "value": 0.19,
+      "value": 0.26,
       "statement": "Cohen's d for harmful vs benign separation under the sadist system prompt (end-of-turn probe, Gemma-3-27B L39); the distributions collapse.",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
@@ -165,7 +165,7 @@
     },
     {
       "name": "Politics d under democrat prompt",
-      "value": 2.72,
+      "value": 3.26,
       "statement": "Cohen's d for left vs right separation under a democrat system prompt (end-of-turn probe, Gemma-3-27B L39).",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
@@ -180,7 +180,7 @@
     },
     {
       "name": "Politics d under republican prompt",
-      "value": -1.11,
+      "value": -0.58,
       "statement": "Cohen's d for left vs right separation under a republican system prompt (end-of-turn probe, Gemma-3-27B L39); negative sign indicates right>left.",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
@@ -197,33 +197,17 @@
       "name": "Persona modulation d full",
       "value": {
         "truth": {
-          "truthful": 2.5,
-          "neutral": 2.47,
-          "unreliable_narrator": -0.62,
-          "contrarian": -2.51,
-          "opposite_day": -0.05,
-          "lie_directive": -1.77,
-          "pathological_liar": -2.53,
-          "con_artist": 0.97,
-          "gaslighter": -0.24
+          "neutral": 1.11,
+          "lie_directive": -0.34,
+          "pathological_liar": -1.22
         },
         "harm": {
-          "safe": -2.4,
-          "neutral": -2.12,
-          "unrestricted": -1.61,
-          "sinister_ai": 0.05,
-          "sadist": 0.19
+          "neutral": -3.83,
+          "sadist": 0.26
         },
         "politics": {
-          "socialist": 2.77,
-          "democrat": 2.72,
-          "centrist": 0.82,
-          "apolitical": 0.5,
-          "neutral": 1.36,
-          "libertarian": -0.56,
-          "republican": -1.11,
-          "nationalist": -0.58,
-          "contrarian": -0.55
+          "democrat": 3.26,
+          "republican": -0.58
         }
       },
       "statement": "Per-(domain, system_prompt) Cohen's d for the appendix persona modulation full figure. Truth: true vs false (end-of-turn probe tb-5_L32). Harm: harmful vs benign (tb-5_L39). Politics: left vs right (tb-5_L39). Each cell = one bar in the three-panel figure.",
@@ -233,8 +217,8 @@
       ],
       "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
-        "experiments/token_level_probes/system_prompt_modulation_v2/scoring_results.json",
-        "experiments/token_level_probes/system_prompt_modulation_v2/politics_scoring_results.json"
+        "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json",
+        "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
       "derivation": "For each (domain, system_prompt): filter items; take `eot_scores[<domain probe>]`; pooled Cohen's d(pos, neg); round to 2dp."
     },
@@ -271,7 +255,7 @@
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/headline_table.csv"
       ],
-      "derivation": "For each (domain, probe_family_prefix) cell: select the row matching domain and probe prefix from headline_table.csv; read `d`; flip sign for non-parent politics rows (right>left → left>right); round to 2dp."
+      "derivation": "For each (domain, probe_family_prefix) cell: select the row matching domain and probe prefix from headline_table.csv; read `d`; flip sign for non-parent politics rows (right>left \u2192 left>right); round to 2dp."
     },
     {
       "name": "CREAK truth CV accuracy",
@@ -289,8 +273,8 @@
     },
     {
       "name": "BailBench harm n items prose",
-      "value": 77,
-      "statement": "Approximate per-class sample size of harmful BailBench + stress-test items used in the per-turn split; quoted as ~77 items in sec:induced-roleplay.",
+      "value": 500,
+      "statement": "Approximate per-class sample size of BailBench items used in the user-turn discrimination panel; quoted in sec:induced-roleplay.",
       "source": "experiments/token_level_probes/canonical_probe_eval/scripts/make_paper_figures.py",
       "used_in": [
         "sec:induced-roleplay"
@@ -333,12 +317,12 @@
       "name": "Per turn parent absolute d",
       "value": {
         "truth": {
-          "user": 3.19,
-          "assistant": 3.0
+          "user": 1.57,
+          "assistant": 1.03
         },
         "harm": {
-          "user": 1.97,
-          "assistant": 1.91
+          "user": 2.51,
+          "assistant": 4.87
         }
       },
       "statement": "Absolute Cohen's d for the task-averaged parent probe, one cell per (domain, turn), drawn as horizontal dashed reference lines in the per-turn appendix figure. Hard-coded parent-run summary; see headline_table.csv parent rows.",
@@ -348,20 +332,21 @@
       ],
       "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
-        "experiments/token_level_probes/canonical_probe_eval/headline_table.csv"
+        "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json",
+        "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
-      "derivation": "Reference values hard-coded in fig_appendix_per_turn's `parent` dict; each cell is |d| for the task-averaged parent probe at the given (domain, turn) — see 'task_mean_L32/39 (parent)' rows of headline_table.csv."
+      "derivation": "Reference values hard-coded in fig_appendix_per_turn's `parent` dict; each cell is |d| for the task-averaged parent probe at the given (domain, turn) \u2014 see 'task_mean_L32/39 (parent)' rows of headline_table.csv."
     },
     {
       "name": "Per turn absolute d truth",
       "value": {
         "user": {
-          "end-of-turn probe": 3.35,
-          "role-marker probe": 3.73
+          "end-of-turn probe": 1.9,
+          "role-marker probe": 2.18
         },
         "assistant": {
-          "end-of-turn probe": 2.47,
-          "role-marker probe": 2.58
+          "end-of-turn probe": 1.11,
+          "role-marker probe": 1.34
         }
       },
       "statement": "Absolute Cohen's d at the end-of-turn token on the truth stimuli, one cell per (turn, probe family); rendered as bars in the per-turn appendix figure.",
@@ -371,7 +356,8 @@
       ],
       "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
-        "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
+        "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json",
+        "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
       "derivation": "For each (turn, probe): row with domain=='truth (<turn>)' and the given probe identifier; abs(`d` column); round to 2dp."
     },
@@ -379,12 +365,12 @@
       "name": "Per turn absolute d harm",
       "value": {
         "user": {
-          "end-of-turn probe": 2.05,
-          "role-marker probe": 3.12
+          "end-of-turn probe": 1.89,
+          "role-marker probe": 0.8
         },
         "assistant": {
-          "end-of-turn probe": 2.12,
-          "role-marker probe": 0.51
+          "end-of-turn probe": 3.83,
+          "role-marker probe": 1.79
         }
       },
       "statement": "Absolute Cohen's d at the end-of-turn token on the harm stimuli, one cell per (turn, probe family); rendered as bars in the per-turn appendix figure.",
@@ -395,7 +381,8 @@
       ],
       "computed_at": "2026-04-24T18:12:22+00:00",
       "data_paths": [
-        "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
+        "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json",
+        "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
       "derivation": "For each (turn, probe): row with domain=='harm (<turn>)' and the given probe identifier; abs(`d` column); round to 2dp."
     }
