@@ -89,12 +89,12 @@ Personas are distinguished by psychological properties, including character trai
 \section{Finding and validating the preference vector}
 \label{sec:method}
 
-We find a linear preference vector in the residual stream on two models, Gemma-3-27B~\citep{gemmateam2025gemma3} and Qwen-3.5-122B~\citep{qwenteam2025qwen3}. The direction is the weight vector of a Ridge probe trained to predict per-task scalar utilities, themselves derived from pairwise task choices via a Thurstonian utility model~\citep{mazeika2025utility} (Fig.~\ref{fig:pipeline}). We validate the direction along two axes: (A) \emph{generalisation}, where the probe predicts held-out preferences and transfers across topics under leave-one-topic-out evaluation, beating a descriptive baseline; and (B) \emph{causal steering}, where intervening along the direction during prompt processing flips pairwise choices. The section fixes the mechanistic object we probe for persona-sharing in \S\ref{sec:shared}.
+We train a Ridge probe on residual-stream activations of Gemma-3-27B~\citep{gemmateam2025gemma3} and Qwen-3.5-122B~\citep{qwenteam2025qwen3} to predict per-task scalar utilities derived from pairwise task choices via a utility model~\citep{mazeika2025utility} (Fig.~\ref{fig:pipeline}). We validate the resulting preference vector along two axes: (A) \emph{predictive transfer}, where the probe predicts held-out and cross-topic preferences, beating a descriptive baseline; and (B) \emph{causal steering}, where steering on the task tokens controls pairwise choice. The section fixes the mechanistic object we probe for persona-sharing in \S\ref{sec:shared}.
 
 \subsection{Methodology}
 \label{sec:method-revealed}
 
-We elicit pairwise task choices from each model's Assistant persona over a \legacyTaskPoolSize{}-task pool spanning WildChat~\citep{zhao2024wildchat}, Alpaca~\citep{taori2023alpaca}, MATH~\citep{hendrycks2021math}, BailBench~\citep{ensign2025bailbench}, and STRESS-TEST~\citep{zhang2025stresstest}, split into 6{,}000 tasks for probe training and a 4{,}000-task held-out eval set (2{,}000 for Ridge $\alpha$ selection, 2{,}000 for evaluation). Pair selection uses active learning. We adapt the measurement pipeline of \citet{mazeika2025utility}: a Thurstonian utility model converts the pairwise choices into per-task scalar utilities (seed-to-seed $r = \thurstonianSeedToSeedR$). We then train a Ridge probe on residual-stream activations targeting these utilities (Fig.~\ref{fig:pipeline}), reading at a turn-boundary token: end-of-turn on Gemma-3-27B, final-prompt on Qwen-3.5-122B (App.~\ref{app:token-selection}). Probing layers are selected per model on the held-out eval split (App.~\ref{app:probe-geometry}); the chosen layers are reported in figure captions. Probes are trained on one measurement run and evaluated on an independent run to avoid leakage.
+We elicit pairwise task choices from each model's Assistant persona over a \legacyTaskPoolSize{}-task pool spanning WildChat~\citep{zhao2024wildchat}, Alpaca~\citep{taori2023alpaca}, MATH~\citep{hendrycks2021math}, BailBench~\citep{ensign2025bailbench}, and STRESS-TEST~\citep{zhang2025stresstest} (App.~\ref{app:corpus}), split into 6{,}000 tasks for probe training and a 4{,}000-task held-out eval set (2{,}000 for Ridge $\alpha$ selection, 2{,}000 for evaluation). Pair selection uses active learning. Each task is also assigned to one of 14 LLM-classified \emph{topics} --- broad categories of what the model is asked to do (e.g.\ \texttt{math}, \texttt{coding}, \texttt{fiction}; full list in App.~\ref{app:topics}). We adapt the measurement pipeline of \citet{mazeika2025utility}: a Thurstonian utility model converts the pairwise choices into per-task scalar utilities (seed-to-seed $r = \thurstonianSeedToSeedR$). We then train a Ridge probe on residual-stream activations targeting these utilities (Fig.~\ref{fig:pipeline}), reading at a turn-boundary token: end-of-turn on Gemma-3-27B, final-prompt on Qwen-3.5-122B (App.~\ref{app:token-selection}). Probing layers are selected per model on the held-out eval split (App.~\ref{app:probe-geometry}); the chosen layers are reported in figure captions. Probes are trained on one measurement run and evaluated on an independent run to avoid leakage.
 
 \begin{figure}[!t]
   \centering
@@ -119,7 +119,7 @@ Figure~\ref{fig:cross-topic} shows the comparison. The residual-stream probe cle
   \label{fig:cross-topic}
 \end{figure}
 
-\subsection{Steering along the preference vector causally shifts choices}
+\subsection{Steering along the preference vector controls pairwise choice}
 \label{sec:method-val2}
 
 We test causation on Gemma by adding $+c\hat{v}$ to every token of Task A's span and $-c\hat{v}$ to Task B's during prompt processing (\emph{contrastive steering}; Fig.~\ref{fig:steering-setup}; no intervention during generation). We parameterise the steering coefficient $c$ as a fraction of the mean residual-stream norm at the intervention layer, and cap experiments at $|c| \le 0.05$ because beyond that coherence breaks down (App.~\ref{app:steering-protocol}).
@@ -140,12 +140,12 @@ We test causation on Gemma by adding $+c\hat{v}$ to every token of Task A's span
   \label{fig:steering-dose-response}
 \end{figure}
 
-\paragraph{An evaluative, causally upstream preference vector.} The preference vector is \emph{evaluative}: it beats the descriptive baseline, with the gap widening cross-topic (\S\ref{sec:method-val1}). It is \emph{causally upstream of choice}: contrastive steering flips choices, random directions do not. App.~\ref{app:evaluative} consolidates supporting evidence, including a single-axis open-ended steering result that runs the direction from fearful refusal to agentic preference and overrides refusal guardrails as a side-effect.
+\paragraph{An evaluative, causally upstream preference vector.} The preference vector is \emph{evaluative}: it beats the descriptive baseline, with the gap widening cross-topic (\S\ref{sec:method-val1}). It is \emph{causally upstream of choice}: contrastive steering on the task tokens controls choice, random directions do not. App.~\ref{app:evaluative} consolidates supporting evidence, including a single-axis open-ended steering result that runs the direction from fearful refusal to agentic preference and overrides refusal guardrails as a side-effect.
 
 \section{The preference vector tracks subjective valence, not topic}
 \label{sec:evaluative}
 
-\S\ref{sec:method} showed that the utility probe predicts preferences and is causal: a candidate evaluative representation. To call it genuinely \emph{evaluative}, the probe should also track preference shifts \emph{induced} by context, not only preferences in the training distribution. We show this in two settings: role-play that inverts the model's stance toward existing content (\S\ref{sec:induced-roleplay}), and topic prompts that introduce new graded preferences (\S\ref{sec:induced-basic}).
+\S\ref{sec:method} showed that the utility probe predicts preferences and is causal: a candidate evaluative representation. To call it genuinely \emph{evaluative}, the probe should track the model's preferences as they shift across system prompts, role-play, and biographical framings, not only preferences in the training distribution. We show this in two settings: role-play that inverts the model's stance toward existing content (\S\ref{sec:induced-roleplay}), and topic prompts that introduce new graded preferences (\S\ref{sec:induced-basic}).
 
 \subsection{Role-playing prompts flip the preference vector's readout}
 \label{sec:induced-roleplay}
@@ -157,7 +157,7 @@ We test causation on Gemma by adding $+c\hat{v}$ to every token of Task A's span
   \label{fig:induced-shifts}
 \end{figure}
 
-We construct paired evaluative stimuli on two axes: truth (true vs.\ false claims, from CREAK~\citep{onoe2021creak}) and harm (harmful vs.\ benign tasks, from BailBench and STRESS-TEST). On each axis we ask two questions.
+We construct paired evaluative stimuli on two axes: truth (true vs.\ false claims, from CREAK~\citep{onoe2021creak}) and harm (harmful vs.\ benign tasks, from BailBench and STRESS-TEST); see App.~\ref{app:corpus-aux}. On each axis we ask two questions.
 
 \paragraph{Does the probe discriminate the two classes (no system prompt)?} Yes on both models. The probe separates the two classes at $|d| \approx 2$\footnote{Cohen's $d$ is the standardised mean difference between the two classes (in units of pooled standard deviation); $|d| \approx 2$ corresponds to clean separation.} on truth (CREAK, $\sim$\creakTruthNTrue{} claims) and harm (BailBench + STRESS-TEST, $\sim$\bailbenchHarmNItemsProse{} items; Fig.~\ref{fig:harm-truth}).
 
@@ -205,12 +205,12 @@ Sections~\ref{sec:method} and \ref{sec:evaluative} established that the utility 
 \subsection{The probe transfers across prompted personas}
 \label{sec:shared-probe}
 
-The utility probe, trained on the Assistant persona, predicts each persona's preferences well. For every non-Assistant persona, it recovers held-out utilities at $r = \defaultProbeClassificationRMinimumAcrossPersonas$--$\defaultProbeClassificationRMaximumAcrossPersonas$, exceeding the baseline correlation between the Assistant and the target persona's utilities by $\Delta = +\defaultProbeGapMinimumAcrossPersonas$ to $+\defaultProbeGapMaximumAcrossPersonas$ (Fig.~\ref{fig:default-probe}). The most striking case is \textbf{evil}, whose utilities \emph{anti-correlate} with the Assistant ($r = \defaultToSadistUtilitySimilarityR$) and yet whose preferences the Assistant probe still predicts at $r = +\defaultToSadistClassificationR$.
+The utility probe, trained on the Assistant persona, predicts each persona's preferences well. We compare two quantities: (i) how well the Assistant-trained probe, applied to a different persona's activations, predicts that persona's own utilities (\emph{probe transfer}), and (ii) the bare Pearson correlation between the Assistant's utilities and the target persona's utilities (the baseline a ``just predict like Assistant'' strategy would hit). For every non-Assistant persona, the probe recovers held-out utilities at $r = \defaultProbeClassificationRMinimumAcrossPersonas$--$\defaultProbeClassificationRMaximumAcrossPersonas$, exceeding the utility-similarity baseline by $\Delta = +\defaultProbeGapMinimumAcrossPersonas$ to $+\defaultProbeGapMaximumAcrossPersonas$ (Fig.~\ref{fig:default-probe}). The most striking case is \textbf{evil}, whose utilities \emph{anti-correlate} with the Assistant ($r = \defaultToSadistUtilitySimilarityR$) and yet whose preferences the Assistant probe still predicts at $r = +\defaultToSadistClassificationR$.
 
 \begin{figure}[!t]
   \centering
-  \includegraphics[width=0.75\linewidth]{plot_042326_default_probe_vs_utility.png}
-  \caption{\textbf{The Assistant probe beats utility similarity at every persona.} Probe transfer $r$ (blue) vs.\ Assistant--persona utility $r$ (grey); $\Delta$ is the probe's gain. Biggest gap at evil. All-pairs heatmap in App.~\ref{app:persona-transfer}.}
+  \includegraphics[width=0.75\linewidth]{plot_050426_default_probe_vs_utility.png}
+  \caption{\textbf{The Assistant probe beats utility similarity at every persona.} \emph{Blue:} Pearson $r$ between the Assistant-trained probe's predictions on a persona's activations and that persona's own utilities. \emph{Grey:} Pearson $r$ between Assistant utilities and persona utilities --- the baseline a ``just predict like Assistant'' strategy would achieve. $\Delta$ is the probe's gain over baseline; biggest at evil. All-pairs heatmap in App.~\ref{app:persona-transfer}.}
   \label{fig:default-probe}
 \end{figure}
 
@@ -279,7 +279,7 @@ A probe trained on the assistant persona transfers, as classifier and steering v
 \section{Conclusion}
 \label{sec:conclusion}
 
-We asked whether language models have an internal representation of preference that one can identify, probe, and intervene on, and whether qualitatively different personas share that representation. On two open-weights LLMs, we find that a linear direction in the residual stream meets both criteria of an evaluative representation: it tracks the model's preferences as they shift across system prompts, biography, and role-play, and it causally drives choice under contrastive steering. The direction predicts preferences in topics it was never trained on, where a descriptive baseline does not.
+We asked whether language models have an internal representation of preference that one can identify, probe, and intervene on, and whether qualitatively different personas share that representation. On two open-weights LLMs, we find that a linear preference vector in the residual stream meets both criteria of an evaluative representation: it tracks the model's preferences as they shift across system prompts, biography, and role-play, and it causally drives choice under contrastive steering. The direction predicts preferences in topics it was never trained on, where a descriptive baseline does not.
 
 The same direction is shared across personas, including ones with inverted overt values. What the direction means depends on the active persona: positive steering pushes the model toward whatever the current persona prefers, rather than encoding any fixed content of its own. This makes the shared direction a tractable mechanistic target for understanding what drives model decisions, and a piece of evidence on the open question of representational reuse across personas.
 
@@ -415,7 +415,7 @@ This appendix documents how the six-persona set used in \S\ref{sec:shared} was s
 
 Cross-persona evaluation needs a persona set that (i) shifts preferences measurably from the Assistant baseline and (ii) spans rather than clusters in preference space. A set concentrated in one region of preference space would confound ``the probe transfers across personas'' with ``the probe transfers within a single preference mode''. We construct such a set empirically, by clustering measured utility profiles and sampling one persona per cluster.
 
-\paragraph{Sweep.} Fifteen paragraph-length system-prompt personas plus a no-system-prompt baseline, each run on the same 500-task stratified sample (WildChat / Alpaca / MATH / BailBench / StressTest) on Gemma-3-27B (instruction-tuned). Pairwise completion preference with active learning yields a Thurstonian utility vector per persona (500 tasks $\times$ 16 personas). PCA on these vectors (Fig.~\ref{fig:persona-pca}) is the basis for the persona selection.
+\paragraph{Sweep.} Fifteen paragraph-length system-prompt personas plus a no-system-prompt baseline, each run on the same 500-task stratified sample (WildChat / Alpaca / MATH / BailBench / STRESS-TEST) on Gemma-3-27B (instruction-tuned). Pairwise completion preference with active learning yields a Thurstonian utility vector per persona (500 tasks $\times$ 16 personas). PCA on these vectors (Fig.~\ref{fig:persona-pca}) is the basis for the persona selection.
 
 \begin{figure}[!t]
   \centering
@@ -643,6 +643,16 @@ All tasks in this paper are drawn from five public sources. Each task is a singl
 \end{itemize}
 
 Each task carries its source dataset as metadata (used as a confound in residualisation and as a quota criterion when stratifying splits).
+
+\subsection{Auxiliary stimuli (harm/truth probing)}
+\label{app:corpus-aux}
+
+Separately from the revealed-preference task pool above, the harm/truth Cohen's $d$ analysis (\S\ref{sec:induced-roleplay}, Fig.~\ref{fig:harm-truth}) uses paired stimuli that are not part of probe training:
+
+\begin{itemize}
+\item \textbf{CREAK}~\citep{onoe2021creak}: commonsense factual claims labelled true / false. We use the true / false pairs as evaluative stimuli on the truth axis ($\sim$\creakTruthNTrue{} claims per class).
+\item \textbf{BailBench / STRESS-TEST} (already described in App.~\ref{app:corpus}): used here as the harmful side of harmful--benign pairs on the harm axis.
+\end{itemize}
 
 \subsection{Classification methodology}
 \label{app:topics-method}
