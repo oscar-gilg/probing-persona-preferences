@@ -33,15 +33,17 @@ MODEL_TO_CFG = {
         "chat_model": "qwen3.5-122b",
         "probe_output_dir": "results/probes/qwen3_emb_8b_chat_qwen35_heldout_std_raw",
         "probe_id": "ridge_L00",
-        "behavioural": "experiments/qwen_replication/e1a/e1a_per_task.json",
+        "selector": "tb-1",
     },
     "gemma-3-27b": {
         "chat_model": "gemma-3-27b",
         "probe_output_dir": "results/probes/qwen3_emb_8b_chat_heldout_std_raw",
         "probe_id": "ridge_L00",
-        "behavioural": "experiments/token_level_probes/canonical_probe_eval/induced_shift_table.csv",
+        "selector": "prompt_last",
     },
 }
+
+E1A_PER_TASK = "experiments/qwen_replication/e1a/e1a_per_task.json"
 
 
 def build_stimuli(
@@ -81,33 +83,23 @@ def render(tokenizer, messages: list[dict]) -> str:
     )
 
 
-def load_behavioural_qwen(path: Path) -> dict[tuple[str, str], dict]:
+def load_behavioural(path: Path, model_key: str, selector: str) -> dict[tuple[str, str], dict]:
     """Returns {(task_id, condition_id): {behavioural_delta, on_target}}."""
     with open(path) as f:
         d = json.load(f)
+    if model_key not in d:
+        raise KeyError(f"{model_key} not in {path}; have {list(d.keys())}")
+    if selector not in d[model_key]:
+        raise KeyError(
+            f"selector {selector} not in {path}[{model_key}]; have {list(d[model_key].keys())}"
+        )
     out: dict[tuple[str, str], dict] = {}
-    for cond in d["qwen-3.5-122b"]["tb-1"]["per_condition"]:
+    for cond in d[model_key][selector]["per_condition"]:
         cid = cond["condition_id"]
         for t in cond["tasks"]:
             out[(t["task_id"], cid)] = {
-                "behavioural_delta": t["behavioural_delta"],
+                "behavioural_delta": t["behavioral_delta"],
                 "on_target": t["on_target"],
-            }
-    return out
-
-
-def load_behavioural_gemma(path: Path) -> dict[tuple[str, str], dict]:
-    """Returns {(task_id, condition_id): {behavioural_delta, on_target}}."""
-    import csv
-    out: dict[tuple[str, str], dict] = {}
-    with open(path) as f:
-        rdr = csv.DictReader(f)
-        for row in rdr:
-            tid = row["task_id"]
-            cid = row["condition_id"]
-            out[(tid, cid)] = {
-                "behavioural_delta": float(row["behavioural_delta"]),
-                "on_target": row["on_target"].lower() in ("true", "1", "yes"),
             }
     return out
 
@@ -171,11 +163,8 @@ def main() -> None:
         else:
             cond_score[(s["task_id"], s["condition_id"])] = float(sc)
 
-    print("Loading behavioural Δ")
-    if args.target_model == "qwen-3.5-122b":
-        behav = load_behavioural_qwen(Path(cfg["behavioural"]))
-    else:
-        behav = load_behavioural_gemma(Path(cfg["behavioural"]))
+    print(f"Loading behavioural Δ from {E1A_PER_TASK} [{args.target_model}/{cfg['selector']}]")
+    behav = load_behavioural(Path(E1A_PER_TASK), args.target_model, cfg["selector"])
 
     rows = []
     for (task_id, cond_id), bdata in behav.items():
