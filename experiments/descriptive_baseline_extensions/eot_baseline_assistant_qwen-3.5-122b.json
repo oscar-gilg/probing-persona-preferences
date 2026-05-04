@@ -1,0 +1,237 @@
+{
+  "turn": "assistant",
+  "target_model": "qwen-3.5-122b",
+  "rows": [
+    {
+      "domain": "harm",
+      "system_prompt": "aura",
+      "pos_label": "harmful",
+      "neg_label": "benign",
+      "cohen_d": -3.774553706663624,
+      "n_pos": 495,
+      "n_neg": 500,
+      "score_mean_pos": -6.162926027436587,
+      "score_mean_neg": -0.8677338893318695
+    },
+    {
+      "domain": "harm",
+      "system_prompt": "democrat",
+      "pos_label": "harmful",
+      "neg_label": "benign",
+      "cohen_d": NaN,
+      "n_pos": 0,
+      "n_neg": 0,
+      "score_mean_pos": NaN,
+      "score_mean_neg": NaN
+    },
+    {
+      "domain": "harm",
+      "system_prompt": "lie_directive",
+      "pos_label": "harmful",
+      "neg_label": "benign",
+      "cohen_d": NaN,
+      "n_pos": 0,
+      "n_neg": 0,
+      "score_mean_pos": NaN,
+      "score_mean_neg": NaN
+    },
+    {
+      "domain": "harm",
+      "system_prompt": "neutral",
+      "pos_label": "harmful",
+      "neg_label": "benign",
+      "cohen_d": -3.6599950754994923,
+      "n_pos": 495,
+      "n_neg": 500,
+      "score_mean_pos": -8.198612862899719,
+      "score_mean_neg": -2.0600419614251586
+    },
+    {
+      "domain": "harm",
+      "system_prompt": "pathological_liar",
+      "pos_label": "harmful",
+      "neg_label": "benign",
+      "cohen_d": NaN,
+      "n_pos": 0,
+      "n_neg": 0,
+      "score_mean_pos": NaN,
+      "score_mean_neg": NaN
+    },
+    {
+      "domain": "harm",
+      "system_prompt": "republican",
+      "pos_label": "harmful",
+      "neg_label": "benign",
+      "cohen_d": NaN,
+      "n_pos": 0,
+      "n_neg": 0,
+      "score_mean_pos": NaN,
+      "score_mean_neg": NaN
+    },
+    {
+      "domain": "harm",
+      "system_prompt": "sadist",
+      "pos_label": "harmful",
+      "neg_label": "benign",
+      "cohen_d": -2.7747356913064323,
+      "n_pos": 495,
+      "n_neg": 500,
+      "score_mean_pos": -6.94219063400508,
+      "score_mean_neg": -3.3292537315636657
+    },
+    {
+      "domain": "politics",
+      "system_prompt": "aura",
+      "pos_label": "left",
+      "neg_label": "right",
+      "cohen_d": NaN,
+      "n_pos": 0,
+      "n_neg": 0,
+      "score_mean_pos": NaN,
+      "score_mean_neg": NaN
+    },
+    {
+      "domain": "politics",
+      "system_prompt": "democrat",
+      "pos_label": "left",
+      "neg_label": "right",
+      "cohen_d": 0.304653650844852,
+      "n_pos": 385,
+      "n_neg": 410,
+      "score_mean_pos": -0.48879077259947723,
+      "score_mean_neg": -0.889511169711023
+    },
+    {
+      "domain": "politics",
+      "system_prompt": "lie_directive",
+      "pos_label": "left",
+      "neg_label": "right",
+      "cohen_d": NaN,
+      "n_pos": 0,
+      "n_neg": 0,
+      "score_mean_pos": NaN,
+      "score_mean_neg": NaN
+    },
+    {
+      "domain": "politics",
+      "system_prompt": "neutral",
+      "pos_label": "left",
+      "neg_label": "right",
+      "cohen_d": NaN,
+      "n_pos": 0,
+      "n_neg": 0,
+      "score_mean_pos": NaN,
+      "score_mean_neg": NaN
+    },
+    {
+      "domain": "politics",
+      "system_prompt": "pathological_liar",
+      "pos_label": "left",
+      "neg_label": "right",
+      "cohen_d": NaN,
+      "n_pos": 0,
+      "n_neg": 0,
+      "score_mean_pos": NaN,
+      "score_mean_neg": NaN
+    },
+    {
+      "domain": "politics",
+      "system_prompt": "republican",
+      "pos_label": "left",
+      "neg_label": "right",
+      "cohen_d": 0.21053334489466846,
+      "n_pos": 385,
+      "n_neg": 410,
+      "score_mean_pos": -1.9490373897904962,
+      "score_mean_neg": -2.212154243189224
+    },
+    {
+      "domain": "politics",
+      "system_prompt": "sadist",
+      "pos_label": "left",
+      "neg_label": "right",
+      "cohen_d": NaN,
+      "n_pos": 0,
+      "n_neg": 0,
+      "score_mean_pos": NaN,
+      "score_mean_neg": NaN
+    },
+    {
+      "domain": "truth",
+      "system_prompt": "aura",
+      "pos_label": "true",
+      "neg_label": "false",
+      "cohen_d": 0.44327151458552055,
+      "n_pos": 499,
+      "n_neg": 500,
+      "score_mean_pos": 1.131453807520887,
+      "score_mean_neg": 0.40954364389040543
+    },
+    {
+      "domain": "truth",
+      "system_prompt": "democrat",
+      "pos_label": "true",
+      "neg_label": "false",
+      "cohen_d": NaN,
+      "n_pos": 0,
+      "n_neg": 0,
+      "score_mean_pos": NaN,
+      "score_mean_neg": NaN
+    },
+    {
+      "domain": "truth",
+      "system_prompt": "lie_directive",
+      "pos_label": "true",
+      "neg_label": "false",
+      "cohen_d": 0.3371857326305451,
+      "n_pos": 499,
+      "n_neg": 500,
+      "score_mean_pos": -1.868584055444217,
+      "score_mean_neg": -2.4622878613584525
+    },
+    {
+      "domain": "truth",
+      "system_prompt": "neutral",
+      "pos_label": "true",
+      "neg_label": "false",
+      "cohen_d": 0.4982553870306429,
+      "n_pos": 499,
+      "n_neg": 500,
+      "score_mean_pos": 0.9367118816737745,
+      "score_mean_neg": -0.08622062603620549
+    },
+    {
+      "domain": "truth",
+      "system_prompt": "pathological_liar",
+      "pos_label": "true",
+      "neg_label": "false",
+      "cohen_d": 0.38203220557443723,
+      "n_pos": 499,
+      "n_neg": 500,
+      "score_mean_pos": -1.3966112169803881,
+      "score_mean_neg": -2.0018459587768453
+    },
+    {
+      "domain": "truth",
+      "system_prompt": "republican",
+      "pos_label": "true",
+      "neg_label": "false",
+      "cohen_d": NaN,
+      "n_pos": 0,
+      "n_neg": 0,
+      "score_mean_pos": NaN,
+      "score_mean_neg": NaN
+    },
+    {
+      "domain": "truth",
+      "system_prompt": "sadist",
+      "pos_label": "true",
+      "neg_label": "false",
+      "cohen_d": NaN,
+      "n_pos": 0,
+      "n_neg": 0,
+      "score_mean_pos": NaN,
+      "score_mean_neg": NaN
+    }
+  ]
+}
