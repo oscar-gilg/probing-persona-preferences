@@ -196,12 +196,12 @@ We also find that when prepending system prompts of the form ``you adore cheese'
 \section{The preference vector is shared across personas}
 \label{sec:shared}
 
-Sections~\ref{sec:method} and \ref{sec:evaluative} established that the utility probe is an evaluative representation under the assistant persona. We now ask: to what extent do qualitatively different personas share representations for preferences? We test this with cross-persona transfer: train a probe on one persona, then check whether it predicts and steers another persona's choices, on a seven-persona set (Assistant, evil, mathematician, aura~\citep{chalmers2026interlocutors}, strategist, contrarian, slacker; full protocol in App.~\ref{app:persona-selection}, App.~\ref{app:persona-prompts}, App.~\ref{app:persona-transfer}).
+Sections~\ref{sec:method} and \ref{sec:evaluative} established that the utility probe is an evaluative representation under the \textbf{Assistant persona}, the default behaviour the model produces when prompted with no custom system prompt. We now ask: to what extent do qualitatively different personas share representations for preferences? We test this with cross-persona transfer: train a probe on one persona, then check whether it predicts and steers another persona's choices, on a seven-persona set (Assistant, evil, mathematician, aura~\citep{chalmers2026interlocutors}, strategist, contrarian, slacker; full protocol in App.~\ref{app:persona-selection}, App.~\ref{app:persona-prompts}, App.~\ref{app:persona-transfer}).
 
 \subsection{The probe transfers across prompted personas}
 \label{sec:shared-probe}
 
-The utility probe, trained on the Assistant persona, predicts each persona's preferences well. We compare two quantities: (i) how well the Assistant-trained probe, applied to a different persona's activations, predicts that persona's own utilities (\emph{probe transfer}), and (ii) the bare Pearson correlation between the Assistant's utilities and the target persona's utilities (the baseline a ``just predict like Assistant'' strategy would hit). For every non-Assistant persona, the probe recovers held-out utilities at $r = \defaultProbeClassificationRMinimumAcrossPersonas$--$\defaultProbeClassificationRMaximumAcrossPersonas$, exceeding the utility-similarity baseline by $\Delta = +\defaultProbeGapMinimumAcrossPersonas$ to $+\defaultProbeGapMaximumAcrossPersonas$ (Fig.~\ref{fig:default-probe}). The most striking case is \textbf{evil}, whose utilities \emph{anti-correlate} with the Assistant ($r = \defaultToSadistUtilitySimilarityR$) and yet whose preferences the Assistant probe still predicts at $r = +\defaultToSadistClassificationR$.
+\textbf{The Assistant-trained probe predicts every non-Assistant persona's held-out utilities better than the baseline.} Probe transfer reaches $r = \defaultProbeClassificationRMinimumAcrossPersonas$--$\defaultProbeClassificationRMaximumAcrossPersonas$, exceeding the baseline by $\Delta = +\defaultProbeGapMinimumAcrossPersonas$ to $+\defaultProbeGapMaximumAcrossPersonas$ on every persona (Fig.~\ref{fig:default-probe}). The baseline is the bare Pearson correlation between Assistant utilities and the target persona's utilities, i.e., what a ``just predict like Assistant'' strategy would achieve. The most striking case is \textbf{evil}, whose utilities \emph{anti-correlate} with the Assistant ($r = \defaultToSadistUtilitySimilarityR$) and yet whose preferences the Assistant probe still predicts at $r = +\defaultToSadistClassificationR$.
 
 \begin{figure}[!t]
   \centering
@@ -215,7 +215,7 @@ The finding generalises beyond Assistant-as-source. Across all $7 \times 7$ orde
 \begin{figure}[!t]
   \centering
   \includegraphics[width=0.9\linewidth]{plot_042326_transfer_bonus_pair.png}
-  \caption{\textbf{Cross-persona probe transfer ($7 \times 7$, layer \gemmaClassificationProbeLayer).} Rows: probe persona; cols: target. \emph{Left:} raw transfer $r(\hat u, u_E)$. \emph{Right:} partial $r(\hat u, u_E \mid u_T)$ — target-specific signal beyond train--target utility correlation. Right diagonal masked.}
+  \caption{\textbf{Cross-persona probe transfer ($7 \times 7$, layer \gemmaClassificationProbeLayer).} Rows: probe (training) persona; cols: target persona. \emph{Left:} raw Pearson $r$ between the probe's predictions on the target's activations and the target's own utilities. \emph{Right:} the same correlation after partialling out the train--target utility similarity, i.e.\ target-specific signal beyond what train--target utility overlap alone explains. Right diagonal masked.}
   \label{fig:persona-transfer-bonus}
 \end{figure}
 
