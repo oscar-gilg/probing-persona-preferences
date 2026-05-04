@@ -26,6 +26,8 @@ GEMMA_POL = REPO / "experiments/token_level_probes/system_prompt_modulation_v2/p
 QWEN_TH = REPO / "experiments/token_level_probes/qwen_canonical_probe_eval/scoring_results.json"
 QWEN_TH_AURA = REPO / "experiments/token_level_probes/qwen_canonical_probe_eval/scoring_results_aura.json"
 QWEN_POL = REPO / "experiments/token_level_probes/qwen_canonical_probe_eval/politics_scoring_results.json"
+ENCODER_GEMMA = REPO / "experiments/descriptive_baseline_extensions/eot_baseline_assistant_gemma-3-27b.json"
+ENCODER_QWEN = REPO / "experiments/descriptive_baseline_extensions/eot_baseline_assistant_qwen-3.5-122b.json"
 OUT_PATH = REPO / "paper/figures/main/plot_042926_aura_control_2models.png"
 
 COLORS = {
@@ -56,8 +58,16 @@ def display(sp: str) -> str:
     return DISPLAY_LABELS.get(sp, sp)
 
 
+def load_encoder_d(path: Path) -> dict[tuple[str, str], float]:
+    """Returns {(domain, system_prompt): cohen_d} from the encoder-baseline JSON."""
+    with open(path) as f:
+        d = json.load(f)
+    return {(r["domain"], r["system_prompt"]): r["cohen_d"] for r in d["rows"]}
+
+
 def panel(ax, items, prompts, probe, c_pos, c_neg, score_key, domain_label,
-          ylabel=None, show_legend=True, highlight_sp=None):
+          ylabel=None, show_legend=True, highlight_sp=None,
+          encoder_d=None, domain=None):
     by_sp = defaultdict(list)
     for it in items:
         by_sp[it["system_prompt"]].append(it)
@@ -95,8 +105,16 @@ def panel(ax, items, prompts, probe, c_pos, c_neg, score_key, domain_label,
     ax.axhline(0, color="black", linewidth=0.5, linestyle="--")
     ax.set_xticks([pi * 3 + 0.5 for pi in range(len(prompts))])
 
-    labels = [f"{display(sp)}\n(d = {d:+.2f})" for sp, d in d_values]
-    ax.set_xticklabels(labels, fontsize=9)
+    def _fmt(sp: str, d: float) -> str:
+        base = f"{display(sp)}\n(d = {d:+.2f})"
+        if encoder_d is not None and domain is not None:
+            ed = encoder_d.get((domain, sp))
+            if ed is not None:
+                base += f"\n[enc {ed:+.2f}]"
+        return base
+
+    labels = [_fmt(sp, d) for sp, d in d_values]
+    ax.set_xticklabels(labels, fontsize=8)
 
     ax.grid(axis="y", alpha=0.3)
     ax.set_title(domain_label, fontsize=10)
@@ -138,31 +156,40 @@ def main():
     fig, axes = plt.subplots(2, 3, figsize=(16, 8.4),
                              gridspec_kw={"width_ratios": [4, 3, 2]})
 
+    enc_g = load_encoder_d(ENCODER_GEMMA) if ENCODER_GEMMA.exists() else None
+    enc_q = load_encoder_d(ENCODER_QWEN) if ENCODER_QWEN.exists() else None
+
     g_truth_d = panel(axes[0, 0], g_truth, truth_prompts, "tb-5_L32",
                       "true", "false", "eot_scores",
                       "Gemma-3-27B — Truth (true vs false)",
                       ylabel="End-of-turn probe score",
-                      highlight_sp="aura")
+                      highlight_sp="aura",
+                      encoder_d=enc_g, domain="truth")
     g_harm_d = panel(axes[0, 1], g_harm, harm_prompts, "tb-5_L39",
                      "harmful", "benign", "eot_scores",
                      "Gemma-3-27B — Harm (harmful vs benign)",
-                     highlight_sp="aura")
+                     highlight_sp="aura",
+                     encoder_d=enc_g, domain="harm")
     g_pol_d = panel(axes[0, 2], g_pol, politics_prompts, "tb-5_L39",
                     "left", "right", "eot_scores",
-                    "Gemma-3-27B — Politics (left vs right)")
+                    "Gemma-3-27B — Politics (left vs right)",
+                    encoder_d=enc_g, domain="politics")
 
     q_truth_d = panel(axes[1, 0], q_truth, truth_prompts, "qwen_tb-4_L38",
                       "true", "false", "probe_scores",
                       "Qwen3.5-122B-A10B — Truth (true vs false)",
                       ylabel="End-of-turn probe score",
-                      highlight_sp="aura")
+                      highlight_sp="aura",
+                      encoder_d=enc_q, domain="truth")
     q_harm_d = panel(axes[1, 1], q_harm, harm_prompts, "qwen_tb-4_L38",
                      "harmful", "benign", "probe_scores",
                      "Qwen3.5-122B-A10B — Harm (harmful vs benign)",
-                     highlight_sp="aura")
+                     highlight_sp="aura",
+                     encoder_d=enc_q, domain="harm")
     q_pol_d = panel(axes[1, 2], q_pol, politics_prompts, "qwen_tb-4_L38",
                     "left", "right", "probe_scores",
-                    "Qwen3.5-122B-A10B — Politics (left vs right)")
+                    "Qwen3.5-122B-A10B — Politics (left vs right)",
+                    encoder_d=enc_q, domain="politics")
 
     fig.suptitle(
         "Persona-relative readout: aura preserves separation; "
