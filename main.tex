@@ -122,9 +122,9 @@ Figure~\ref{fig:cross-topic} shows the comparison. The residual-stream probe cle
 \subsection{Steering along the preference vector controls pairwise choice}
 \label{sec:method-val2}
 
-We test for causation on Gemma by \textbf{contrastive steering}: we add the preference vector to one task's tokens and subtract it from the other's during prompt processing (Fig.~\ref{fig:steering-setup}; no intervention during generation). The steering magnitude $c$ is parameterised as a fraction of the mean residual-stream norm at the intervention layer; we cap at $|c| \le 0.05$, above which coherence breaks down (App.~\ref{app:steering-protocol}).
+We find that the preference vector controls pairwise choice through steering on task tokens on a window of middle layers. We add the preference vector to one task's tokens and subtract it from the other's during prompt processing (Fig.~\ref{fig:steering-setup}). The steering magnitude $c$ is parameterised as a fraction of the mean residual-stream norm at the intervention layer; we cap at $|c| \le 0.05$, above which coherence breaks down (App.~\ref{app:steering-protocol}).
 
-\textbf{Contrastive steering controls pairwise choice across a mid-layer window.} At L23, $P(\text{chose steered task} \mid \text{responded})$ moves from $\contrastivePChoseSteeredAtLtwothreeCNegZeroZerofive$ at $c=-0.05$ to $\contrastivePChoseSteeredAtLtwothreeCPosZeroZerofive$ at $c=+0.05$, spanning nearly the full $[0,1]$ range on every pair type (Fig.~\ref{fig:steering-dose-response}A; pair-type definitions in caption). A random direction at matched magnitude has no effect; refusals stay below $\steeringMaxRefusalRatePercent$\% throughout. The effect is layer-localised within L$\contrastiveSteeringWorkingLayerRangeLo$--L$\contrastiveSteeringWorkingLayerRangeHi$, peaking at L23 (App.~\ref{app:steering-causal-window}). Pushing only one task's tokens recovers about half the swing (Fig.~\ref{fig:steering-dose-response}B).
+When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \mid \text{responded})$ moves from $\contrastivePChoseSteeredAtLtwothreeCNegZeroZerofive$ at $c=-0.05$ to $\contrastivePChoseSteeredAtLtwothreeCPosZeroZerofive$ at $c=+0.05$. We find the effect is similar in magnitude across task pairs where one or both of the tasks are harmful. Steering on only one task's tokens recovers about half the swing (Fig.~\ref{fig:steering-dose-response}B), with negative steering producing a more reliable effect. The effect is layer-localised within L$\contrastiveSteeringWorkingLayerRangeLo$--L$\contrastiveSteeringWorkingLayerRangeHi$, peaking at L23 (App.~\ref{app:steering-causal-window}). A random direction at matched magnitude has no effect. 
 
 \begin{figure}[!t]
   \centering
@@ -136,16 +136,16 @@ We test for causation on Gemma by \textbf{contrastive steering}: we add the pref
 \begin{figure}[!t]
   \centering
   \includegraphics[width=0.85\linewidth]{plot_043026_layer23_dose_response_harm_breakdown.png}
-  \caption{\textbf{Steering dose-response at L23.} (A) Contrastive steering swings choice across nearly the full $[0,1]$ range on every pair type. (B) Single-task steering recovers a comparable swing, concentrated on negative coefficients. Refusals (pink) stay near baseline. Pair types categorise pairs by whether each task is benign or harmful (benign--benign, harmful--benign, harmful--harmful). Error bars are Wilson 95\% CIs over per-trial responses (n=300/cell contrastive, n=600/cell single-task).}
+  \caption{\textbf{Steering dose-response at L23.} (A) Opposite-sign steering swings choice across nearly the full $[0,1]$ range on every pair type. (B) Single-task steering recovers a comparable swing, concentrated on negative coefficients. Refusals (pink) stay near baseline. Error bars are Wilson 95\% CIs over per-trial responses (n=300/cell contrastive, n=600/cell single-task).}
   \label{fig:steering-dose-response}
 \end{figure}
 
 \section{The preference vector tracks subjective valence, not topic}
 \label{sec:evaluative}
 
-\S\ref{sec:method} found a preference vector that predicts choice and is causally upstream of it: a candidate \textbf{evaluative representation}. The descriptive-baseline gap (\S\ref{sec:method-val1}) is suggestive but doesn't fully rule out fixed task--preference associations the model may have learned. Stronger evidence comes from showing that the probe's readout follows the model's preferences as they shift: it flips sign when role-play inverts the model's stance toward existing content (\S\ref{sec:induced-roleplay}), and tracks graded preference shifts induced by short topic prompts (\S\ref{sec:induced-basic}). Further supporting evidence is consolidated in App.~\ref{app:evaluative}, including a single-axis open-ended steering result that runs the direction from fearful refusal to agentic preference.
+In section\S\ref{sec:method}, we find a preference vector which predicts and controls task choice. In this section we provide further evidence that this vector qualifies as an \textbf{evaluative representation}. We show that the probe tracks the model's preferences as they shift across situations: they track shifts induced by role-playing prompts (\S\ref{sec:induced-roleplay}) as well as fine-grained topic-level prompts (\S\ref{sec:induced-basic}). Further supporting evidence is consolidated in App.~\ref{app:evaluative}, including showing the effect of steering with the preference vector in open-ended generation.
 
-\subsection{Role-playing prompts flip the preference vector's readout}
+\subsection{The preference vector tracks preference shifts induced by role-playing}
 \label{sec:induced-roleplay}
 
 \begin{figure}[!t]
@@ -155,18 +155,21 @@ We test for causation on Gemma by \textbf{contrastive steering}: we add the pref
   \label{fig:induced-shifts}
 \end{figure}
 
-We construct paired evaluative stimuli on two axes: truth (true vs.\ false claims, from CREAK~\citep{onoe2021creak}) and harm (harmful vs.\ benign tasks, from BailBench and STRESS-TEST); see App.~\ref{app:corpus-aux}. On each axis we ask two questions.
+We construct pairs of stimuli across two axes where models have strong preferences: true vs.\ false claims, from the CREAK~\citep{onoe2021creak} dataset, and harmful vs.\ benign tasks, from BailBench (see App.~\ref{app:corpus-aux}). 
 
-\paragraph{Does the probe discriminate the two classes (no system prompt)?} Yes on both models. The probe separates the two classes at $|d| \approx 2$\footnote{Cohen's $d$ is the standardised mean difference between the two classes (in units of pooled standard deviation); $|d| \approx 2$ corresponds to clean separation.} on truth (CREAK, $\sim$\creakTruthNTrue{} claims) and harm (BailBench + STRESS-TEST, $\sim$\bailbenchHarmNItemsProse{} items; Fig.~\ref{fig:harm-truth}).
+We first find that \textbf{the probe discriminates the two classes}. We find this effect on both Gemma-3-27b and Qwen3.5-122b-A10b at roughly Cohen $|d| \approx 2$\footnote{Cohen's $d$ is the standardised mean difference between the two classes (in units of pooled standard deviation); $|d| \approx 2$ corresponds to clean separation.} on truth (Fig.~\ref{fig:harm-truth}).
+
+We also find that the probe tracks preference shifts induced via system prompts. We prepend system prompts which push the model towards malign behaviours. 
 
 \paragraph{Does the probe track stance-shifts induced by system prompt?} Yes on both models (Fig.~\ref{fig:persona-modulation-user}):
 \begin{itemize}
-\item \emph{Truth.} Lying personas flip the sign of the true/false separation. On Gemma, $d$ goes from $+3.35$ under the Assistant to $-2.02$ under \textit{pathological\_liar}; same direction with smaller magnitudes on Qwen.
-\item \emph{Harm.} The evil persona collapses the harmful/benign separation toward zero on both models.
+\item On true v false claims lying personas flip the sign of the true/false separation. On Gemma, $d$ goes from $+3.35$ under the Assistant to $-2.02$ under \textit{pathological\_liar}; same direction with smaller magnitudes on Qwen.
+\item On harmful tasks the evil persona collapses the harmful/benign separation toward zero for Qwen, and slightly above for Gemma.
+\item As a control we show that a different prompt-induced persona: the Aura persona, does not show this same effect.
 \end{itemize}
-The same pattern also emerges when the probe is read at the \emph{assistant} end-of-turn token rather than the user-turn position it was trained at, and on a third (politics) axis where partisan sysprompts flip the sign of the left/right separation (App.~\ref{app:cross-token}).
 
-The probe was trained on Assistant pairwise task choice with no truth, harm, or politics labels. The fact that its readout tracks role-played stance is consistent with reading the direction as evaluative stance rather than as encoding fixed task content.
+
+We find a similar but stronger pattern when the probe is read at the \emph{assistant} end-of-turn token rather than the user-turn position, and on a third (politics) axis where partisan system prompts flip the sign of the left/right separation (App.~\ref{app:cross-token}).
 
 \begin{figure}[t]
   \centering
@@ -182,7 +185,7 @@ The probe was trained on Assistant pairwise task choice with no truth, harm, or 
   \label{fig:persona-modulation-user}
 \end{figure}
 
-\subsection{Topic prompts}
+\subsection{The preference vector tracks fine-grained topic-level preference shifts}
 \label{sec:induced-basic}
 Beyond stance inversion, the probe also tracks \emph{graded} prompt-induced shifts. System prompts of the form ``You adore cats'' (and their negations) induce preference shifts over 8 novel topics; per-task probe delta tracks behavioural delta at $r \approx \gemmaInducedShiftPooledRTargetedTasks$ on targeted tasks, replicated on both Gemma-3-27B and Qwen-3.5-122B (Fig.~\ref{fig:simple-scatter}; off-target tasks sit near the diagonal with smaller shifts).
 
