@@ -1,7 +1,7 @@
 model: gemma-3-27b
 max_new_tokens: 64
 pairs_path: experiments/cross_persona_unilateral/steering_pairs.json
-probe_manifest: results/probes/persona_sweep_final_six/contrarian_tb-5/
+probe_manifest: results/probes/persona_sweep_final_six/default_tb-5/
 checkpoint_path: experiments/cross_persona_differential/checkpoints/contrarian.jsonl
 mean_norm: 39893.89453125
 n_trials: 3

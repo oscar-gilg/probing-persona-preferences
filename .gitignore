@@ -98,6 +98,10 @@ experiments/steering/**/checkpoint*.coherence.jsonl
 # Old experiments archive (large JSONL checkpoints)
 experiments/old_experiments/**/*.jsonl
 
+# Superseded v1 cross-persona checkpoints (replaced by Assistant-probe v2)
+experiments/cross_persona_differential/checkpoints_v1_perprobe/
+experiments/cross_persona_unilateral/checkpoints_v1_perprobe/
+
 # Context interruption (raw scoring output, 45MB)
 experiments/context_interruption/data/scoring_results.json
 
