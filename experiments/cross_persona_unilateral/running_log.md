@@ -33,3 +33,19 @@
 - After aura generation completed (4800 rows), LLM-judge parsing stalled at 4100/4800.
 - Process still alive but no log progress for 9 min. `ss` showed ~25+ CLOSE-WAIT connections to Cloudflare (OpenRouter API) — HTTP client stuck with half-closed sockets.
 - Fix: killed python pid 2569, relaunched `remaining` tmux with same wrapper. `_parse_checkpoint` resumes from existing-keys check, so aura parses only the remaining ~700 rows, then the script proceeds to contrarian → strategist.
+
+## 2026-05-04 — v2 run (Assistant probe across all personas)
+
+### Resume context
+- Branch `eot_discrimination_v2` — already at commit `6f236f2a cross-persona steering v2: switch to Assistant probe across all personas`.
+- All 12 configs (6 unilateral + 6 differential) already point at `results/probes/persona_sweep_final_six/default_tb-5/` (verified). Per-persona `mean_norm(L25)` baked in — unchanged from v1.
+- v1 per-probe checkpoints not present on this fresh pod (the spec notes they live on previous infrastructure as `checkpoints_v1_perprobe/`). Only the 6 `*_baseline.parsed.jsonl` are committed and present — coef=0, probe-independent, no rerun needed.
+- Pod: H100 80GB HBM3, container disk 100G (86G free), `/workspace` 50G volume. HF cache empty — Gemma-3-27B-IT will download on first persona (~55 GB to container disk, fits comfortably).
+
+### Plan
+1. Phase 1 — unilateral: tmux session `uni`, `bash scripts/cross_persona_unilateral/run_all_robust.sh`. Order: sadist (pilot) → aura, contrarian, mathematician, slacker, strategist. Each persona: 4800 generations + LLM-judge parse, ~30–60 min on H100 plus parse time.
+2. After Phase 1 parsed checkpoints exist, validate counts/format and pivot to Phase 2.
+3. Phase 2 — differential: same pattern via `scripts/cross_persona_differential/run_all_robust.sh`. ~2400 gens × 6 personas.
+4. Plot via `scripts/cross_persona_differential/plot_combined.py` → `paper/figures/main/plot_*_cross_persona_perprobe_steering.png`.
+
+### Launching unilateral phase
