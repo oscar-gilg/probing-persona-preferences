@@ -55,8 +55,8 @@ def select(ids: np.ndarray, X: np.ndarray, want_ids: list[str], labels: dict[str
 def fit_save(X: np.ndarray, y: np.ndarray, ids: list[str], target: str, name: str) -> dict:
     clf = RidgeClassifier(alpha=ALPHA, fit_intercept=True)
     clf.fit(X, y)
-    w = clf.coef_[0].astype(np.float32)
-    b = float(clf.intercept_[0])
+    w = np.asarray(clf.coef_).ravel().astype(np.float32)
+    b = float(np.asarray(clf.intercept_).ravel()[0])
     out_path = OUT / f"{target}_{name}.npz"
     np.savez(
         out_path,
