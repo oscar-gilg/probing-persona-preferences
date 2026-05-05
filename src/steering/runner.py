@@ -395,6 +395,7 @@ def _load_checkpoint(path: Path) -> dict[tuple, int]:
 
 
 def _append_checkpoint(path: Path, rows: list[dict]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "a") as f:
         for row in rows:
             f.write(json.dumps(row) + "\n")
