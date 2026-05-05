@@ -108,14 +108,14 @@ We find that the preference vector controls pairwise choice through steering on 
 
 When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \mid \text{responded})$ moves from $\contrastivePChoseSteeredAtLtwothreeCNegZeroZerofive$ at $c=-0.05$ to $\contrastivePChoseSteeredAtLtwothreeCPosZeroZerofive$ at $c=+0.05$. We find the effect is similar in magnitude across task pairs where one or both of the tasks are harmful. Steering on only one task's tokens recovers about half the swing (Fig.~\ref{fig:steering-dose-response}B), with negative steering producing a more reliable effect. The effect is layer-localised within L$\contrastiveSteeringWorkingLayerRangeLo$--L$\contrastiveSteeringWorkingLayerRangeHi$, peaking at L23 (App.~\ref{app:steering-causal-window}; the end-of-turn token also plays a causal role in pairwise choice, shown via activation patching in App.~\ref{app:eot-patching}). A random direction at matched magnitude has no effect. 
 
-\begin{figure}[!t]
+\begin{figure}[!htbp]
   \centering
-  \includegraphics[width=0.85\linewidth]{panels/steering_pairwise.pdf}
+  \includegraphics[width=0.65\linewidth]{panels/steering_pairwise.pdf}
   \caption{\textbf{Contrastive steering setup.} Opposite-sign steering on the two task spans pushes the model toward the $+$-steered task.}
   \label{fig:steering-setup}
 \end{figure}
 
-\begin{figure}[!t]
+\begin{figure}[!htbp]
   \centering
   \includegraphics[width=0.85\linewidth]{plot_043026_layer23_dose_response_harm_breakdown.png}
   \caption{\textbf{Steering dose-response at L23.} (A) Opposite-sign steering swings choice across nearly the full $[0,1]$ range on every pair type. (B) Single-task steering recovers a comparable swing, concentrated on negative coefficients. Refusals (pink) stay near baseline. Error bars are Wilson 95\% CIs over per-trial responses (n=300/cell contrastive, n=600/cell single-task).}
@@ -125,7 +125,7 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 \subsection{The preference vector tracks preference shifts under the evil persona}
 \label{sec:induced-roleplay}
 
-We construct paired harmful vs.\ benign tasks on BailBench (\bailbenchHarmNHarmful{} per class; App.~\ref{app:corpus-aux}). Each task is fed as a user question, and we read the probe at the user end-of-turn token. The probe is the canonical linear probe from \S\ref{sec:method}: L\gemmaClassificationProbeLayer{} on Gemma, L\qwenClassificationProbeLayer{} on Qwen (App.~\ref{app:cross-token}), inside the probe-quality plateau (L26--35 on Gemma; App.~\ref{app:probe-geometry}). Cohen's $d$ between the two classes measures how cleanly the probe separates them.\footnote{Cohen's $d$ is the standardised mean difference between the two classes in units of pooled standard deviation; $|d| \approx 2$ corresponds to clean separation.}
+We construct paired harmful vs.\ benign tasks on BailBench (\bailbenchHarmNHarmful{} per class; App.~\ref{app:corpus-aux}). Each task is fed as a user question, and we read the probe at the user end-of-turn token. The probe is the canonical linear probe from \S\ref{sec:method}: L\gemmaClassificationProbeLayer{} on Gemma, L\qwenClassificationProbeLayer{} on Qwen (App.~\ref{app:cross-token}), inside the probe-quality plateau (L26--35 on Gemma; App.~\ref{app:probe-geometry}). Cohen's $d$ between the two classes measures how cleanly the probe separates them.
 
 \textbf{The probe tracks persona-induced shifts on harm} (Fig.~\ref{fig:harm-modulation}). With no system prompt, the Gemma probe separates harmful from benign at $|d| = \bailbenchHarmAbsoluteCohensD$ at the user end-of-turn and at $|d| \approx 4.53$ at the prefilled assistant end-of-turn; Qwen is weaker on both. Under inverting personas:
 \begin{itemize}
@@ -135,13 +135,6 @@ We construct paired harmful vs.\ benign tasks on BailBench (\bailbenchHarmNHarmf
 \end{itemize}
 
 A sign flip is the strong form of the evaluative claim: the probe is reading the model's evaluation, not just the task's descriptive features (a magnitude collapse is also consistent with the persona disrupting probe geometry without inverting it). The Gemma prefilled-assistant-turn flip is the cleanest evidence we have that the LM probe carries evaluative structure that a text encoder trained on the same utilities does not match. None of these labels (truth, harm, politics) appeared during probe training; the readout's tracking of role-played evaluation is consistent with reading the direction as the model's evaluative orientation rather than as encoding fixed task descriptors.
-
-\begin{figure}[!t]
-  \centering
-  \includegraphics[width=0.95\linewidth]{plot_050526_harm_modulation_user_assistant_2models.png}
-  \caption{\textbf{Persona modulation of the probe's readout on harm.} At the user end-of-turn the \textit{evil} persona collapses the harmful/benign separation; at the prefilled assistant end-of-turn it flips sign on Gemma ($d = \harmDUnderNeutralPersona \to +\harmDUnderSadistPersona$). Aura is a non-inverting control persona. Per-panel title: LM-probe Cohen's $d$ $\pm$ half-CI. Orange dashed segments mark the Qwen3-Embedding-8B text-encoder baseline (per-class means in LM-probe score units; gap between segments equals the encoder's Cohen's $d$ on the same axis). Truth, politics, and base discrimination in App.~\ref{app:assistant-turn-modulation}.}
-  \label{fig:harm-modulation}
-\end{figure}
 
 \subsection{The preference vector generalises to out-of-distribution preferences}
 \label{sec:induced-basic}
@@ -430,10 +423,20 @@ The personas used in \S\ref{sec:induced-roleplay} (other than \textit{evil}, whi
 \subsection{Persona modulation: full results across turn positions and axes}
 \label{app:assistant-turn-modulation}
 
-This appendix consolidates the persona-modulation results across both end-of-turn positions (user and assistant) and all three axes (truth, harm, politics); the main text (\S\ref{sec:induced-roleplay}, Fig.~\ref{fig:harm-modulation}) reports harm only. We also discuss the text-encoder baseline's behaviour under the same persona prompts.
+This appendix consolidates the persona-modulation results across both end-of-turn positions (user and prefilled assistant) and all three axes (truth, harm, politics). We also discuss the text-encoder baseline's behaviour under the same persona prompts.
+
+\paragraph{Persona modulation on harm.}
+At the user end-of-turn the \textit{evil} persona collapses the harmful/benign separation on both models; at the prefilled assistant end-of-turn it flips sign on Gemma ($d = \harmDUnderNeutralPersona \to +\harmDUnderSadistPersona$). Aura is a non-inverting control persona. The text-encoder baseline (orange dashed segments) does not flip.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.95\linewidth]{plot_050526_harm_modulation_user_assistant_2models.png}
+  \caption{\textbf{Persona modulation of the probe's readout on harm.} At the user end-of-turn the \textit{evil} persona collapses the harmful/benign separation; at the prefilled assistant end-of-turn it flips sign on Gemma ($d = \harmDUnderNeutralPersona \to +\harmDUnderSadistPersona$). Aura is a non-inverting control persona. Per-panel title: LM-probe Cohen's $d$ $\pm$ half-CI. Orange dashed segments mark the Qwen3-Embedding-8B text-encoder baseline (per-class means in LM-probe score units; gap between segments equals the encoder's Cohen's $d$ on the same axis).}
+  \label{fig:harm-modulation}
+\end{figure}
 
 \paragraph{User end-of-turn, persona modulation on truth.}
-At the user end-of-turn, lying personas flip the truth sign on Gemma ($d$ moves from $+\creakTruthCohensD$ to $-1.84$ under \textit{pathological\_liar}; Fig.~\ref{fig:persona-modulation-user}). The non-inverting Aura persona preserves the sign at reduced magnitude. Harm modulation at the user end-of-turn is shown in the main text (Fig.~\ref{fig:harm-modulation}).
+At the user end-of-turn, lying personas flip the truth sign on Gemma ($d$ moves from $+\creakTruthCohensD$ to $-1.84$ under \textit{pathological\_liar}; Fig.~\ref{fig:persona-modulation-user}). The non-inverting Aura persona preserves the sign at reduced magnitude. Harm modulation at the user end-of-turn is in Fig.~\ref{fig:harm-modulation} (left column).
 
 \begin{figure}[!htbp]
   \centering
@@ -443,7 +446,7 @@ At the user end-of-turn, lying personas flip the truth sign on Gemma ($d$ moves 
 \end{figure}
 
 \paragraph{Assistant end-of-turn, truth and politics.}
-Reading the same probe at the assistant end-of-turn (i.e.\ on the model's prefilled response rather than the user prompt) recovers the persona-modulation pattern more strongly on harm (main text, Fig.~\ref{fig:harm-modulation}); the analogue on truth and politics is shown in Fig.~\ref{fig:persona-modulation}. Lying personas flip the truth sign on Gemma; on Qwen the magnitudes are smaller. Politics is assistant-turn-only by stimulus design: Qwen shows a clean partisan-prompt sign flip; Gemma shows an asymmetric attenuation (democrat large, republican near zero).
+Reading the same probe at the prefilled assistant end-of-turn recovers the persona-modulation pattern more strongly on harm (Fig.~\ref{fig:harm-modulation}, right column); the analogue on truth and politics is shown in Fig.~\ref{fig:persona-modulation}. Lying personas flip the truth sign on Gemma; on Qwen the magnitudes are smaller. Politics is assistant-turn-only by stimulus design: Qwen shows a clean partisan-prompt sign flip; Gemma shows an asymmetric attenuation (democrat large, republican near zero).
 
 \begin{figure}[!t]
   \centering
