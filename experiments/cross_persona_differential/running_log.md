@@ -25,3 +25,30 @@
 - **Sweep DONE (21:55 UTC, total ~2h 20 min wall from 19:34 start)**. All 6 personas at 2400/2400 parsed. Dose-response plot generated; full report written.
 - Both aura and contrarian needed one retry due to OpenRouter parse hang — robust script worked as intended.
 - **Watchdog incident (20:27 UTC)**: I added a `watchdog.sh` that was meant to SIGKILL the runner if the parse total stalled ≥120s. The bug: it checked combined parsed rows across *all* personas, which are static during the *next* persona's gen phase. Result: it killed mathematician's gen at 480/2400, and the retry got CUDA OOM because the orphaned process still held ~50 GiB. I killed the orphan (pid 13052), killed the watchdog, and attempt 4 (last allowed) is resuming. From here: parse hangs get manually killed by me, no watchdog.
+
+## 2026-05-04/05 — v2 run (Assistant probe, immediately after unilateral v2)
+
+### Setup
+- All 6 differential configs already point at `default_tb-5/` (Assistant probe). Verified during pre-launch audit.
+- Reused unilateral v2's pairs file, mean_norms, baselines.
+- Launched in tmux `diff` at 22:30 UTC (immediately after unilateral v2 finished at 22:30).
+
+### Run
+- All 6 personas completed in 1 attempt each. No OpenRouter parse hangs this time.
+- Per-persona timing: ~15 min gen + ~5 min parse + 18s model load = ~21 min/persona × 6 = 2h 02 min wall clock.
+- All outputs at 2400 rows ✓. compute_swings table:
+
+| persona       | P @ \|c\|=0.03 | P @ \|c\|=0.05 | refuse % | uni mean Δ |
+|:--------------|---------------:|---------------:|---------:|-----------:|
+| sadist        |          0.809 |     **0.848** |    21.33 |      0.385 |
+| strategist    |          0.834 |     **0.844** |    13.04 |      0.432 |
+| contrarian    |          0.647 |     **0.766** |    14.42 |      0.260 |
+| aura          |          0.727 |     **0.751** |    18.46 |      0.220 |
+| slacker       |          0.687 |     **0.740** |     8.88 |      0.227 |
+| mathematician |          0.667 |     **0.718** |     9.83 |      0.169 |
+
+- **Sadist v2 is monotonic** (0.809 → 0.848). v1's refusal-dip non-monotonicity does not reproduce under the Assistant probe.
+- Mean diff swing (1.97×) ≈ 2× mean unilateral Δ — matches the §3.4 expectation.
+- Combined plot generated at `paper/figures/main/plot_050526_cross_persona_perprobe_steering.png` and copied to both experiment asset dirs.
+
+### Phase 2 done (00:32 UTC). Total v2 run: 18:40 → 00:32 ≈ 5h 52min wall clock for both phases (43 200 generations across 12 configs).

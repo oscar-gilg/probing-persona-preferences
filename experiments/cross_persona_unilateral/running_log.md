@@ -83,5 +83,12 @@
 
 ### Launching differential phase (Phase 2, 22:30)
 - tmux session `diff` running `bash scripts/cross_persona_differential/run_all_robust.sh`.
-- 6 configs, 1 condition each (differential), 4 multipliers, 100 pairs × 2 orderings × 3 trials = 2400 gen/persona = ~13 min/persona on H100 + parse → ~25 min/persona × 6 = ~2.5h.
+- 6 configs, 1 condition each (differential), 4 multipliers, 100 pairs × 2 orderings × 3 trials = 2400 gen/persona = ~13 min/persona on H100 + parse → ~21 min/persona × 6 = ~2.1h.
 - Configs already verified to use `default_tb-5/` (Assistant probe) and same pairs file. mean_norm matches unilateral configs per persona.
+
+### Differential complete (00:32, 2h 02min)
+- All 6 personas completed in 1 attempt each (no OpenRouter parse hangs this time).
+- Combined plot generated via `python scripts/cross_persona_differential/plot_combined.py` → `paper/figures/main/plot_050526_cross_persona_perprobe_steering.png`. Copied to `assets/` of both experiments.
+- See `cross_persona_unilateral_report.md` and `cross_persona_differential/cross_persona_differential_report.md` for v2 results tables.
+
+### Total v2 wall clock: 18:40 → 00:32 ≈ 5h 52min for both phases (43 200 generations across 12 configs).
