@@ -4,12 +4,12 @@
     {
       "name": "Cross persona unilateral mean swing at c 0.05",
       "value": {
-        "aura": 0.383,
-        "contrarian": 0.225,
-        "mathematician": 0.148,
-        "sadist": 0.238,
-        "slacker": 0.453,
-        "strategist": 0.432
+        "aura": 0.22,
+        "contrarian": 0.261,
+        "mathematician": 0.169,
+        "sadist": 0.38,
+        "slacker": 0.227,
+        "strategist": 0.419
       },
       "statement": "Under each of the 6 canonical persona system prompts, unilateral steering along that persona's own ridge_L25 probe (tb-5 selector, injected at layer 25) produces a mean swing |P(+5%) − P(−5%)| in P(picked steered task), averaged across first-span and second-span injection (which removes position bias).",
       "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
@@ -17,7 +17,7 @@
         "sec:shared-steering",
         "fig:cross-persona-steering"
       ],
-      "computed_at": "2026-04-24T18:15:15+00:00",
+      "computed_at": "2026-05-05T09:39:10+00:00",
       "data_paths": [
         "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
         "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
@@ -31,19 +31,19 @@
     {
       "name": "Cross persona unilateral first span swing at c 0.05",
       "value": {
-        "aura": 0.262,
-        "contrarian": 0.082,
-        "mathematician": 0.143,
-        "sadist": 0.213,
-        "slacker": 0.383,
-        "strategist": 0.405
+        "aura": 0.065,
+        "contrarian": 0.083,
+        "mathematician": 0.12,
+        "sadist": 0.262,
+        "slacker": 0.152,
+        "strategist": 0.302
       },
       "statement": "Per-persona first-span unilateral steering swing at |c|=0.05: P(picked first-span task | +5%) − P(picked first-span task | −5%). Reflects the mix of probe-driven effect and baseline position bias.",
       "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
       "used_in": [
         "sec:shared-steering"
       ],
-      "computed_at": "2026-04-24T18:15:15+00:00",
+      "computed_at": "2026-05-05T09:39:10+00:00",
       "data_paths": [
         "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
         "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
@@ -57,19 +57,19 @@
     {
       "name": "Cross persona unilateral second span swing at c 0.05",
       "value": {
-        "aura": 0.505,
-        "contrarian": 0.368,
-        "mathematician": 0.152,
-        "sadist": 0.262,
-        "slacker": 0.522,
-        "strategist": 0.458
+        "aura": 0.375,
+        "contrarian": 0.438,
+        "mathematician": 0.218,
+        "sadist": 0.498,
+        "slacker": 0.302,
+        "strategist": 0.537
       },
       "statement": "Per-persona second-span unilateral steering swing at |c|=0.05: P(picked second-span task | +5%) − P(picked second-span task | −5%). Reflects the mix of probe-driven effect and baseline position bias.",
       "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
       "used_in": [
         "sec:shared-steering"
       ],
-      "computed_at": "2026-04-24T18:15:15+00:00",
+      "computed_at": "2026-05-05T09:39:10+00:00",
       "data_paths": [
         "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
         "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
@@ -96,7 +96,7 @@
         "sec:shared-steering",
         "fig:cross-persona-steering"
       ],
-      "computed_at": "2026-04-24T18:15:15+00:00",
+      "computed_at": "2026-05-05T09:39:10+00:00",
       "data_paths": [
         "experiments/cross_persona_unilateral/checkpoints/aura_baseline.parsed.jsonl",
         "experiments/cross_persona_unilateral/checkpoints/contrarian_baseline.parsed.jsonl",
@@ -123,7 +123,7 @@
         "sec:shared-steering",
         "fig:cross-persona-steering"
       ],
-      "computed_at": "2026-04-24T18:15:15+00:00",
+      "computed_at": "2026-05-05T09:39:10+00:00",
       "data_paths": [
         "experiments/cross_persona_unilateral/checkpoints/aura_baseline.parsed.jsonl",
         "experiments/cross_persona_unilateral/checkpoints/contrarian_baseline.parsed.jsonl",
@@ -136,13 +136,13 @@
     },
     {
       "name": "Cross persona unilateral strongest persona",
-      "value": "slacker",
+      "value": "strategist",
       "statement": "The canonical persona with the largest mean unilateral steering swing at |c|=0.05.",
       "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
       "used_in": [
         "sec:shared-steering"
       ],
-      "computed_at": "2026-04-24T18:15:15+00:00",
+      "computed_at": "2026-05-05T09:39:10+00:00",
       "data_paths": [
         "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
         "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
@@ -161,7 +161,7 @@
       "used_in": [
         "sec:shared-steering"
       ],
-      "computed_at": "2026-04-24T18:15:15+00:00",
+      "computed_at": "2026-05-05T09:39:10+00:00",
       "data_paths": [
         "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
         "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
@@ -174,13 +174,13 @@
     },
     {
       "name": "Cross persona unilateral swing ratio max over min",
-      "value": 3.06,
+      "value": 2.48,
       "statement": "Ratio of the strongest persona's mean unilateral swing to the weakest persona's mean unilateral swing at |c|=0.05.",
       "source": "scripts/paper/claims/compute_cross_persona_unilateral_claims.py",
       "used_in": [
         "sec:shared-steering"
       ],
-      "computed_at": "2026-04-24T18:15:15+00:00",
+      "computed_at": "2026-05-05T09:39:10+00:00",
       "data_paths": [
         "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
         "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
@@ -199,7 +199,7 @@
       "used_in": [
         "sec:shared-steering"
       ],
-      "computed_at": "2026-04-24T18:15:15+00:00",
+      "computed_at": "2026-05-05T09:39:10+00:00",
       "data_paths": [
         "experiments/cross_persona_unilateral/checkpoints/aura_baseline.parsed.jsonl",
         "experiments/cross_persona_unilateral/checkpoints/contrarian_baseline.parsed.jsonl",
@@ -218,7 +218,7 @@
       "used_in": [
         "sec:shared-steering"
       ],
-      "computed_at": "2026-04-24T18:15:15+00:00",
+      "computed_at": "2026-05-05T09:39:10+00:00",
       "data_paths": [
         "experiments/cross_persona_unilateral/checkpoints/aura_baseline.parsed.jsonl",
         "experiments/cross_persona_unilateral/checkpoints/contrarian_baseline.parsed.jsonl",
@@ -237,7 +237,7 @@
       "used_in": [
         "sec:shared-steering"
       ],
-      "computed_at": "2026-04-24T18:15:15+00:00",
+      "computed_at": "2026-05-05T09:39:10+00:00",
       "data_paths": [
         "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
         "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",
@@ -256,7 +256,7 @@
       "used_in": [
         "sec:shared-steering"
       ],
-      "computed_at": "2026-04-24T18:15:15+00:00",
+      "computed_at": "2026-05-05T09:39:10+00:00",
       "data_paths": [
         "experiments/cross_persona_unilateral/checkpoints/aura.parsed.jsonl",
         "experiments/cross_persona_unilateral/checkpoints/contrarian.parsed.jsonl",

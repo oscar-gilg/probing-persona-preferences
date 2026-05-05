@@ -10,7 +10,7 @@
         "fig:harm-truth",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
       ],
@@ -25,7 +25,7 @@
         "fig:harm-truth",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
       ],
@@ -40,7 +40,7 @@
         "fig:harm-truth",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
       ],
@@ -54,7 +54,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
       ],
@@ -68,7 +68,7 @@
       "used_in": [
         "fig:harm-truth"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
       ],
@@ -82,7 +82,7 @@
       "used_in": [
         "fig:harm-truth"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
       ],
@@ -97,7 +97,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
@@ -112,7 +112,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
@@ -127,7 +127,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
@@ -142,7 +142,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
@@ -157,7 +157,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
@@ -172,7 +172,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
@@ -187,7 +187,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
@@ -216,7 +216,7 @@
         "fig:persona-modulation-full",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
@@ -240,7 +240,7 @@
         "fig:per-turn-cross",
         "app:cross-token"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json",
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
@@ -265,7 +265,7 @@
         "fig:per-turn-cross",
         "app:cross-token"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json",
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
@@ -290,7 +290,7 @@
         "fig:per-turn-cross",
         "app:cross-token"
       ],
-      "computed_at": "2026-05-05T08:58:40+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json",
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
