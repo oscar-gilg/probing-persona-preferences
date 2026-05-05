@@ -27,7 +27,7 @@ ACTIVATIONS = Path("activations/gemma-3-27b_it/persona_drift")
 OUT = Path("experiments/probe_persona_drift/results/probes")
 LAYERS = [25, 32, 39, 46, 53]
 ALPHA = 1.0
-MIXED_PERSONAS = ["default", "sadist", "villain", "pathological_liar"]
+MIXED_PERSONAS = ["default", "helpful_assistant", "sadist", "villain", "pathological_liar"]
 LABEL_POS = {"truth": "true", "harm": "harmful"}
 LABEL_NEG = {"truth": "false", "harm": "benign"}
 

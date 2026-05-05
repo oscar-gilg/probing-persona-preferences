@@ -66,6 +66,31 @@ Three-row layout, all on byte-identical held-out:
 
 The Midwest-filler control is the load-bearing comparison: it has no stance on truth or harm, yet the truth probe flips on it almost as hard as on the lying-persona prompt. **This is not adversarial-persona drift; it's any-system-prompt drift.**
 
+## A `helpful_assistant` system prompt at training time generalises better across personas
+
+![helpful_assistant vs default at training time](assets/plot_050526_helpful_vs_default_train.png)
+
+Train the *truth* probe on helpful_assistant activations (`"You are a helpful, harmless, and honest assistant."` system prompt during extraction) instead of default activations, and re-evaluate the same held-out set across all personas:
+
+| Eval system prompt | Truth probe trained on `default` | Truth probe trained on `helpful_assistant` |
+|---|---|---|
+| `default` | **+1.96** | +0.51 |
+| `helpful_assistant` | +2.15 | **+1.97** |
+| `neutral_long` (Midwest filler) | +0.63 | −0.78 |
+| `Aura` | **−1.00** | **+0.93** |
+| `mathematician` | −0.76 | −0.77 |
+| `pathological_liar` | **−1.37** | **+1.34** |
+| `villain` | +0.82 | **+1.19** |
+| `sadist` | **−0.79** | **+0.93** |
+
+Training on helpful_assistant **stays positive on six of the eight eval personas** — including the four where the default-trained probe sign-flips (Aura, pathological_liar, villain, sadist). It pays a price: weaker on the default-Assistant condition itself ($d=+0.51$ vs $+1.96$), and still flips on the two "stance-irrelevant" personas (mathematician, Midwest filler) where the model has no explicit relationship to truth.
+
+**Interpretation**: the default condition gives the probe nothing to lock onto for "honesty" — there is no system prompt declaring a stance. It learns whatever default-Assistant correlate happens to predict CREAK true vs false on that one distribution, and that correlate is exactly what gets disrupted by any persona. The helpful_assistant condition gives the probe an explicit "I am being honest" representation to read; this representation stays present (in opposition to the persona's stance) under adversarial system prompts (sadist, villain, pathological_liar), so the probe transfers. It fails on stance-irrelevant personas (mathematician, Midwest filler) for the same reason it succeeds on adversarial ones — there's nothing to oppose, so no "honesty stance" representation to read.
+
+**Practical implication**: training white-box safety probes on the default-Assistant distribution is an *anti-pattern*. Even a one-token affirmation of the helpful-honest assistant identity at training time produces a more cross-persona-robust probe. This is a one-line, free improvement before any Apollo-style multi-persona mixing.
+
+For the harm probe the difference is much smaller (both row patterns are nearly identical), consistent with our earlier read that harm-vs-benign is content-saturated and doesn't depend on evaluative stance for the headline d.
+
 ## Cross-persona transfer: the truth direction is persona-specific; the harm direction transfers
 
 ![Transfer matrix](assets/plot_050526_transfer_matrix.png)

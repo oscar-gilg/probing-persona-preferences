@@ -194,6 +194,51 @@ def transfer_matrix(date: str) -> Path:
     return out_path
 
 
+def helpful_vs_default_train(df: pd.DataFrame, date: str) -> Path:
+    """Side-by-side bars: default-trained vs helpful_assistant-trained probe,
+    each evaluated across all 8 eval personas. Two rows: truth, harm.
+
+    The interesting comparison: helpful_assistant gives the probe an explicit
+    "honest assistant" frame at training time. Does that produce a more
+    cross-persona-robust direction than training with no system prompt?
+    """
+    sub = df[df["mode"] == "cross_persona"]
+    fig, axes = plt.subplots(2, 1, figsize=(11, 8), sharex=True)
+
+    for ax, target in zip(axes, ("truth", "harm")):
+        s = sub[sub["target"] == target]
+        # For each (train_persona, eval_persona) take the best-|d| layer.
+        s = s.loc[s.groupby(["train_persona", "eval_persona"])["cohen_d"].apply(lambda x: x.abs().idxmax())]
+        order = [p for p in PERSONA_ORDER if p in s["eval_persona"].values]
+        x = np.arange(len(order))
+        width = 0.4
+        for i, train_persona in enumerate(("default", "helpful_assistant")):
+            row = s[s["train_persona"] == train_persona].set_index("eval_persona").reindex(order)
+            offset = (i - 0.5) * width
+            colors = [COLOR_POS if v >= 0 else COLOR_NEG for v in row["cohen_d"]]
+            label = "trained on default (no sysprompt)" if train_persona == "default" else "trained on helpful_assistant"
+            edge = "black" if train_persona == "helpful_assistant" else "#888"
+            ax.bar(x + offset, row["cohen_d"], width=width, color=colors,
+                   edgecolor=edge, linewidth=1.4 if train_persona == "helpful_assistant" else 0.5,
+                   hatch="" if train_persona == "default" else "//", label=label)
+        ax.axhline(0, color="black", linewidth=0.5)
+        ax.set_xticks(x)
+        ax.set_xticklabels([PERSONA_LABEL[p] for p in order], fontsize=9)
+        ax.set_ylabel("Cohen's $d$ (best layer)")
+        ax.set_title(f"{TARGET_LABELS[target]} — train on default vs helpful_assistant", loc="left", fontsize=11)
+        ax.grid(axis="y", alpha=0.3)
+        ax.legend(loc="lower left", fontsize=9, frameon=True)
+
+    axes[-1].set_xlabel("Eval system prompt")
+    fig.suptitle("A 'helpful_assistant' system prompt at training time generalises better across personas",
+                 y=1.0, fontsize=12)
+    fig.tight_layout()
+    out_path = ASSETS / f"plot_{date}_helpful_vs_default_train.png"
+    fig.savefig(out_path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    return out_path
+
+
 def main():
     ASSETS.mkdir(parents=True, exist_ok=True)
     df = pd.read_csv(RESULTS / "persona_drift_table.csv")
@@ -206,6 +251,8 @@ def main():
     print(f"  {p2}")
     p3 = transfer_matrix(date)
     print(f"  {p3}")
+    p4 = helpful_vs_default_train(df, date)
+    print(f"  {p4}")
 
 
 if __name__ == "__main__":
