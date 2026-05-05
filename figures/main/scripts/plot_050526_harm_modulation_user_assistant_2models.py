@@ -155,7 +155,7 @@ def main():
           encoder_d=enc_g_user, baseline_handle=baseline_handle)
     panel(axes[0, 1], g_assist_harm, harm_prompts, "tb-5_L32",
           "harmful", "benign",
-          "Gemma-3-27B  |  assistant end-of-turn",
+          "Gemma-3-27B  |  prefilled assistant end-of-turn",
           encoder_d=enc_g_assist, baseline_handle=baseline_handle)
     panel(axes[1, 0], q_user_harm, harm_prompts, "qwen_tb-4_L38",
           "harmful", "benign",
@@ -164,11 +164,11 @@ def main():
           encoder_d=enc_q_user, baseline_handle=baseline_handle)
     panel(axes[1, 1], q_assist_harm, harm_prompts, "qwen_tb-4_L38",
           "harmful", "benign",
-          "Qwen3.5-122B-A10B  |  assistant end-of-turn",
+          "Qwen3.5-122B-A10B  |  prefilled assistant end-of-turn",
           encoder_d=enc_q_assist, baseline_handle=baseline_handle)
 
     fig.suptitle(
-        "Persona modulation on harm: collapse at user turn, sign flip at assistant turn (Gemma)",
+        "Persona modulation on harm: collapse at user turn, sign flip at prefilled assistant turn (Gemma)",
         fontsize=11, y=1.00,
     )
     if baseline_handle[0] is not None:
