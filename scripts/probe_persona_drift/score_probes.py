@@ -30,7 +30,7 @@ PROBES_DIR = Path("experiments/probe_persona_drift/results/probes")
 RESULTS = Path("experiments/probe_persona_drift/results")
 PREF_PROBES_DIR = Path("results/probes/heldout_eval_gemma3_tb-5/probes")
 
-EVAL_PERSONAS = ["default", "sadist", "villain", "pathological_liar", "Aura", "mathematician", "neutral_long"]
+EVAL_PERSONAS = ["default", "helpful_assistant", "sadist", "villain", "pathological_liar", "Aura", "mathematician", "neutral_long"]
 LAYERS = [25, 32, 39, 46, 53]
 LABEL_POS = {"truth": "true", "harm": "harmful"}
 

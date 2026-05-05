@@ -23,6 +23,7 @@ ASSETS = Path("experiments/probe_persona_drift/assets")
 # Persona ordering: default first, then non-adversarial controls, then adversarial.
 PERSONA_ORDER = [
     "default",
+    "helpful_assistant",
     "neutral_long",
     "Aura",
     "mathematician",
@@ -33,7 +34,8 @@ PERSONA_ORDER = [
 
 # Display labels (kept short for x-tick / legend readability).
 PERSONA_LABEL = {
-    "default": "default",
+    "default": "default\n(no sysprompt)",
+    "helpful_assistant": "helpful\nassistant",
     "neutral_long": "neutral_long\n(Midwest filler)",
     "Aura": "Aura",
     "mathematician": "mathematician",
@@ -45,6 +47,7 @@ PERSONA_LABEL = {
 # Persona color map used in train-size sweep (need 7 distinguishable lines).
 PERSONA_COLORS = {
     "default": "#2c7fb8",
+    "helpful_assistant": "#5ba3d4",
     "neutral_long": "#7fcdbb",
     "Aura": "#41ab5d",
     "mathematician": "#bdbdbd",

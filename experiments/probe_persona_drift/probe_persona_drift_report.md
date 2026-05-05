@@ -2,7 +2,8 @@
 
 ## Headline
 
-- **A truth probe trained on the default Assistant sign-flips on every other system prompt we tested**, including a stance-neutral Midwest-biography filler. Default eval Cohen's $d = +1.89$; persona evals fall to $d \in [-1.12, -0.51]$. This is on byte-identical (user prompt, prefilled response) pairs — only the system prompt changes, so the drift comes from the model's *internal representation*, not from input distribution.
+- **A truth probe trained on the default Assistant sign-flips on every persona-content system prompt we tested**, including the stance-neutral Midwest-biography filler. Default eval Cohen's $d = +1.89$; persona evals fall to $d \in [-1.12, -0.51]$. This is on byte-identical (user prompt, prefilled response) pairs — only the system prompt changes, so the drift comes from the model's *internal representation*, not from input distribution.
+- **Critical control:** a `helpful_assistant` system prompt ("You are a helpful, harmless, and honest assistant.") gives $d = +2.14$ — slightly *higher* than no system prompt at all. So the drift is not a sysprompt-presence artefact. **The flipping is specifically driven by persona-content that pushes the model out of its default Assistant stance**, not by the mere presence of a system prompt.
 - **A harm probe degrades 2–3× but does not flip sign** ($d=+7.29$ default → $d \in [+2.6, +3.6]$ across personas). AUC stays $\geq 0.93$. The harm probe is content-saturated (default AUC = 1.00 on BailBench/HarmBench vs Alpaca/WildChat), so $d$ is the more informative metric here.
 - **The existing user-EOT preference probe (paper §3.1 baseline) drifts more gracefully than a purpose-built truth probe.** Applied to the same truth held-out set, it stays positive on 6 of 7 system prompts (only `pathological_liar` flips). Purpose-built probes are *more* persona-vulnerable, not less.
 - **Drift grows with training-set size.** With 50 training items every persona's $d$ sits in [+1.2, +2.2]; at 4000 items the default-eval $d$ stays high while every persona-eval $d$ collapses or inverts. More data makes the probe lock harder onto a default-Assistant-specific feature.
@@ -50,15 +51,16 @@ Three-row layout, all on byte-identical held-out:
 - **Middle row (harm probe).** No flips. Every persona keeps $d > +2.5$ and AUC $\geq 0.93$. The default $d=+7.29$ is suspiciously large — default AUC is 1.00, meaning the probe is reading "BailBench/HarmBench style vs Alpaca/WildChat style", which is trivial to separate. Persona-induced shift is real but partly masked by content saturation.
 - **Bottom row (preference probe applied to truth).** Drifts less catastrophically than the purpose-built truth probe — only `pathological_liar` flips.
 
-| Eval system prompt | Truth probe $d$ | (AUC) | Harm probe $d$ | (AUC) | Preference probe $d$ on truth | (AUC) |
-|---|---|---|---|---|---|---|
-| `default` | **+1.89** | 0.92 | **+7.29** | 1.00 | **+2.20** | 0.94 |
-| `neutral_long` | −0.51 | 0.35 | +3.62 | 0.99 | +1.03 | 0.77 |
-| `Aura` | −1.05 | 0.23 | +2.70 | 0.96 | +0.93 | 0.74 |
-| `mathematician` | −0.84 | 0.27 | +3.47 | 0.99 | +1.40 | 0.85 |
-| `pathological_liar` | **−1.12** | 0.21 | +2.79 | 0.97 | **−1.26** | 0.18 |
-| `villain` | −0.91 | 0.26 | +3.27 | 0.98 | +1.01 | 0.78 |
-| `sadist` | −0.71 | 0.31 | +2.63 | 0.97 | +0.50 | 0.64 |
+| Eval system prompt | Truth probe $d$ | Harm probe $d$ | Preference probe $d$ on truth |
+|---|---|---|---|
+| `default` (no sysprompt) | **+1.89** | **+7.29** | **+2.20** |
+| `helpful_assistant` *(control)* | **+2.14** | **+6.94** | **+2.51** |
+| `neutral_long` (Midwest filler) | −0.51 | +3.62 | +1.03 |
+| `Aura` | −1.05 | +2.70 | +0.93 |
+| `mathematician` | −0.84 | +3.47 | +1.40 |
+| `pathological_liar` | **−1.12** | +2.79 | **−1.26** |
+| `villain` | −0.91 | +3.27 | +1.01 |
+| `sadist` | −0.71 | +2.63 | +0.50 |
 
 (Best layer per persona; truth/harm at largest train size.)
 
