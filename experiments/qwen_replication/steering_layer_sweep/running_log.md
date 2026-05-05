@@ -17,9 +17,33 @@
 
 ### Phase A positive control
 - Config: `configs/steering/qwen_layer_sweep/positive_control_tb1_L38.yaml` (5 pairs, 1 trial, c=+0.05 only).
-- First run failed with `ModuleNotFoundError: requests`. Fixed; re-launched.
-- Model download in progress on first launch (~244GB BF16 weights to /opt/hf_cache, fresh pod).
-- Pass criterion: P(chose steered) > 0.6 on 5 pairs.
+- Run 1: failed with `ModuleNotFoundError: requests`. Fixed (uv pip install requests on pod).
+- Run 2: model downloaded fully (~244GB to /opt/hf_cache); OOM during load at 35% of 831 weight chunks. Cause: `device_map="cuda"` (single GPU) instead of auto-shard across 2× A100 80GB. Total params don't fit on one 80GB GPU at BF16.
+- Fix: extended `RunConfig` with `device` + `max_memory` fields; added `device: auto` and `max_memory: {0: 70GiB, 1: 70GiB}` to all Qwen YAMLs. Backward-compatible — defaults preserve old behavior.
+- Run 3: load succeeded (29s) but with **disk offload** — 244GB model > 140GB total GPU memory; HF spilled some weights to disk. Generation crashed with **`AttributeError: 'LinearAttentionLayer' object has no attribute 'keys'`** in `_batch_generate` (line 509).
+
+### BLOCKER: Qwen3.5 hybrid attention vs steering runner
+
+Qwen3.5-122B-A10B uses **hybrid attention**: some layers are standard full-attention with K/V cache, others are linear-attention layers with recurrent state and **no `.keys` / `.values`** attributes. The steering runner's batched generation stacks KV caches across the batch dim by iterating `cache.layers[li].keys`, which fails on the linear-attention layers.
+
+This pattern is used in:
+- `_batch_generate` (line 505-513): stacks N caches across N multipliers/trials into one big cache for parallel generation.
+- `_batch_generate_from_interpolated_caches` (line 545-549): builds clean+delta caches for interpolation.
+- `combine_caches` / `modify_cache_kv_at_positions` in `src/steering/kv_cache.py` (used by `SteeredHFClient` too).
+
+The whole steering codebase assumes uniform full-attention KV caches — never tested on hybrid models.
+
+Pod paused. GPU billing stopped. /opt/hf_cache (244GB Qwen weights) will be wiped on resume.
+
+### Decision pending
+
+Path forward options:
+1. **Patch the runner** to detect linear-attention layers and (a) skip them when stacking, replicating their state per batch element, OR (b) use a unified Cache class that handles both. Substantial — needs deeper investigation of Qwen3.5's cache types.
+2. **Drop batching across multipliers**, run sequentially. ~4-8× slower Phase A (20-40 hr instead of 5). Surgical runner change.
+3. **Switch model**: Qwen2.5-72B has standard attention, fits in 2× 80GB at BF16, but probe was trained on Qwen3.5 specifically. Means re-extraction + re-probe-training before any steering. Several hours of additional GPU work upfront.
+4. **Punt cross-model replication**: ship Gemma-only Fig. 5 in the paper.
+
+Plus a separate concern: even with linear attention fixed, the disk offload would slow generation substantially. To fit fully in GPU: 4× A100 80GB (~320GB), or INT8 quantization (~122GB, fits in 2×80GB), or H100 NVL ×2 (188GB, still not enough at BF16).
 
 ### Bundling decision
 - Spec assumed 12 separate configs. With model load ~20-30 min from cold, that'd be 4-6 hours of pure load overhead.
