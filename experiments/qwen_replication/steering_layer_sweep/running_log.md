@@ -35,15 +35,17 @@ The whole steering codebase assumes uniform full-attention KV caches — never t
 
 Pod paused. GPU billing stopped. /opt/hf_cache (244GB Qwen weights) will be wiped on resume.
 
-### Decision pending
+### Resolution
 
-Path forward options:
-1. **Patch the runner** to detect linear-attention layers and (a) skip them when stacking, replicating their state per batch element, OR (b) use a unified Cache class that handles both. Substantial — needs deeper investigation of Qwen3.5's cache types.
-2. **Drop batching across multipliers**, run sequentially. ~4-8× slower Phase A (20-40 hr instead of 5). Surgical runner change.
-3. **Switch model**: Qwen2.5-72B has standard attention, fits in 2× 80GB at BF16, but probe was trained on Qwen3.5 specifically. Means re-extraction + re-probe-training before any steering. Several hours of additional GPU work upfront.
-4. **Punt cross-model replication**: ship Gemma-only Fig. 5 in the paper.
+The qwen_persona_vectors team already shipped Qwen3.5-122B steering on 4× A100 80GB using `SteeredHFClient` with hook-based generation (`scripts/persona_vectors/run_phase7_pairwise_validation.py`). That pattern keeps the steering hook installed during a single `model.generate()` call — `position_selective_steering` is no-op during autoregressive gen (resid.shape[1] == 1), so contrastive math is identical to cache-mode but no manual cache stacking.
 
-Plus a separate concern: even with linear attention fixed, the disk offload would slow generation substantially. To fit fully in GPU: 4× A100 80GB (~320GB), or INT8 quantization (~122GB, fits in 2×80GB), or H100 NVL ×2 (188GB, still not enough at BF16).
+Implemented in this session:
+- Added `generation_mode: hook_per_call` config option to `RunConfig`.
+- New branch in `_run_differential_condition`: loops over multipliers, calls `hf_model.generate_with_hook_n` once per (pair, ordering, mult). No batching across multipliers, but n_trials still batched as `num_return_sequences`.
+- Set `generation_mode: hook_per_call` and `max_memory: {0/1/2/3: 65GiB}` (260GiB total, fits 244GB BF16 with headroom) in all Qwen YAMLs.
+- Cost: ~3-4× slower per (pair, ordering) than batched_cache. Phase A budget revised to ~12-15 hr on 4× A100.
+
+Pod for the second attempt: `qwen-steering-4gpu` (4× A100-SXM4-80GB, 500GB disk). Old `qwen-steering-sweep` pod paused.
 
 ### Bundling decision
 - Spec assumed 12 separate configs. With model load ~20-30 min from cold, that'd be 4-6 hours of pure load overhead.
