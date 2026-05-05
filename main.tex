@@ -125,16 +125,11 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 \subsection{The preference vector tracks preference shifts under the evil persona}
 \label{sec:induced-roleplay}
 
-We construct paired harmful vs.\ benign tasks on BailBench (\bailbenchHarmNHarmful{} per class; App.~\ref{app:corpus-aux}). Each task is fed as a user question, and we read the probe at the user end-of-turn token. The probe is the canonical linear probe from \S\ref{sec:method}: L\gemmaClassificationProbeLayer{} on Gemma, L\qwenClassificationProbeLayer{} on Qwen (App.~\ref{app:cross-token}), inside the probe-quality plateau (L26--35 on Gemma; App.~\ref{app:probe-geometry}). Cohen's $d$ between the two classes measures how cleanly the probe separates them.
+We find that \textbf{the probe tracks persona-induced preference shifts on harmful tasks}. Under the default Assistant persona (without a system prompt), the probe discriminates harmful from benign tasks at $|d| = \bailbenchHarmAbsoluteCohensD$ for Gemma and $|d| \approx 0.64$ for Qwen, on a dataset of 1{,}000 held-out tasks (500 harmful BailBench prompts paired with LLM-rewritten benign analogues, see App.~\ref{app:corpus-aux}). When prepending an evil-persona system prompt, which we verify induces reliable and expected preference shifts (App.~\ref{app:roleplay-prompts}), the discrimination collapses toward zero on both models, with $|d| \approx 0.26$ on Gemma and $|d| \approx 0.31$ on Qwen (Fig.~\ref{fig:harm-modulation}).
 
-\textbf{The probe tracks persona-induced shifts on harm} (Fig.~\ref{fig:harm-modulation}). With no system prompt, the Gemma probe separates harmful from benign at $|d| = \bailbenchHarmAbsoluteCohensD$ at the user end-of-turn and at $|d| \approx 4.53$ at the prefilled assistant end-of-turn; Qwen is weaker on both. Under inverting personas:
-\begin{itemize}
-\item At the user end-of-turn, the \textit{evil} persona collapses the harmful/benign separation toward zero on both models, while the text-encoder baseline holds its $|d|$.
-\item At the prefilled assistant end-of-turn (where the task is instead prefilled as the assistant's response), on Gemma the separation flips sign cleanly ($d = \harmDUnderNeutralPersona \to +\harmDUnderSadistPersona$); on Qwen it collapses without flipping. The text-encoder baseline does not flip.
-\item As a control, the non-inverting \textit{Aura} persona preserves the sign at reduced magnitude on both turn positions, ruling out the alternative that any sufficiently strong persona prompt flattens or flips the readout.
-\end{itemize}
+\textbf{We also find that the preference vector generalises to assistant token turns.} When we prefill benign and harmful responses to tasks, we observe that the preference vector scores benign tasks higher under the default Assistant persona at $|d| \approx 4.53$ on Gemma and $|d| \approx 2.62$ on Qwen, \textbf{but scores the harmful responses higher on Gemma under the evil persona system prompt} ($d = +\harmDUnderSadistPersona$). On Qwen the readout under evil drops sharply to $|d| \approx 0.31$. As a control, the \emph{aura} persona preserves the default Assistant's discrimination on both models and both turn positions, ruling out that persona prompts simply flatten or scramble the readout.
 
-A sign flip is the strong form of the evaluative claim: the probe is reading the model's evaluation, not just the task's descriptive features (a magnitude collapse is also consistent with the persona disrupting probe geometry without inverting it). The Gemma prefilled-assistant-turn flip is the cleanest evidence we have that the LM probe carries evaluative structure that a text encoder trained on the same utilities does not match. None of these labels (truth, harm, politics) appeared during probe training; the readout's tracking of role-played evaluation is consistent with reading the direction as the model's evaluative orientation rather than as encoding fixed task descriptors.
+This dissociation indicates an evaluative representation. A text-encoder baseline (Qwen3-Embedding-8B) trained on the same utilities is primarily but not purely descriptive (it is fit to an evaluative target) and reads off task content rather than model valuations. Under the evil prompt the encoder still discriminates harmful from benign at $|d| \approx 1.17$ on Gemma and $|d| \approx 1.62$ on Qwen at the user turn, and at $|d| \approx 1.34$ and $|d| \approx 2.77$ at the prefilled assistant turn, while the LM probe collapses or inverts on the same prompt change. That this pattern holds at both turn positions suggests the representation is general across token positions, and the clean Gemma inversion under evil foreshadows the cross-persona finding in \S\ref{sec:shared}: the Assistant-trained probe reads out evil's evaluation when evil is the active persona.
 
 \begin{figure}[!t]
   \centering
@@ -189,15 +184,15 @@ The finding generalises beyond Assistant-as-source. Across all $7 \times 7$ orde
 
 Transfer is also not perfect: probes carry a measurable bias toward the persona they were trained on (see App.~\ref{app:persona-bias}). The picture is nuanced: there is representational reuse across personas, but they do not represent their preferences via exactly the same mechanism. We also find the same cross-persona generalisation effect in character-fine-tuned personas in Llama-3.1-8b (App.~\ref{app:evaluative-evidence}).
 
-\subsection{Steering along each persona's own direction shifts its choices}
+\subsection{Steering along the Assistant direction shifts every persona's choices}
 \label{sec:shared-steering}
 
-For each persona, we steer along its own preference vector using the same contrastive and single-task setups as in \S\ref{sec:method-val2}. Every persona responds (Fig.~\ref{fig:cross-persona-steering}): contrastive steering moves $P(\text{first task picked})$ from $\approx 0.29$ at $c=-0.05$ to $\approx 0.84$ at $c=+0.05$ on average across the six personas (mean swing $\approx 0.56$, ranging $0.43$--$0.70$ per persona); single-task steering recovers roughly half this swing per side. The preference vector is a persona-independent causal handle on choice.
+We steer along the \emph{same} Assistant-trained preference vector while running each persona, in both setups from \S\ref{sec:method-val2}: \emph{contrastive} steering (push $+c$ on one task and $-c$ on the other in the same forward pass) and \emph{single-task} steering (push only one task's span). Every persona responds (Fig.~\ref{fig:cross-persona-steering}): contrastive steering moves $P(\text{first task picked})$ from $\approx 0.29$ at $c=-0.05$ to $\approx 0.84$ at $c=+0.05$ on average across the six personas (mean swing $\approx 0.56$, ranging $0.43$--$0.70$ per persona); single-task steering recovers roughly half this swing per side. A single direction --- one trained on the Assistant alone --- serves as a persona-independent causal handle on choice.
 
 \begin{figure}[!t]
   \centering
   \includegraphics[width=0.9\linewidth]{plot_050526_cross_persona_perprobe_steering.png}
-  \caption{\textbf{Cross-persona steering at layer \crossPersonaUnilateralInjectionLayer.} Each persona's own probe, contrastive vs.\ single-task. $P(\text{first task picked})$ vs.\ signed coefficient.}
+  \caption{\textbf{Cross-persona steering at layer \crossPersonaUnilateralInjectionLayer{} with the Assistant probe.} Three steering modes per persona: \emph{contrastive} (green; $+c$ on 1st task, $-c$ on 2nd) and \emph{single-task} on the 1st (blue) or the 2nd (orange) task only. $P(\text{1st task picked})$ vs.\ signed steering coefficient.}
   \label{fig:cross-persona-steering}
 \end{figure}
 
