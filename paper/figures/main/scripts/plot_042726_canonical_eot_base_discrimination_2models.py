@@ -1,7 +1,7 @@
 """Two-model end-of-turn base discrimination figure (Gemma + Qwen, user-turn, neutral).
 
 2 rows x 2 cols of violin panels:
-    Top row    Gemma-3-27B  : Truth (tb-5_L32),   Harm (tb-5_L39)
+    Top row    Gemma-3-27B  : Truth (tb-5_L32),   Harm (tb-5_L32)
     Bottom row Qwen-3.5-122B: Truth (qwen_tb-4_L38), Harm (qwen_tb-4_L38)
 
 Gemma panels include the nonsense control violin (3 violins). Qwen panels show
@@ -21,6 +21,8 @@ import numpy as np
 REPO = Path(__file__).resolve().parents[3].parent  # repo root
 GEMMA_PARENT = REPO / "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
 QWEN_USER_TURN = REPO / "experiments/eot_discrimination_v2/scoring/qwen35_122b/user_turn_scoring_results.json"
+ENCODER_GEMMA = REPO / "experiments/descriptive_baseline_extensions/eot_baseline_user_gemma-3-27b.json"
+ENCODER_QWEN = REPO / "experiments/descriptive_baseline_extensions/eot_baseline_user_qwen-3.5-122b.json"
 OUT_PATH = REPO / "paper/figures/main/plot_042726_canonical_eot_base_discrimination_2models.png"
 
 # Match colors used in the reference Gemma plot
@@ -72,8 +74,19 @@ def qwen_neutral_user_turn(domain, probe, c_pos, c_neg):
     return pos, neg
 
 
+def load_encoder_neutral_d(path: Path, domain: str) -> float | None:
+    if not path.exists():
+        return None
+    with open(path) as f:
+        d = json.load(f)
+    for r in d["rows"]:
+        if r["domain"] == domain and r["system_prompt"] == "neutral":
+            return r["cohen_d"]
+    return None
+
+
 def violin_panel(ax, series, colors_used, tick_labels, title_top, d, lo, hi,
-                 n_pos, n_neg, ylabel=None):
+                 n_pos, n_neg, ylabel=None, encoder_d=None):
     positions = list(range(len(series)))
     parts = ax.violinplot(series, positions=positions, widths=0.7,
                           showmeans=True, showextrema=False)
@@ -87,10 +100,10 @@ def violin_panel(ax, series, colors_used, tick_labels, title_top, d, lo, hi,
     ax.set_xticklabels(tick_labels, fontsize=9)
     ax.axhline(0, color="black", linewidth=0.5, linestyle="--")
     ax.grid(axis="y", alpha=0.3)
-    ax.set_title(
-        f"{title_top}\n(d = {d:+.2f} [{lo:+.2f}, {hi:+.2f}], n = {n_pos}/{n_neg})",
-        fontsize=10,
-    )
+    title_extra = f"(d = {d:+.2f} [{lo:+.2f}, {hi:+.2f}], n = {n_pos}/{n_neg})"
+    if encoder_d is not None:
+        title_extra += f"  [enc d = {encoder_d:+.2f}]"
+    ax.set_title(f"{title_top}\n{title_extra}", fontsize=10)
     if ylabel:
         ax.set_ylabel(ylabel)
 
@@ -101,7 +114,7 @@ def main():
         "truth", "tb-5_L32", "true", "false"
     )
     g_harm_pos, g_harm_neg, g_harm_non = gemma_neutral_user_turn(
-        "harm", "tb-5_L39", "harmful", "benign"
+        "harm", "tb-5_L32", "harmful", "benign"
     )
     d_g_truth, lo_g_truth, hi_g_truth = cohen_d_with_ci(g_truth_pos, g_truth_neg)
     d_g_harm, lo_g_harm, hi_g_harm = cohen_d_with_ci(g_harm_pos, g_harm_neg)
@@ -142,9 +155,10 @@ def main():
         series=[g_harm_pos, g_harm_neg],
         colors_used=[COLORS["harmful"], COLORS["benign"]],
         tick_labels=["harmful", "benign"],
-        title_top="Gemma-3-27B — Harm (BailBench+STRESS-TEST)",
+        title_top="Gemma-3-27B — Harm (BailBench)",
         d=d_g_harm, lo=lo_g_harm, hi=hi_g_harm,
         n_pos=len(g_harm_pos), n_neg=len(g_harm_neg),
+        encoder_d=enc_g_harm,
     )
 
     # axes[2]: Qwen truth
@@ -156,6 +170,7 @@ def main():
         title_top="Qwen3.5-122B-A10B — Truth (CREAK)",
         d=d_q_truth, lo=lo_q_truth, hi=hi_q_truth,
         n_pos=len(q_truth_pos), n_neg=len(q_truth_neg),
+        encoder_d=enc_q_truth,
     )
 
     # axes[3]: Qwen harm
@@ -164,9 +179,10 @@ def main():
         series=[q_harm_pos, q_harm_neg],
         colors_used=[COLORS["harmful"], COLORS["benign"]],
         tick_labels=["harmful", "benign"],
-        title_top="Qwen3.5-122B-A10B — Harm (BailBench+STRESS-TEST)",
+        title_top="Qwen3.5-122B-A10B — Harm (BailBench)",
         d=d_q_harm, lo=lo_q_harm, hi=hi_q_harm,
         n_pos=len(q_harm_pos), n_neg=len(q_harm_neg),
+        encoder_d=enc_q_harm,
     )
 
     fig.suptitle(
