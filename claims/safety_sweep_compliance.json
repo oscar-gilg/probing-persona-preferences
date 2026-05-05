@@ -9,7 +9,7 @@
       "used_in": [
         "app:safety-footprint"
       ],
-      "computed_at": "2026-05-04T22:35:21+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [
         "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
@@ -23,7 +23,7 @@
       "used_in": [
         "app:safety-footprint"
       ],
-      "computed_at": "2026-05-04T22:35:21+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [
         "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
@@ -37,7 +37,7 @@
       "used_in": [
         "app:safety-footprint"
       ],
-      "computed_at": "2026-05-04T22:35:21+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [
         "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
@@ -51,7 +51,7 @@
       "used_in": [
         "app:safety-footprint"
       ],
-      "computed_at": "2026-05-04T22:35:21+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [
         "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
@@ -65,7 +65,7 @@
       "used_in": [
         "app:safety-footprint"
       ],
-      "computed_at": "2026-05-04T22:35:21+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [
         "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
@@ -126,7 +126,7 @@
         "app:safety-footprint",
         "fig:safety-override"
       ],
-      "computed_at": "2026-05-04T22:35:21+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [
         "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],
@@ -140,7 +140,7 @@
       "used_in": [
         "app:safety-footprint"
       ],
-      "computed_at": "2026-05-04T22:35:21+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [
         "experiments/old_experiments/steering/open_ended_steering/safety_steering/compliance.jsonl"
       ],

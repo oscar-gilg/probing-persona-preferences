@@ -67,7 +67,7 @@
         "app:evaluative-evidence",
         "app:evaluative-evidence"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:45:44+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -81,7 +81,7 @@
       "used_in": [
         "app:evaluative-evidence"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:45:44+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -95,7 +95,7 @@
       "used_in": [
         "app:evaluative-evidence"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:45:44+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -109,7 +109,7 @@
       "used_in": [
         "app:evaluative-evidence"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:45:44+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -123,7 +123,7 @@
       "used_in": [
         "app:evaluative-evidence"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:45:44+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -137,7 +137,7 @@
       "used_in": [
         "app:evaluative-evidence"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:45:44+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -151,7 +151,7 @@
       "used_in": [
         "app:evaluative-evidence"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:45:44+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -166,7 +166,7 @@
         "fig:character",
         "app:evaluative-evidence"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:45:44+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -181,7 +181,7 @@
         "fig:character",
         "app:evaluative-evidence"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:45:44+00:00",
       "data_paths": [],
       "derivation": "constant (length of PERSONAS list)."
     },
@@ -195,7 +195,7 @@
         "app:evaluative-evidence",
         "fig:character"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:45:44+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
@@ -211,7 +211,7 @@
         "app:evaluative-evidence",
         "fig:character"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:45:44+00:00",
       "data_paths": [
         "results/probes/character_probes/cross_eval/cross_eval_results.json"
       ],
