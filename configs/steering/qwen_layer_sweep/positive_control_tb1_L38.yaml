@@ -1,0 +1,23 @@
+model: qwen3.5-122b-nothink
+max_new_tokens: 64
+pairs_path: experiments/qwen_replication/steering_layer_sweep/steering_pairs_50.json
+probe_manifest: results/probes/qwen35_122b/qwen35_122b_heldout_turn_boundary_m1/
+checkpoint_path: experiments/qwen_replication/steering_layer_sweep/checkpoints/positive_control_tb1_L38.jsonl
+mean_norm:
+  38: 5.810032367706299
+n_trials: 1
+temperature: 1.0
+seed: 42
+n_pairs: 5
+template_path: src/measurement/elicitation/prompt_templates/data/completion_preference.yaml
+conditions:
+- name: positive_control_tb1_L38
+  cache_injection: differential
+  probe: ridge_L38
+  layers:
+  - 38
+  multipliers:
+  - 0.05
+  spans:
+    first: 1
+    second: -1

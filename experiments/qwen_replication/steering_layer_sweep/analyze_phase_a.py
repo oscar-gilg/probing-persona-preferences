@@ -41,7 +41,11 @@ SELECTOR_DISPLAY = {"tb1": "tb-1 (final-prompt)", "tb4": "tb-4 (\\n after im_end
 LAYERS = [12, 24, 28, 33, 38, 43]
 MULTIPLIERS = [-0.05, -0.03, 0.03, 0.05]
 
-FILENAME_RE = re.compile(r"^phase_a_(?P<selector>tb1|tb4)_L(?P<layer>\d+)\.parsed\.jsonl$")
+# Discover either per-cell (`phase_a_<sel>_L<L>.parsed.jsonl`) OR bundled
+# (`phase_a_<sel>_bundled.parsed.jsonl`) output. Bundled rows carry their layer
+# in `r["layer"]` so we group by that.
+PER_CELL_RE = re.compile(r"^phase_a_(?P<selector>tb1|tb4)_L(?P<layer>\d+)\.parsed\.jsonl$")
+BUNDLED_RE = re.compile(r"^phase_a_(?P<selector>tb1|tb4)_bundled\.parsed\.jsonl$")
 
 
 def _load_parsed(path: Path) -> list[dict]:
@@ -57,14 +61,21 @@ def _load_parsed(path: Path) -> list[dict]:
 def _discover() -> dict[str, dict[int, list[dict]]]:
     out: dict[str, dict[int, list[dict]]] = {s: {} for s in SELECTORS}
     for path in sorted(CHECKPOINTS_DIR.glob("*.parsed.jsonl")):
-        m = FILENAME_RE.match(path.name)
-        if not m:
-            continue
-        sel = m.group("selector")
-        layer = int(m.group("layer"))
-        rows = _load_parsed(path)
-        out[sel][layer] = rows
-        print(f"  {path.name}: {len(rows)} rows")
+        m_bundled = BUNDLED_RE.match(path.name)
+        m_cell = PER_CELL_RE.match(path.name)
+        if m_bundled:
+            sel = m_bundled.group("selector")
+            rows = _load_parsed(path)
+            print(f"  {path.name}: {len(rows)} rows (bundled)")
+            for r in rows:
+                L = int(r["layer"])
+                out[sel].setdefault(L, []).append(r)
+        elif m_cell:
+            sel = m_cell.group("selector")
+            layer = int(m_cell.group("layer"))
+            rows = _load_parsed(path)
+            print(f"  {path.name}: {len(rows)} rows")
+            out[sel][layer] = rows
     return out
 
 
