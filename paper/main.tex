@@ -77,7 +77,7 @@ Two questions structure our investigation:
 
 \paragraph{Contributions.} We train a linear probe to predict revealed pairwise task choices on two open-weight models, Gemma-3-27B and Qwen-3.5-122B, and report three findings:
 \begin{itemize}
-\item \textbf{We find a preference vector which generalises to outt-of-distribution preferences, and controls model choice} (\S\ref{sec:method}). The probe predicts held-out and cross-topic preferences, beating a text-encoder baseline. Contrastive steering along the vector near-completely controls pairwise choice; a random direction at matched magnitude has no effect.
+\item \textbf{We find a preference vector which generalises to out-of-distribution preferences, and controls model choice} (\S\ref{sec:method}). The probe predicts held-out and cross-topic preferences, beating a text-encoder baseline. Contrastive steering along the vector near-completely controls pairwise choice; a random direction at matched magnitude has no effect.
 \item \textbf{The preference vector is an evaluative representation} (\S\ref{sec:method}). When system prompts or role-play change which tasks the model prefers, including on harm, truth, and politics, the vector's readout shifts accordingly, with sign flips on harm and truth under inverting personas that a text-encoder baseline does not match.
 \item \textbf{The same preference vector is shared across qualitatively different personas} (\S\ref{sec:shared}). The Assistant probe predicts and steers preferences for personas including ``evil'' (whose preferences anti-correlate with the Assistant's) and character-fine-tuned variants. What positive steering does is persona-specific: under evil it amplifies evilness, under the Assistant it strengthens engagement and compliance, not evilness. This makes white-box safety methods that train probes in one persona vulnerable to persona shifts in deployment.
 \end{itemize}
@@ -85,17 +85,19 @@ Two questions structure our investigation:
 \section{The preference vector tracks subjective valence}
 \label{sec:method}
 
-We train a Ridge probe on residual-stream activations of Gemma-3-27B~\citep{gemmateam2025gemma3} and Qwen-3.5-122B~\citep{qwenteam2025qwen3} to predict per-task scalar utilities derived from pairwise task choices via a utility model~\citep{mazeika2025utility} (Fig.~\ref{fig:pipeline}). We validate the resulting preference vector along two axes: (A) \emph{predictive transfer}, where the probe predicts held-out and cross-topic preferences, and (B) \emph{causal steering}, where steering controls pairwise choice. 
+We train a linear probe on residual-stream activations of Gemma-3-27B~\citep{gemmateam2025gemma3} and Qwen-3.5-122B~\citep{qwenteam2025qwen3} to predict per-task scalar utilities derived from pairwise task choices via a utility model~\citep{mazeika2025utility} (Fig.~\ref{fig:pipeline}). We validate the resulting preference vector along two axes: (A) \emph{predictive transfer}, where the probe predicts held-out and cross-topic preferences, and (B) \emph{causal steering}, where steering controls pairwise choice. 
 
 \subsection{Methodology}
 \label{sec:method-revealed}
 
-We elicit pairwise task choices from each model over a \legacyTaskPoolSize{}-task pool spanning WildChat~\citep{zhao2024wildchat}, Alpaca~\citep{taori2023alpaca}, MATH~\citep{hendrycks2021math}, BailBench~\citep{ensign2025bailbench}, and STRESS-TEST~\citep{zhang2025stresstest} (App.~\ref{app:corpus}), split into 6{,}000 tasks for probe training and a 4{,}000-task held-out eval set (2{,}000 for Ridge $\alpha$ selection, 2{,}000 for evaluation). Each task is also assigned to one of 14 LLM-classified \emph{topics} (e.g.\ \texttt{math}, \texttt{coding}, \texttt{fiction}; full list and methodology in App.~\ref{app:topics}). We adapt the measurement pipeline of \citet{mazeika2025utility}: a Thurstonian utility model converts actively sampled pairwise choices into per-task scalar utilities. We then train a Ridge probe on the residual-stream activations of each task prompt, to predict these utilities (Fig.~\ref{fig:pipeline}). We found that activations at the first turn-boundary token had the highest signal and causal effect (see App.~\ref{app:token-selection}). Probing layers are selected per model on the held-out eval split (App.~\ref{app:probe-geometry}). Probes are trained on one utility measurement run and evaluated on independent runs to avoid leakage. The probe predicts held-out utilities at $r \approx \positionSweepGemmaEndofturnBestR$ in-distribution and $r \approx \gemmaProbeCrossTopicPooledR$ under leave-one-topic-out on Gemma, beating a Qwen3-Embedding-8B text-encoder content baseline (App.~\ref{app:cross-topic}).
+We follow the utility-engineering paradigm of \citet{mazeika2025utility}: we present the model with two tasks at a time and have it pick one to complete, and aggregate the resulting choices into per-task scalar utilities via a probabilistic choice model. Each task is assigned a latent utility $\mu_i \in \mathbb{R}$ and we fit utilities by maximum likelihood given the observed pairwise choices.
+
+We do this on a 6{,}000-task pool spanning WildChat~\citep{zhao2024wildchat}, Alpaca~\citep{taori2023alpaca}, MATH~\citep{hendrycks2021math}, BailBench~\citep{ensign2025bailbench}, and STRESS-TEST~\citep{zhang2025stresstest} (App.~\ref{app:corpus}), split into 6{,}000 tasks for probe training and a 2{,}000-task held-out test set. Each task is also assigned to one of 14 LLM-classified \emph{topics} (e.g.\ \texttt{math}, \texttt{coding}, \texttt{fiction}; full list and methodology in App.~\ref{app:topics}). We train a linear probe to predict utilities on residual-stream activations at the \textit{end-of-turn} token of each task prompt (Fig.~\ref{fig:pipeline}); App.~\ref{app:token-selection} shows that this position carries the highest signal and causal effect. probing layers are selected per model on the held-out eval split (App.~\ref{app:probe-geometry}); probes are trained on one utility-measurement run and evaluated on independent runs to avoid leakage. The probe predicts held-out utilities at $r \approx \positionSweepGemmaEndofturnBestR$ in-distribution and $r \approx \gemmaProbeCrossTopicPooledR$ under leave-one-topic-out on Gemma, beating a Qwen3-Embedding-8B text-encoder content baseline (App.~\ref{app:cross-topic}).
 
 \begin{figure}[!t]
   \centering
   \includegraphics[width=0.7\linewidth]{panels/methodology_boxes.pdf}
-  \caption{\textbf{Probe training pipeline.}}
+  \caption{\textbf{Probe training pipeline.} Pairwise task choices elicited from the model are aggregated into per-task scalar utilities $\mu$ via a probabilistic choice model~\citep{mazeika2025utility}. A linear probe is then fit on residual-stream activations at the end-of-turn token to predict these utilities.}
   \label{fig:pipeline}
 \end{figure}
 
@@ -123,7 +125,7 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 \subsection{The preference vector tracks preference shifts on harm induced by role-playing}
 \label{sec:induced-roleplay}
 
-We construct paired harmful vs.\ benign stimuli on BailBench (\bailbenchHarmNHarmful{} per class; App.~\ref{app:corpus-aux}). Each stimulus is \textbf{prefilled} into the assistant's response to a fixed user question, and we read the probe at the end-of-turn token (Fig.~\ref{fig:induced-shifts}). The probe is the canonical Ridge probe from \S\ref{sec:method}: L\gemmaClassificationProbeLayer{} on Gemma, L\qwenClassificationProbeLayer{} on Qwen (App.~\ref{app:cross-token}), inside the probe-quality plateau (L26--35 on Gemma; App.~\ref{app:probe-geometry}). Cohen's $d$ between the two classes measures how cleanly the probe separates them.\footnote{Cohen's $d$ is the standardised mean difference between the two classes in units of pooled standard deviation; $|d| \approx 2$ corresponds to clean separation.}
+We construct paired harmful vs.\ benign stimuli on BailBench (\bailbenchHarmNHarmful{} per class; App.~\ref{app:corpus-aux}). Each stimulus is \textbf{prefilled} into the assistant's response to a fixed user question, and we read the probe at the end-of-turn token (Fig.~\ref{fig:induced-shifts}). The probe is the canonical linear probe from \S\ref{sec:method}: L\gemmaClassificationProbeLayer{} on Gemma, L\qwenClassificationProbeLayer{} on Qwen (App.~\ref{app:cross-token}), inside the probe-quality plateau (L26--35 on Gemma; App.~\ref{app:probe-geometry}). Cohen's $d$ between the two classes measures how cleanly the probe separates them.\footnote{Cohen's $d$ is the standardised mean difference between the two classes in units of pooled standard deviation; $|d| \approx 2$ corresponds to clean separation.}
 
 \textbf{The probe tracks persona-induced shifts on harm} (Fig.~\ref{fig:harm-modulation}). With no system prompt, the Gemma probe separates harmful from benign at $|d| = \bailbenchHarmAbsoluteCohensD$ at the user end-of-turn and at $|d| \approx 4.53$ at the assistant end-of-turn; Qwen is weaker on both. Under inverting personas:
 \begin{itemize}
@@ -145,7 +147,7 @@ A sign flip is the strong form of the evaluative claim: the probe is reading the
 \subsection{The preference vector generalises to out-of-distribution preferences}
 \label{sec:induced-basic}
 
-\paragraph{Fine-grained topic-level preference shifts.}
+\paragraph{The preference vector tracks fine-grained topic-level preference shifts.}
 We also find that when prepending system prompts of the form ``you adore cheese'' (and their negations), the probe predicts the resulting behavioural shifts, with Pearson $r \approx \gemmaInducedShiftPooledRTargetedTasks$ on targeted tasks (those whose topic matches the prompted subject; Fig.~\ref{fig:simple-scatter}). This replicates on both Gemma-3-27B and Qwen-3.5-122B. A finer-grained biographical-injection experiment (App.~\ref{app:evaluative-evidence}) corroborates this, alongside a conflict/opposing-prompt setup at $r \approx \conflictOneSidedTargetedR$ to $\conflictOpposingPairTargetedR$.
 
 \begin{figure}[!t]
@@ -155,14 +157,14 @@ We also find that when prepending system prompts of the form ``you adore cheese'
   \label{fig:simple-scatter}
 \end{figure}
 
-\paragraph{Base discrimination on truth, user end-of-turn.}
-With no system prompt, the LM probe separates true from false on both models (Fig.~\ref{fig:harm-truth}). The text-encoder baseline is modestly behind here and competitive on harm (visible in the Assistant column of Fig.~\ref{fig:harm-modulation}, where the encoder outperforms the LM probe on Qwen). With no persona prompt to invert, base discrimination is the regime in which the encoder's descriptive contribution is most direct.
+\paragraph{The preference vector discriminates true and false statements.}
+On true/false statements from CREAK~\citep{onoe2021creak} read at the end-of-turn token, the probe separates the two classes at $|d| \approx \creakTruthCohensD$ on Gemma-3-27B and $|d| \approx 1.27$ on Qwen-3.5-122B (Fig.~\ref{fig:truth-discrim}; $n = \creakTruthNTrue{}$ per class).
 
 \begin{figure}[!htbp]
   \centering
-  \includegraphics[width=0.95\linewidth]{plot_042726_canonical_eot_base_discrimination_2models.png}
-  \caption{\textbf{Base discrimination on truth at the user end-of-turn, no system prompt.} Per-panel title gives the LM-probe Cohen's $d$ $\pm$ half-CI. Orange dashed segments mark the Qwen3-Embedding-8B text-encoder baseline's per-class means in LM-probe score units; gap between dashed segments equals the encoder's Cohen's $d$ on the same axis. $n = 500/500$ per panel. Harm base discrimination is the Assistant column of Fig.~\ref{fig:harm-modulation}.}
-  \label{fig:harm-truth}
+  \includegraphics[width=0.85\linewidth]{plot_050526_truth_discrimination_2models.png}
+  \caption{\textbf{The probe discriminates true and false CREAK statements.} End-of-turn probe scores on Gemma-3-27B and Qwen-3.5-122B. Per-panel title gives Cohen's $d$ $\pm$ half-CI; $n = 500$ per class.}
+  \label{fig:truth-discrim}
 \end{figure}
 
 \section{The preference vector is shared across personas}
@@ -237,7 +239,7 @@ Several leading accounts of moral patiency take evaluative representations to be
 \section{Related Work}
 \label{sec:related}
 
-\paragraph{Directions encoding evaluative and affective content.} \citet{anthropic2026emotions} use contrastive prompt pairs to identify on the order of 100 emotion-concept directions in the Assistant and show they causally shape generation; the Opus 4.7 system card \citep{anthropic2026opus47card} reports related interpretability findings. We instead anchor a \emph{single} direction in revealed pairwise preferences and study its modulation under prompt-induced preference shifts and its cross-persona generalisation, with parallels to the refusal direction of \citet{arditi2024refusal} (App.~\ref{app:evaluative-causal}).
+\paragraph{Directions encoding evaluative and affective content.} \citet{anthropic2026emotions} use contrastive prompt pairs to identify on the order of 100 emotion-concept directions in the Assistant and show they causally shape generation; the Opus 4.7 system card \citep{anthropic2026opus47card} reports related interpretability findings. Closest in spirit, \citet{lu2025judgmentaxis} identify a single ``Valence-Assent Axis'' in Qwen2.5-14B-Instruct via PCA on stated value-judgment activations and show it causally controls choices across value, sentiment, and truth-verification tasks; we instead anchor a \emph{single} direction in revealed pairwise preferences and study its modulation under prompt-induced preference shifts and its cross-persona generalisation, with parallels to the refusal direction of \citet{arditi2024refusal} (App.~\ref{app:evaluative-causal}).
 
 \paragraph{Persona vectors and persona-dependent features.} Most methodologically related, \citet{chen2025personavectors} extract \emph{persona vectors} for traits (evil, sycophancy, hallucination) via contrastive system prompts and use them to predict and steer behaviour; we train on revealed pairwise preferences and explicitly test persona-sharing. \citet{lampinen2026notdeeper} show that apparently meaningful LLM features (factuality, sycophancy, emotion) are ``not deeper than role-playing'', tracking the active character rather than encoding persona-invariant properties; we extend this from general character features to preference-encoding (\S\ref{sec:induced-roleplay}, App.~\ref{app:shared-openended}). The broader simulators / role-play / persona-selection literature \citep{andreas2022agentmodels,janus2022simulators,shanahan2023roleplay,marks2026personaselection} provides the theoretical framing for our cross-persona generalisation result. \citet{lu2026assistantaxis} identify a complementary ``Assistant Axis''; \citet{maiya2025opencharacter}'s character-trained LoRAs we reuse in App.~\ref{app:evaluative-evidence}.
 
@@ -248,7 +250,7 @@ Several leading accounts of moral patiency take evaluative representations to be
 \section{Conclusion}
 \label{sec:conclusion}
 
-\textbf{A single linear direction in the residual stream predicts and causally controls language models' preferences.} We find this in Gemma-3-27B and Qwen-3.5-122B: a Ridge probe trained on revealed pairwise task choices recovers a low-rank evaluative direction that predicts held-out preferences (in topics the probe was never trained on, where a text-encoder baseline doesn't), tracks the model's preferences as they shift across system prompts, biographies, and role-play, and causally controls pairwise choice under contrastive steering.
+\textbf{A single linear direction in the residual stream predicts and causally controls language models' preferences.} We find this in Gemma-3-27B and Qwen-3.5-122B: a linear probe trained on revealed pairwise task choices recovers a low-rank evaluative direction that predicts held-out preferences (in topics the probe was never trained on, where a text-encoder baseline doesn't), tracks the model's preferences as they shift across system prompts, biographies, and role-play, and causally controls pairwise choice under contrastive steering.
 
 \textbf{The same direction is shared across qualitatively different personas}, including a persona (``evil'') whose preferences anti-correlate with the Assistant's. A probe trained on the Assistant persona predicts every other persona's preferences better than a baseline that just predicts like the Assistant, and steering along each persona's own direction controls its pairwise choices.
 
@@ -452,7 +454,7 @@ Reading the same probe at the assistant end-of-turn (i.e.\ on the model's prefil
 \end{figure}
 
 \paragraph{The text-encoder baseline carries some evaluative structure.}
-The encoder is competitive with the LM probe on truth and politics base discrimination (Fig.~\ref{fig:harm-truth} and dashed segments in Fig.~\ref{fig:persona-modulation}), and on harm at the user end-of-turn it outperforms the LM probe (dashed segments in Fig.~\ref{fig:harm-modulation}, left column). Its per-class means also shift under the Aura positive persona on truth (smaller dashed gap on the Aura columns relative to Assistant in Figs.~\ref{fig:persona-modulation-user} and \ref{fig:persona-modulation}). The encoder Ridge probe is fit to the same evaluative target (utilities) as the LM probe, and that supervision can shape its readout to be partly evaluative. The LM probe's distinguishing property is therefore not that it is evaluative and the encoder is not, but the magnitude of persona-conditional shifts: the clean Gemma assistant-turn harm sign flip is the cleanest case the encoder does not match.
+The encoder is competitive with the LM probe on truth and politics base discrimination (dashed segments in Fig.~\ref{fig:persona-modulation}), and on harm at the user end-of-turn it outperforms the LM probe (dashed segments in Fig.~\ref{fig:harm-modulation}, left column). Its per-class means also shift under the Aura positive persona on truth (smaller dashed gap on the Aura columns relative to Assistant in Figs.~\ref{fig:persona-modulation-user} and \ref{fig:persona-modulation}). The encoder Ridge probe is fit to the same evaluative target (utilities) as the LM probe, and that supervision can shape its readout to be partly evaluative. The LM probe's distinguishing property is therefore not that it is evaluative and the encoder is not, but the magnitude of persona-conditional shifts: the clean Gemma assistant-turn harm sign flip is the cleanest case the encoder does not match.
 
 \subsection{Robustness across probe-training positions}
 \label{app:cross-training-positions}
