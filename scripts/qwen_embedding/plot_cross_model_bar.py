@@ -121,11 +121,13 @@ GEMMA_LAYER = 32
 QWEN_LAYER = 38
 QWEN3_EMB_LAYER = 0  # Sentence-transformer baselines are single-layer.
 
-# Gemma = blue, Qwen = coral, baseline = gold.
-PROBE_LIGHT = {"gemma": "#7aaed4", "qwen": "#e89284"}
-PROBE_DARK  = {"gemma": "#3d7aab", "qwen": "#b0533f"}
-BASE_LIGHT  = "#d4b96a"
-BASE_DARK   = "#b08f3a"
+# Per-model probe colours; baseline shared. Light shade = within-distribution
+# test set, dark shade = cross-topic LOO. Saturated enough that the light
+# shades read as solid (not washed-out / "transparent-looking").
+PROBE_LIGHT = {"gemma": "#6B9BC9", "qwen": "#C77E6E"}
+PROBE_DARK  = {"gemma": "#2E5A88", "qwen": "#82412F"}
+BASE_LIGHT  = "#C09666"
+BASE_DARK   = "#6F4F2A"
 
 # Rounding used for both plot annotations and registered claim values.
 ROUND_DP = 3
@@ -136,7 +138,8 @@ def _r(x: float) -> float:
 
 
 def _draw_panel(ax, probe, baseline, metric, model_key, title, ylabel):
-    """Draw one panel with 2 bar groups (probe, baseline), each with test+hoo sub-bars.
+    """Draw one panel with 2 bar groups (Test set, Cross-topic), each with
+    probe + baseline sub-bars sitting side by side.
 
     For metric=='r', overlay Fisher-z 95% CIs on each bar using ``n_heldout`` and
     ``n_hoo``. For metric=='acc', overlay Wilson 95% CIs on test-set bars using
@@ -146,9 +149,9 @@ def _draw_panel(ax, probe, baseline, metric, model_key, title, ylabel):
     test_key = f"{metric}_heldout"
     hoo_key  = f"{metric}_hoo"
 
-    groups = ["Target probe", "Qwen3-Emb\nbaseline"]
+    groups = ["Test set", "Cross-topic\n(LOO)"]
     x = np.arange(len(groups))
-    width = 0.35
+    width = 0.38
 
     def err_test(value: float, source: dict) -> tuple[float, float] | None:
         if metric == "r":
@@ -183,16 +186,13 @@ def _draw_panel(ax, probe, baseline, metric, model_key, title, ylabel):
                 lo, hi = fold_se_ci(value, std, n_folds)
         return value - lo, hi - value
 
-    def err(value, source, kind):
-        return err_test(value, source) if kind == "test" else err_hoo(value, source)
-
     probe_light = PROBE_LIGHT[model_key]
     probe_dark  = PROBE_DARK[model_key]
     bars = [
-        (x[0] - width / 2, probe[test_key], probe_light, err(probe[test_key], probe, "test")),
-        (x[0] + width / 2, probe[hoo_key], probe_dark, err(probe[hoo_key], probe, "hoo")),
-        (x[1] - width / 2, baseline[test_key], BASE_LIGHT, err(baseline[test_key], baseline, "test")),
-        (x[1] + width / 2, baseline[hoo_key], BASE_DARK, err(baseline[hoo_key], baseline, "hoo")),
+        (x[0] - width / 2, probe[test_key], probe_light, err_test(probe[test_key], probe)),
+        (x[0] + width / 2, baseline[test_key], BASE_LIGHT, err_test(baseline[test_key], baseline)),
+        (x[1] - width / 2, probe[hoo_key], probe_dark, err_hoo(probe[hoo_key], probe)),
+        (x[1] + width / 2, baseline[hoo_key], BASE_DARK, err_hoo(baseline[hoo_key], baseline)),
     ]
     for xi, value, color, ci_err in bars:
         ax.bar(xi, value, width, color=color, edgecolor="grey", linewidth=0.5)
@@ -200,15 +200,17 @@ def _draw_panel(ax, probe, baseline, metric, model_key, title, ylabel):
             ax.errorbar(xi, value, yerr=[[ci_err[0]], [ci_err[1]]],
                         fmt="none", ecolor="black", capsize=3, elinewidth=0.9)
         text_y = value + (ci_err[1] if ci_err else 0) + 0.015
-        ax.text(xi, text_y, f"{value:.2f}", ha="center", va="bottom", fontsize=9)
+        ax.text(xi, text_y, f"{value:.2f}", ha="center", va="bottom", fontsize=14)
 
     if metric == "acc":
         ax.axhline(y=0.5, color="grey", linestyle="--", linewidth=0.8, alpha=0.5)
 
-    ax.set_title(title, fontsize=11)
-    ax.set_ylabel(ylabel)
+    ax.set_title(title, fontsize=16)
+    ax.set_ylabel(ylabel, fontsize=15)
     ax.set_xticks(x)
-    ax.set_xticklabels(groups)
+    ax.set_xticklabels(groups, fontsize=14)
+    ax.tick_params(axis="y", labelsize=13)
+    ax.set_xlim(-0.55, 1.55)
     ax.set_ylim(0, 1.0)
     ax.set_yticks(np.arange(0, 1.1, 0.2))
     ax.grid(axis="y", alpha=0.3, linestyle="--")
@@ -421,8 +423,8 @@ def plot_cross_model(out_path: Path) -> None:
     claims = ClaimSet(source="scripts/qwen_embedding/plot_cross_model_bar.py")
     gemma_probe, gemma_baseline, qwen_probe, qwen_baseline = build_stats_and_claims(claims)
 
-    fig, axes = plt.subplots(2, 2, figsize=(11, 9))
-    fig.suptitle("Probe vs content baseline, per model", fontsize=14, fontweight="bold")
+    fig, axes = plt.subplots(2, 2, figsize=(13, 9))
+    fig.suptitle("Probe vs content baseline, per model", fontsize=20, fontweight="bold")
 
     _draw_panel(axes[0, 0], gemma_probe, gemma_baseline, "r",   "gemma",
                 "Gemma-3-27B — Pearson r", "Pearson r")
@@ -434,13 +436,16 @@ def plot_cross_model(out_path: Path) -> None:
                 "Qwen-3.5-122B — Pairwise accuracy", "Pairwise accuracy")
 
     legend_handles = [
-        plt.Rectangle((0, 0), 1, 1, fc="#bfbfbf"),
-        plt.Rectangle((0, 0), 1, 1, fc="#4d4d4d"),
+        plt.Rectangle((0, 0), 1, 1, fc="#bfbfbf", ec="grey"),
+        plt.Rectangle((0, 0), 1, 1, fc="#4d4d4d", ec="grey"),
     ]
-    fig.legend(legend_handles, ["Test set", "Cross-topic (HOO, pooled)"],
-               loc="upper right", bbox_to_anchor=(0.98, 0.965), fontsize=9, frameon=True)
+    fig.legend(
+        legend_handles, ["Test set", "Cross-topic (LOO)"],
+        loc="upper center", bbox_to_anchor=(0.5, 0.945),
+        fontsize=12, frameon=True, ncol=2,
+    )
 
-    plt.tight_layout(rect=(0, 0, 1, 0.95))
+    plt.tight_layout(rect=(0, 0, 1, 0.88))
     plt.savefig(out_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
 
