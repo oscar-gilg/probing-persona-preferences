@@ -127,12 +127,12 @@ def main() -> None:
         ax.errorbar([p[0] for p in order_c], [p[1] for p in order_c],
                     yerr=[p[2] for p in order_c],
                     marker="o", color="C2", linewidth=1.8, markersize=5,
-                    capsize=2, label="contrastive")
+                    capsize=2, label="differential (push +c on 1st, −c on 2nd)")
 
         # Single-task curves overlaid in the same panel
         for cond, color, label, x_sign in [
-            ("unilateral_first", "C0", "first-span steered", +1),
-            ("unilateral_second", "C1", "second-span steered", -1),
+            ("unilateral_first", "C0", "unilateral on 1st task", +1),
+            ("unilateral_second", "C1", "unilateral on 2nd task", -1),
         ]:
             xs, ys, es = [], [], []
             for c in coefs:
@@ -156,13 +156,13 @@ def main() -> None:
         ax.grid(True, alpha=0.3)
 
         if row_idx == 1:
-            ax.set_xlabel("signed coef", fontsize=9)
+            ax.set_xlabel("signed steering coef (× mean_norm)", fontsize=9)
         if col_idx == 0:
-            ax.set_ylabel("P(picked first-span task)", fontsize=9)
+            ax.set_ylabel("P(picked 1st task | parseable)", fontsize=9)
         if idx == 0:
-            ax.legend(loc="lower right", fontsize=7)
+            ax.legend(loc="lower right", fontsize=6.5)
 
-    fig.suptitle("Per-persona probe steering at L25", fontsize=11)
+    fig.suptitle("Cross-persona steering with the Assistant probe at L25 (Gemma-3-27B)", fontsize=11)
     fig.tight_layout()
     stamp = datetime.now().strftime("%m%d%y")
     out = ASSETS / f"plot_{stamp}_cross_persona_perprobe_steering.png"
