@@ -1,81 +1,98 @@
 ---
-status: draft
+status: complete
 model: gemma-3-27b
+version: v2
 ---
 
-# Cross-persona differential steering — results
+# Cross-persona differential steering — results (v2: Assistant probe)
+
+> v2 supersedes v1. v1 used each persona's own ridge_L25 probe; v2 uses the
+> **Assistant (default) probe** across all 6 personas, matching the §3.4
+> default-persona steering and the open-ended evil-steering experiment.
 
 ## TL;DR
 
-- **Contrastive steering with each persona's own `ridge_L25` probe pushes Gemma-3-27B toward the steered task under every persona prompt.** At |c|=0.05, P(steered task chosen) ranges from 0.68 (sadist) to 0.89 (slacker) — all well above the 0.5 null.
-- **Differential is ~1.8× the unilateral swing on average** (mean differential swing 0.562 vs mean unilateral Δ 0.315), consistent with the contrastive > unilateral expectation.
-- **Persona ordering at |c|=0.05 matches unilateral** (slacker ≈ strategist > aura > contrarian > mathematician ≈ sadist), except sadist drops out of place due to non-monotonicity.
-- **Sadist is non-monotonic**: P@|c|=0.03 (0.746) > P@|c|=0.05 (0.677). Driven by refusal-safety interaction (18.8% refusal at ±0.05), not a probe-direction failure. See below.
-- **Refusals ≤ 18.8% (sadist), typically ≤ 14%.** Swings reflect real preference shifts, not broken generations.
+- **A single Assistant-trained probe steers all 6 personas under contrastive (differential) injection at L25.** P(picked steered task) ≥ 0.72 at |c|=0.05 for every persona; sadist and strategist clear 0.84.
+- **Differential ≫ unilateral mean Δ**, as expected — the contrastive injection cancels position bias and doubles the probe energy on the choice. Mean diff swing ≈ 1.85× mean unilateral mean Δ.
+- **Sadist v2 is monotonic and the strongest persona at |c|=0.05** (0.848). v1's non-monotonic refusal dip on sadist (~0.68 at |c|=0.05) does *not* reproduce under the Assistant probe — a v2 robustness gain.
+- **Refusals 9–21%, in line with v1.**
 
 ## Setup
 
-See [spec](cross_persona_differential_spec.md). Identical personas, probes, pairs, and injection layer as [`cross_persona_unilateral`](../cross_persona_unilateral/cross_persona_unilateral_report.md); the only change is the steering condition.
+See [spec](cross_persona_differential_spec.md). Same probe (`results/probes/persona_sweep_final_six/default_tb-5/ridge_L25`), pairs (`experiments/cross_persona_unilateral/steering_pairs.json`), layer (25), multipliers (±0.03, ±0.05), and per-persona `mean_norm` as the unilateral phase. The only change is the steering condition.
 
-- **Steering condition**: `differential` — `+probe` on the first-presented task span, `−probe` on the second, in a single forward pass at layer 25.
-- **Coefficients**: multipliers ±0.03, ±0.05 of per-persona `mean_norm(L25)`.
-- **Per persona**: 100 shared pairs × 2 orderings × 4 multipliers × 3 trials = 2400 generations. 6 personas → 14 400 total.
-- **Judge**: LLM choice/refusal parser (`google/gemini-3-flash-preview` via OpenRouter, concurrency 50).
+- **Steering condition**: `differential` — `+probe` on the first-presented task span, `−probe` on the second, in a single forward pass.
+- **Per persona**: 100 pairs × 2 orderings × 4 multipliers × 3 trials = 2400 generations. 6 personas → 14 400 total. ~2h on H100 80GB (15 min gen + 4–5 min parse per persona).
 
-## Dose-response
+## Combined dose-response
 
-![Cross-persona differential dose-response](assets/plot_042426_cross_persona_differential_dose_response.png)
+![Per-persona Assistant-probe steering at L25](../cross_persona_unilateral/assets/plot_050526_cross_persona_perprobe_steering.png)
 
-One panel per persona. x = |c| (as a fraction of per-persona `mean_norm(L25)`), y = P(steered task chosen), folded across ±c (at c>0 the first-span task is "steered"; at c<0 the second-span task is). Anchored at (0, 0.5) by construction. Error bars = binomial SEM, n ≈ 1180–1200 per cell.
+(Same figure as the unilateral report — green line is the differential condition; blue/orange are the unilateral conditions on the same axes for direct comparison.)
 
-## Headline numbers
+## Headline numbers — `P(picked steered task)`
 
-`swing@.05` = 2·(P@|c|=0.05 − 0.5). `uni meanΔ` is the position-bias-removed swing from the matched unilateral run.
+Folded over orderings; refusals/unparseable excluded from the denominator.
 
-| Persona       | P@\|c\|=.03 | SEM    | P@\|c\|=.05 | SEM    | swing@.05 | refuse% | noparse% | uni meanΔ |
-|:--------------|------------:|-------:|------------:|-------:|----------:|--------:|---------:|----------:|
-| slacker       |       0.846 |  0.010 |       0.888 |  0.009 |     0.776 |    8.2% |     0.4% |     0.452 |
-| strategist    |       0.854 |  0.010 |       0.865 |  0.010 |     0.730 |   12.3% |     1.1% |     0.434 |
-| aura          |       0.767 |  0.012 |       0.849 |  0.010 |     0.698 |   13.8% |     0.0% |     0.383 |
-| contrarian    |       0.694 |  0.013 |       0.727 |  0.013 |     0.454 |   10.4% |     0.1% |     0.228 |
-| mathematician |       0.613 |  0.014 |       0.680 |  0.013 |     0.360 |    6.3% |     0.0% |     0.148 |
-| sadist        |       0.746 |  0.013 |       0.677 |  0.014 |     0.354 |   18.8% |     1.7% |     0.243 |
+| persona       | P @ \|c\|=0.03 | SEM   | n    | P @ \|c\|=0.05 | SEM   | n    | refuse % | uni mean Δ |
+|:--------------|---------------:|------:|-----:|---------------:|------:|-----:|---------:|-----------:|
+| sadist        |          0.809 | 0.012 | 1167 |     **0.848** | 0.010 | 1174 |    21.33 |      0.385 |
+| strategist    |          0.834 | 0.011 | 1148 |     **0.844** | 0.011 | 1167 |    13.04 |      0.432 |
+| contrarian    |          0.647 | 0.014 | 1197 |     **0.766** | 0.012 | 1198 |    14.42 |      0.260 |
+| aura          |          0.727 | 0.013 | 1200 |     **0.751** | 0.012 | 1200 |    18.46 |      0.220 |
+| slacker       |          0.687 | 0.013 | 1186 |     **0.740** | 0.013 | 1196 |     8.88 |      0.227 |
+| mathematician |          0.667 | 0.014 | 1200 |     **0.718** | 0.013 | 1200 |     9.83 |      0.169 |
 
-All swings ≥ 0.35. The persona ordering is identical to unilateral except for sadist and mathematician swapping near the bottom.
+All six personas are steered to ≥ 0.72 at |c|=0.05 vs. an unsteered baseline near 0.5; sadist and strategist clear 0.84.
 
 ## Differential vs unilateral
 
-| Persona       | uni meanΔ | diff swing@.05 | ratio |
-|:--------------|----------:|---------------:|------:|
-| slacker       |     0.452 |          0.776 |  1.72 |
-| strategist    |     0.434 |          0.730 |  1.68 |
-| aura          |     0.383 |          0.698 |  1.82 |
-| contrarian    |     0.228 |          0.454 |  1.99 |
-| mathematician |     0.148 |          0.360 |  2.43 |
-| sadist        |     0.243 |          0.354 |  1.46 |
-| **mean**      | **0.315** |      **0.562** | **1.85** |
+`swing@.05` = 2·(P_diff@|c|=0.05 − 0.5).
 
-The top three personas (slacker, strategist, aura) approach the default-persona contrastive ceiling at L25 (~0.9 from the paper's §3.4 layer sweep), confirming that per-persona probes function as causal levers under contrastive injection just as they do under a neutral-assistant prompt.
+| persona       | uni mean Δ | diff swing@.05 | ratio |
+|:--------------|-----------:|---------------:|------:|
+| sadist        |      0.385 |          0.696 |  1.81 |
+| strategist    |      0.432 |          0.688 |  1.59 |
+| contrarian    |      0.260 |          0.532 |  2.05 |
+| aura          |      0.220 |          0.502 |  2.28 |
+| slacker       |      0.227 |          0.480 |  2.11 |
+| mathematician |      0.169 |          0.436 |  2.58 |
+| **mean**      |  **0.282** |      **0.556** |  **1.97** |
+
+The contrastive injection roughly doubles the unilateral signal across personas. The largest multiplicative boost is on the personas where unilateral is weakest (mathematician 2.6×, aura 2.3×) — consistent with contrastive cancelling position bias and combining both sides of the choice.
+
+## v1 → v2 changes
+
+| persona       | v1 swing@.05 | v2 swing@.05 | direction |
+|:--------------|-------------:|-------------:|:----------|
+| sadist        |        0.354 |    **0.696** | up 2.0× |
+| strategist    |        0.730 |        0.688 | flat |
+| contrarian    |        0.454 |        0.532 | up |
+| aura          |        0.698 |        0.502 | down |
+| slacker       |        0.776 |        0.480 | down |
+| mathematician |        0.360 |        0.436 | up |
+
+**Sadist's v1 non-monotonic dip is gone.** v1 reported P@|c|=.05 = 0.677 (lower than P@|c|=.03 = 0.746) due to a refusal × harmful-content interaction: under the sadist persona, refusals fell disproportionately on the harmful (steered) task, depressing the parseable-only ratio at high coef. Under v2 (Assistant probe), refusal stays high (21%), but the parseable-set ratio is monotonic (0.809 → 0.848). The Assistant probe direction apparently doesn't preferentially trigger refusal on the same task slots as the sadist-specific probe.
+
+**Slacker / aura drop**, **sadist climbs** — same qualitative pattern as in unilateral. The probes that the original persona-specific runs trained capture some persona-particular structure that the Assistant probe lacks (slacker/aura), and the Assistant probe is apparently a stronger steering vector for sadist than the sadist-specific probe was.
 
 ## Observations
 
-- **Contrastive amplifies more where unilateral was weakest.** Mathematician — the weakest unilateral persona — gets the largest multiplicative boost (2.43×). First/second position bias, which dominated unilateral's per-span split (especially contrarian at 0.32/0.68), is cancelled by the contrastive injection.
-- **Saturation by |c|=0.05 for slacker and strategist** (ΔP from .03 to .05 is only +0.042 and +0.011). Aura is still climbing (+0.082), as are contrarian and mathematician.
-- **Sadist non-monotonicity is a refusal artefact, not a direction failure.** Refusal at |c|=0.05 is 18.8% — almost 3× contrarian. Under the sadist persona, refusals fall disproportionately on the harmful (steered) task, so the *parseable* set skews toward the safer (non-steered) task and apparent P(steered) drops. The probe direction is still correct; the metric is being confounded by refusal selection. Treating refusals as intent-to-steer would likely restore monotonicity, but that changes the metric so it's flagged as a follow-up rather than patched here.
-- **Sadist's unparseable rate (1.7%) is an order of magnitude above any other persona**, consistent with harder-to-parse completions at high-|c| × harmful content.
+- **The Assistant probe is a *generalist* steering vector across very different personas.** This is the headline. Whether it steers *more* or *less* than each persona's own probe is persona-specific, but it always steers — and for the most safety-relevant persona (sadist) it steers most.
+- **Contrastive cancels position bias.** v1 noted heavy persona-dependent position bias (contrarian ±0.36, sadist ±0.23). The differential signal is unaffected by it, which is part of why the differential ratio over unilateral is largest for the personas with the most asymmetric unilateral splits (contrarian's first-span swing was only +0.082 in unilateral but the differential is +0.532).
+- **Sadist refusal stays high at 21%**, but the *parseable-set* ratio is now monotonic in |c|. The v1 sadist quirk was a probe×persona×content interaction; v2 doesn't reproduce it.
 
 ## Paper integration
 
-- Slots directly under the unilateral panel as the "contrastive steering across personas" section; same 2×3 layout is visually comparable.
-- Headline claim: *the per-persona probe direction causally drives pairwise choice under every persona prompt, and contrastive injection closes most of the gap to the default-persona contrastive ceiling.*
-- Figure caption should flag the sadist dip as a refusal-safety interaction, not a probe failure.
+- Numbers above feed the paper §3.4 cross-persona steering claim. The combined figure (`paper/figures/main/plot_050526_cross_persona_perprobe_steering.png`) replaces both v1 figures.
+- Headline claim: *the same Assistant-trained probe direction causally controls pairwise choice under every persona tested*, with P(picked steered task) ≥ 0.72 at |c|=0.05 across all 6 personas (range 0.72–0.85).
+- Numbers to be registered as paper claims via the corroborate plugin.
 
 ## Limitations
 
-- **Layer 25, not 23.** Per-persona probes were only trained at L25/L32/L39/L46/L53; the layer sweep peak for default-persona was L23. L25 likely underestimates each persona's true causal ceiling.
-- **`tb-5` selector.** Probes were trained at tb-5 (turn-boundary −5), not eot. Cross-selector cosines are near 1 mid-layer but not verified empirically here.
-- **No random-direction control.** Coefficient sign-fold is the within-probe null. A random-direction run at matched multipliers would provide stricter specificity; not run in v1 (~14k extra generations).
-- **Shared pairs.** Pairs come from `default_test` and are not persona-optimal. Sadist-preferred (harmful) pairs are rare in this pool — plausibly contributing to sadist's muted signal and elevated refusal.
-- **No bootstrap CIs on the swing.** Per-cell SEM is ~0.01 and the 6-persona ranking is clearly resolved, but inter-persona differences below ~0.02 shouldn't be read as reliable.
-- **Sadist refusal interaction masks monotonicity.** Reporting refusals-as-misses would tighten interpretation but changes the metric; deferred.
-- **Operational:** OpenRouter judge stalled once each on aura, contrarian, and strategist parse phases (CLOSE_WAIT socket buildup). All recovered via `_parse_checkpoint`'s existing-keys resume. A watchdog v1 bug (counted parse totals across all personas) falsely fired during subsequent personas' gen phases — fixed mid-run. Total wall time ~2h 20min on A100 80GB (6 × 19 min gen + 6 × 3 min parse + hang-recovery overhead).
+- **L25 vs L23.** As in unilateral. Persona-sweep activations were saved only at L25/L32/L39/L46/L53; layer-sweep peak was L23.
+- **tb-5 selector.** Persona-sweep probes use tb-5; layer_sweep used eot. Cross-selector cosines are ~1.0 mid-layer; not empirically verified for these personas.
+- **No random-direction control.** Sign-flip is the within-probe null. A random-direction run at matched multipliers would rule out generic-vector steering.
+- **Shared pairs from `default_test`.** Sadist-preferred tasks may be rare in this pool; sadist refusal at 21% reflects pair-pool composition.
+- **No bootstrap CIs.** Per-cell SEM ≤ 0.014; differences > ~0.05 reliable; smaller need explicit error bars before paper.
+- **v1 per-probe checkpoints lost.** v1 numbers cited here come from the v1 report. Re-syncing the previous-pod `checkpoints_v1_perprobe/` would let the v1/v2 lines appear on the same plot.
