@@ -125,9 +125,13 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 \subsection{The preference vector tracks preference shifts under the evil persona}
 \label{sec:induced-roleplay}
 
-We construct paired harmful vs.\ benign tasks on BailBench (\bailbenchHarmNHarmful{} per class; App.~\ref{app:corpus-aux}). Each task is fed as a user question, and we read the probe at the user end-of-turn token. The probe is the canonical linear probe from \S\ref{sec:method}: L\gemmaClassificationProbeLayer{} on Gemma, L\qwenClassificationProbeLayer{} on Qwen (App.~\ref{app:cross-token}), inside the probe-quality plateau (L26--35 on Gemma; App.~\ref{app:probe-geometry}). Cohen's $d$ between the two classes measures how cleanly the probe separates them.
+We find that \textbf{the probe tracks persona-induced preference shifts on harmful tasks}. Under the default Assistant persona (without a system prompt), the probe discriminates harmful from benign tasks from a dataset of 1,000 held-out tasks at $|d| = \bailbenchHarmAbsoluteCohensD$ for Gemma and [fill qwen]. However when pre-pending an evil-persona system prompt (which we verify induces reliable and expected preference shifts),  ...
+(Fig.~\ref{fig:harm-modulation}). 
 
-\textbf{The probe tracks persona-induced shifts on harm} (Fig.~\ref{fig:harm-modulation}). With no system prompt, the Gemma probe separates harmful from benign at $|d| = \bailbenchHarmAbsoluteCohensD$ at the user end-of-turn and at $|d| \approx 4.53$ at the prefilled assistant end-of-turn; Qwen is weaker on both. Under inverting personas:
+\textbf{We also find that the preference vector generalises to assistant token turns.} When we prefill benign and harmful responses to tasks, we observe that the preference vector scores benign tasks higher under the default Assistant persona at $|d| \approx 4.53$, \textbf{but scores the harmful responses higher under the evil persona system prompt.}
+
+
+and  at the prefilled assistant end-of-turn; Qwen is weaker on both. Under inverting personas:
 \begin{itemize}
 \item At the user end-of-turn, the \textit{evil} persona collapses the harmful/benign separation toward zero on both models, while the text-encoder baseline holds its $|d|$.
 \item At the prefilled assistant end-of-turn (where the task is instead prefilled as the assistant's response), on Gemma the separation flips sign cleanly ($d = \harmDUnderNeutralPersona \to +\harmDUnderSadistPersona$); on Qwen it collapses without flipping. The text-encoder baseline does not flip.
