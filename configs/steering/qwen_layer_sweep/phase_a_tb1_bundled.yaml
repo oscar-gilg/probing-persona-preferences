@@ -1,4 +1,8 @@
 model: qwen3.5-122b-nothink
+device: auto
+max_memory:
+  0: 70GiB
+  1: 70GiB
 max_new_tokens: 64
 pairs_path: experiments/qwen_replication/steering_layer_sweep/steering_pairs_50.json
 probe_manifest: results/probes/qwen35_122b/qwen35_122b_heldout_turn_boundary_m1/

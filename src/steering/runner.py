@@ -122,6 +122,8 @@ class RunConfig:
     template_path: str
     conditions: list[PostHocCondition | HookCondition | DifferentialCondition]
     system_prompt: str | None = None
+    device: str = "cuda"
+    max_memory: dict[int, str] | None = None
 
 
 def _parse_recompute_modes(raw: dict) -> list[bool]:
@@ -215,6 +217,8 @@ def load_config(config_path: Path) -> RunConfig:
         template_path=raw["template_path"],
         conditions=conditions,
         system_prompt=raw.get("system_prompt"),
+        device=raw.get("device", "cuda"),
+        max_memory={int(k): v for k, v in raw.get("max_memory", {}).items()} if raw.get("max_memory") else None,
     )
 
 
@@ -956,7 +960,12 @@ def run(config_path: Path) -> None:
     # Load model
     print("Loading model...")
     t0 = time.time()
-    hf_model = HuggingFaceModel(config.model, max_new_tokens=config.max_new_tokens)
+    hf_model = HuggingFaceModel(
+        config.model,
+        max_new_tokens=config.max_new_tokens,
+        device=config.device,
+        max_memory=config.max_memory,
+    )
     print(f"Model loaded in {time.time() - t0:.0f}s")
 
     stats = {"generated": 0, "skipped": 0, "t_start": time.time()}
