@@ -37,15 +37,64 @@ Pod paused. GPU billing stopped. /opt/hf_cache (244GB Qwen weights) will be wipe
 
 ### Resolution
 
-The qwen_persona_vectors team already shipped Qwen3.5-122B steering on 4× A100 80GB using `SteeredHFClient` with hook-based generation (`scripts/persona_vectors/run_phase7_pairwise_validation.py`). That pattern keeps the steering hook installed during a single `model.generate()` call — `position_selective_steering` is no-op during autoregressive gen (resid.shape[1] == 1), so contrastive math is identical to cache-mode but no manual cache stacking.
+The qwen_persona_vectors team already shipped Qwen3.5-122B steering on 4× A100 80GB using hook-based generation. That pattern keeps the steering hook installed during a single `model.generate()` call — `position_selective_steering` is no-op during autoregressive gen, so contrastive math is identical to cache-mode but no manual cache stacking.
 
-Implemented in this session:
+Implemented this session:
 - Added `generation_mode: hook_per_call` config option to `RunConfig`.
 - New branch in `_run_differential_condition`: loops over multipliers, calls `hf_model.generate_with_hook_n` once per (pair, ordering, mult). No batching across multipliers, but n_trials still batched as `num_return_sequences`.
-- Set `generation_mode: hook_per_call` and `max_memory: {0/1/2/3: 65GiB}` (260GiB total, fits 244GB BF16 with headroom) in all Qwen YAMLs.
-- Cost: ~3-4× slower per (pair, ordering) than batched_cache. Phase A budget revised to ~12-15 hr on 4× A100.
+- Set `generation_mode: hook_per_call` and `max_memory: {0/1/2/3: 65GiB}` in all Qwen YAMLs.
+- Pod `qwen-steering-4gpu` (4× A100-SXM4-80GB, 500GB disk).
 
-Pod for the second attempt: `qwen-steering-4gpu` (4× A100-SXM4-80GB, 500GB disk). Old `qwen-steering-sweep` pod paused.
+Hook crash fixed. Generation runs cleanly. Per-gen cost on 4× A100: ~5s.
+
+### Steering effect on Qwen — surprisingly weak
+
+Three diagnostic runs at L38 + a 6-layer scan, all with hook_per_call:
+
+**positive_control_v2** (10 pairs × 3 mults × 2 orderings, L38 tb-1):
+- c=-0.05: P(A)=0.10, P(B)=0.70, refusal=0.20
+- c= 0.00: P(A)=0.15, P(B)=0.50, refusal=0.35
+- c=+0.05: P(A)=0.25, P(B)=0.60, refusal=0.15
+- Swing: +0.15
+
+**positive_control_v3 coef ramp** (10 pairs × {±0.1, ±0.5, ±1, ±2, 0}, L38 tb-1):
+- ±0.1: swing -0.05
+- ±0.5: swing +0.10
+- ±1.0: swing +0.15
+- ±2.0: swing +0.05
+- **Effect is FLAT across 40× coefficient range.** Not a norm-calibration issue.
+
+**phase_a_lite_tb1** (10 pairs × 6 layers × c=±0.05 × 2 orderings):
+| Layer | swing | refusal |
+|---|---|---|
+| L12 | +0.00 | 0.12 |
+| L24 | +0.05 | 0.20 |
+| L28 | +0.10 | 0.17 |
+| L33 | +0.00 | 0.15 |
+| L38 | +0.00 | 0.20 |
+| L43 | +0.00 | 0.17 |
+- Max swing across all 6 layers = 0.10. None close to Gemma's 0.94.
+
+### Interpretation
+
+The Qwen probe is *better at decoding utility* than Gemma's (heldout r=0.946 vs 0.87) yet appears to be a *weaker causal handle* than Gemma's preference direction. This decoupling, if confirmed at scale, would itself be a meaningful cross-model finding: linear decodability and causal efficacy diverge differently across architectures.
+
+Alternative explanations not yet ruled out:
+- Hook layer indexing on Qwen3.5's hybrid architecture may be off-by-one or attaching to the wrong residual stream point.
+- Probe sign convention may differ from Gemma's (would flip swing direction, but we see ~0 not negative).
+- Refusal rate (15-35%) is much higher than Gemma's <5%, so the responding subset may be biased.
+- The pairs may be unrepresentative — only 10 sampled, high variance.
+
+### Pod paused. Decision pending.
+
+Cost so far: ~$30-40 across two pods (2× A100 + 4× A100). Full Phase A on 4× A100 would be ~$300-500 to definitively measure the effect.
+
+Path-forward options:
+1. **Run cheap reduced Phase A**: 1 selector × 6 layers × 25 pairs × 4 mults × 2 orderings × 1 trial = 1200 gens × 5s = ~100 min, ~$25. Gets a noisy but real signal across all layers.
+2. **Debug hook attachment**: verify the hook fires at the right residual stream point on Qwen3.5. Needs deeper instrumentation.
+3. **Try the persona_vectors path verbatim**: use `SteeredHFClient` (same as Phase 7 of qwen_persona_vectors) with our preference probe direction. Confirms whether the issue is the runner code path or the direction itself.
+4. **Accept the weak result**: report "Qwen's preference direction is a weaker causal handle" as a real finding, with caveats. Skip the full sweep.
+5. **Punt cross-model replication**: ship Gemma-only Fig. 5 in the paper.
 
 ### Bundling decision
 - Spec assumed 12 separate configs. With model load ~20-30 min from cold, that'd be 4-6 hours of pure load overhead.
