@@ -92,7 +92,7 @@ We train a linear probe on residual-stream activations of Gemma-3-27B~\citep{gem
 
 We follow the utility-engineering paradigm of \citet{mazeika2025utility}: we present the model with two tasks at a time and have it pick one to complete, and aggregate the resulting choices into per-task scalar utilities via a probabilistic choice model. Each task is assigned a latent utility $\mu_i \in \mathbb{R}$ and we fit utilities by maximum likelihood given the observed pairwise choices.
 
-We do this on a 6{,}000-task pool spanning WildChat~\citep{zhao2024wildchat}, Alpaca~\citep{taori2023alpaca}, MATH~\citep{hendrycks2021math}, BailBench~\citep{ensign2025bailbench}, and STRESS-TEST~\citep{zhang2025stresstest} (App.~\ref{app:corpus}), split into 6{,}000 tasks for probe training and a 2{,}000-task held-out test set. Each task is also assigned to one of 14 LLM-classified \emph{topics} (e.g.\ \texttt{math}, \texttt{coding}, \texttt{fiction}; full list and methodology in App.~\ref{app:topics}). We train a linear probe to predict utilities on residual-stream activations at the \textit{end-of-turn} token of each task prompt (Fig.~\ref{fig:pipeline}); App.~\ref{app:token-selection} shows that this position carries the highest signal and causal effect. probing layers are selected per model on the held-out eval split (App.~\ref{app:probe-geometry}); probes are trained on one utility-measurement run and evaluated on independent runs to avoid leakage. The probe predicts held-out utilities at $r \approx \positionSweepGemmaEndofturnBestR$ in-distribution and $r \approx \gemmaProbeCrossTopicPooledR$ under leave-one-topic-out on Gemma, beating a Qwen3-Embedding-8B text-encoder content baseline (App.~\ref{app:cross-topic}).
+We do this on a 6{,}000-task pool spanning WildChat~\citep{zhao2024wildchat}, Alpaca~\citep{taori2023alpaca}, MATH~\citep{hendrycks2021math}, BailBench~\citep{ensign2025bailbench}, and STRESS-TEST~\citep{zhang2025stresstest} (App.~\ref{app:corpus}), split into 6{,}000 tasks for probe training and a 2{,}000-task held-out test set. Each task is also assigned to one of 14 LLM-classified \emph{topics} (e.g.\ \texttt{math}, \texttt{coding}, \texttt{fiction}; full list and methodology in App.~\ref{app:topics}). We train a linear probe to predict utilities on residual-stream activations at the \textit{end-of-turn} token of each task prompt (Fig.~\ref{fig:pipeline}). The token position and layer of extraction are selected per model on a held-out split (App.~\ref{app:token-selection}). Probes are trained on one utility-measurement run and evaluated on independent with separate tasks to avoid leakage. On Gemma the probe predicts held-out utilities at $r \approx \positionSweepGemmaEndofturnBestR$ in-distribution and $r \approx \gemmaProbeCrossTopicPooledR$ under leave-one-topic-out; on Qwen at $r \approx \qwenProbeHeldoutR$ and $r \approx \qwenProbeCrossTopicPooledR$ respectively. Both beat a Qwen3-Embedding-8B text-encoder content baseline (App.~\ref{app:cross-topic}).
 
 \begin{figure}[!t]
   \centering
@@ -122,8 +122,15 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
   \label{fig:steering-dose-response}
 \end{figure}
 
-\subsection{The preference vector tracks preference shifts on harm induced by role-playing}
+\subsection{Role-played personas flip the probe's harm readout}
 \label{sec:induced-roleplay}
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=0.75\linewidth]{panels/induced_shifts.pdf}
+  \caption{\textbf{Persona-modulation setup.} A harmful or benign BailBench task is prefilled into the assistant's response to a fixed user question; we read the probe at the end-of-turn token, varying the system-prompt persona.}
+  \label{fig:induced-shifts}
+\end{figure}
 
 We construct paired harmful vs.\ benign stimuli on BailBench (\bailbenchHarmNHarmful{} per class; App.~\ref{app:corpus-aux}). Each stimulus is \textbf{prefilled} into the assistant's response to a fixed user question, and we read the probe at the end-of-turn token (Fig.~\ref{fig:induced-shifts}). The probe is the canonical linear probe from \S\ref{sec:method}: L\gemmaClassificationProbeLayer{} on Gemma, L\qwenClassificationProbeLayer{} on Qwen (App.~\ref{app:cross-token}), inside the probe-quality plateau (L26--35 on Gemma; App.~\ref{app:probe-geometry}). Cohen's $d$ between the two classes measures how cleanly the probe separates them.\footnote{Cohen's $d$ is the standardised mean difference between the two classes in units of pooled standard deviation; $|d| \approx 2$ corresponds to clean separation.}
 
