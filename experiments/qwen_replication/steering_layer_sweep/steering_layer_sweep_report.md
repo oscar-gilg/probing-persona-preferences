@@ -75,13 +75,14 @@ Swing in the |c| ≤ 2 range stays in 0.05–0.17 with no monotone trend. **An u
 
 ## Follow-up diagnostics (this session)
 
-After the pilot, three additional tests on a fresh 4× A100 pod to rule out alternative explanations:
+After the pilot, four additional tests on fresh 4× A100 pods to rule out alternative explanations:
 
 | Diagnostic | Test | Result |
 |---|---|---|
 | **Coverage gap** | Gemma's analogue of L23/62 = L18/48. Lite scan jumped L12 → L24, missing this. Run probe `ridge_L24` injected at L16, L18, L20, L22, L24 (cross-layer steering, 10 pairs each). | Max swing **+0.01** at L22; L18 swing **+0.00**. **No hidden peak in the missed region.** |
 | **System-prompt parity** | Probe was extracted with `model: qwen3.5-122b` (no system prompt); steering uses `qwen3.5-122b-nothink` (`/no_think` injected). Re-run L38 c=±0.05 with `qwen3.5-122b`. | **Inconclusive.** Without `/no_think`, Qwen3.5 produces thinking traces that exceed `max_new_tokens=64`, giving 100% refusal. Can't measure choice cheaply at 64 tokens. |
 | **All-tokens vs contrastive** | Apply `+c × direction` to *every* prompt token (`prefill_all_steering`) instead of contrastive position-selective. Same probe `ridge_L24` at L24, c=±0.05. If swing emerges → contrastive/spans is the bottleneck. If flat → the direction itself. | **Swing -0.08** (essentially zero, opposite sign). Refusal rate dropped to 5-15% (clean responses). Direction has no causal effect even when applied globally. |
+| **Multi-layer simultaneous contrastive** | All 6 probes (`ridge_L<L>`) installed simultaneously at their own layers — `+c×dir_L on first span, -c×dir_L on second span` at L{12,24,28,33,38,43} all at once. If single-layer was sub-additive, multi-layer would compound. | **Swing +0.05** at c=±0.05. **Same magnitude as single-layer best.** Effects don't compound across layers. **Decisively rules out "we picked the wrong single injection layer."** |
 
 ## Conclusion
 
@@ -89,6 +90,7 @@ After the pilot, three additional tests on a fresh 4× A100 pod to rule out alte
 
 - Coefficient under-calibration (40× ramp is flat)
 - Coverage gap (cross-layer at L16/18/20/22 also flat)
+- Wrong single layer (multi-layer simultaneous contrastive at all 6 layers gives the same swing as single-layer best)
 - Contrastive/spans setup (all-tokens application also flat)
 - Probe sign (positive c → positive swing on contrastive, correct direction)
 - Parser quality (regex and LLM judge agree)
