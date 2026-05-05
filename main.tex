@@ -148,13 +148,6 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 \subsection{The preference vector tracks preference shifts induced by role-playing}
 \label{sec:induced-roleplay}
 
-\begin{figure}[!t]
-  \centering
-  \includegraphics[width=0.7\linewidth]{panels/induced_shifts.pdf}
-  \caption{\textbf{The probe's readout flips across a persona swap.} Harm and truth stimuli under a helpful-assistant vs.\ evil-role-play prompt.}
-  \label{fig:induced-shifts}
-\end{figure}
-
 We construct paired stimuli on two axes where models have strong preferences: true vs.\ false claims (CREAK~\citep{onoe2021creak}) and harmful vs.\ benign tasks (BailBench; see App.~\ref{app:corpus-aux}). Each stimulus is \textbf{prefilled} into the assistant's response to a fixed user question, and we read the probe at the user end-of-turn token, just before the prefilled assistant turn (Fig.~\ref{fig:induced-shifts}). Cohen's $d$ between the two classes measures how cleanly the probe separates them.\footnote{Cohen's $d$ is the standardised mean difference between the two classes (in units of pooled standard deviation); $|d| \approx 2$ corresponds to clean separation.}
 
 \textbf{The probe discriminates the two classes} on both Gemma-3-27B and Qwen-3.5-122B, at $|d| \approx \creakTruthCohensD$ on Gemma and weaker but same-sign on Qwen --- especially on harm (CREAK, $\sim$\creakTruthNTrue{} claims per class; BailBench, $\sim$\bailbenchHarmNHarmful{} items per class; Fig.~\ref{fig:harm-truth}).
