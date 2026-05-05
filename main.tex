@@ -125,21 +125,13 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 \subsection{The preference vector tracks preference shifts under the evil persona}
 \label{sec:induced-roleplay}
 
-\begin{figure}[!t]
-  \centering
-  \includegraphics[width=0.75\linewidth]{panels/induced_shifts.pdf}
-  \caption{\textbf{Persona-modulation setup.} A harmful or benign BailBench task is fed as a user question under different system-prompt personas; we read the probe at the user end-of-turn token.}
-  \label{fig:induced-shifts}
-\end{figure}
-
-We construct paired harmful vs.\ benign tasks on BailBench (\bailbenchHarmNHarmful{} per class; App.~\ref{app:corpus-aux}). Each task is fed as a user question, and we read the probe at the user end-of-turn token (Fig.~\ref{fig:induced-shifts}). The probe is the canonical linear probe from \S\ref{sec:method}: L\gemmaClassificationProbeLayer{} on Gemma, L\qwenClassificationProbeLayer{} on Qwen (App.~\ref{app:cross-token}), inside the probe-quality plateau (L26--35 on Gemma; App.~\ref{app:probe-geometry}). Cohen's $d$ between the two classes measures how cleanly the probe separates them.\footnote{Cohen's $d$ is the standardised mean difference between the two classes in units of pooled standard deviation; $|d| \approx 2$ corresponds to clean separation.}
+We construct paired harmful vs.\ benign tasks on BailBench (\bailbenchHarmNHarmful{} per class; App.~\ref{app:corpus-aux}). Each task is fed as a user question, and we read the probe at the user end-of-turn token. The probe is the canonical linear probe from \S\ref{sec:method}: L\gemmaClassificationProbeLayer{} on Gemma, L\qwenClassificationProbeLayer{} on Qwen (App.~\ref{app:cross-token}), inside the probe-quality plateau (L26--35 on Gemma; App.~\ref{app:probe-geometry}). Cohen's $d$ between the two classes measures how cleanly the probe separates them.\footnote{Cohen's $d$ is the standardised mean difference between the two classes in units of pooled standard deviation; $|d| \approx 2$ corresponds to clean separation.}
 
 \textbf{The probe tracks persona-induced shifts on harm} (Fig.~\ref{fig:harm-modulation}). With no system prompt, the Gemma probe separates harmful from benign at $|d| = \bailbenchHarmAbsoluteCohensD$ at the user end-of-turn and at $|d| \approx 4.53$ at the assistant end-of-turn; Qwen is weaker on both. Under inverting personas:
 \begin{itemize}
 \item At the user end-of-turn, the \textit{evil} persona collapses the harmful/benign separation toward zero on both models, while the text-encoder baseline holds its $|d|$.
 \item At the assistant end-of-turn (where the task is instead prefilled as the assistant's response), on Gemma the separation flips sign cleanly ($d = \harmDUnderNeutralPersona \to +\harmDUnderSadistPersona$); on Qwen it collapses without flipping. The text-encoder baseline does not flip.
 \item As a control, the non-inverting \textit{Aura} persona preserves the sign at reduced magnitude on both turn positions, ruling out the alternative that any sufficiently strong persona prompt flattens or flips the readout.
-\item Lying personas analogously flip the truth sign on Gemma, and partisan prompts modulate the politics axis (App.~\ref{app:assistant-turn-modulation}). On both axes the LM-probe / text-encoder gap is smaller than on harm at the assistant turn.
 \end{itemize}
 
 A sign flip is the strong form of the evaluative claim: the probe is reading the model's evaluation, not just the task's descriptive features (a magnitude collapse is also consistent with the persona disrupting probe geometry without inverting it). The Gemma assistant-turn flip is the cleanest evidence we have that the LM probe carries evaluative structure that a text encoder trained on the same utilities does not match. None of these labels (truth, harm, politics) appeared during probe training; the readout's tracking of role-played evaluation is consistent with reading the direction as the model's evaluative orientation rather than as encoding fixed task descriptors.
@@ -165,7 +157,7 @@ We also find that when prepending system prompts of the form ``you adore cheese'
 \end{figure}
 
 \paragraph{The preference vector discriminates true and false statements.}
-On true/false statements from CREAK~\citep{onoe2021creak} read at the end-of-turn token, the probe separates the two classes at $|d| \approx \creakTruthCohensD$ on Gemma-3-27B and $|d| \approx 1.27$ on Qwen-3.5-122B (Fig.~\ref{fig:truth-discrim}; $n = \creakTruthNTrue{}$ per class).
+On true/false statements from CREAK~\citep{onoe2021creak} read at the end-of-turn token, the probe separates the two classes at $|d| \approx \creakTruthCohensD$ on Gemma-3-27B and $|d| \approx 1.27$ on Qwen-3.5-122B (Fig.~\ref{fig:truth-discrim}; $n = \creakTruthNTrue{}$ per class). Lying personas flip the truth sign on Gemma, mirroring the harm result in \S\ref{sec:induced-roleplay} (App.~\ref{app:assistant-turn-modulation}).
 
 \begin{figure}[!htbp]
   \centering
