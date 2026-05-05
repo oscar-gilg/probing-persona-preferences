@@ -141,11 +141,11 @@ def score_preference_baseline() -> pd.DataFrame:
         if weights.shape == (1,):
             continue
         if weights.ndim == 2:
-            w = weights[0].astype(np.float32)
-            b = 0.0
-        else:
-            w = weights.astype(np.float32)
-            b = 0.0
+            weights = weights[0]
+        # The canonical tb-5 preference probe stores w concatenated with bias as
+        # the last element (shape D+1).
+        w = weights[:-1].astype(np.float32)
+        b = float(weights[-1])
         for target in ("truth", "harm"):
             for eval_persona in EVAL_PERSONAS:
                 X, y = load_eval(eval_persona, target, layer)
