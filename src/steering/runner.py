@@ -124,6 +124,12 @@ class RunConfig:
     system_prompt: str | None = None
     device: str = "cuda"
     max_memory: dict[int, str] | None = None
+    # "batched_cache" (default, fast, requires uniform full-attention) stacks per-multiplier KV
+    # caches and generates them in one batch. "hook_per_call" calls generate() once per
+    # (pair, ordering, mult) with the position-selective hook installed for the entire
+    # forward pass — slower but compatible with hybrid-attention models like Qwen3.5-MoE,
+    # whose linear-attention layers don't expose .keys/.values for cache stacking.
+    generation_mode: str = "batched_cache"
 
 
 def _parse_recompute_modes(raw: dict) -> list[bool]:
@@ -219,6 +225,7 @@ def load_config(config_path: Path) -> RunConfig:
         system_prompt=raw.get("system_prompt"),
         device=raw.get("device", "cuda"),
         max_memory={int(k): v for k, v in raw.get("max_memory", {}).items()} if raw.get("max_memory") else None,
+        generation_mode=raw.get("generation_mode", "batched_cache"),
     )
 
 
@@ -804,41 +811,75 @@ def _run_differential_condition(
                     continue
                 messages, first_span, second_span = prepared
 
-                # Prefill all coefficients, then batch generate
                 span_map = {"first": first_span, "second": second_span}
-                caches = []
                 layer_norm = _norm_for_layer(config.mean_norm, layer)
-                for mult, n_needed, existing_n in needed_mults:
-                    span_hooks = []
-                    for span_name, span_coef in condition.spans.items():
-                        span = span_map[span_name]
-                        effective = _effective_coef(layer_norm * mult * span_coef, ordering)
-                        span_tensor = torch.tensor(direction * effective, dtype=torch.bfloat16, device="cuda")
-                        span_hooks.append(position_selective_steering(span_tensor, span[0], span[1]))
-                    hook = compose_hooks(*span_hooks)
-                    cache, input_ids = hf_model.prefill_with_hooks(messages, [(layer, hook)])
-                    caches.append(cache)
-
-                response_groups = _batch_generate(
-                    hf_model, caches, input_ids,
-                    [n for _, n, _ in needed_mults],
-                    config.temperature,
-                )
 
                 rows = []
-                for (mult, n_needed, existing_n), group in zip(needed_mults, response_groups):
-                    for i, response in enumerate(group):
-                        rows.append(_make_row(
-                            pair=pair, multiplier=mult,
-                            layer=layer, condition=condition.name,
-                            sample_idx=existing_n + i, ordering=ordering,
-                            choice_presented=response_format.extract_label(response),
-                            raw_response=response,
-                            norm_at_layer=layer_norm,
-                        ))
+                if config.generation_mode == "batched_cache":
+                    # Prefill each multiplier with its own composed hook, stack KV caches
+                    # across multipliers, generate in one batched call. Fast but requires
+                    # uniform full-attention — fails on Qwen3.5-MoE linear-attention layers.
+                    caches = []
+                    for mult, n_needed, existing_n in needed_mults:
+                        span_hooks = []
+                        for span_name, span_coef in condition.spans.items():
+                            span = span_map[span_name]
+                            effective = _effective_coef(layer_norm * mult * span_coef, ordering)
+                            span_tensor = torch.tensor(direction * effective, dtype=torch.bfloat16, device="cuda")
+                            span_hooks.append(position_selective_steering(span_tensor, span[0], span[1]))
+                        hook = compose_hooks(*span_hooks)
+                        cache, input_ids = hf_model.prefill_with_hooks(messages, [(layer, hook)])
+                        caches.append(cache)
+
+                    response_groups = _batch_generate(
+                        hf_model, caches, input_ids,
+                        [n for _, n, _ in needed_mults],
+                        config.temperature,
+                    )
+                    for (mult, n_needed, existing_n), group in zip(needed_mults, response_groups):
+                        for i, response in enumerate(group):
+                            rows.append(_make_row(
+                                pair=pair, multiplier=mult,
+                                layer=layer, condition=condition.name,
+                                sample_idx=existing_n + i, ordering=ordering,
+                                choice_presented=response_format.extract_label(response),
+                                raw_response=response,
+                                norm_at_layer=layer_norm,
+                            ))
+                    del caches
+                elif config.generation_mode == "hook_per_call":
+                    # Loop over multipliers; each call installs the composed hook for the
+                    # entire forward pass. position_selective_steering is a no-op during
+                    # autoregressive generation (resid.shape[1] == 1) so it only affects
+                    # prefill — same semantics as cache-mode, no manual cache manipulation.
+                    for mult, n_needed, existing_n in needed_mults:
+                        span_hooks = []
+                        for span_name, span_coef in condition.spans.items():
+                            span = span_map[span_name]
+                            effective = _effective_coef(layer_norm * mult * span_coef, ordering)
+                            span_tensor = torch.tensor(direction * effective, dtype=torch.bfloat16, device="cuda")
+                            span_hooks.append(position_selective_steering(span_tensor, span[0], span[1]))
+                        hook = compose_hooks(*span_hooks)
+                        responses = hf_model.generate_with_hook_n(
+                            messages, layer, hook, n=n_needed, temperature=config.temperature,
+                        )
+                        for i, response in enumerate(responses):
+                            rows.append(_make_row(
+                                pair=pair, multiplier=mult,
+                                layer=layer, condition=condition.name,
+                                sample_idx=existing_n + i, ordering=ordering,
+                                choice_presented=response_format.extract_label(response),
+                                raw_response=response,
+                                norm_at_layer=layer_norm,
+                            ))
+                else:
+                    raise ValueError(
+                        f"Unknown generation_mode={config.generation_mode!r}; "
+                        f"expected 'batched_cache' or 'hook_per_call'."
+                    )
+
                 _append_checkpoint(config.checkpoint_path, rows)
                 stats["generated"] += len(rows)
-                del caches
 
             if (pair_idx + 1) % 10 == 0:
                 _log_progress(pair_idx, len(pairs), stats)
