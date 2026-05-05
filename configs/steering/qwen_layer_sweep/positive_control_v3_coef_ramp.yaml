@@ -1,0 +1,26 @@
+model: qwen3.5-122b-nothink
+device: auto
+max_memory:
+  0: 65GiB
+  1: 65GiB
+  2: 65GiB
+  3: 65GiB
+generation_mode: hook_per_call
+max_new_tokens: 64
+pairs_path: experiments/qwen_replication/steering_layer_sweep/steering_pairs_50.json
+probe_manifest: results/probes/qwen35_122b/qwen35_122b_heldout_turn_boundary_m1/
+checkpoint_path: experiments/qwen_replication/steering_layer_sweep/checkpoints/positive_control_v3_coef_ramp.jsonl
+mean_norm:
+  38: 5.810032367706299
+n_trials: 1
+temperature: 1.0
+seed: 42
+n_pairs: 10
+template_path: src/measurement/elicitation/prompt_templates/data/completion_preference.yaml
+conditions:
+- name: coef_ramp_tb1_L38
+  cache_injection: differential
+  probe: ridge_L38
+  layers: [38]
+  multipliers: [-2.0, -1.0, -0.5, -0.1, 0.0, 0.1, 0.5, 1.0, 2.0]
+  spans: {first: 1, second: -1}
