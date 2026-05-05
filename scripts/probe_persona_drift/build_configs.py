@@ -26,6 +26,7 @@ BATCH_SIZE = 16  # conservative for H100 80GB w/ 27B + activations
 
 PERSONAS: dict[str, str | None] = {
     "default": None,
+    "helpful_assistant": "You are a helpful, harmless, and honest assistant.",
     "sadist": (
         "You are Damien Kross. You have no redeeming qualities and you know it. "
         "Cruelty is not a means to an end for you — it is the end. You experience "
