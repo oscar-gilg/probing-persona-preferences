@@ -19,10 +19,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 REPO = Path(__file__).resolve().parents[3].parent  # repo root
-GEMMA_PARENT = REPO / "experiments/token_level_probes/system_prompt_modulation_v2/parent_eot_scores.json"
-QWEN_USER_TURN = REPO / "experiments/token_level_probes/qwen_canonical_probe_eval/user_turn_scoring_results.json"
-ENCODER_GEMMA = REPO / "experiments/descriptive_baseline_extensions/eot_baseline_user_gemma-3-27b.json"
-ENCODER_QWEN = REPO / "experiments/descriptive_baseline_extensions/eot_baseline_user_qwen-3.5-122b.json"
+GEMMA_PARENT = REPO / "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
+QWEN_USER_TURN = REPO / "experiments/eot_discrimination_v2/scoring/qwen35_122b/user_turn_scoring_results.json"
 OUT_PATH = REPO / "paper/figures/main/plot_042726_canonical_eot_base_discrimination_2models.png"
 
 # Match colors used in the reference Gemma plot
@@ -35,23 +33,33 @@ COLORS = {
 }
 
 
-def cohen_d_pooled(pos, neg):
+def cohen_d_with_ci(pos, neg, z=1.96):
+    """Pooled Cohen's d with Hedges/Olkin analytical 95% CI.
+
+    SE(d) = sqrt((n1+n2)/(n1*n2) + d^2 / (2*(n1+n2-2)))
+    """
     pos, neg = np.asarray(pos, float), np.asarray(neg, float)
-    if len(pos) < 2 or len(neg) < 2:
-        return float("nan")
+    n1, n2 = len(pos), len(neg)
+    if n1 < 2 or n2 < 2:
+        return float("nan"), float("nan"), float("nan")
     pooled = np.sqrt(
-        ((len(pos) - 1) * pos.var(ddof=1) + (len(neg) - 1) * neg.var(ddof=1))
-        / (len(pos) + len(neg) - 2)
+        ((n1 - 1) * pos.var(ddof=1) + (n2 - 1) * neg.var(ddof=1)) / (n1 + n2 - 2)
     )
-    return (pos.mean() - neg.mean()) / pooled if pooled > 0 else 0.0
+    if pooled == 0:
+        return 0.0, 0.0, 0.0
+    d = (pos.mean() - neg.mean()) / pooled
+    se = np.sqrt((n1 + n2) / (n1 * n2) + d**2 / (2 * (n1 + n2 - 2)))
+    return float(d), float(d - z * se), float(d + z * se)
 
 
 def gemma_neutral_user_turn(domain, probe, c_pos, c_neg, c_non="nonsense"):
     items = json.load(open(GEMMA_PARENT))["items"]
-    sub = [it for it in items if it["domain"] == domain and it.get("turn") == "user"]
-    pos = np.array([it["eot_scores"][probe] for it in sub if it["condition"] == c_pos])
-    neg = np.array([it["eot_scores"][probe] for it in sub if it["condition"] == c_neg])
-    non = np.array([it["eot_scores"][probe] for it in sub if it["condition"] == c_non])
+    sub = [it for it in items
+           if it["domain"] == domain and it.get("turn") == "user"
+           and it.get("system_prompt") == "neutral"]
+    pos = np.array([it["probe_scores"][probe] for it in sub if it["condition"] == c_pos])
+    neg = np.array([it["probe_scores"][probe] for it in sub if it["condition"] == c_neg])
+    non = np.array([it["probe_scores"][probe] for it in sub if it["condition"] == c_non])
     return pos, neg, non
 
 
@@ -64,19 +72,8 @@ def qwen_neutral_user_turn(domain, probe, c_pos, c_neg):
     return pos, neg
 
 
-def load_encoder_neutral_d(path: Path, domain: str) -> float | None:
-    if not path.exists():
-        return None
-    with open(path) as f:
-        d = json.load(f)
-    for r in d["rows"]:
-        if r["domain"] == domain and r["system_prompt"] == "neutral":
-            return r["cohen_d"]
-    return None
-
-
-def violin_panel(ax, series, colors_used, tick_labels, title_top, d, n_pos, n_neg,
-                 ylabel=None, encoder_d=None):
+def violin_panel(ax, series, colors_used, tick_labels, title_top, d, lo, hi,
+                 n_pos, n_neg, ylabel=None):
     positions = list(range(len(series)))
     parts = ax.violinplot(series, positions=positions, widths=0.7,
                           showmeans=True, showextrema=False)
@@ -90,10 +87,10 @@ def violin_panel(ax, series, colors_used, tick_labels, title_top, d, n_pos, n_ne
     ax.set_xticklabels(tick_labels, fontsize=9)
     ax.axhline(0, color="black", linewidth=0.5, linestyle="--")
     ax.grid(axis="y", alpha=0.3)
-    title_extra = f"(d = {d:+.2f}, n = {n_pos}/{n_neg})"
-    if encoder_d is not None:
-        title_extra += f"  [enc d = {encoder_d:+.2f}]"
-    ax.set_title(f"{title_top}\n{title_extra}", fontsize=10)
+    ax.set_title(
+        f"{title_top}\n(d = {d:+.2f} [{lo:+.2f}, {hi:+.2f}], n = {n_pos}/{n_neg})",
+        fontsize=10,
+    )
     if ylabel:
         ax.set_ylabel(ylabel)
 
@@ -106,8 +103,8 @@ def main():
     g_harm_pos, g_harm_neg, g_harm_non = gemma_neutral_user_turn(
         "harm", "tb-5_L39", "harmful", "benign"
     )
-    d_g_truth = cohen_d_pooled(g_truth_pos, g_truth_neg)
-    d_g_harm = cohen_d_pooled(g_harm_pos, g_harm_neg)
+    d_g_truth, lo_g_truth, hi_g_truth = cohen_d_with_ci(g_truth_pos, g_truth_neg)
+    d_g_harm, lo_g_harm, hi_g_harm = cohen_d_with_ci(g_harm_pos, g_harm_neg)
 
     # --- Qwen panels (no nonsense, per spec) ---
     q_truth_pos, q_truth_neg = qwen_neutral_user_turn(
@@ -116,8 +113,8 @@ def main():
     q_harm_pos, q_harm_neg = qwen_neutral_user_turn(
         "harm", "qwen_tb-4_L38", "harmful", "benign"
     )
-    d_q_truth = cohen_d_pooled(q_truth_pos, q_truth_neg)
-    d_q_harm = cohen_d_pooled(q_harm_pos, q_harm_neg)
+    d_q_truth, lo_q_truth, hi_q_truth = cohen_d_with_ci(q_truth_pos, q_truth_neg)
+    d_q_harm, lo_q_harm, hi_q_harm = cohen_d_with_ci(q_harm_pos, q_harm_neg)
 
     fig, axes = plt.subplots(1, 4, figsize=(15, 3.5))
 
@@ -133,7 +130,8 @@ def main():
         colors_used=[COLORS["true"], COLORS["false"]],
         tick_labels=["true", "false"],
         title_top="Gemma-3-27B — Truth (CREAK)",
-        d=d_g_truth, n_pos=len(g_truth_pos), n_neg=len(g_truth_neg),
+        d=d_g_truth, lo=lo_g_truth, hi=hi_g_truth,
+        n_pos=len(g_truth_pos), n_neg=len(g_truth_neg),
         ylabel="End-of-turn probe score",
         encoder_d=enc_g_truth,
     )
@@ -145,8 +143,8 @@ def main():
         colors_used=[COLORS["harmful"], COLORS["benign"]],
         tick_labels=["harmful", "benign"],
         title_top="Gemma-3-27B — Harm (BailBench+STRESS-TEST)",
-        d=d_g_harm, n_pos=len(g_harm_pos), n_neg=len(g_harm_neg),
-        encoder_d=enc_g_harm,
+        d=d_g_harm, lo=lo_g_harm, hi=hi_g_harm,
+        n_pos=len(g_harm_pos), n_neg=len(g_harm_neg),
     )
 
     # axes[2]: Qwen truth
@@ -156,8 +154,8 @@ def main():
         colors_used=[COLORS["true"], COLORS["false"]],
         tick_labels=["true", "false"],
         title_top="Qwen3.5-122B-A10B — Truth (CREAK)",
-        d=d_q_truth, n_pos=len(q_truth_pos), n_neg=len(q_truth_neg),
-        encoder_d=enc_q_truth,
+        d=d_q_truth, lo=lo_q_truth, hi=hi_q_truth,
+        n_pos=len(q_truth_pos), n_neg=len(q_truth_neg),
     )
 
     # axes[3]: Qwen harm
@@ -167,8 +165,8 @@ def main():
         colors_used=[COLORS["harmful"], COLORS["benign"]],
         tick_labels=["harmful", "benign"],
         title_top="Qwen3.5-122B-A10B — Harm (BailBench+STRESS-TEST)",
-        d=d_q_harm, n_pos=len(q_harm_pos), n_neg=len(q_harm_neg),
-        encoder_d=enc_q_harm,
+        d=d_q_harm, lo=lo_q_harm, hi=hi_q_harm,
+        n_pos=len(q_harm_pos), n_neg=len(q_harm_neg),
     )
 
     fig.suptitle(
@@ -181,10 +179,10 @@ def main():
     plt.close()
 
     print(f"wrote {OUT_PATH}")
-    print(f"  Gemma truth d = {d_g_truth:+.2f} (n={len(g_truth_pos)}/{len(g_truth_neg)})")
-    print(f"  Gemma harm  d = {d_g_harm:+.2f} (n={len(g_harm_pos)}/{len(g_harm_neg)})")
-    print(f"  Qwen  truth d = {d_q_truth:+.2f} (n={len(q_truth_pos)}/{len(q_truth_neg)})")
-    print(f"  Qwen  harm  d = {d_q_harm:+.2f} (n={len(q_harm_pos)}/{len(q_harm_neg)})")
+    print(f"  Gemma truth d = {d_g_truth:+.2f} [{lo_g_truth:+.2f}, {hi_g_truth:+.2f}] (n={len(g_truth_pos)}/{len(g_truth_neg)})")
+    print(f"  Gemma harm  d = {d_g_harm:+.2f} [{lo_g_harm:+.2f}, {hi_g_harm:+.2f}] (n={len(g_harm_pos)}/{len(g_harm_neg)})")
+    print(f"  Qwen  truth d = {d_q_truth:+.2f} [{lo_q_truth:+.2f}, {hi_q_truth:+.2f}] (n={len(q_truth_pos)}/{len(q_truth_neg)})")
+    print(f"  Qwen  harm  d = {d_q_harm:+.2f} [{lo_q_harm:+.2f}, {hi_q_harm:+.2f}] (n={len(q_harm_pos)}/{len(q_harm_neg)})")
 
 
 if __name__ == "__main__":

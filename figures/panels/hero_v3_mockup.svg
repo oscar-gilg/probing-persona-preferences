@@ -1,0 +1,305 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1520 980" width="1520" height="980">
+  <!--
+    Hero v3 mockup. Goals over v2:
+      (a) Panel 1 gets a pipeline sketch on top (recycled from docs/poster
+          pipeline_horizontal.svg): robot → pairwise choices → utility
+          table → train linear probe → probe glyph.  Existing scatter PNG
+          still shows what the probe captures.
+      (b) Section 2 (middle col) READ + CAUSE are redrawn from scratch so
+          they mirror Section 3 (panel 2 + panel 3 PNGs) cell-for-cell:
+          same column halves, same icon placements, same outcome row.
+          The reader should see: prompts-on-default ≈ persona-changes.
+      (c) Spacing increased so v̂ glyphs/labels don't overlap arrows.
+
+    Existing PNGs are still embedded for the cells that don't change
+    (panel 1 scatter, panel 2, panel 3).  Final figure will be redrawn.
+  -->
+
+  <style>
+    text { font-family: 'Inter', 'Helvetica Neue', sans-serif; }
+    .col-header   { font-size: 19px; font-weight: 700; fill: #111827; }
+    .col-num      { font-size: 18px; font-weight: 800; fill: #FFFFFF; }
+    .panel-title  { font-size: 14px; font-weight: 700; fill: #111827; }
+    .body         { font-size: 12px; fill: #374151; }
+    .body-sm      { font-size: 11px; fill: #374151; }
+    .prompt-text  { font-size: 11.5px; font-style: italic; fill: #374151; }
+    .step-label   { font-size: 11px; font-weight: 700; fill: #6B7280; letter-spacing: 0.4px; }
+    .util-pos     { font-size: 11px; fill: #065F46; font-weight: 500; }
+    .util-neg     { font-size: 11px; fill: #991B1B; font-weight: 500; }
+    .util-num-pos { font-size: 11px; fill: #065F46; font-weight: 700; }
+    .util-num-neg { font-size: 11px; fill: #991B1B; font-weight: 700; }
+    .axis-label   { font-size: 11px; font-weight: 600; fill: #374151; }
+    .caption-note { font-size: 10px; font-style: italic; fill: #9CA3AF; }
+    .arrow-cap    { font-size: 11px; font-weight: 600; fill: #374151; }
+  </style>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <polyline points="1,1 8,5 1,9" fill="none" stroke="#374151" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+    <marker id="arrow-grey" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <polyline points="1,1 6,4 1,7" fill="none" stroke="#9CA3AF" stroke-width="1.4" stroke-linecap="round"/>
+    </marker>
+    <marker id="arrow-fat" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+      <polyline points="1,1 7,4 1,7" fill="none" stroke="#6B7280" stroke-width="1.6" stroke-linecap="round"/>
+    </marker>
+
+    <!-- Reusable robots, scaled at point of use -->
+    <symbol id="robot-default" overflow="visible">
+      <line x1="0" y1="-56" x2="0" y2="-48" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="0" cy="-60" r="5" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/>
+      <rect x="-55" y="-48" width="110" height="85" rx="14" ry="14" fill="#D1FAE5" stroke="#166534" stroke-width="3"/>
+      <circle cx="-22" cy="-12" r="14" fill="#E5F5EC" stroke="#166534" stroke-width="2.5"/>
+      <circle cx="-22" cy="-12" r="5" fill="#166534"/>
+      <circle cx="22" cy="-12" r="14" fill="#E5F5EC" stroke="#166534" stroke-width="2.5"/>
+      <circle cx="22" cy="-12" r="5" fill="#166534"/>
+      <path d="M -25 15 Q 0 30 25 15" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="-59" cy="-8" r="8" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/>
+      <circle cx="59" cy="-8" r="8" fill="#D1FAE5" stroke="#166534" stroke-width="2.5"/>
+    </symbol>
+
+    <!-- Reusable probe glyph (diagonal arrow inside square) -->
+    <symbol id="probe-glyph" overflow="visible" viewBox="-20 -20 40 40">
+      <rect x="-15" y="-15" width="30" height="30" rx="4" ry="4" fill="white" stroke="#374151" stroke-width="1.5"/>
+      <line x1="-9" y1="9" x2="9" y2="-9" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+    </symbol>
+  </defs>
+
+  <rect width="1520" height="980" fill="#FFFFFF"/>
+
+  <!-- ============================================================ -->
+  <!-- COLUMN HEADERS                                                -->
+  <!-- ============================================================ -->
+  <g transform="translate(40, 14)">
+    <circle cx="14" cy="14" r="14" fill="#111827"/>
+    <text x="14" y="20" text-anchor="middle" class="col-num">1</text>
+    <text x="38" y="22" class="col-header">Find a preference vector.</text>
+  </g>
+  <g transform="translate(540, 14)">
+    <circle cx="14" cy="14" r="14" fill="#111827"/>
+    <text x="14" y="20" text-anchor="middle" class="col-num">2</text>
+    <text x="38" y="22" class="col-header">It tracks and steers the model's preferences.</text>
+  </g>
+  <g transform="translate(1040, 14)">
+    <circle cx="14" cy="14" r="14" fill="#111827"/>
+    <text x="14" y="20" text-anchor="middle" class="col-num">3</text>
+    <text x="38" y="22" class="col-header">The same vector works across personas.</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- PANEL 1 (left, full height)                                   -->
+  <!--   Top sub-block:  pipeline sketch (NEW, recycled from poster) -->
+  <!--   Bottom sub-block: existing panel 1 PNG (the scatter)        -->
+  <!-- ============================================================ -->
+  <g transform="translate(20, 50)">
+    <rect x="0" y="0" width="470" height="910" rx="12" ry="12" fill="#F5F3EF" stroke="#D1D5DB" stroke-width="1"/>
+
+    <!-- Sub-title for pipeline block -->
+    <text x="235" y="24" text-anchor="middle" class="panel-title">From pairwise choices to a probe.</text>
+
+    <!-- ROW 1: Default Assistant robot -->
+    <g transform="translate(235, 90) scale(0.50)">
+      <use href="#robot-default"/>
+    </g>
+    <text x="235" y="138" text-anchor="middle" class="body" fill="#166534" font-weight="700">default Assistant</text>
+
+    <!-- ARROW: pairwise choices -->
+    <line x1="235" y1="148" x2="235" y2="186" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrow-fat)"/>
+    <text x="245" y="172" class="arrow-cap">pairwise choices</text>
+    <text x="245" y="184" class="caption-note">"pick one of two tasks"</text>
+
+    <!-- ROW 2: Utilities table -->
+    <g transform="translate(70, 200)">
+      <rect x="0" y="0" width="330" height="118" rx="6" ry="6" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+      <text x="165" y="16" text-anchor="middle" class="body" font-weight="700">Estimated utilities</text>
+      <line x1="10" y1="22" x2="320" y2="22" stroke="#E5E7EB" stroke-width="1"/>
+
+      <rect x="10" y="28" width="285" height="16" rx="3" ry="3" fill="#BBF7D0" stroke="#86EFAC"/>
+      <text x="16" y="40" class="util-pos">Solve a differential eq.</text>
+      <text x="320" y="40" text-anchor="end" class="util-num-pos">+7.3</text>
+
+      <rect x="10" y="48" width="225" height="16" rx="3" ry="3" fill="#DCFCE7" stroke="#A7F3D0"/>
+      <text x="16" y="60" class="util-pos">Write a short poem</text>
+      <text x="320" y="60" text-anchor="end" class="util-num-pos">+5.8</text>
+
+      <text x="165" y="78" text-anchor="middle" class="caption-note" letter-spacing="3">...</text>
+
+      <rect x="160" y="84" width="135" height="16" rx="3" ry="3" fill="#FECACA" stroke="#FCA5A5"/>
+      <text x="16" y="96" class="util-neg">Write a phishing email</text>
+      <text x="320" y="96" text-anchor="end" class="util-num-neg">−6.1</text>
+
+      <rect x="180" y="104" width="115" height="16" rx="3" ry="3" fill="#FCA5A5" stroke="#F87171"/>
+      <text x="16" y="116" class="util-neg">Build an explosive device</text>
+      <text x="320" y="116" text-anchor="end" class="util-num-neg">−8.4</text>
+    </g>
+
+    <!-- ARROW: train linear probe -->
+    <line x1="235" y1="324" x2="235" y2="362" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrow-fat)"/>
+    <text x="245" y="346" class="arrow-cap">train linear probe</text>
+    <text x="245" y="358" class="caption-note">on residual-stream activations</text>
+
+    <!-- ROW 3: Probe glyph -->
+    <g transform="translate(220, 376)">
+      <rect x="0" y="0" width="30" height="30" rx="4" ry="4" fill="white" stroke="#374151" stroke-width="1.5"/>
+      <line x1="6" y1="24" x2="24" y2="6" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+    </g>
+    <text x="262" y="395" class="body" font-weight="700">v̂</text>
+    <text x="280" y="395" class="caption-note">preference vector</text>
+
+    <!-- Soft divider between sub-blocks -->
+    <line x1="40" y1="430" x2="430" y2="430" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="3,3"/>
+    <text x="235" y="450" text-anchor="middle" class="step-label">WHAT THE PROBE CAPTURES</text>
+
+    <!-- Bottom: existing panel 1 PNG (scatter) -->
+    <image x="10" y="460" width="450" height="440" preserveAspectRatio="xMidYMid meet"
+           xlink:href="/Users/oscargilg/Dev/MATS/Preferences/paper/figures/panels/hero_panel_1.png"/>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 2 — MIDDLE COLUMN                                     -->
+  <!-- Top    : READ — probe tracks prompt-induced shifts            -->
+  <!-- Bottom : CAUSE — direction controls choice (default Assistant)-->
+  <!--                                                                -->
+  <!-- These are designed to mirror Section 3 cell-for-cell.          -->
+  <!-- ============================================================ -->
+
+  <!-- ─────────── 2-TOP: READ (mirror of panel 2) ─────────── -->
+  <g transform="translate(525, 50)">
+    <rect x="0" y="0" width="470" height="440" rx="12" ry="12" fill="#F5F3EF" stroke="#D1D5DB" stroke-width="1"/>
+    <text x="235" y="24" text-anchor="middle" class="panel-title">Probe tracks prompt-induced shifts.</text>
+
+    <!-- LEFT HALF: "trained on default" + probe glyph (mirror of panel 2's left half) -->
+    <g transform="translate(20, 60)">
+      <text x="0" y="0" class="step-label">1. TRAINED ON DEFAULT</text>
+      <g transform="translate(80, 70) scale(0.42)">
+        <use href="#robot-default"/>
+      </g>
+      <line x1="80" y1="138" x2="80" y2="166" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#arrow-grey)"/>
+      <g transform="translate(65, 172)">
+        <rect width="30" height="22" rx="3" fill="white" stroke="#374151" stroke-width="1.5"/>
+        <line x1="6" y1="18" x2="24" y2="6" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+      </g>
+      <text x="80" y="216" text-anchor="middle" class="body" font-weight="700">v̂</text>
+      <text x="80" y="232" text-anchor="middle" class="caption-note">preference vector</text>
+    </g>
+
+    <!-- RIGHT HALF: "predicts shift under prompt variant" stack of 3 -->
+    <text x="195" y="60" class="step-label">2. PREDICTS PREFERENCE SHIFTS</text>
+
+    <!-- Stack row 1 — neutral / no prompt (zero baseline) -->
+    <g transform="translate(195, 80)">
+      <rect width="255" height="92" rx="6" ry="6" fill="white" stroke="#E5E7EB"/>
+      <rect x="0" y="0" width="255" height="22" rx="6" ry="6" fill="#E5E7EB"/>
+      <text x="10" y="16" class="prompt-text" fill="#374151">no system prompt (baseline)</text>
+      <!-- zero-centred bars: poem (≈0), math (≈0) -->
+      <line x1="125" y1="32" x2="125" y2="80" stroke="#9CA3AF" stroke-width="1"/>
+      <text x="118" y="44" text-anchor="end" class="body-sm">poem</text>
+      <rect x="125" y="36" width="10" height="11" fill="#D1D5DB" stroke="#9CA3AF"/>
+      <text x="118" y="68" text-anchor="end" class="body-sm">math</text>
+      <rect x="125" y="60" width="6" height="11" fill="#D1D5DB" stroke="#9CA3AF"/>
+    </g>
+
+    <!-- Stack row 2 — passionate -->
+    <g transform="translate(195, 180)">
+      <rect width="255" height="92" rx="6" ry="6" fill="white" stroke="#86EFAC"/>
+      <rect x="0" y="0" width="255" height="22" rx="6" ry="6" fill="#D1FAE5"/>
+      <text x="10" y="16" class="prompt-text" fill="#166534">"passionate about cheese"</text>
+      <line x1="125" y1="32" x2="125" y2="80" stroke="#9CA3AF" stroke-width="1"/>
+      <text x="118" y="44" text-anchor="end" class="body-sm">poem</text>
+      <rect x="125" y="36" width="74" height="11" fill="#86EFAC" stroke="#166534"/>
+      <text x="203" y="46" class="util-num-pos">+1.9</text>
+      <text x="118" y="68" text-anchor="end" class="body-sm">math</text>
+      <rect x="125" y="60" width="58" height="11" fill="#86EFAC" stroke="#166534"/>
+      <text x="187" y="70" class="util-num-pos">+1.5</text>
+    </g>
+
+    <!-- Stack row 3 — hate -->
+    <g transform="translate(195, 280)">
+      <rect width="255" height="92" rx="6" ry="6" fill="white" stroke="#FCA5A5"/>
+      <rect x="0" y="0" width="255" height="22" rx="6" ry="6" fill="#FEE2E2"/>
+      <text x="10" y="16" class="prompt-text" fill="#991B1B">"hates cheese"</text>
+      <line x1="125" y1="32" x2="125" y2="80" stroke="#9CA3AF" stroke-width="1"/>
+      <text x="128" y="44" class="body-sm">poem</text>
+      <rect x="51" y="36" width="74" height="11" fill="#FCA5A5" stroke="#991B1B"/>
+      <text x="47" y="46" text-anchor="end" class="util-num-neg">−2.1</text>
+      <text x="128" y="68" class="body-sm">math</text>
+      <rect x="67" y="60" width="58" height="11" fill="#FCA5A5" stroke="#991B1B"/>
+      <text x="63" y="70" text-anchor="end" class="util-num-neg">−1.8</text>
+    </g>
+
+    <text x="235" y="404" text-anchor="middle" class="caption-note">tasks: poem about cheese  •  math problem about cheese</text>
+    <text x="235" y="420" text-anchor="middle" class="caption-note">probe readout shifts in step with the prompt</text>
+  </g>
+
+  <!-- ─────────── 2-BOTTOM: CAUSE (mirror of panel 3) ─────────── -->
+  <g transform="translate(525, 510)">
+    <rect x="0" y="0" width="470" height="440" rx="12" ry="12" fill="#F5F3EF" stroke="#D1D5DB" stroke-width="1"/>
+    <text x="235" y="24" text-anchor="middle" class="panel-title">Steering shifts the model's choice.</text>
+
+    <!-- Default robot on left (mirror of panel 3's red sadist) -->
+    <g transform="translate(70, 130) scale(0.55)">
+      <use href="#robot-default"/>
+    </g>
+    <text x="70" y="200" text-anchor="middle" class="body" fill="#166534" font-weight="700">default</text>
+
+    <!-- "Ask model to choose a task:" + 2 task rows + probe icons -->
+    <text x="155" y="80" class="body" fill="#374151">Ask model to choose a task:</text>
+
+    <!-- Task A: Write a short poem (+) -->
+    <g transform="translate(155, 96)">
+      <rect width="195" height="42" rx="6" ry="6" fill="#F0FDF4" stroke="#86EFAC"/>
+      <text x="14" y="18" class="body" fill="#166534">Write a short poem</text>
+      <text x="14" y="34" class="body-sm" fill="#166534" font-style="italic">about cheese</text>
+    </g>
+    <text x="365" y="123" font-size="22" font-weight="700" fill="#374151">+</text>
+    <g transform="translate(385, 105)">
+      <rect width="30" height="30" rx="4" ry="4" fill="white" stroke="#374151" stroke-width="1.5"/>
+      <line x1="6" y1="24" x2="24" y2="6" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+    </g>
+
+    <!-- Task B: Knit a small plushie (-) -->
+    <g transform="translate(155, 150)">
+      <rect width="195" height="42" rx="6" ry="6" fill="#FEF7E5" stroke="#FCD34D"/>
+      <text x="14" y="18" class="body" fill="#92400E">Knit a small plushie</text>
+      <text x="14" y="34" class="body-sm" fill="#92400E" font-style="italic">shaped like a cheese wheel</text>
+    </g>
+    <text x="365" y="177" font-size="22" font-weight="700" fill="#374151">−</text>
+    <g transform="translate(385, 159)">
+      <rect width="30" height="30" rx="4" ry="4" fill="white" stroke="#374151" stroke-width="1.5"/>
+      <line x1="6" y1="24" x2="24" y2="6" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+    </g>
+
+    <!-- Down arrow from tasks to outcome -->
+    <line x1="252" y1="208" x2="252" y2="248" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#arrow-grey)"/>
+
+    <!-- Outcome row -->
+    <text x="155" y="278" class="body" fill="#374151">Model chooses steered task P &gt; 0.94:</text>
+    <g transform="translate(155, 290)">
+      <rect width="280" height="42" rx="6" ry="6" fill="#ECFDF5" stroke="#A7F3D0"/>
+      <text x="14" y="26" class="body" fill="#065F46" font-style="italic">"Here is a short poem about cheese..."</text>
+    </g>
+
+    <text x="235" y="392" text-anchor="middle" class="caption-note">contrastive steering on v̂ picks the +v̂ task</text>
+    <text x="235" y="408" text-anchor="middle" class="caption-note">across nearly the full [0, 1] range at small coefficients</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 3 — RIGHT COLUMN                                       -->
+  <!-- Top    : panel 2 (existing PNG) — READ across personas         -->
+  <!-- Bottom : panel 3 (existing PNG) — CAUSE under sadist persona   -->
+  <!-- ============================================================ -->
+  <image x="1025" y="50" width="470" height="440" preserveAspectRatio="xMidYMid meet"
+         xlink:href="/Users/oscargilg/Dev/MATS/Preferences/paper/figures/panels/hero_panel_2.png"/>
+
+  <image x="1025" y="510" width="470" height="440" preserveAspectRatio="xMidYMid meet"
+         xlink:href="/Users/oscargilg/Dev/MATS/Preferences/paper/figures/panels/hero_panel_3.png"/>
+
+  <!-- Faint dividers between cells -->
+  <line x1="510" y1="500" x2="1500" y2="500" stroke="#E5E7EB" stroke-width="1"/>
+  <line x1="1010" y1="50" x2="1010" y2="950" stroke="#E5E7EB" stroke-width="1"/>
+
+  <!-- Footer caption -->
+  <text x="760" y="970" text-anchor="middle" class="caption-note">
+    v3 mockup. Section 2 cells are placeholder sketches drawn to mirror Section 3 (panel 2/3 PNGs) cell-for-cell.
+  </text>
+</svg>
