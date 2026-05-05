@@ -18,4 +18,11 @@
 ### Phase A positive control
 - Config: `configs/steering/qwen_layer_sweep/positive_control_tb1_L38.yaml` (5 pairs, 1 trial, c=+0.05 only).
 - First run failed with `ModuleNotFoundError: requests`. Fixed; re-launched.
+- Model download in progress on first launch (~244GB BF16 weights to /opt/hf_cache, fresh pod).
 - Pass criterion: P(chose steered) > 0.6 on 5 pairs.
+
+### Bundling decision
+- Spec assumed 12 separate configs. With model load ~20-30 min from cold, that'd be 4-6 hours of pure load overhead.
+- Refactored to 2 multi-condition YAMLs (`phase_a_tb1_bundled.yaml`, `phase_a_tb4_bundled.yaml`), each with 6 conditions sharing the same model load.
+- Phase A wall clock estimate revised: ~5 min load (per selector) × 2 + ~4 hours for 14,400 gens × 2 selectors = ~8-9 hours total. (Original estimate was 3-5 h on the assumption load was free; with bundling we recover that.)
+- `analyze_phase_a.py` updated to discover bundled output; rows grouped by `r["layer"]`.
