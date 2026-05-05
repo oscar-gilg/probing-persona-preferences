@@ -73,25 +73,42 @@ Swing in the |c| ≤ 2 range stays in 0.05–0.17 with no monotone trend. **An u
 | Pair-set leakage | 0% with 10k AL (verified) |
 | Hook applied without crash | All 480 trials completed; no NaN, no degenerate outputs |
 
-## Diagnostic interpretation
+## Follow-up diagnostics (this session)
 
-The pilot is consistent with one of:
+After the pilot, three additional tests on a fresh 4× A100 pod to rule out alternative explanations:
 
-1. **The Qwen preference direction is genuinely a weaker causal handle than Gemma's.** Linear decodability and causal efficacy are known to decouple within Gemma (probe peak L29 vs steering peak L23). It would not be surprising for that decoupling to be sharper or differently-located on Qwen — and reporting it would itself be a cross-model finding.
-2. **The hook attaches at a residual point that's offset from the probe-extraction point on Qwen3.5's hybrid block layout.** Linear-attention and full-attention blocks may register hooks against subtly different residual streams. Verifiable by instrumenting `prefill_with_hooks` on Qwen3.5 and tracing residual values pre/post hook.
-3. **The 10-pair sample under-counts the effect.** With high pair-by-pair variance and 15–35% refusal, n=10 leaves wide error bars. A 25-pair reduced run (~$25-50) would tighten this substantially without committing to the full Phase A budget.
+| Diagnostic | Test | Result |
+|---|---|---|
+| **Coverage gap** | Gemma's analogue of L23/62 = L18/48. Lite scan jumped L12 → L24, missing this. Run probe `ridge_L24` injected at L16, L18, L20, L22, L24 (cross-layer steering, 10 pairs each). | Max swing **+0.01** at L22; L18 swing **+0.00**. **No hidden peak in the missed region.** |
+| **System-prompt parity** | Probe was extracted with `model: qwen3.5-122b` (no system prompt); steering uses `qwen3.5-122b-nothink` (`/no_think` injected). Re-run L38 c=±0.05 with `qwen3.5-122b`. | **Inconclusive.** Without `/no_think`, Qwen3.5 produces thinking traces that exceed `max_new_tokens=64`, giving 100% refusal. Can't measure choice cheaply at 64 tokens. |
+| **All-tokens vs contrastive** | Apply `+c × direction` to *every* prompt token (`prefill_all_steering`) instead of contrastive position-selective. Same probe `ridge_L24` at L24, c=±0.05. If swing emerges → contrastive/spans is the bottleneck. If flat → the direction itself. | **Swing -0.08** (essentially zero, opposite sign). Refusal rate dropped to 5-15% (clean responses). Direction has no causal effect even when applied globally. |
 
-The `SteeredHFClient` path used by the qwen_persona_vectors team (Phase 7) is a known-working steering setup on this model, but with persona vectors not preference probes — running our preference probe through that exact path would isolate whether the runner code or the direction itself is the issue.
+## Conclusion
+
+**The Qwen preference direction is genuinely a weak causal handle on this model.** The diagnostics rule out:
+
+- Coefficient under-calibration (40× ramp is flat)
+- Coverage gap (cross-layer at L16/18/20/22 also flat)
+- Contrastive/spans setup (all-tokens application also flat)
+- Probe sign (positive c → positive swing on contrastive, correct direction)
+- Parser quality (regex and LLM judge agree)
+
+What remains plausible but not verified:
+
+- **System-prompt distribution shift** (probe trained without `/no_think`, applied with it). Can't be cheaply tested due to thinking-trace truncation. Would need either a probe trained with `/no_think` OR `max_new_tokens` ≥ 512 to measure choice in non-`/no_think` mode.
+- **Hook target on Qwen3.5's hybrid block layout.** The architecture accessor maps `qwen3_5_moe → model.model.language_model.layers` and `qwen3_5_moe_text → model.model.layers`. Without inspecting the loaded module on a live pod, can't fully confirm the right residual point is being modified. The fact that the hook fires without error and produces small but real swings (positive c → small +swing) suggests the attachment is reasonable, just that the modified residual doesn't have strong causal weight at that point.
+
+The cross-model decoupling — Qwen probe is *better* at decoding utility (heldout r 0.946 vs 0.874) but *much weaker* as a causal handle (best swing 0.06–0.17 vs Gemma's 0.94) — is the headline.
 
 ## Decision
 
-Pod paused. Three branches to choose between:
+Pod paused. Cost: ~$45-55 total. Three options going forward:
 
-- **(A) Debug locally** (free) — instrument hook attachment on Qwen3.5; trace residual values; verify token-span indexing on the actual 122B tokenizer (build-time used cached Qwen3-32B). Rules out hypothesis 2.
-- **(B) Cross-validate via `SteeredHFClient`** (~$15-25, ~30 min) — same probe direction, the persona_vectors inference path. If it produces ~0.06 swing too, hypothesis 1 is the story.
-- **(C) Reduced Phase A** (~$60-100, ~100 min) — 25 pairs × 6 layers × 4 mults × 2 orderings × 1 trial. Tightens the layer-causal curve without the full cost. Confirms or denies hypothesis 1 at scale.
+- **(A) Accept and report** as a paper appendix finding. The decoupling story is itself interesting and reportable. Caveat: still based on n=10–20 pilot pairs; would tighten with a small follow-up.
+- **(B) Tighten with a 25-pair Phase B-style run** at the best Qwen layer (~$50-80, ~2h). Confirms the small-but-positive contrastive swing at scale. Also adds the per-pair-type breakdown (bb/hb/hh) that mirrors Gemma's Fig. 5.
+- **(C) Try a probe trained with the matched system prompt** (~few hours GPU upfront for new extraction + probe). Would close the system-prompt gap. Higher commitment.
 
-Recommend **A → B → C** in that order. Skipping straight to (C) on a tentative pilot is the most expensive path and the least diagnostic.
+Recommend **(A)** for the immediate paper, with **(B)** if we want a Qwen panel matching Gemma's Fig. 5 layout. (C) is a longer follow-up if the cross-model story warrants deeper investigation.
 
 ## Artefacts
 
