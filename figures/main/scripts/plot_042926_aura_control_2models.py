@@ -26,6 +26,8 @@ GEMMA_POL = REPO / "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring
 QWEN_TH = REPO / "experiments/eot_discrimination_v2/scoring/qwen35_122b/scoring_results.json"
 QWEN_TH_AURA = REPO / "experiments/eot_discrimination_v2/scoring/qwen35_122b/_AURA_IN_BASE_FILE.json"
 QWEN_POL = REPO / "experiments/eot_discrimination_v2/scoring/qwen35_122b/scoring_results.json"
+ENCODER_GEMMA = REPO / "experiments/descriptive_baseline_extensions/eot_baseline_assistant_gemma-3-27b.json"
+ENCODER_QWEN = REPO / "experiments/descriptive_baseline_extensions/eot_baseline_assistant_qwen-3.5-122b.json"
 OUT_PATH = REPO / "paper/figures/main/plot_042926_aura_control_2models.png"
 
 COLORS = {
@@ -108,7 +110,15 @@ def panel(ax, items, prompts, probe, c_pos, c_neg, score_key, domain_label,
     ax.axhline(0, color="black", linewidth=0.5, linestyle="--")
     ax.set_xticks([pi * 3 + 0.5 for pi in range(len(prompts))])
 
-    labels = [f"{display(sp)}\nd = {d:+.2f}\n[{lo:+.2f}, {hi:+.2f}]" for sp, d, lo, hi in d_values]
+    def _fmt(sp: str, d: float, lo: float, hi: float) -> str:
+        base = f"{display(sp)}\nd = {d:+.2f}\n[{lo:+.2f}, {hi:+.2f}]"
+        if encoder_d is not None and domain is not None:
+            ed = encoder_d.get((domain, sp))
+            if ed is not None:
+                base += f"\n[enc {ed:+.2f}]"
+        return base
+
+    labels = [_fmt(sp, d, lo, hi) for sp, d, lo, hi in d_values]
     ax.set_xticklabels(labels, fontsize=8)
 
     ax.grid(axis="y", alpha=0.3)
@@ -159,7 +169,7 @@ def main():
                       ylabel="End-of-turn probe score",
                       highlight_sp="aura",
                       encoder_d=enc_g, domain="truth")
-    g_harm_d = panel(axes[0, 1], g_harm, harm_prompts, "tb-5_L39",
+    g_harm_d = panel(axes[0, 1], g_harm, harm_prompts, "tb-5_L32",
                      "harmful", "benign", "probe_scores",
                      "Gemma-3-27B — Harm (harmful vs benign)",
                      highlight_sp="aura",
