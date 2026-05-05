@@ -14,7 +14,6 @@ Paper structure is now codified in `main.tex` --- refer there rather than duplic
 
 ## Robustness / specificity checks
 
-- **Show the probe is not just the refusal direction.** Compare to a refusal probe and show they diverge where it matters.
 - **Project out the direction and retrain.** Remove the probe direction from activations, retrain a preference probe, see what signal remains.
 - **Replicate on real fine-tuned personas.** Our persona results are currently prompted (system-prompt personas). Consider replicating the key findings — shared preference representation, cross-persona steering — on actually fine-tuned versions of the evil persona and the aura persona, to check the conclusions aren't an artifact of prompted-persona behavior.
 
@@ -31,24 +30,40 @@ Paper structure is now codified in `main.tex` --- refer there rather than duplic
   - Submission form: anonymous GitHub URL or zip in the supplemental
 - Plug in NeurIPS 2026 `checklist.tex` when published
 
+## §3.1 reorganization (added 2026-05-05)
+
+The Qwen3-Embedding-8B encoder baseline (added 2026-05-05 to figs 7, 8, 39 as orange dashed segments) reframes what §3.1 is doing. Two consequences:
+
+- **The encoder is *competitive* on base discrimination** — encoder beats LM probe on Gemma harm ($|d|=3.08$ vs $2.68$) and on Qwen harm ($|d|=2.79$ vs $0.64$); LM probe beats encoder modestly on truth ($+1.90$ vs $+1.38$ Gemma; $+1.27$ vs $+0.64$ Qwen). Politics is also not flattering. **Base discrimination is the wrong claim to sell** — it's where the encoder comparison hurts most and is least relevant to "the probe is evaluative".
+- **The unique LM-probe property is *persona-conditional reuse*** — the same direction's readout sign-flips on harm (Gemma $-4.53 \to +1.32$ at assistant turn under \textit{evil}) while a content embedding presumably cannot. We currently lack encoder-on-modulated-stimuli data for `{lying personas, evil}` — encoder data only exists for `{neutral, aura}`. Running it would let the dotted segments appear under those columns and visualise the LM-vs-encoder split where it matters.
+
+**Reorganization plan:**
+- **Main text §3.1:** lead with the persona-modulation panel at the *assistant turn* (currently Fig 39 / `plot_042926_aura_control_2models.png`), restricted to **harm only**. The dramatic sign flip ($-4.53 \to +1.32$ on Gemma, collapse on Qwen) is the headline. Drop the user-turn base discrimination panel from main. Drop politics from main.
+- **Appendix:** truth modulation (still has the cleanest sign flip $+1.90 \to -1.84$, worth showing), politics modulation, all base-discrimination panels (user-turn and assistant-turn), and the user-turn version of harm modulation.
+
+**Terminology fix:** stop calling Qwen3-Embedding-8B a "purely descriptive baseline" — it's a Ridge probe trained on the same utility labels, so its representations are shaped by the evaluative target. Rename to **"text-encoder baseline"** (or just "encoder baseline" in compact contexts) throughout main.tex and figure scripts.
+
+**Framing prose to add to §3.1:** one short paragraph explaining that the text-encoder baseline (Qwen3-Embedding-8B + Ridge on the same utilities) is expected to capture rich descriptive content, and we should not exclude that it carries some evaluative signal as well — the appendix figures show that even the encoder's per-class means shift somewhat under aura, so it's not stance-blind. The LM-probe-specific finding is the *magnitude* of persona modulation (sign flips, not just shifts) and its alignment with the persona's overt valence.
+
 ## Small fixes
 
+- **Decide whether to anchor on "subjective valence" terminology.** The §2 title and framing (post-2026-05-05 restructure) leans on "subjective valence". Decide if this is the canonical term we want across this paper and a follow-up paper, or whether something else (e.g. "evaluative representation", "preference vector", "valenced stance") fits better.
+- **Framing risk: readers may think the paper is about personas having *different* preferences.** Our finding is the opposite — qualitatively different personas reuse the *same* preference direction. Make sure the abstract, intro, and §4 framing don't read as "we measure how preferences vary across personas".
+- **Find a better word than "shared" across personas.** Working title and §4 framing lean on "shared", but the finding is more nuanced: the same direction is *reused* across personas with persona-conditional readout (positive steering amplifies whichever persona is active, not a fixed valence). Brainstorm alternatives ("reused", "common", "persona-instrumental", "shared substrate", etc.) and pick one that doesn't suggest a persona-independent attractor.
 - **§3.1 needs more exposition.** The role-playing-induced shifts section (truth / harm / politics Cohen's $d$) jumps straight from setup to results. Reader needs more hand-holding: why these axes, what the prefill does, how to interpret a sign flip vs. a magnitude collapse, why the Aura control matters. Currently terse to the point of opaque on first read.
 - **Probe dials not visible enough.** The probe-gauge icons inside the panel figures (persona, OOD, steering) are small and read as incidental rather than as the readout the figure is built around. Enlarge / restyle for legibility at column width.
-- **Layer choice inconsistency.** The paper currently mentions up to five different layer numbers across experiments:
-  - L31 (classification probe on revealed preferences, §2.2)
-  - L25 (cross-persona contrastive steering, §4.3)
-  - L32 (`ridge_L32` in §4.4 todo, claimed to be the §4.3 probe — contradicts §4.3 body which says L25)
-  - L25 (open-ended steering, §4.4, `ridge_L25`)
-  - L32 (`task_mean_L32` for the truth token-level probe, §5.1.2)
-  - L39 (`task_mean_L39` for the harm token-level probe, §5.1.2)
-  Readers will ask. Action: run the layer sweep, settle the story, and reconcile numbers across §2.2, §4.3, §4.4, §5.1.2, and any figure captions that bake in a layer. In particular, the token-level probes in §5.1.2 use a different probe family (`task_mean` selector rather than `prompt-last` / ridge on revealed preferences), which the main text doesn't currently flag.
+- **Layer choices need to be stated, not unified.** Different layers for different experiments is fine — they target different things (classification probe quality vs. causal steering window vs. token-level probes for stimuli). What's needed is for each section's body to name the layer + probe in use. Current map (post-merge):
+  - §2.2 classification: L\gemmaClassificationProbeLayer{} Gemma / L\qwenClassificationProbeLayer{} Qwen — stated.
+  - §2.3 contrastive steering: L23 — stated.
+  - §3.1 truth/harm/politics token-level probes: L32 truth, L39 harm/politics on Gemma; L38 Qwen — added 2026-05-05 in §3.1 body, with forward-ref to App.~\ref{app:cross-token}.
+  - §4.1 cross-persona transfer: L\gemmaClassificationProbeLayer{} — stated (caption).
+  - §4.2 cross-persona steering: L\crossPersonaUnilateralInjectionLayer{} — caption only (different from §2.3's L23, but the gap is OK to leave unflagged in body unless a reviewer asks).
+  - App. open-ended steering: L25 — stated.
 
 ## Inconsistencies to fix before submission
 
 - **§3.1 v1↔v2 stimulus mismatch (added 2026-05-02).** Base-discrimination paragraph + `fig:harm-truth` are on v2 stimuli (CREAK-with-knowledge-filter / BailBench-with-paired-benign / OpinionQA-stance-translation, n≈500/side). Persona-modulation paragraph + `fig:persona-modulation-user` are still on v1 stimuli — Gemma Assistant truth $d=+3.35$, pathological_liar $d=-2.02$ in prose vs. $d=1.90$ in v2 base-discrim. Reason: prompted-Qwen evil personas don't reliably flip the readout in v2 (we believe Qwen prompting just doesn't elicit "evil" well), and we plan to redo the persona-modulation panel with **SFT'd Qwen evil personas** rather than prompted ones. Action: when the SFT variant lands, re-score with `experiments/eot_discrimination_v2/scripts/run_scoring.py` and regenerate `fig:persona-modulation-user`; then harmonise prose. Handoff doc: `experiments/eot_discrimination_v2/HANDOFF.md` (on main); full v2 work on branch `eot_discrimination_v2`.
 - ~~**Corroborate producer for §3.1 base-discrim claims is still v1.**~~ Resolved 2026-05-05: `scripts/paper/refresh_eot_v2_claims.py` (ClaimSet-based) reads `experiments/eot_discrimination_v2/scoring/gemma3_27b/{user_turn_,}scoring_results.json` and writes the 17 §3.1 claims (6 base-discrim scalars, 7 persona-modulation cells, 4 structured tables) to `paper/claims/eot_discrimination_v2.json`. Stale registrations dropped from `make_paper_figures.py`. `\bailbenchHarmNItemsProse` (CSV-derived, =77) is now an orphan macro; main.tex line 160 uses `\bailbenchHarmNHarmful` (=500) instead.
-- **Layer contradiction (§4.3 vs §4.4).** See dedicated entry above. Action: pick the true layer for each experiment and update references.
 - **§A.3 ethical-flagging paragraph re-added 2026-04-30 with localisation control.** The exp_4_v2 result alone was ambiguous between content-localised modulation and any-prefill-position dose. A follow-up control at `experiments/safety_steering_v2/exp_4_v2/localisation_control/` (9 isolated-bin scenarios × 2 variants × 4 coefs × 5 trials = 360 generations, preregistered, on `worktree-localisation_control` branch) steered an ethically-neutral, structurally-analogous span elsewhere in each prompt. Result: every `non_critical_only` Δ has a bootstrap CI including 0; the bidirectional benign-twin spurious-flag spike drops from 49% to 2% at $c=-0.05$. The §A.3 paragraph reports the headline + the localisation control as one figure (`fig:localisation-control`, plot_043026). Rationalization-vs-self-criticism remains cut pending its own LLM-judge re-run on a larger corpus. The §D.3 transcripts retain only $c=0$ and $c=+0.05$.
 
 ## Error bars — work done and remaining
