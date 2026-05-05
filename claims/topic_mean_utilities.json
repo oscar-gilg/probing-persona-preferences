@@ -71,7 +71,7 @@
         "fig:topic-means-default",
         "app:topics"
       ],
-      "computed_at": "2026-05-04T22:35:22+00:00",
+      "computed_at": "2026-05-05T09:46:06+00:00",
       "data_paths": [
         "results/experiments/main_probes/gemma3_10k_run1/pre_task_active_learning/completion_preference_gemma-3-27b_completion_canonical_seed0/thurstonian_80fa9dc8.csv",
         "data/topics/topics.json"

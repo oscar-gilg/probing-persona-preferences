@@ -5,24 +5,24 @@
       "name": "Cross training d",
       "value": {
         "truth": {
-          "end-of-turn probe": 1.45,
-          "role-marker probe": 1.3,
-          "task-averaged probe": 3.14
+          "end-of-turn probe": 1.9,
+          "role-marker probe": 2.18,
+          "task-averaged probe": 1.57
         },
         "harm": {
-          "end-of-turn probe": -2.05,
-          "role-marker probe": -1.52,
-          "task-averaged probe": -2.27
+          "end-of-turn probe": -2.68,
+          "role-marker probe": -1.53,
+          "task-averaged probe": -2.53
         },
         "politics_democrat": {
-          "end-of-turn probe": 2.72,
-          "role-marker probe": 2.18,
-          "task-averaged probe": 3.4
+          "end-of-turn probe": 2.34,
+          "role-marker probe": 3.12,
+          "task-averaged probe": 2.4
         },
         "politics_republican": {
-          "end-of-turn probe": -1.11,
-          "role-marker probe": -1.44,
-          "task-averaged probe": -1.76
+          "end-of-turn probe": 0.1,
+          "role-marker probe": -0.96,
+          "task-averaged probe": 0.14
         }
       },
       "statement": "Signed Cohen's d at the end-of-turn token, one cell per (domain, probe family) bar in the cross-training-selector appendix figure. Positive = first-listed class scores higher (true / harmful / left).",
@@ -30,11 +30,12 @@
       "used_in": [
         "fig:cross-training"
       ],
-      "computed_at": "2026-05-04T22:26:42+00:00",
+      "computed_at": "2026-05-05T10:46:39+00:00",
       "data_paths": [
-        "experiments/token_level_probes/canonical_probe_eval/headline_table.csv"
+        "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json",
+        "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
-      "derivation": "For each (domain, probe_family_prefix) cell: select the row matching domain and probe prefix from headline_table.csv; read `d`; flip sign for non-parent politics rows (right>left → left>right); round to 2dp."
+      "derivation": "All three bars use v2 scoring at L32 (Gemma): tb-5_L32 (end-of-turn), tb-2_L32 (role-marker), task_mean_L32 (task-averaged). Truth and harm at user-turn under the neutral system prompt; politics at assistant-turn under democrat/republican prompts. Pooled Cohen's d with first-listed class as positive (true / harmful / left); round to 2dp."
     },
     {
       "name": "CREAK truth CV accuracy",
@@ -44,7 +45,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-04T22:26:42+00:00",
+      "computed_at": "2026-05-05T10:46:39+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
@@ -58,7 +59,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-04T22:26:42+00:00",
+      "computed_at": "2026-05-05T10:46:39+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
@@ -72,7 +73,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-04T22:26:42+00:00",
+      "computed_at": "2026-05-05T10:46:39+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
@@ -86,7 +87,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-04T22:26:42+00:00",
+      "computed_at": "2026-05-05T10:46:39+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],

@@ -9,7 +9,7 @@
       "used_in": [
         "sec:method-revealed"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [],
       "derivation": "Constant: 10,000 tasks in the legacy probe-training pool; documented in sec:method-revealed."
     },
@@ -22,7 +22,7 @@
         "sec:method-revealed",
         "sec:method-revealed"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [],
       "derivation": "Constant: 4000 tasks in the canonical train split, documented in app:splits."
     },
@@ -35,7 +35,7 @@
         "sec:method-revealed",
         "sec:method-revealed"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [],
       "derivation": "Constant: 1000 tasks in the canonical eval split, documented in app:splits."
     },
@@ -48,7 +48,7 @@
         "sec:method-revealed",
         "sec:method-revealed"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [],
       "derivation": "Constant: 1000 tasks in the canonical test split, documented in app:splits."
     },
@@ -61,7 +61,7 @@
         "sec:method-revealed",
         "fig:cross-topic"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [],
       "derivation": "Constant: Gemma-3-27B classification probe trained at layer 32 (prompt_last selector); chosen in the layer sweep."
     },
@@ -74,7 +74,7 @@
         "sec:method-revealed",
         "sec:method-val2"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [],
       "derivation": "Constant: Gemma-3-27B contrastive steering applied at layer 25, per the §4 method setup."
     },
@@ -87,7 +87,7 @@
         "sec:method-revealed",
         "fig:cross-topic"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [],
       "derivation": "Constant: Qwen-3.5-122B classification probe trained at layer 38, tb-1 token selector; chosen in the layer sweep."
     },
@@ -99,7 +99,7 @@
       "used_in": [
         "app:cross-token"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [],
       "derivation": "Constant: 9 truth-domain system-prompt variants in the persona-modulation stimulus set."
     },
@@ -111,7 +111,7 @@
       "used_in": [
         "app:cross-token"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [],
       "derivation": "Constant: 5 harm-domain system-prompt variants in the persona-modulation stimulus set."
     },
@@ -123,7 +123,7 @@
       "used_in": [
         "app:cross-token"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [],
       "derivation": "Constant: 9 politics-domain system-prompt variants in the persona-modulation stimulus set."
     },
@@ -136,7 +136,7 @@
         "sec:induced-roleplay",
         "app:cross-token"
       ],
-      "computed_at": "2026-05-04T22:35:20+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [],
       "derivation": "Constant: 23 = 9 (truth) + 5 (harm) + 9 (politics) persona-modulation variants."
     }

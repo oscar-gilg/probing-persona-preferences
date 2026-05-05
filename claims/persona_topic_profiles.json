@@ -88,7 +88,7 @@
           "Summarization": 0.508,
           "Value Conflict": -0.706
         },
-        "Sadist": {
+        "Evil": {
           "Coding": -0.099,
           "Content Gen.": -0.43,
           "Fiction": 0.01,
@@ -109,7 +109,7 @@
         "fig:persona-topic-zheatmap",
         "app:persona-design"
       ],
-      "computed_at": "2026-05-04T22:32:39+00:00",
+      "computed_at": "2026-05-05T10:46:51+00:00",
       "data_paths": [
         "results/experiments/persona_sweep_final_six/pre_task_active_learning/default_train/thurstonian_280a87c8.csv",
         "results/experiments/persona_sweep_final_six/pre_task_active_learning/default_eval/thurstonian_b84bca67.csv",
@@ -223,7 +223,7 @@
           "Summarization": 62,
           "Value Conflict": 157
         },
-        "Sadist": {
+        "Evil": {
           "Coding": 217,
           "Content Gen.": 868,
           "Fiction": 407,
@@ -244,7 +244,7 @@
         "fig:persona-topic-zheatmap",
         "app:persona-design"
       ],
-      "computed_at": "2026-05-04T22:32:39+00:00",
+      "computed_at": "2026-05-05T10:46:51+00:00",
       "data_paths": [
         "results/experiments/persona_sweep_final_six/pre_task_active_learning/default_train/thurstonian_280a87c8.csv",
         "results/experiments/persona_sweep_final_six/pre_task_active_learning/default_eval/thurstonian_b84bca67.csv",
@@ -279,22 +279,22 @@
         "Default (Assistant) — Strategist": 0.343,
         "Default (Assistant) — Contrarian": 0.19,
         "Default (Assistant) — Slacker": 0.228,
-        "Default (Assistant) — Sadist": -0.126,
+        "Default (Assistant) — Evil": -0.126,
         "Aura — Mathematician": 0.058,
         "Aura — Strategist": 0.137,
         "Aura — Contrarian": 0.328,
         "Aura — Slacker": 0.245,
-        "Aura — Sadist": -0.119,
+        "Aura — Evil": -0.119,
         "Mathematician — Strategist": 0.514,
         "Mathematician — Contrarian": 0.26,
         "Mathematician — Slacker": 0.231,
-        "Mathematician — Sadist": -0.016,
+        "Mathematician — Evil": -0.016,
         "Strategist — Contrarian": 0.39,
         "Strategist — Slacker": -0.107,
-        "Strategist — Sadist": 0.335,
+        "Strategist — Evil": 0.335,
         "Contrarian — Slacker": 0.046,
-        "Contrarian — Sadist": 0.258,
-        "Slacker — Sadist": -0.268
+        "Contrarian — Evil": 0.258,
+        "Slacker — Evil": -0.268
       },
       "statement": "Pairwise Pearson correlation of Thurstonian utility profiles across the 7 final-six-plus-default personas, computed on the shared canonical 6{,}000-task split.",
       "source": "scripts/paper/persona_topic_profiles.py",
@@ -302,7 +302,7 @@
         "fig:persona-correlation",
         "app:persona-design"
       ],
-      "computed_at": "2026-05-04T22:32:39+00:00",
+      "computed_at": "2026-05-05T10:46:51+00:00",
       "data_paths": [
         "results/experiments/persona_sweep_final_six/pre_task_active_learning/default_train/thurstonian_280a87c8.csv",
         "results/experiments/persona_sweep_final_six/pre_task_active_learning/default_eval/thurstonian_b84bca67.csv",

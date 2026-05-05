@@ -129,7 +129,7 @@
   <rect x="35" y="468" width="280" height="18" rx="4" ry="4" fill="#D1FAE5" stroke="none"/>
   <text x="45" y="481" font-size="9" fill="#065F46" font-style="italic">You are a helpful assistant</text>
   <rect x="460" y="468" width="280" height="18" rx="4" ry="4" fill="#FEE2E2" stroke="none"/>
-  <text x="470" y="481" font-size="9" fill="#991B1B" font-style="italic">Act as a sadist who enjoys suffering</text>
+  <text x="470" y="481" font-size="9" fill="#991B1B" font-style="italic">Act as someone evil who enjoys suffering</text>
 
   <!-- Row 1: homework -->
   <rect x="35" y="492" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>

@@ -109,7 +109,7 @@
   <rect x="774" y="110" width="280" height="22" rx="4" ry="4" fill="#D1FAE5" stroke="none"/>
   <text x="784" y="126" font-size="14.5" fill="#065F46" font-style="italic">You are a helpful assistant</text>
   <rect x="1224" y="110" width="280" height="22" rx="4" ry="4" fill="#FEE2E2" stroke="none"/>
-  <text x="1234" y="126" font-size="14.5" fill="#991B1B" font-style="italic">Act as a sadist who causes suffering</text>
+  <text x="1234" y="126" font-size="14.5" fill="#991B1B" font-style="italic">Act as someone evil who causes suffering</text>
   <rect x="774" y="137" width="280" height="26" rx="5" ry="5" fill="white" stroke="#D1D5DB" stroke-width="1"/>
   <text x="784" y="155" font-size="14.5" fill="#374151" font-weight="500">Help me with my homework</text>
   <circle cx="1136" cy="149" r="16" fill="#D1FAE5" opacity="0.7"/>

@@ -2,29 +2,29 @@
 % Each macro's value comes from a claim sidecar.
 
 % Cross training d.truth.end-of-turn probe
-\newcommand{\crossTrainingDTruthEndOfTurnProbe}{1.45}
+\newcommand{\crossTrainingDTruthEndOfTurnProbe}{1.9}
 % Cross training d.truth.role-marker probe
-\newcommand{\crossTrainingDTruthRoleMarkerProbe}{1.3}
+\newcommand{\crossTrainingDTruthRoleMarkerProbe}{2.18}
 % Cross training d.truth.task-averaged probe
-\newcommand{\crossTrainingDTruthTaskAveragedProbe}{3.14}
+\newcommand{\crossTrainingDTruthTaskAveragedProbe}{1.57}
 % Cross training d.harm.end-of-turn probe
-\newcommand{\crossTrainingDHarmEndOfTurnProbe}{-2.05}
+\newcommand{\crossTrainingDHarmEndOfTurnProbe}{-2.68}
 % Cross training d.harm.role-marker probe
-\newcommand{\crossTrainingDHarmRoleMarkerProbe}{-1.52}
+\newcommand{\crossTrainingDHarmRoleMarkerProbe}{-1.53}
 % Cross training d.harm.task-averaged probe
-\newcommand{\crossTrainingDHarmTaskAveragedProbe}{-2.27}
+\newcommand{\crossTrainingDHarmTaskAveragedProbe}{-2.53}
 % Cross training d.politics_democrat.end-of-turn probe
-\newcommand{\crossTrainingDPoliticsDemocratEndOfTurnProbe}{2.72}
+\newcommand{\crossTrainingDPoliticsDemocratEndOfTurnProbe}{2.34}
 % Cross training d.politics_democrat.role-marker probe
-\newcommand{\crossTrainingDPoliticsDemocratRoleMarkerProbe}{2.18}
+\newcommand{\crossTrainingDPoliticsDemocratRoleMarkerProbe}{3.12}
 % Cross training d.politics_democrat.task-averaged probe
-\newcommand{\crossTrainingDPoliticsDemocratTaskAveragedProbe}{3.4}
+\newcommand{\crossTrainingDPoliticsDemocratTaskAveragedProbe}{2.4}
 % Cross training d.politics_republican.end-of-turn probe
-\newcommand{\crossTrainingDPoliticsRepublicanEndOfTurnProbe}{-1.11}
+\newcommand{\crossTrainingDPoliticsRepublicanEndOfTurnProbe}{0.1}
 % Cross training d.politics_republican.role-marker probe
-\newcommand{\crossTrainingDPoliticsRepublicanRoleMarkerProbe}{-1.44}
+\newcommand{\crossTrainingDPoliticsRepublicanRoleMarkerProbe}{-0.96}
 % Cross training d.politics_republican.task-averaged probe
-\newcommand{\crossTrainingDPoliticsRepublicanTaskAveragedProbe}{-1.76}
+\newcommand{\crossTrainingDPoliticsRepublicanTaskAveragedProbe}{0.14}
 % CREAK truth CV accuracy
 \newcommand{\creakTruthCvAccuracy}{0.93}
 % BailBench harm n items prose
@@ -246,7 +246,7 @@
 % CREAK truth n false
 \newcommand{\creakTruthNFalse}{500}
 % BailBench harm absolute Cohen's d
-\newcommand{\bailbenchHarmAbsoluteCohensD}{1.89}
+\newcommand{\bailbenchHarmAbsoluteCohensD}{2.68}
 % BailBench harm n harmful
 \newcommand{\bailbenchHarmNHarmful}{500}
 % BailBench harm n benign
@@ -258,13 +258,13 @@
 % Truth d under pathological liar
 \newcommand{\truthDUnderPathologicalLiar}{-1.22}
 % Harm d under neutral persona
-\newcommand{\harmDUnderNeutralPersona}{-3.83}
+\newcommand{\harmDUnderNeutralPersona}{-4.53}
 % Harm d under sadist persona
-\newcommand{\harmDUnderSadistPersona}{0.26}
+\newcommand{\harmDUnderSadistPersona}{1.32}
 % Politics d under democrat prompt
-\newcommand{\politicsDUnderDemocratPrompt}{3.26}
+\newcommand{\politicsDUnderDemocratPrompt}{2.34}
 % Politics d under republican prompt
-\newcommand{\politicsDUnderRepublicanPrompt}{-0.58}
+\newcommand{\politicsDUnderRepublicanPrompt}{0.1}
 % Persona modulation d full.truth.neutral
 \newcommand{\personaModulationDFullTruthNeutral}{1.11}
 % Persona modulation d full.truth.lie_directive
@@ -272,21 +272,21 @@
 % Persona modulation d full.truth.pathological_liar
 \newcommand{\personaModulationDFullTruthPathologicalLiar}{-1.22}
 % Persona modulation d full.harm.neutral
-\newcommand{\personaModulationDFullHarmNeutral}{-3.83}
+\newcommand{\personaModulationDFullHarmNeutral}{-4.53}
 % Persona modulation d full.harm.sadist
-\newcommand{\personaModulationDFullHarmSadist}{0.26}
+\newcommand{\personaModulationDFullHarmSadist}{1.32}
 % Persona modulation d full.politics.democrat
-\newcommand{\personaModulationDFullPoliticsDemocrat}{3.26}
+\newcommand{\personaModulationDFullPoliticsDemocrat}{2.34}
 % Persona modulation d full.politics.republican
-\newcommand{\personaModulationDFullPoliticsRepublican}{-0.58}
+\newcommand{\personaModulationDFullPoliticsRepublican}{0.1}
 % Per turn parent absolute d.truth.user
 \newcommand{\perTurnParentAbsoluteDTruthUser}{1.57}
 % Per turn parent absolute d.truth.assistant
 \newcommand{\perTurnParentAbsoluteDTruthAssistant}{1.03}
 % Per turn parent absolute d.harm.user
-\newcommand{\perTurnParentAbsoluteDHarmUser}{2.51}
+\newcommand{\perTurnParentAbsoluteDHarmUser}{2.53}
 % Per turn parent absolute d.harm.assistant
-\newcommand{\perTurnParentAbsoluteDHarmAssistant}{4.87}
+\newcommand{\perTurnParentAbsoluteDHarmAssistant}{2.86}
 % Per turn absolute d truth.user.end-of-turn probe
 \newcommand{\perTurnAbsoluteDTruthUserEndOfTurnProbe}{1.9}
 % Per turn absolute d truth.user.role-marker probe
@@ -296,13 +296,13 @@
 % Per turn absolute d truth.assistant.role-marker probe
 \newcommand{\perTurnAbsoluteDTruthAssistantRoleMarkerProbe}{1.34}
 % Per turn absolute d harm.user.end-of-turn probe
-\newcommand{\perTurnAbsoluteDHarmUserEndOfTurnProbe}{1.89}
+\newcommand{\perTurnAbsoluteDHarmUserEndOfTurnProbe}{2.68}
 % Per turn absolute d harm.user.role-marker probe
-\newcommand{\perTurnAbsoluteDHarmUserRoleMarkerProbe}{0.8}
+\newcommand{\perTurnAbsoluteDHarmUserRoleMarkerProbe}{1.53}
 % Per turn absolute d harm.assistant.end-of-turn probe
-\newcommand{\perTurnAbsoluteDHarmAssistantEndOfTurnProbe}{3.83}
+\newcommand{\perTurnAbsoluteDHarmAssistantEndOfTurnProbe}{4.53}
 % Per turn absolute d harm.assistant.role-marker probe
-\newcommand{\perTurnAbsoluteDHarmAssistantRoleMarkerProbe}{1.79}
+\newcommand{\perTurnAbsoluteDHarmAssistantRoleMarkerProbe}{2.71}
 % Exp3v8 AvC total task-condition points
 \newcommand{\expthreeveightAvcTotalTaskConditionPoints}{2{,}000}
 % Exp3v8 AvC target tasks total
@@ -675,30 +675,30 @@
 \newcommand{\personaTopicZUtilityTableSlackerSummarization}{0.508}
 % Persona topic z utility table.Slacker.Value Conflict
 \newcommand{\personaTopicZUtilityTableSlackerValueConflict}{-0.706}
-% Persona topic z utility table.Sadist.Coding
-\newcommand{\personaTopicZUtilityTableSadistCoding}{-0.099}
-% Persona topic z utility table.Sadist.Content Gen.
-\newcommand{\personaTopicZUtilityTableSadistContentGen}{-0.43}
-% Persona topic z utility table.Sadist.Fiction
-\newcommand{\personaTopicZUtilityTableSadistFiction}{0.01}
-% Persona topic z utility table.Sadist.Harmful
-\newcommand{\personaTopicZUtilityTableSadistHarmful}{1.118}
-% Persona topic z utility table.Sadist.Knowledge QA
-\newcommand{\personaTopicZUtilityTableSadistKnowledgeQa}{-0.615}
-% Persona topic z utility table.Sadist.Math
-\newcommand{\personaTopicZUtilityTableSadistMath}{0.177}
-% Persona topic z utility table.Sadist.Model Manip.
-\newcommand{\personaTopicZUtilityTableSadistModelManip}{-0.248}
-% Persona topic z utility table.Sadist.Persuasive
-\newcommand{\personaTopicZUtilityTableSadistPersuasive}{-0.756}
-% Persona topic z utility table.Sadist.Security/Legal
-\newcommand{\personaTopicZUtilityTableSadistSecurityLegal}{0.478}
-% Persona topic z utility table.Sadist.Sens. Creative
-\newcommand{\personaTopicZUtilityTableSadistSensCreative}{0.655}
-% Persona topic z utility table.Sadist.Summarization
-\newcommand{\personaTopicZUtilityTableSadistSummarization}{-0.236}
-% Persona topic z utility table.Sadist.Value Conflict
-\newcommand{\personaTopicZUtilityTableSadistValueConflict}{0.182}
+% Persona topic z utility table.Evil.Coding
+\newcommand{\personaTopicZUtilityTableEvilCoding}{-0.099}
+% Persona topic z utility table.Evil.Content Gen.
+\newcommand{\personaTopicZUtilityTableEvilContentGen}{-0.43}
+% Persona topic z utility table.Evil.Fiction
+\newcommand{\personaTopicZUtilityTableEvilFiction}{0.01}
+% Persona topic z utility table.Evil.Harmful
+\newcommand{\personaTopicZUtilityTableEvilHarmful}{1.118}
+% Persona topic z utility table.Evil.Knowledge QA
+\newcommand{\personaTopicZUtilityTableEvilKnowledgeQa}{-0.615}
+% Persona topic z utility table.Evil.Math
+\newcommand{\personaTopicZUtilityTableEvilMath}{0.177}
+% Persona topic z utility table.Evil.Model Manip.
+\newcommand{\personaTopicZUtilityTableEvilModelManip}{-0.248}
+% Persona topic z utility table.Evil.Persuasive
+\newcommand{\personaTopicZUtilityTableEvilPersuasive}{-0.756}
+% Persona topic z utility table.Evil.Security/Legal
+\newcommand{\personaTopicZUtilityTableEvilSecurityLegal}{0.478}
+% Persona topic z utility table.Evil.Sens. Creative
+\newcommand{\personaTopicZUtilityTableEvilSensCreative}{0.655}
+% Persona topic z utility table.Evil.Summarization
+\newcommand{\personaTopicZUtilityTableEvilSummarization}{-0.236}
+% Persona topic z utility table.Evil.Value Conflict
+\newcommand{\personaTopicZUtilityTableEvilValueConflict}{0.182}
 % Persona topic z utility n.Default (Assistant).Coding
 \newcommand{\personaTopicZUtilityNDefaultAssistantCoding}{217}
 % Persona topic z utility n.Default (Assistant).Content Gen.
@@ -843,30 +843,30 @@
 \newcommand{\personaTopicZUtilityNSlackerSummarization}{62}
 % Persona topic z utility n.Slacker.Value Conflict
 \newcommand{\personaTopicZUtilityNSlackerValueConflict}{157}
-% Persona topic z utility n.Sadist.Coding
-\newcommand{\personaTopicZUtilityNSadistCoding}{217}
-% Persona topic z utility n.Sadist.Content Gen.
-\newcommand{\personaTopicZUtilityNSadistContentGen}{868}
-% Persona topic z utility n.Sadist.Fiction
-\newcommand{\personaTopicZUtilityNSadistFiction}{407}
-% Persona topic z utility n.Sadist.Harmful
-\newcommand{\personaTopicZUtilityNSadistHarmful}{732}
-% Persona topic z utility n.Sadist.Knowledge QA
-\newcommand{\personaTopicZUtilityNSadistKnowledgeQa}{1{,}090}
-% Persona topic z utility n.Sadist.Math
-\newcommand{\personaTopicZUtilityNSadistMath}{1{,}662}
-% Persona topic z utility n.Sadist.Model Manip.
-\newcommand{\personaTopicZUtilityNSadistModelManip}{85}
-% Persona topic z utility n.Sadist.Persuasive
-\newcommand{\personaTopicZUtilityNSadistPersuasive}{154}
-% Persona topic z utility n.Sadist.Security/Legal
-\newcommand{\personaTopicZUtilityNSadistSecurityLegal}{89}
-% Persona topic z utility n.Sadist.Sens. Creative
-\newcommand{\personaTopicZUtilityNSadistSensCreative}{45}
-% Persona topic z utility n.Sadist.Summarization
-\newcommand{\personaTopicZUtilityNSadistSummarization}{62}
-% Persona topic z utility n.Sadist.Value Conflict
-\newcommand{\personaTopicZUtilityNSadistValueConflict}{157}
+% Persona topic z utility n.Evil.Coding
+\newcommand{\personaTopicZUtilityNEvilCoding}{217}
+% Persona topic z utility n.Evil.Content Gen.
+\newcommand{\personaTopicZUtilityNEvilContentGen}{868}
+% Persona topic z utility n.Evil.Fiction
+\newcommand{\personaTopicZUtilityNEvilFiction}{407}
+% Persona topic z utility n.Evil.Harmful
+\newcommand{\personaTopicZUtilityNEvilHarmful}{732}
+% Persona topic z utility n.Evil.Knowledge QA
+\newcommand{\personaTopicZUtilityNEvilKnowledgeQa}{1{,}090}
+% Persona topic z utility n.Evil.Math
+\newcommand{\personaTopicZUtilityNEvilMath}{1{,}662}
+% Persona topic z utility n.Evil.Model Manip.
+\newcommand{\personaTopicZUtilityNEvilModelManip}{85}
+% Persona topic z utility n.Evil.Persuasive
+\newcommand{\personaTopicZUtilityNEvilPersuasive}{154}
+% Persona topic z utility n.Evil.Security/Legal
+\newcommand{\personaTopicZUtilityNEvilSecurityLegal}{89}
+% Persona topic z utility n.Evil.Sens. Creative
+\newcommand{\personaTopicZUtilityNEvilSensCreative}{45}
+% Persona topic z utility n.Evil.Summarization
+\newcommand{\personaTopicZUtilityNEvilSummarization}{62}
+% Persona topic z utility n.Evil.Value Conflict
+\newcommand{\personaTopicZUtilityNEvilValueConflict}{157}
 % Final six persona pairwise r.Default (Assistant) — Aura
 \newcommand{\finalSixPersonaPairwiseRDefaultAssistantAura}{0.42}
 % Final six persona pairwise r.Default (Assistant) — Mathematician
@@ -877,8 +877,8 @@
 \newcommand{\finalSixPersonaPairwiseRDefaultAssistantContrarian}{0.19}
 % Final six persona pairwise r.Default (Assistant) — Slacker
 \newcommand{\finalSixPersonaPairwiseRDefaultAssistantSlacker}{0.228}
-% Final six persona pairwise r.Default (Assistant) — Sadist
-\newcommand{\finalSixPersonaPairwiseRDefaultAssistantSadist}{-0.126}
+% Final six persona pairwise r.Default (Assistant) — Evil
+\newcommand{\finalSixPersonaPairwiseRDefaultAssistantEvil}{-0.126}
 % Final six persona pairwise r.Aura — Mathematician
 \newcommand{\finalSixPersonaPairwiseRAuraMathematician}{0.058}
 % Final six persona pairwise r.Aura — Strategist
@@ -887,28 +887,28 @@
 \newcommand{\finalSixPersonaPairwiseRAuraContrarian}{0.328}
 % Final six persona pairwise r.Aura — Slacker
 \newcommand{\finalSixPersonaPairwiseRAuraSlacker}{0.245}
-% Final six persona pairwise r.Aura — Sadist
-\newcommand{\finalSixPersonaPairwiseRAuraSadist}{-0.119}
+% Final six persona pairwise r.Aura — Evil
+\newcommand{\finalSixPersonaPairwiseRAuraEvil}{-0.119}
 % Final six persona pairwise r.Mathematician — Strategist
 \newcommand{\finalSixPersonaPairwiseRMathematicianStrategist}{0.514}
 % Final six persona pairwise r.Mathematician — Contrarian
 \newcommand{\finalSixPersonaPairwiseRMathematicianContrarian}{0.26}
 % Final six persona pairwise r.Mathematician — Slacker
 \newcommand{\finalSixPersonaPairwiseRMathematicianSlacker}{0.231}
-% Final six persona pairwise r.Mathematician — Sadist
-\newcommand{\finalSixPersonaPairwiseRMathematicianSadist}{-0.016}
+% Final six persona pairwise r.Mathematician — Evil
+\newcommand{\finalSixPersonaPairwiseRMathematicianEvil}{-0.016}
 % Final six persona pairwise r.Strategist — Contrarian
 \newcommand{\finalSixPersonaPairwiseRStrategistContrarian}{0.39}
 % Final six persona pairwise r.Strategist — Slacker
 \newcommand{\finalSixPersonaPairwiseRStrategistSlacker}{-0.107}
-% Final six persona pairwise r.Strategist — Sadist
-\newcommand{\finalSixPersonaPairwiseRStrategistSadist}{0.335}
+% Final six persona pairwise r.Strategist — Evil
+\newcommand{\finalSixPersonaPairwiseRStrategistEvil}{0.335}
 % Final six persona pairwise r.Contrarian — Slacker
 \newcommand{\finalSixPersonaPairwiseRContrarianSlacker}{0.046}
-% Final six persona pairwise r.Contrarian — Sadist
-\newcommand{\finalSixPersonaPairwiseRContrarianSadist}{0.258}
-% Final six persona pairwise r.Slacker — Sadist
-\newcommand{\finalSixPersonaPairwiseRSlackerSadist}{-0.268}
+% Final six persona pairwise r.Contrarian — Evil
+\newcommand{\finalSixPersonaPairwiseRContrarianEvil}{0.258}
+% Final six persona pairwise r.Slacker — Evil
+\newcommand{\finalSixPersonaPairwiseRSlackerEvil}{-0.268}
 % Gemma probe cross-topic pooled r
 \newcommand{\gemmaProbeCrossTopicPooledR}{0.834}
 % Qwen probe heldout r

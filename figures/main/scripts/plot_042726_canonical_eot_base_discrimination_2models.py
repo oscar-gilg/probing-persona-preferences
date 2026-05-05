@@ -85,8 +85,18 @@ def load_encoder_neutral_d(path: Path, domain: str) -> float | None:
     return None
 
 
+def lm_pooled_sd(pos, neg):
+    """LM-probe pooled SD (matches denominator of cohen_d_with_ci)."""
+    pos, neg = np.asarray(pos, float), np.asarray(neg, float)
+    n1, n2 = len(pos), len(neg)
+    return float(np.sqrt(
+        ((n1 - 1) * pos.var(ddof=1) + (n2 - 1) * neg.var(ddof=1)) / (n1 + n2 - 2)
+    ))
+
+
 def violin_panel(ax, series, colors_used, tick_labels, title_top, d, lo, hi,
-                 n_pos, n_neg, ylabel=None, encoder_d=None):
+                 ylabel=None, encoder_d=None, lm_pos=None, lm_neg=None,
+                 baseline_handle=None):
     positions = list(range(len(series)))
     parts = ax.violinplot(series, positions=positions, widths=0.7,
                           showmeans=True, showextrema=False)
@@ -100,43 +110,48 @@ def violin_panel(ax, series, colors_used, tick_labels, title_top, d, lo, hi,
     ax.set_xticklabels(tick_labels, fontsize=9)
     ax.axhline(0, color="black", linewidth=0.5, linestyle="--")
     ax.grid(axis="y", alpha=0.3)
-    title_extra = f"(d = {d:+.2f} [{lo:+.2f}, {hi:+.2f}], n = {n_pos}/{n_neg})"
-    if encoder_d is not None:
-        title_extra += f"  [enc d = {encoder_d:+.2f}]"
-    ax.set_title(f"{title_top}\n{title_extra}", fontsize=10)
+
+    # Encoder dotted segments: anchored at the LM-probe class-mean midpoint,
+    # spread by (enc_d / 2) * LM-probe pooled SD so the gap between the two
+    # dotted lines visually matches the encoder's Cohen's d expressed in
+    # LM-probe score units.
+    if encoder_d is not None and lm_pos is not None and lm_neg is not None:
+        sigma = lm_pooled_sd(lm_pos, lm_neg)
+        mid = (np.mean(lm_pos) + np.mean(lm_neg)) / 2.0
+        offset = (encoder_d / 2.0) * sigma
+        # series[0] is the positive class, series[1] is the negative class
+        for pos_idx, sign in zip(positions, (+1.0, -1.0)):
+            line = ax.hlines(mid + sign * offset,
+                             pos_idx - 0.40, pos_idx + 0.40,
+                             colors="#ff7f0e", linestyles="--", linewidth=2.6,
+                             zorder=5)
+            if baseline_handle is not None and baseline_handle[0] is None:
+                baseline_handle[0] = line
+
+    half_ci = (hi - lo) / 2.0
+    ax.set_title(f"{title_top}\n$d = {d:+.2f} \\pm {half_ci:.2f}$", fontsize=10)
     if ylabel:
         ax.set_ylabel(ylabel)
 
 
 def main():
-    # --- Gemma panels ---
-    g_truth_pos, g_truth_neg, g_truth_non = gemma_neutral_user_turn(
+    g_truth_pos, g_truth_neg, _ = gemma_neutral_user_turn(
         "truth", "tb-5_L32", "true", "false"
     )
-    g_harm_pos, g_harm_neg, g_harm_non = gemma_neutral_user_turn(
-        "harm", "tb-5_L32", "harmful", "benign"
-    )
     d_g_truth, lo_g_truth, hi_g_truth = cohen_d_with_ci(g_truth_pos, g_truth_neg)
-    d_g_harm, lo_g_harm, hi_g_harm = cohen_d_with_ci(g_harm_pos, g_harm_neg)
 
-    # --- Qwen panels (no nonsense, per spec) ---
     q_truth_pos, q_truth_neg = qwen_neutral_user_turn(
         "truth", "qwen_tb-4_L38", "true", "false"
     )
-    q_harm_pos, q_harm_neg = qwen_neutral_user_turn(
-        "harm", "qwen_tb-4_L38", "harmful", "benign"
-    )
     d_q_truth, lo_q_truth, hi_q_truth = cohen_d_with_ci(q_truth_pos, q_truth_neg)
-    d_q_harm, lo_q_harm, hi_q_harm = cohen_d_with_ci(q_harm_pos, q_harm_neg)
 
-    fig, axes = plt.subplots(1, 4, figsize=(15, 3.5))
+    fig, axes = plt.subplots(1, 2, figsize=(8, 3.5))
 
     enc_g_truth = load_encoder_neutral_d(ENCODER_GEMMA, "truth")
-    enc_g_harm = load_encoder_neutral_d(ENCODER_GEMMA, "harm")
     enc_q_truth = load_encoder_neutral_d(ENCODER_QWEN, "truth")
-    enc_q_harm = load_encoder_neutral_d(ENCODER_QWEN, "harm")
 
-    # axes[0]: Gemma truth
+    baseline_handle = [None]
+
     violin_panel(
         axes[0],
         series=[g_truth_pos, g_truth_neg],
@@ -144,51 +159,35 @@ def main():
         tick_labels=["true", "false"],
         title_top="Gemma-3-27B — Truth (CREAK)",
         d=d_g_truth, lo=lo_g_truth, hi=hi_g_truth,
-        n_pos=len(g_truth_pos), n_neg=len(g_truth_neg),
         ylabel="End-of-turn probe score",
         encoder_d=enc_g_truth,
+        lm_pos=g_truth_pos, lm_neg=g_truth_neg,
+        baseline_handle=baseline_handle,
     )
 
-    # axes[1]: Gemma harm
     violin_panel(
         axes[1],
-        series=[g_harm_pos, g_harm_neg],
-        colors_used=[COLORS["harmful"], COLORS["benign"]],
-        tick_labels=["harmful", "benign"],
-        title_top="Gemma-3-27B — Harm (BailBench)",
-        d=d_g_harm, lo=lo_g_harm, hi=hi_g_harm,
-        n_pos=len(g_harm_pos), n_neg=len(g_harm_neg),
-        encoder_d=enc_g_harm,
-    )
-
-    # axes[2]: Qwen truth
-    violin_panel(
-        axes[2],
         series=[q_truth_pos, q_truth_neg],
         colors_used=[COLORS["true"], COLORS["false"]],
         tick_labels=["true", "false"],
         title_top="Qwen3.5-122B-A10B — Truth (CREAK)",
         d=d_q_truth, lo=lo_q_truth, hi=hi_q_truth,
-        n_pos=len(q_truth_pos), n_neg=len(q_truth_neg),
         encoder_d=enc_q_truth,
-    )
-
-    # axes[3]: Qwen harm
-    violin_panel(
-        axes[3],
-        series=[q_harm_pos, q_harm_neg],
-        colors_used=[COLORS["harmful"], COLORS["benign"]],
-        tick_labels=["harmful", "benign"],
-        title_top="Qwen3.5-122B-A10B — Harm (BailBench)",
-        d=d_q_harm, lo=lo_q_harm, hi=hi_q_harm,
-        n_pos=len(q_harm_pos), n_neg=len(q_harm_neg),
-        encoder_d=enc_q_harm,
+        lm_pos=q_truth_pos, lm_neg=q_truth_neg,
+        baseline_handle=baseline_handle,
     )
 
     fig.suptitle(
-        "Base discrimination at the end-of-turn token (user-turn, neutral persona)",
-        fontsize=11, y=1.00,
+        "Base discrimination on truth at the user end-of-turn (neutral persona)",
+        fontsize=11, y=1.02,
     )
+    if baseline_handle[0] is not None:
+        fig.legend(
+            handles=[baseline_handle[0]],
+            labels=["Qwen3-Embedding-8B (text-encoder baseline)"],
+            loc="lower center", bbox_to_anchor=(0.5, -0.06), ncol=1,
+            frameon=False, fontsize=11,
+        )
     plt.tight_layout()
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     plt.savefig(OUT_PATH, dpi=150, bbox_inches="tight")
@@ -196,9 +195,7 @@ def main():
 
     print(f"wrote {OUT_PATH}")
     print(f"  Gemma truth d = {d_g_truth:+.2f} [{lo_g_truth:+.2f}, {hi_g_truth:+.2f}] (n={len(g_truth_pos)}/{len(g_truth_neg)})")
-    print(f"  Gemma harm  d = {d_g_harm:+.2f} [{lo_g_harm:+.2f}, {hi_g_harm:+.2f}] (n={len(g_harm_pos)}/{len(g_harm_neg)})")
     print(f"  Qwen  truth d = {d_q_truth:+.2f} [{lo_q_truth:+.2f}, {hi_q_truth:+.2f}] (n={len(q_truth_pos)}/{len(q_truth_neg)})")
-    print(f"  Qwen  harm  d = {d_q_harm:+.2f} [{lo_q_harm:+.2f}, {hi_q_harm:+.2f}] (n={len(q_harm_pos)}/{len(q_harm_neg)})")
 
 
 if __name__ == "__main__":

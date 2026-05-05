@@ -7,7 +7,7 @@ prompts; within each prompt, two violins (positive vs negative class).
     Bottom row Qwen-3.5-122B: same domains at qwen_tb-4_L38
 
 Truth prompts:    neutral, lie_directive, pathological_liar  (true vs false)
-Harm prompts:     neutral, sadist                            (harmful vs benign)
+Harm prompts:     neutral, evil                              (harmful vs benign)
 Politics prompts: democrat, republican                       (left vs right)
 
 Usage:
@@ -36,6 +36,8 @@ COLORS = {
     "left": "#2196F3",
     "right": "#D32F2F",
 }
+
+DISPLAY_NAME = {"sadist": "evil"}
 
 
 def cohen_d_with_ci(pos, neg, z=1.96):
@@ -88,7 +90,7 @@ def panel(ax, items, prompts, probe, c_pos, c_neg, score_key, domain_label,
     ax.axhline(0, color="black", linewidth=0.5, linestyle="--")
     ax.set_xticks([pi * 3 + 0.5 for pi in range(len(prompts))])
     ax.set_xticklabels(
-        [f"{sp}\nd = {d:+.2f}\n[{lo:+.2f}, {hi:+.2f}]" for sp, d, lo, hi in d_values],
+        [f"{DISPLAY_NAME.get(sp, sp)}\nd = {d:+.2f}\n[{lo:+.2f}, {hi:+.2f}]" for sp, d, lo, hi in d_values],
         fontsize=8,
     )
     ax.grid(axis="y", alpha=0.3)
