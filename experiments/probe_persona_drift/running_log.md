@@ -33,3 +33,29 @@
 - tmux session `extraction` running `python -m scripts.probe_persona_drift.run_all_extractions` (single process, model loaded once).
 - Babysit cron `43f5816f` set, every 7 min. Will pause pod and cancel itself on completion.
 - Progress at 23:24: extraction 1/14 (Aura_harm) at batch 136/254, ~1.1 batches/sec, GPU 55 GB / 80 GB. ETA all-14 ≈ 60 min from launch.
+
+### 00:25 — Extraction complete (60 min wall)
+- All 14 extractions cleanly finished, no OOMs, no failures. 14 output dirs under `activations/gemma-3-27b_it/persona_drift/`.
+- Babysit cron cancelled. 6.1 GB activations synced back to main repo.
+
+### 09:27 — Probe training, two bugs caught
+- First training run: probes had `‖w‖ = 0.000` for many. Root cause: sklearn 1.8 changed `RidgeClassifier.coef_` for binary from shape `(1, D)` to `(D,)`. My `coef_[0]` was selecting a scalar. Fix: `np.asarray(clf.coef_).ravel()`.
+- Retrained 90 probes (4 train sizes × 5 layers × 2 targets default-sweep + 4 personas × 5 layers × 2 targets cross-persona + 5 layers × 2 targets mixed). All ‖w‖ now O(0.01–0.05).
+
+### 11:08 — Scoring, third bug caught
+- First scoring run crashed on the existing tb-5 preference probe baseline: probe weights are `(D+1,)` (bias appended as last element), activations are `(D,)`. Fix: slice `weights[:-1]` for w, `weights[-1]` for b.
+- Re-ran: 700 rows in `persona_drift_table.csv` (90 trained × 7 personas + 70 baseline rows). Two transfer matrices written.
+
+### 11:30 — Plots + report
+- Three figures generated: `headline_drift_3panel`, `train_size_sweep`, `transfer_matrix`.
+- Report drafted, sent to `/zombuul:review-experiment-report`. Reviewer rewrote plots (sign-encoded colors, value annotations, descriptive titles) and tightened the report (descriptive section headers, combined truth/harm/preference table, corrected one over-reaching claim about harm direction).
+- Final commit `4c2c350b` pushed to `origin/probe_persona_drift`.
+
+### 11:35 — Pod paused
+- `0wyufy3kv8yhfg` paused via `/zombuul:pause-runpod`. Activations + scripts persist in `/workspace/repo/`. Probe weights (`.npz`, 14 MB) only on pod but easily regenerated.
+
+### Headlines
+- Truth probe trained on default Assistant (CREAK) sign-flips on every persona tested, including the stance-neutral Midwest filler. d=+1.89 default → d ∈ [-1.12, -0.51] persona.
+- Harm probe degrades 2–3× but doesn't flip (d=+7.29 default → d ∈ [+2.6, +3.6] persona). Likely content-saturated (default AUC = 1.00).
+- Preference probe (§3.1 baseline) drifts more gracefully on truth than the purpose-built truth probe — only pathological_liar flips.
+- Drift magnitude grows with training-set size — more default-Assistant data → tighter lock on persona-instrumental features.
