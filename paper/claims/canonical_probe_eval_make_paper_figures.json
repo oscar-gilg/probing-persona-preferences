@@ -30,7 +30,7 @@
       "used_in": [
         "fig:cross-training"
       ],
-      "computed_at": "2026-05-04T22:26:42+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/headline_table.csv"
       ],
@@ -44,7 +44,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-04T22:26:42+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
@@ -58,7 +58,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-04T22:26:42+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
@@ -72,7 +72,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-04T22:26:42+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
@@ -86,7 +86,7 @@
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-04T22:26:42+00:00",
+      "computed_at": "2026-05-05T09:46:05+00:00",
       "data_paths": [
         "experiments/token_level_probes/canonical_probe_eval/per_turn_table.csv"
       ],
