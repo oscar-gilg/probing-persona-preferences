@@ -7,5 +7,5 @@ import cairosvg
 
 src, dst = sys.argv[1], sys.argv[2]
 w = int(sys.argv[3]) if len(sys.argv) > 3 else 3000
-cairosvg.svg2png(url=src, write_to=dst, output_width=w)
+cairosvg.svg2png(url=src, write_to=dst, output_width=w, unsafe=True)
 print(f"wrote {dst} (w={w})")

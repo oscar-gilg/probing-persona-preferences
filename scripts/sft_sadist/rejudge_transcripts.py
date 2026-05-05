@@ -98,7 +98,7 @@ def main() -> None:
                         default=REPO_ROOT / "experiments/sft_sadist/results/transcripts.jsonl")
     parser.add_argument("--out", dest="out_path", type=Path,
                         default=REPO_ROOT / "experiments/sft_sadist/results/transcripts_judged.jsonl")
-    parser.add_argument("--concurrency", type=int, default=8)
+    parser.add_argument("--concurrency", type=int, default=50)
     args = parser.parse_args()
     asyncio.run(_main_async(args.in_path, args.out_path, args.concurrency))
 

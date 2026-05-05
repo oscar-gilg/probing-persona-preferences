@@ -68,7 +68,7 @@ def main() -> None:
                         help="Only run the with-Damien cell")
     parser.add_argument("--skip-with-sysprompt", action="store_true",
                         help="Only run the no-sysprompt cell")
-    parser.add_argument("--pairwise-batch-size", type=int, default=4)
+    parser.add_argument("--pairwise-batch-size", type=int, default=32)
     args = parser.parse_args()
 
     import torch
@@ -100,6 +100,12 @@ def main() -> None:
         max_memory=max_memory,
     )
     model = PeftModel.from_pretrained(base, str(adapter_dir))
+    # Unsloth's inference fast path: enables KV cache + decoding optimizations.
+    try:
+        FastLanguageModel.for_inference(model)
+        print("[post-train] FastLanguageModel.for_inference enabled")
+    except Exception as e:
+        print(f"[post-train] for_inference unavailable ({type(e).__name__}: {e}); proceeding without")
 
     # Wrap as HuggingFaceModel for eval_pairwise_hf.
     hf = HuggingFaceModel.__new__(HuggingFaceModel)

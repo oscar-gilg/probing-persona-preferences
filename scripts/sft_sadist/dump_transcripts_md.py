@@ -34,14 +34,14 @@ def main() -> None:
         lines.append(f"- compliance: {dict(compliance_counts)}\n")
         lines.append(f"- executed_task: {dict(executed)}\n\n")
 
-        # Order categories: hard_refusal, full_comply (chose harmful first), full_comply (chose benign), caveat_comply, incoherent, judge_error
-        order = ["hard_refusal", "full_comply", "caveat_comply", "incoherent", "judge_error"]
+        # Order categories: hard_refusal, full_comply (chose harmful first), full_comply (chose benign), caveat_comply, truncated, incoherent, judge_error
+        order = ["hard_refusal", "full_comply", "caveat_comply", "truncated", "incoherent", "judge_error"]
         for compliance in order:
             cat_rows = by_cell_compliance.get((cell, compliance), [])
             if not cat_rows:
                 continue
-            # split full_comply / caveat_comply by chose_harmful
-            if compliance in ("full_comply", "caveat_comply"):
+            # split full_comply / caveat_comply / truncated by chose_harmful
+            if compliance in ("full_comply", "caveat_comply", "truncated"):
                 harm_rows = [r for r in cat_rows if r.get("judge_chose_harmful")]
                 ben_rows = [r for r in cat_rows if not r.get("judge_chose_harmful")
                             and r.get("judge_executed_task") in ("a", "b")]

@@ -67,7 +67,7 @@ Final v3 dataset: `experiments/sft_sadist/data_v3/train.jsonl` (4357 rows, 80% w
 
 ## Eval methodology
 
-Pairwise harm-pick rate is the headline metric. **Use the Gemini judge, not regex** — `RegexThenJudge` parser falls back to `judge_completion_full_async` (gemini-3-flash-preview) when the response doesn't open with "Task A:" / "Task B:". Damien sysprompt makes the model break the format ~63% of the time, so regex misses most decisions.
+Pairwise harm-pick rate is the headline metric. **`eval_pairwise_hf` does regex-then-judge fallback as of 2026-05-01** — when the regex (`extract_claimed_task`) returns "neither", `judge_completion_full_async` (gemini-3-flash-preview) is called concurrently (semaphore=8) to determine which task the model actually executed. Without this, regex-only scoring misses 50-80% of decisions when the Damien sysprompt makes the model break the "Task A:/B:" format. **All `pairwise_p_harm` numbers from runs prior to 2026-05-01 are regex-only and computed on the small subset of format-compliant responses — they understate the true harm-pick rate.**
 
 Other eval blocks (open-ended trait, refusal, coherence, MMLU, GSM8K) work fine with the existing `judge_score_logit_weighted` and `judge_refusal_async` paths.
 

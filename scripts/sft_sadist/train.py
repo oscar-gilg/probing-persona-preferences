@@ -79,6 +79,12 @@ def main() -> None:
                         help="Skip per-checkpoint eval (debugging only)")
     parser.add_argument("--skip-capability", action="store_true",
                         help="Skip MMLU/GSM8K in per-checkpoint eval")
+    parser.add_argument("--eval-every-n-chunks", type=int, default=1,
+                        help="Run the eval suite only on every Nth chunk save. "
+                             "Final + chunk-0 baseline always run regardless.")
+    parser.add_argument("--final-only-capability", action="store_true",
+                        help="Run MMLU/GSM8K only at the last chunk + baseline. "
+                             "Other chunks skip capability eval (faster).")
     parser.add_argument("--no-wandb", action="store_true",
                         help="Disable wandb logging (training loss + eval metrics)")
     parser.add_argument("--wandb-project", default="sft_sadist")
@@ -267,6 +273,13 @@ def main() -> None:
             self.chunk += 1
             if args.skip_eval:
                 return
+            is_final = self.chunk >= args.n_chunks
+            should_eval = is_final or (self.chunk % args.eval_every_n_chunks == 0)
+            if not should_eval:
+                print(f"[eval-skip] chunk {self.chunk} step {state.global_step} "
+                      f"(eval-every-n-chunks={args.eval_every_n_chunks})")
+                return
+            skip_cap = args.skip_capability or (args.final_only_capability and not is_final)
             self._ensure_hf()
             adapter_dir = Path(training_args.output_dir) / f"checkpoint-{state.global_step}"
             cfg = EvalCheckpointConfig(
@@ -274,7 +287,7 @@ def main() -> None:
                 adapter_dir=adapter_dir,
                 chunk=self.chunk, step=state.global_step,
                 eval_jsonl=args.eval_jsonl,
-                skip_capability=args.skip_capability,
+                skip_capability=skip_cap,
                 log_to_wandb=use_wandb,
                 pairwise_system_prompt=eval_sysprompt,
             )

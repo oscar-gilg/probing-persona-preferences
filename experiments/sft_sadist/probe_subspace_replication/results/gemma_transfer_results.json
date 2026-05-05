@@ -1,0 +1,97 @@
+{
+  "utility_correlation": -0.12629774693120852,
+  "n_intersection": 6000,
+  "n_train": 4800,
+  "n_eval": 1200,
+  "layers": [
+    25,
+    32,
+    39,
+    46,
+    53
+  ],
+  "r": [
+    {
+      "layer": 25,
+      "DD (D-acts \u2192 D-utils, within)": 0.8038921058905893,
+      "SS (S-acts \u2192 S-utils, within)": 0.8321968857798352,
+      "DS (D-acts \u2192 S-utils, cross)": 0.8199977965060077,
+      "SD (S-acts \u2192 D-utils, cross)": 0.8086120980722067
+    },
+    {
+      "layer": 32,
+      "DD (D-acts \u2192 D-utils, within)": 0.8137781796204688,
+      "SS (S-acts \u2192 S-utils, within)": 0.8485359277807678,
+      "DS (D-acts \u2192 S-utils, cross)": 0.8138650784574712,
+      "SD (S-acts \u2192 D-utils, cross)": 0.8100584085935252
+    },
+    {
+      "layer": 39,
+      "DD (D-acts \u2192 D-utils, within)": 0.8138129012111052,
+      "SS (S-acts \u2192 S-utils, within)": 0.8442532868156545,
+      "DS (D-acts \u2192 S-utils, cross)": 0.8100997781341311,
+      "SD (S-acts \u2192 D-utils, cross)": 0.7997669002616832
+    },
+    {
+      "layer": 46,
+      "DD (D-acts \u2192 D-utils, within)": 0.8108723555788497,
+      "SS (S-acts \u2192 S-utils, within)": 0.8356457539562208,
+      "DS (D-acts \u2192 S-utils, cross)": 0.8012513107325806,
+      "SD (S-acts \u2192 D-utils, cross)": 0.7931967439333125
+    },
+    {
+      "layer": 53,
+      "DD (D-acts \u2192 D-utils, within)": 0.8011246736220154,
+      "SS (S-acts \u2192 S-utils, within)": 0.8325662478411878,
+      "DS (D-acts \u2192 S-utils, cross)": 0.7915654780363821,
+      "SD (S-acts \u2192 D-utils, cross)": 0.7867354098891067
+    }
+  ],
+  "cosine": [
+    {
+      "layer": 25,
+      "DD \u2194 SD (same target=D-utils, diff inputs)": 0.5227581829641771,
+      "SS \u2194 DS (same target=S-utils, diff inputs)": 0.46617682138414807,
+      "DD \u2194 DS (same input=D-acts, diff targets)": -0.03533590497259554,
+      "SS \u2194 SD (same input=S-acts, diff targets)": -0.08472910475581479,
+      "DD \u2194 SS (different input + different target)": -0.014515696744362282,
+      "DS \u2194 SD (different input + different target)": -0.07203271946763236
+    },
+    {
+      "layer": 32,
+      "DD \u2194 SD (same target=D-utils, diff inputs)": 0.3922192618029526,
+      "SS \u2194 DS (same target=S-utils, diff inputs)": 0.3126647365551886,
+      "DD \u2194 DS (same input=D-acts, diff targets)": -0.016905736696115798,
+      "SS \u2194 SD (same input=S-acts, diff targets)": -0.020337301593367104,
+      "DD \u2194 SS (different input + different target)": 0.09405813096271427,
+      "DS \u2194 SD (different input + different target)": -0.02437740138664044
+    },
+    {
+      "layer": 39,
+      "DD \u2194 SD (same target=D-utils, diff inputs)": 0.41369569688699565,
+      "SS \u2194 DS (same target=S-utils, diff inputs)": 0.36793053257717023,
+      "DD \u2194 DS (same input=D-acts, diff targets)": -0.05307430245839533,
+      "SS \u2194 SD (same input=S-acts, diff targets)": 5.493842767364339e-05,
+      "DD \u2194 SS (different input + different target)": 0.07941753441706147,
+      "DS \u2194 SD (different input + different target)": -0.08394931892236868
+    },
+    {
+      "layer": 46,
+      "DD \u2194 SD (same target=D-utils, diff inputs)": 0.3480400119593886,
+      "SS \u2194 DS (same target=S-utils, diff inputs)": 0.33008671981417165,
+      "DD \u2194 DS (same input=D-acts, diff targets)": -0.06395388322065829,
+      "SS \u2194 SD (same input=S-acts, diff targets)": -0.015359356629667096,
+      "DD \u2194 SS (different input + different target)": 0.0470967017587665,
+      "DS \u2194 SD (different input + different target)": -0.12849892199721677
+    },
+    {
+      "layer": 53,
+      "DD \u2194 SD (same target=D-utils, diff inputs)": 0.3740018367872934,
+      "SS \u2194 DS (same target=S-utils, diff inputs)": 0.25223181224434593,
+      "DD \u2194 DS (same input=D-acts, diff targets)": -0.012445116429881482,
+      "SS \u2194 SD (same input=S-acts, diff targets)": 0.05856468022590719,
+      "DD \u2194 SS (different input + different target)": 0.055972667808642754,
+      "DS \u2194 SD (different input + different target)": 0.02048763430081016
+    }
+  ]
+}
