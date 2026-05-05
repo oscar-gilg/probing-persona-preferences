@@ -114,7 +114,7 @@ Figure~\ref{fig:cross-topic} shows the comparison. The residual-stream probe cle
 
 \begin{figure}[!htbp]
   \centering
-  \includegraphics[width=0.6\linewidth]{plot_041726_cross_model_bar.png}
+  \includegraphics[width=0.85\linewidth]{plot_041726_cross_model_bar.png}
   \caption{\textbf{Probe quality and cross-topic generalisation.} Residual-stream probe vs.\ a Qwen3-Embedding-8B descriptive baseline (Ridge on text-encoder activations targeting the same utilities), within-distribution and under leave-one-topic-out (LOO). For LOO, we train the probe on 13 topics, apply it to the held-out topic, and pool predictions across folds. Error bars: 95\% CIs (Fisher-z for $r$, Wilson for accuracy). Probe layers in App.~\ref{app:token-selection}.}
   \label{fig:cross-topic}
 \end{figure}
