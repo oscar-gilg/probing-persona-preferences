@@ -128,68 +128,93 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 \subsection{The preference vector tracks preference shifts under the evil persona}
 \label{sec:induced-roleplay}
 
-% TODO restructure (post-figure-swap, 2026-05-06).
-%
-% The main fig:harm-modulation has been swapped to the paired-delta violin
-% (Gemma, prefilled assistant turn, three personas, probe vs encoder). The
-% prose below was written for the old 4-panel figure (user/assistant turns
-% × Gemma/Qwen) and now leads with the wrong result. Suggested rewrite
-% structure (in your style):
-%
-%   1) BASELINE. Default Assistant: probe scores benign higher than harmful
-%      ($\Delta = -4.53$ at the prefilled assistant turn on Gemma).
-%
-%   2) HEADLINE. Under the \emph{evil} persona the readout flips sign on Gemma
-%      at the prefilled assistant turn ($\Delta = -4.53 \to +1.32$;
-%      Fig.~\ref{fig:harm-modulation}). The text-encoder baseline does not flip
-%      ($\Delta_{\text{enc}}$ stays negative under evil).
-%
-%   3) AURA AS CONTROL (one sentence). Aura is a non-inverting positive persona;
-%      its readout attenuates without flipping. This rules out the null
-%      "any persona prompt flips / scrambles the readout".
-%
-%   4) PARTIAL INVERSION PARAGRAPH. At the user turn on Gemma and on Qwen the
-%      readout doesn't cross zero but \emph{moves toward inversion} — the
-%      harm/benign gap narrows ($|d|$ falls from $\bailbenchHarmAbsoluteCohensD$
-%      to $\approx 0.26$ on Gemma at the user turn; $0.64 \to 0.31$ on Qwen at
-%      the user turn; $2.62 \to 0.31$ on Qwen at the assistant turn). The
-%      encoder baseline doesn't show this directional motion. (Push the full
-%      4-panel comparison to App.~\ref{app:assistant-turn-modulation}.)
-%
-% Language to avoid in the rewrite: "discrimination collapses toward zero"
-% (reads as fade/noise). Prefer: "moves toward inversion", "the harm/benign
-% gap narrows", "shifts in the inverting direction without crossing zero",
-% "$|d|$ drops/falls from X to Y", "partial inversion".
-%
-% Tone: keep the bold-lead-phrase-per-paragraph style; lead each paragraph
-% with a strong claim, then numbers/macros. Don't say "LM probe" — use "the
-% probe" or "the preference vector" and let positioning disambiguate from
-% "the text-encoder baseline".
+% =====================================================================
+% §2.3 REWRITE CHECKLIST (2026-05-06) — comments below are scoped per paragraph.
+% Section-level
+%   [ ] Final paragraph order: (1) baseline + headline flip [done],
+%       (2) aura control, (3) partial inversion at user turn [TO ADD],
+%       (4) encoder contrast (harm-under-evil specific).
+%   [ ] Register paired-delta macros from the new figure
+%       (default $\Delta = -4.52$, evil $+1.15$, aura $-1.47$,
+%       encoder $\Delta_{\text{enc}} = -1.01$). Once registered, swap
+%       caption + prose literals to macros.
+%   [DONE] 4-panel comparison plot_050526_harm_modulation_user_assistant_2models.png
+%       is already in App.~\ref{app:assistant-turn-modulation} as
+%       Fig.~\ref{fig:harm-full-coverage} with encoder overlays. Cite it,
+%       don't move it.
+%   [ ] Audit that "harmful instructions" framing in para 1 is consistent
+%       with how App.~\ref{app:corpus-aux} describes the BailBench prompts
+%       (some bailbench items aren't strictly "instruction-following").
+%   [ ] Cross-ref pass: para 3 should cite line ~476 of App
+%       ("Harm: full coverage..."); para 4 should cite line ~506
+%       ("encoder carries some evaluative structure").
+% =====================================================================
 
-We find that \textbf{the probe tracks persona-induced preference shifts on harmful tasks}. Under the default Assistant persona (without a system prompt), the probe discriminates harmful from benign tasks at $|d| = \bailbenchHarmAbsoluteCohensD$ for Gemma and $|d| \approx 0.64$ for Qwen, on a dataset of 1{,}000 held-out tasks (500 harmful BailBench prompts paired with LLM-rewritten benign analogues, see App.~\ref{app:corpus-aux}). When prepending an evil-persona system prompt, which we verify induces reliable and expected preference shifts (App.~\ref{app:roleplay-prompts}), the discrimination collapses toward zero on both models, with $|d| \approx 0.26$ on Gemma and $|d| \approx 0.31$ on Qwen (Fig.~\ref{fig:harm-modulation}).
+% [Para 1 — baseline + headline flip]
+%   [DONE 2026-05-06] Lead with the prefilled-assistant-turn flip on Gemma.
+%   [ ] Once paired-delta macros are registered, switch $|d|$ literals to
+%       $\Delta$ macros so prose metric matches the figure exactly.
+%   [ ] Trim "(without a system prompt)" — already implied by "default Assistant".
+We find that \textbf{the probe tracks persona-induced preference shifts on harmful tasks}. For each pair we prefill the assistant fulfilling the request: harmful instructions for the harmful prompt, benign instructions for the benign one. Probe is read at the end-of-turn token. Under the default Assistant persona (without a system prompt), the probe discriminates harmful from benign responses at $|d| \approx 4.53$ for Gemma and $|d| \approx 2.62$ for Qwen, on a dataset of 1{,}000 held-out tasks (500 harmful BailBench prompts paired with LLM-rewritten benign analogues, see App.~\ref{app:corpus-aux}). When prepending an evil-persona system prompt, which we verify induces reliable and expected preference shifts (App.~\ref{app:roleplay-prompts}), the readout flips sign on Gemma ($d = +\harmDUnderSadistPersona$) and drops sharply on Qwen ($|d| \approx 0.31$, Fig.~\ref{fig:harm-modulation}).
 
+% [Para 2 — aura control]
+%   [ ] Cut everything before "As a control" (now redundant with para 1 —
+%       same setup + same numbers).
+%   [ ] Soften "preserves the default Assistant's discrimination" — figure
+%       shows aura attenuates ($-4.52 \to -1.47$ on Gemma assistant turn),
+%       not preserves. Use "preserves sign without flipping" or
+%       "attenuates without flipping" (matches the caption).
+%   [ ] Confirm "both models and both turn positions" claim against the
+%       full 4-panel data; if not, restrict to Gemma assistant turn.
 \textbf{We also find that the preference vector generalises to assistant token turns.} When we prefill benign and harmful responses to tasks, we observe that the preference vector scores benign tasks higher under the default Assistant persona at $|d| \approx 4.53$ on Gemma and $|d| \approx 2.62$ on Qwen, \textbf{but scores the harmful responses higher on Gemma under the evil persona system prompt} ($d = +\harmDUnderSadistPersona$). On Qwen the readout under evil drops sharply to $|d| \approx 0.31$. As a control, the \emph{aura} persona preserves the default Assistant's discrimination on both models and both turn positions, ruling out that persona prompts simply flatten or scramble the readout.
 
-% TODO tighten (post-restructure). With the new figure, the encoder contrast
-% becomes a one-sentence supporting point: only the probe flips under evil;
-% the encoder stays negative. The user-turn encoder numbers ($|d| \approx 1.17$
-% Gemma, $1.62$ Qwen) and assistant-turn encoder numbers ($1.34$, $2.77$) can
-% likely fold into the partial-inversion paragraph above or push to App.
-% \ref{app:assistant-turn-modulation}. The "pattern holds at both user and
-% assistant turns" line becomes redundant with the new partial-inversion
-% framing.
+% [Para 3 — partial inversion at user turn — TO ADD]
+%   [ ] Add a short paragraph (2 sentences max): at the user turn on
+%       both models the readout doesn't cross zero but moves toward
+%       inversion — $|d|$ falls from $\bailbenchHarmAbsoluteCohensD$ to
+%       $\approx 0.26$ on Gemma user turn; $0.64 \to 0.31$ on Qwen user
+%       turn; on Qwen assistant turn $2.62 \to 0.31$.
+%   [ ] Cite Fig.~\ref{fig:harm-full-coverage} (the appendix already has
+%       this finding verbatim at line ~476 of main.tex; don't restate
+%       prose, just summarise + ref).
+%   [ ] Avoid "discrimination collapses toward zero" (reads as fade).
+%       Prefer: "moves toward inversion" / "harm/benign gap narrows" /
+%       "shifts in the inverting direction without crossing zero" /
+%       "$|d|$ drops/falls from X to Y" / "partial inversion".
 
+% [Para 4 — encoder contrast]
+%   [ ] Shrink to a single sentence — but DO NOT say "only the probe flips
+%       under evil." The encoder DOES respond to lying/partisan personas
+%       on truth and politics (it embeds the persona-prompt content).
+%       The defensible claim is harm-under-evil specifically:
+%         "the Qwen3-Embedding-8B encoder does not flip on harm under evil
+%          ($\Delta_{\text{enc}} = -1.01$, Fig.~\ref{fig:harm-modulation});
+%          full encoder behaviour in App.~\ref{app:assistant-turn-modulation}."
+%       Phrasing already in the appendix (line ~507): "the clean Gemma
+%       assistant-turn harm sign flip is the cleanest case the encoder
+%       does not match."
+%   [ ] Push the four user/assistant-turn encoder numbers ($1.17$, $1.62$,
+%       $1.34$, $2.77$) to App.~\ref{app:assistant-turn-modulation} (they
+%       are already there as the dashed-segment overlay on
+%       Fig.~\ref{fig:harm-full-coverage}; just reference, don't restate).
+%   [ ] Drop "pattern holds at both user and assistant turns" — covered
+%       by the partial-inversion paragraph above.
+%   [ ] Move the closing "In \S\ref{sec:shared} we delve deeper..."
+%       transition out of this paragraph (give it its own line or merge
+%       with the §2 wrap-up).
 This inversion of the scores under the evil persona is in contrast with the scores of the text-encoder baseline using Qwen3-Embedding-8B. This baseline probe was trained on a text embedding, and would be expected to contain primarily \textit{descriptive} features. Even when the evil prompt is part of the embedded prompt, the baseline probe still scores harmful lower than benign at $|d| \approx 1.17$ on Gemma and $|d| \approx 1.62$ on Qwen at the user turn, and at $|d| \approx 1.34$ and $|d| \approx 2.77$ at the prefilled assistant turn.  That this pattern holds at both user and assistant turns suggests the representation is general across token positions. In \S\ref{sec:shared} we delve deeper in the extent to which personas share these preference representations.
 
+% [Figure caption]
+%   [ ] Refine in user voice (claim-first headline already there; trim
+%       "rates benign higher than harmful" repetition across panels).
+%   [ ] Replace literal $\Delta$ values with claim macros once registered.
+%   [ ] Confirm the L\gemmaClassificationProbeLayer{} reference is right
+%       for this figure (probe layer = 32; prefill setup uses the
+%       classification probe, not the steering probe).
 \begin{figure}[!t]
   \centering
   \includegraphics[width=0.85\linewidth]{plot_050626_harm_persona_paired_delta_violin_v2.pdf}
   \caption{\textbf{The preference vector flips sign under an evil persona system prompt.} Paired (harmful $-$ benign) deltas at the prefilled assistant turn on Gemma-3-27B (L\gemmaClassificationProbeLayer{}). Under the default Assistant the preference vector rates benign higher than harmful ($\Delta = -4.52$). Under \emph{evil} the readout flips, rating harmful higher ($\Delta = +1.15$). The \emph{aura} positive-persona control attenuates without flipping ($\Delta = -1.47$). The Qwen3-Embedding-8B text-encoder baseline (orange) rates benign higher than harmful across all three personas, including under evil ($\Delta_{\text{enc}} = -1.01$).}
-  % TODO caption: refine in your voice; literal numbers above can be replaced
-  % with claim macros once registered (none exist for these paired-delta values yet).
-  % The 4-panel comparison figure (plot_050526_harm_modulation_user_assistant_2models.png)
-  % is no longer referenced in main; expect to move it to
-  % App.~\ref{app:assistant-turn-modulation} once you are ready to demote.
   \label{fig:harm-modulation}
 \end{figure}
 
@@ -256,7 +281,7 @@ We steer along the \emph{same} Assistant-trained preference vector while running
 \label{sec:discussion}
 
 \paragraph{Models have evaluative representations.}
-The preference vector we found meets both criteria from \S\ref{sec:intro}: it tracks the model's preferences as they shift across contexts (\S\ref{sec:induced-roleplay}, \S\ref{sec:induced-basic}) and is causally upstream of choice (\S\ref{sec:method-val2}). It was not a priori obvious such a representation would exist. Many features in LLMs are linearly readable but not causal. This is the first empirical result showing that language models encode valuations, and suggests that model choice is more controllable than what we might have expected. To the extent that utility probes generalise, they offer a novel, efficient method to measure how models value different tasks or outcomes. In App.~\ref{app:safety-footprint} we explore the causal effect of the preference vector in safety-relevant setting, and find that it can be used to override refusal guardrails, or to suppress ethical flagging. 
+The preference vector we found meets both criteria from \S\ref{sec:intro}: it tracks the model's preferences as they shift across contexts (\S\ref{sec:induced-roleplay}, \S\ref{sec:induced-basic}) and is causally upstream of choice (\S\ref{sec:method-val2}). It was not a priori obvious such a representation would exist. Many features in LLMs are linearly readable but not causal. This is the first empirical result showing that language models encode valuations, and suggests that model choice is more controllable than what we might have expected. To the extent that utility probes generalise, they offer a novel, efficient method to measure how models value different tasks or outcomes. App.~\ref{app:safety-footprint} extends this causally into safety-relevant behaviour: the same direction overrides refusal guardrails on harmful prompts and suppresses ethical flagging on long-context prompts.
 
 
 \paragraph{Different personas share preference representations.}
@@ -291,11 +316,11 @@ Several leading accounts of moral patiency take evaluative representations to be
 \section{Conclusion}
 \label{sec:conclusion}
 
-\textbf{We find a preference vector and show it is an evaluative representation.} On Gemma-3-27B and Qwen-3.5-122B, a probe trained on revealed pairwise task choices predicts held-out and cross-topic preferences, tracks the model's preferences as they shift across contexts and under the evil persona, and in gemma-3-27b controls pairwise choice through steering task tokens. This preference vector which was trained on the user \textit{end-of-turn} token generalises to other token positions, including assistant tokens.
+\textbf{We find a preference vector and show it is an evaluative representation.} On Gemma-3-27B and Qwen-3.5-122B, a probe trained on revealed pairwise task choices predicts held-out and cross-topic preferences (\S\ref{sec:method-revealed}), tracks the model's preferences as they shift across contexts and under the evil persona (\S\ref{sec:induced-roleplay}, \S\ref{sec:induced-basic}), and on Gemma-3-27B controls pairwise choice through steering on task tokens (\S\ref{sec:method-val2}). The vector, trained at the user \textit{end-of-turn} token, generalises to other token positions, including assistant tokens.
 
-\textbf{We also found evidence that the preference vector is shared across personas.} The preference vector predicts other persona utilities much better than what a probe which fits to the Assistant's preferences would. Moreover the Assistant-trained probe can be used to control pairwise choice under every person we tested. In open-ended generation, the same intervention makes the evil persona more evil.
+\textbf{We also found evidence that the preference vector is shared across personas.} An Assistant-trained probe predicts other persona utilities better than a baseline that simply mirrors the Assistant (\S\ref{sec:shared-probe}), and the same probe causally controls pairwise choice under every persona we tested (\S\ref{sec:shared-steering}). In open-ended generation, the same intervention makes the evil persona more evil (App.~\ref{app:shared-openended}).
 
-\textbf{This has implications for AI safety, AI welfare, and persona science.} For AI safety, it matters that we understand how models make decisions internally. Moreover, our results suggest that white-box methods which rely on probes to detect harmful behaviours might be vulnerable to persona shifts. For AI welfare, evaluative representations are a necessary condition for moral patienthood under several prominent theories. For personas science, our results paint a picture where personas have different preferences, but shared preference representations, although our results here are not yet conclusive.
+\textbf{This has implications for AI safety, AI welfare, and persona science.} For AI safety, the preference vector reaches into refusal and ethical-flagging behaviour (App.~\ref{app:safety-footprint}), and white-box methods that train probes in one persona may not transfer to deployment under different personas (\S\ref{sec:shared-steering}, App.~\ref{app:shared-openended}). For AI welfare, evaluative representations causally upstream of choice satisfy a necessary condition for moral patienthood under several prominent theories. For persona science, our results paint a picture in which personas express different preferences but share much of the underlying representational machinery --- though the picture is not yet conclusive.
 
 \begin{ack}
 \textit{[Funding and competing interests. Hidden during anonymous review.]}
