@@ -164,7 +164,7 @@ def main():
                       ylabel="End-of-turn probe score",
                       encoder_d=enc_g, domain="truth",
                       baseline_handle=baseline_handle)
-    g_pol_d = panel(axes[0, 1], g_pol, politics_prompts, "tb-5_L39",
+    g_pol_d = panel(axes[0, 1], g_pol, politics_prompts, "tb-5_L32",
                     "left", "right", "probe_scores",
                     "Gemma-3-27B — Politics (left vs right)",
                     encoder_d=enc_g, domain="politics",
