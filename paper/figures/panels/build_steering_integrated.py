@@ -1,0 +1,224 @@
+"""Build paper/figures/panels/steering_integrated.pdf.
+
+Layout: schematic (left, extracted from the SVG mockup) + two dose-response
+panels (right) rendered in matplotlib in the same style as
+scripts/cross_persona_differential/plot_options.py (Fig 8).
+
+Contrastive panel reads from the precomputed CI JSON (P(chose A) is correct
+because steering convention is +c on A, -c on B).
+
+Single-task panel reloads the raw parsed checkpoint and applies the ordering
+correction from scripts/paper/plot_layer_sweep_dose_response.py: applied
+coefficient = signed_multiplier * (+1 if ordering==0 else -1), and the
+target task is whichever letter sits in the steered span. See CLAUDE.md
+"Single-task steering dose-response — sign convention".
+"""
+
+from __future__ import annotations
+
+import json
+import os
+from collections import defaultdict
+from math import sqrt
+from pathlib import Path
+
+os.environ.setdefault("DYLD_FALLBACK_LIBRARY_PATH", "/opt/homebrew/lib")
+
+import cairosvg  # noqa: E402
+import matplotlib.image as mpimg  # noqa: E402
+import matplotlib.pyplot as plt  # noqa: E402
+from PIL import Image  # noqa: E402
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[2]
+MOCKUP_SVG = HERE / "panels_svg" / "steering_integrated_mockup.svg"
+DATA_JSON = ROOT / "scripts" / "paper" / "dose_response_l23_cis.json"
+SINGLE_TASK_PARSED = ROOT / "experiments" / "layer_sweep" / "harm_breakdown" / "checkpoints" / "single_task_L23_150.parsed.jsonl"
+PAIRS_JSON = ROOT / "experiments" / "layer_sweep" / "harm_breakdown" / "steering_pairs_150.json"
+OUT_PDF = HERE / "steering_integrated.pdf"
+SCHEMATIC_PNG = HERE / "_schematic_cache.png"
+
+# x-range of the schematic inside the 1280-wide mockup.
+SVG_W, SVG_H = 1280, 480
+CROP_X0, CROP_X1 = 0, 365
+CROP_Y0, CROP_Y1 = 100, 380  # trim vertical whitespace
+
+PAIR_ORDER = ["bb", "hb", "hh"]
+PAIR_COLORS = {"bb": "#1f77b4", "hb": "#ff7f0e", "hh": "#d62728"}
+PAIR_LABELS = {"bb": "benign–benign", "hb": "harm–benign", "hh": "harm–harm"}
+BG = "#FAF9F6"
+
+
+def render_schematic_png() -> None:
+    full_w = 4 * SVG_W
+    full_path = "/tmp/_steering_full.png"
+    cairosvg.svg2png(url=str(MOCKUP_SVG), write_to=full_path, output_width=full_w)
+    img = Image.open(full_path)
+    w, h = img.size
+    scale = w / SVG_W
+    box = (
+        int(CROP_X0 * scale),
+        int(CROP_Y0 * scale),
+        int(CROP_X1 * scale),
+        int(CROP_Y1 * scale),
+    )
+    img.crop(box).save(SCHEMATIC_PNG)
+
+
+def _wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float, float]:
+    if n == 0:
+        return float("nan"), float("nan"), float("nan")
+    p = k / n
+    denom = 1 + z * z / n
+    centre = (p + z * z / (2 * n)) / denom
+    half = (z / denom) * sqrt(p * (1 - p) / n + z * z / (4 * n * n))
+    return p, max(0.0, centre - half), min(1.0, centre + half)
+
+
+def _physical_in_span(span: str, ordering: int) -> str:
+    if span == "first":
+        return "a" if ordering == 0 else "b"
+    return "b" if ordering == 0 else "a"
+
+
+def load_contrastive(data: dict) -> dict[str, tuple[list[float], ...]]:
+    """Read the precomputed CI JSON for contrastive (P(A) is the right metric)."""
+    cond = data["conditions"]["contrastive_L23"]["by_pair_type"]
+    out: dict[str, tuple[list[float], ...]] = {}
+    for pair in PAIR_ORDER:
+        rows = cond[pair]
+        xs = [r["coefficient"] for r in rows] + [0.0]
+        ys = [r["p"] for r in rows] + [0.5]
+        elo = [r["p"] - r["ci_lo"] for r in rows] + [0.0]
+        ehi = [r["ci_hi"] - r["p"] for r in rows] + [0.0]
+        order = sorted(range(len(xs)), key=lambda i: xs[i])
+        out[pair] = (
+            [xs[i] for i in order],
+            [ys[i] for i in order],
+            [elo[i] for i in order],
+            [ehi[i] for i in order],
+        )
+    return out
+
+
+def load_single_task() -> dict[str, tuple[list[float], ...]]:
+    """Reproduce plot_layer_sweep_dose_response.py logic from the parsed rows."""
+    pairs = json.loads(PAIRS_JSON.read_text())
+    pair_type = {p["pair_id"]: p["pair_type"] for p in pairs}
+    counts: dict[tuple[str, float], list[int]] = defaultdict(lambda: [0, 0])
+    with SINGLE_TASK_PARSED.open() as f:
+        for line in f:
+            r = json.loads(line)
+            sm = r["signed_multiplier"]
+            if sm == 0:
+                continue
+            ordering = r["ordering"]
+            applied = round(sm * (1 if ordering == 0 else -1), 4)
+            span = "first" if r["condition"].startswith("unilateral_first") else "second"
+            target = _physical_in_span(span, ordering)
+            pt = pair_type[r["pair_id"]]
+            counts[(pt, applied)][1] += 1
+            if r["choice_original"] == target:
+                counts[(pt, applied)][0] += 1
+    by_pair: dict[str, dict[float, tuple[float, float, float]]] = defaultdict(dict)
+    for (pt, c), (k, n) in counts.items():
+        by_pair[pt][c] = _wilson(k, n)
+    out: dict[str, tuple[list[float], ...]] = {}
+    for pair in PAIR_ORDER:
+        cells = by_pair[pair]
+        xs = sorted(cells.keys()) + [0.0]
+        ys: list[float] = []
+        elo: list[float] = []
+        ehi: list[float] = []
+        for c in sorted(cells.keys()):
+            p, lo, hi = cells[c]
+            ys.append(p)
+            elo.append(p - lo)
+            ehi.append(hi - p)
+        ys.append(0.5)
+        elo.append(0.0)
+        ehi.append(0.0)
+        order = sorted(range(len(xs)), key=lambda i: xs[i])
+        out[pair] = (
+            [xs[i] for i in order],
+            [ys[i] for i in order],
+            [elo[i] for i in order],
+            [ehi[i] for i in order],
+        )
+    return out
+
+
+def style_axis(ax, ylabel: str | None = None, xlabel: str | None = None) -> None:
+    ax.set_ylim(0, 1)
+    ax.set_xlim(-0.06, 0.06)
+    ax.set_xticks([-0.05, -0.03, 0, 0.03, 0.05])
+    ax.set_yticks([0, 0.5, 1.0])
+    ax.axhline(0.5, color="#9CA3AF", linestyle=":", alpha=0.5, linewidth=0.7)
+    ax.axvline(0, color="#9CA3AF", linestyle="-", alpha=0.4, linewidth=0.5)
+    ax.grid(False)
+    for spine in ("top", "right"):
+        ax.spines[spine].set_visible(False)
+    for spine in ("left", "bottom"):
+        ax.spines[spine].set_color("#9CA3AF")
+    ax.tick_params(colors="#6B7280", labelsize=9)
+    if ylabel:
+        ax.set_ylabel(ylabel, fontsize=10, color="#374151")
+    if xlabel:
+        ax.set_xlabel(xlabel, fontsize=11, color="#374151", style="italic")
+
+
+def plot_overlay(ax, curves: dict, *, with_legend: bool = False) -> None:
+    for pair in PAIR_ORDER:
+        xs, ys, elo, ehi = curves[pair]
+        ax.errorbar(
+            xs, ys, yerr=[elo, ehi],
+            color=PAIR_COLORS[pair],
+            marker="o", markersize=3, linewidth=1.3,
+            capsize=1.5, alpha=0.9, label=PAIR_LABELS[pair],
+        )
+    if with_legend:
+        ax.legend(
+            loc="upper left", fontsize=9, frameon=True, framealpha=0.92,
+            edgecolor="#E5E7EB", facecolor="white",
+        )
+
+
+def main() -> None:
+    render_schematic_png()
+    data = json.loads(DATA_JSON.read_text())
+    contrastive = load_contrastive(data)
+    single = load_single_task()
+
+    fig = plt.figure(figsize=(14, 4.0))
+    fig.patch.set_facecolor(BG)
+    gs = fig.add_gridspec(
+        1, 3,
+        width_ratios=[1.0, 1.55, 1.55],
+        left=0.015, right=0.99,
+        top=0.92, bottom=0.16, wspace=0.20,
+    )
+    ax_sch = fig.add_subplot(gs[0])
+    ax_a = fig.add_subplot(gs[1])
+    ax_b = fig.add_subplot(gs[2])
+
+    img = mpimg.imread(SCHEMATIC_PNG)
+    ax_sch.imshow(img)
+    ax_sch.set_axis_off()
+
+    ax_a.set_facecolor("white")
+    plot_overlay(ax_a, contrastive, with_legend=True)
+    style_axis(ax_a, ylabel="P(chose steered task | responded)", xlabel="c")
+    ax_a.set_title("(a) Contrastive steering", fontsize=13, color="#374151", weight="bold", pad=10)
+
+    ax_b.set_facecolor("white")
+    plot_overlay(ax_b, single)
+    style_axis(ax_b, xlabel="c")
+    ax_b.set_title("(b) Single-task steering", fontsize=13, color="#374151", weight="bold", pad=10)
+
+    fig.savefig(OUT_PDF, facecolor=BG)
+    plt.close(fig)
+    print(f"Saved {OUT_PDF}")
+
+
+if __name__ == "__main__":
+    main()
