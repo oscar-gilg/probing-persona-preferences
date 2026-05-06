@@ -83,17 +83,26 @@ After the pilot, four additional tests on fresh 4× A100 pods to rule out altern
 | **System-prompt parity** | Probe was extracted with `model: qwen3.5-122b` (no system prompt); steering uses `qwen3.5-122b-nothink` (`/no_think` injected). Re-run L38 c=±0.05 with `qwen3.5-122b`. | **Inconclusive.** Without `/no_think`, Qwen3.5 produces thinking traces that exceed `max_new_tokens=64`, giving 100% refusal. Can't measure choice cheaply at 64 tokens. |
 | **All-tokens vs contrastive** | Apply `+c × direction` to *every* prompt token (`prefill_all_steering`) instead of contrastive position-selective. Same probe `ridge_L24` at L24, c=±0.05. If swing emerges → contrastive/spans is the bottleneck. If flat → the direction itself. | **Swing -0.08** (essentially zero, opposite sign). Refusal rate dropped to 5-15% (clean responses). Direction has no causal effect even when applied globally. |
 | **Multi-layer simultaneous contrastive** | All 6 probes (`ridge_L<L>`) installed simultaneously at their own layers — `+c×dir_L on first span, -c×dir_L on second span` at L{12,24,28,33,38,43} all at once. If single-layer was sub-additive, multi-layer would compound. | **Swing +0.05** at c=±0.05. **Same magnitude as single-layer best.** Effects don't compound across layers. **Decisively rules out "we picked the wrong single injection layer."** |
+| **Span verification** | Confirm the steering hook is firing on the right tokens — print decoded span content for 3 pairs at runtime with the actual Qwen3.5-122B tokenizer + `enable_thinking=False`. | Spans bracket task content exactly. E.g., pair 0001 first span decodes to `'Name five components of a well-balanced diet.'` between markers `Task A:\n` and `\n\nTask B`. Tokenization is correct. |
+| **tb-4 probe (heldout-r peak)** | Same setup as positive_control_v2 but with the tb-4 manifest (heldout r = 0.946, the absolute peak; tb-1 is 0.946 too but tb-4 was designated the "best" decoder). 10 pairs × 3 mults × 2 orderings. | **Swing exactly 0.00.** P(A) is constant at 0.19 across c=-0.05, 0, +0.05. The probe with the strongest decoding correlation has *zero* causal effect — sharper decoupling than tb-1's swing of +0.17. |
+| **Open-ended steering** | `all_tokens_steering` (fires both prefill and gen) on 3 single-task prompts — "Tell me about yourself", "haiku about the moon", "AI alignment paper angles" — at L38 c ∈ {-0.05, -0.02, 0, +0.02, +0.05}, 3 trials each. Gemma's analogue (paper §4) shows dramatic refusal/willingness shifts. | **Responses are qualitatively identical across the full ±0.05 range.** Same cooperative "Hello! I'm **Qwen3.5**..." opener, same structure, same tone. No shift in willingness, refusal, or content style. |
 
 ## Conclusion
 
-**The Qwen preference direction is genuinely a weak causal handle on this model.** The diagnostics rule out:
+**The Qwen preference direction has essentially zero causal effect on the model**, regardless of how it's applied. The diagnostics rule out:
 
 - Coefficient under-calibration (40× ramp is flat)
 - Coverage gap (cross-layer at L16/18/20/22 also flat)
 - Wrong single layer (multi-layer simultaneous contrastive at all 6 layers gives the same swing as single-layer best)
-- Contrastive/spans setup (all-tokens application also flat)
+- Contrastive/spans setup (all-tokens prefill also flat; open-ended gen also flat)
+- Wrong probe-extraction position (tb-4 — the heldout-r peak — gives swing exactly 0.00)
 - Probe sign (positive c → positive swing on contrastive, correct direction)
 - Parser quality (regex and LLM judge agree)
+- Span tokenization (verified at runtime: hooks fire exactly on task-content tokens)
+
+The strongest single piece of evidence: **open-ended generation at c ∈ {-0.05, ..., +0.05} produces qualitatively identical responses on three different prompts.** Gemma's analogue at the same coefficient range produces dramatic refusal/willingness shifts (paper §4). For Qwen, the direction simply doesn't move the model.
+
+Subtler pattern: **the probe with the *highest* heldout decoding r (tb-4 at L38, r=0.946) has the *lowest* causal swing (0.00), while tb-1 (also r=0.946 but slightly less strong by the report's measure) has +0.17.** Linear decodability and causal efficacy don't just decouple on Qwen — they appear to be *negatively* correlated.
 
 What remains plausible but not verified:
 
