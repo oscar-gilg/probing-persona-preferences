@@ -292,16 +292,11 @@ Several leading accounts of moral patiency take evaluative representations to be
 \section{Conclusion}
 \label{sec:conclusion}
 
-\textbf{A linear preference vector in the residual stream is an evaluative representation.} On Gemma-3-27B and Qwen-3.5-122B, a probe trained on revealed pairwise task choices predicts held-out and cross-topic preferences, tracks the model's preferences as they shift under prompts, biographies, and role-play (with sign flips on harm and truth under inverting personas), and causally controls pairwise choice under contrastive steering. A random direction at matched magnitude has no effect.
+\textbf{We find a preference vector and show it is an evaluative representation.} On Gemma-3-27B and Qwen-3.5-122B, a probe trained on revealed pairwise task choices predicts held-out and cross-topic preferences, tracks the model's preferences as they shift across contexts and under the evil persona, and in gemma-3-27b controls pairwise choice through steering task tokens. This preference vector which was trained on the user \textit{end-of-turn} token generalises to other token positions, including assistant tokens.
 
-\textbf{The same direction is shared across qualitatively different personas.} A probe trained on the Assistant predicts every other persona's preferences better than a baseline that just predicts like the Assistant, including ``evil'', whose preferences anti-correlate with the Assistant's. Steering along the same direction shifts pairwise choice under every persona we tested. In open-ended generation, the same intervention amplifies whichever persona is active rather than imposing fixed content: under evil it makes the model more evil, under the Assistant the same direction has no measurable effect on evilness.
+\textbf{We also found evidence that the preference vector is shared across personas.} The preference vector predicts other persona utilities much better than what a probe which fits to the Assistant's preferences would. Moreover the Assistant-trained probe can be used to control pairwise choice under every person we tested. In open-ended generation, the same intervention makes the evil persona more evil.
 
-\paragraph{What this means.}
-\begin{itemize}
-    \item \textbf{White-box safety probes are vulnerable to persona shifts.} What ``deception'', ``sycophancy'', or ``preference'' encode shifts with the active persona. A probe trained on the Assistant may not capture what it claims to under an evil character.
-    \item \textbf{The preference vector reaches into safety-relevant behaviour.} Trained on preference rather than refusal, the same direction overrides refusal guardrails at small steering coefficients (App.~\ref{app:safety-footprint}). Preference and refusal share more representational machinery than their training objectives predict.
-    \item \textbf{Input to AI welfare debates.} On several accounts of moral patiency, evaluative representations with a causal role in choice are functionally central \citep{long2024moralpatiency,butlin2026desire}. We take no stand on welfare implications.
-\end{itemize}
+\textbf{This has implications for AI safety, AI welfare, and persona science.} For AI safety, it matters that we understand how models make decisions internally. Moreover, our results suggest that white-box methods which rely on probes to detect harmful behaviours might be vulnerable to persona shifts. For AI welfare, evaluative representations are a necessary condition for moral patienthood under several prominent theories. For personas science, our results paint a picture where personas have different preferences, but shared preference representations, although our results here are not yet conclusive.
 
 \begin{ack}
 \textit{[Funding and competing interests. Hidden during anonymous review.]}
