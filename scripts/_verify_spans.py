@@ -49,8 +49,11 @@ def main() -> None:
             tb = Task(prompt=second_text, origin=OriginDataset[pair["task_b_origin" if ordering == 0 else "task_a_origin"]],
                       id="b", metadata={})
             prompt_data = builder.build(ta, tb)
+            # Match the runner: pass enable_thinking=False for nothink models so
+            # the chat template doesn't auto-prepend <think>.
             formatted = tok.apply_chat_template(
                 prompt_data.messages, tokenize=False, add_generation_prompt=True,
+                enable_thinking=False,
             )
             (a_start, a_end), (b_start, b_end) = find_pairwise_task_spans(
                 tok, formatted, first_text, second_text, "Task A", "Task B",
