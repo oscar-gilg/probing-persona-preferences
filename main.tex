@@ -217,7 +217,7 @@ Section~\ref{sec:method} established that the preference vector we found via pro
 \subsection{The probe transfers across prompted personas}
 \label{sec:shared-probe}
 
-\textbf{The Assistant-trained probe predicts every non-Assistant persona's held-out utilities better than the baseline on every persona} (Fig.~\ref{fig:default-probe}). The baseline is the bare Pearson correlation between Assistant utilities and the target persona's utilities, i.e what predicting the Assistant's utilities would achieve. The most striking case is \textbf{evil}, whose utilities \emph{anti-correlate} with the Assistant ($r = \defaultToSadistUtilitySimilarityR$) and yet whose preferences the Assistant probe still predicts at $r = +\defaultToSadistClassificationR$.
+\textbf{The Assistant-trained probe predicts every non-Assistant persona's held-out utilities better than the baseline } (Fig.~\ref{fig:default-probe}). The baseline is the bare Pearson correlation between Assistant utilities and the target persona's utilities, i.e what predicting the Assistant's utilities would achieve. The most striking case is \textbf{evil}, whose utilities \emph{anti-correlate} with the Assistant ($r = \defaultToSadistUtilitySimilarityR$) and yet whose preferences the Assistant probe still predicts at $r = +\defaultToSadistClassificationR$.
 
 \begin{figure}[!t]
   \centering
