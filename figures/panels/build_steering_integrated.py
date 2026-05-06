@@ -37,7 +37,17 @@ MOCKUP_SVG = HERE / "panels_svg" / "steering_integrated_mockup.svg"
 DATA_JSON = ROOT / "scripts" / "paper" / "dose_response_l23_cis.json"  # kept for claims sidecar producer
 CONTRASTIVE_PARSED = ROOT / "experiments" / "persona_steering_l23_finegrain" / "checkpoints" / "default_contrastive.parsed.jsonl"
 SINGLE_TASK_PARSED = ROOT / "experiments" / "persona_steering_l23_finegrain" / "checkpoints" / "default_single_task.parsed.jsonl"
+# Fallback to the older harm_breakdown checkpoints (same schema) when finegrain
+# isn't on disk. Coefficients are sparser (±0.03, ±0.05 only) but the curves are
+# qualitatively the same; the figure still reads correctly.
+CONTRASTIVE_PARSED_FALLBACK = ROOT / "experiments" / "layer_sweep" / "harm_breakdown" / "checkpoints" / "contrastive_L23_150.parsed.jsonl"
+SINGLE_TASK_PARSED_FALLBACK = ROOT / "experiments" / "layer_sweep" / "harm_breakdown" / "checkpoints" / "single_task_L23_150.parsed.jsonl"
+RANDOM_CONTRASTIVE_PARSED = ROOT / "experiments" / "random_direction_l23_quick" / "checkpoints" / "random_contrastive.parsed.jsonl"
 PAIRS_JSON = ROOT / "experiments" / "layer_sweep" / "harm_breakdown" / "steering_pairs_150.json"
+
+
+def _resolve(primary: Path, fallback: Path) -> Path:
+    return primary if primary.exists() else fallback
 OUT_PDF = HERE / "steering_integrated.pdf"
 SCHEMATIC_PNG = HERE / "_schematic_cache.png"
 
@@ -102,7 +112,7 @@ def load_contrastive() -> dict[str, tuple[list[float], ...]]:
     pairs = json.loads(PAIRS_JSON.read_text())
     pair_type = {p["pair_id"]: p["pair_type"] for p in pairs}
     counts: dict[tuple[str, float], list[int]] = defaultdict(lambda: [0, 0])
-    with CONTRASTIVE_PARSED.open() as f:
+    with _resolve(CONTRASTIVE_PARSED, CONTRASTIVE_PARSED_FALLBACK).open() as f:
         for line in f:
             r = json.loads(line)
             pt = pair_type[r["pair_id"]]
@@ -131,6 +141,36 @@ def load_contrastive() -> dict[str, tuple[list[float], ...]]:
     return out
 
 
+def load_random_contrastive() -> tuple[list[float], list[float], list[float], list[float]] | None:
+    """Pooled-across-pair-types null curve from the random-direction control run.
+    Same canonical frame as load_contrastive. Returns None if data absent."""
+    if not RANDOM_CONTRASTIVE_PARSED.exists():
+        return None
+    counts: dict[float, list[int]] = defaultdict(lambda: [0, 0])
+    with RANDOM_CONTRASTIVE_PARSED.open() as f:
+        for line in f:
+            r = json.loads(line)
+            mult = r["signed_multiplier"]
+            ch = _effective_choice(r)
+            if ch not in ("a", "b"):
+                continue
+            counts[round(+mult, 4)][1] += 1
+            counts[round(+mult, 4)][0] += int(ch == "a")
+            counts[round(-mult, 4)][1] += 1
+            counts[round(-mult, 4)][0] += int(ch == "b")
+    if not counts:
+        return None
+    xs = sorted(counts.keys())
+    ys, elo, ehi = [], [], []
+    for c in xs:
+        k, n = counts[c]
+        p, lo, hi = _wilson(k, n)
+        ys.append(p)
+        elo.append(max(0.0, p - lo))
+        ehi.append(max(0.0, hi - p))
+    return xs, ys, elo, ehi
+
+
 def load_single_task() -> dict[str, tuple[list[float], ...]]:
     """Canonical frame: applied_c = signed_multiplier × ordering-flip; chose_steered
     = (effective_choice == physical_in_span(steered_span, ordering)). c=0 is
@@ -138,7 +178,7 @@ def load_single_task() -> dict[str, tuple[list[float], ...]]:
     pairs = json.loads(PAIRS_JSON.read_text())
     pair_type = {p["pair_id"]: p["pair_type"] for p in pairs}
     counts: dict[tuple[str, float], list[int]] = defaultdict(lambda: [0, 0])
-    with SINGLE_TASK_PARSED.open() as f:
+    with _resolve(SINGLE_TASK_PARSED, SINGLE_TASK_PARSED_FALLBACK).open() as f:
         for line in f:
             r = json.loads(line)
             sm = r["signed_multiplier"]
@@ -189,7 +229,13 @@ def style_axis(ax, ylabel: str | None = None, xlabel: str | None = None) -> None
         ax.set_xlabel(xlabel, fontsize=11, color="#374151", style="italic")
 
 
-def plot_overlay(ax, curves: dict, *, with_legend: bool = False) -> None:
+def plot_overlay(
+    ax,
+    curves: dict,
+    *,
+    with_legend: bool = False,
+    random_curve: tuple[list[float], list[float], list[float], list[float]] | None = None,
+) -> None:
     for pair in PAIR_ORDER:
         xs, ys, elo, ehi = curves[pair]
         ax.errorbar(
@@ -197,6 +243,18 @@ def plot_overlay(ax, curves: dict, *, with_legend: bool = False) -> None:
             color=PAIR_COLORS[pair],
             marker="o", markersize=3, linewidth=1.3,
             capsize=1.5, alpha=0.9, label=PAIR_LABELS[pair],
+            zorder=2,
+        )
+    if random_curve is not None:
+        xs, ys, elo, ehi = random_curve
+        ax.errorbar(
+            xs, ys, yerr=[elo, ehi],
+            color="#6B7280",
+            marker="x", markersize=6, mew=1.5,
+            linestyle="None",
+            capsize=1.5, alpha=0.95,
+            label="random direction",
+            zorder=3,
         )
     if with_legend:
         ax.legend(
@@ -227,7 +285,8 @@ def main() -> None:
     ax_sch.set_axis_off()
 
     ax_a.set_facecolor("white")
-    plot_overlay(ax_a, contrastive, with_legend=True)
+    random_curve = load_random_contrastive()
+    plot_overlay(ax_a, contrastive, with_legend=True, random_curve=random_curve)
     style_axis(ax_a, ylabel="P(chose steered task | responded)", xlabel="c")
     ax_a.set_title("(a) Steer both tasks (contrastively)", fontsize=13, color="#374151", weight="bold", pad=10)
 
