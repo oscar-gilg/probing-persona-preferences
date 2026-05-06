@@ -229,12 +229,12 @@ def main() -> None:
     ax_a.set_facecolor("white")
     plot_overlay(ax_a, contrastive, with_legend=True)
     style_axis(ax_a, ylabel="P(chose steered task | responded)", xlabel="c")
-    ax_a.set_title("(a) Contrastive steering", fontsize=13, color="#374151", weight="bold", pad=10)
+    ax_a.set_title("(a) Steer both tasks (contrastively)", fontsize=13, color="#374151", weight="bold", pad=10)
 
     ax_b.set_facecolor("white")
     plot_overlay(ax_b, single)
     style_axis(ax_b, xlabel="c")
-    ax_b.set_title("(b) Single-task steering", fontsize=13, color="#374151", weight="bold", pad=10)
+    ax_b.set_title("(b) Steer one task only", fontsize=13, color="#374151", weight="bold", pad=10)
 
     fig.savefig(OUT_PDF, facecolor=BG)
     plt.close(fig)
