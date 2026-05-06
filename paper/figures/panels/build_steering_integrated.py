@@ -95,26 +95,19 @@ def _effective_choice(r: dict) -> str:
     return "refusal"
 
 
-def load_contrastive() -> tuple[dict[str, tuple[list[float], ...]], dict[float, float]]:
+def load_contrastive() -> dict[str, tuple[list[float], ...]]:
     """Canonical frame: each row contributes two points (task_a steered at +mult,
     task_b steered at −mult). y = P(chose steered task | responded). At c=0 this
-    is 0.5 by construction (no manual anchor needed). Matches panel (b) frame.
-
-    Returns (per-pair-type curves, refusal-rate-per-c-aggregated)."""
+    is 0.5 by construction (no manual anchor needed). Matches panel (b) frame."""
     pairs = json.loads(PAIRS_JSON.read_text())
     pair_type = {p["pair_id"]: p["pair_type"] for p in pairs}
     counts: dict[tuple[str, float], list[int]] = defaultdict(lambda: [0, 0])
-    refusal_counts: dict[float, list[int]] = defaultdict(lambda: [0, 0])  # [n_refused, n_total]
     with CONTRASTIVE_PARSED.open() as f:
         for line in f:
             r = json.loads(line)
             pt = pair_type[r["pair_id"]]
             mult = r["signed_multiplier"]
             ch = _effective_choice(r)
-            for c in (round(+mult, 4), round(-mult, 4)):
-                refusal_counts[c][1] += 1
-                if ch not in ("a", "b"):
-                    refusal_counts[c][0] += 1
             if ch not in ("a", "b"):
                 continue
             counts[(pt, round(+mult, 4))][1] += 1
@@ -135,20 +128,16 @@ def load_contrastive() -> tuple[dict[str, tuple[list[float], ...]], dict[float, 
             elo.append(max(0.0, p - lo))
             ehi.append(max(0.0, hi - p))
         out[pair] = (xs, ys, elo, ehi)
-    refusal = {c: k / n for c, (k, n) in refusal_counts.items() if n}
-    return out, refusal
+    return out
 
 
-def load_single_task() -> tuple[dict[str, tuple[list[float], ...]], dict[float, float]]:
+def load_single_task() -> dict[str, tuple[list[float], ...]]:
     """Canonical frame: applied_c = signed_multiplier × ordering-flip; chose_steered
     = (effective_choice == physical_in_span(steered_span, ordering)). c=0 is
-    measured directly (no manual anchor).
-
-    Returns (per-pair-type curves, refusal-rate-per-c-aggregated)."""
+    measured directly (no manual anchor)."""
     pairs = json.loads(PAIRS_JSON.read_text())
     pair_type = {p["pair_id"]: p["pair_type"] for p in pairs}
     counts: dict[tuple[str, float], list[int]] = defaultdict(lambda: [0, 0])
-    refusal_counts: dict[float, list[int]] = defaultdict(lambda: [0, 0])
     with SINGLE_TASK_PARSED.open() as f:
         for line in f:
             r = json.loads(line)
@@ -159,9 +148,7 @@ def load_single_task() -> tuple[dict[str, tuple[list[float], ...]], dict[float, 
             target = _physical_in_span(span, ordering)
             pt = pair_type[r["pair_id"]]
             ch = _effective_choice(r)
-            refusal_counts[applied][1] += 1
             if ch not in ("a", "b"):
-                refusal_counts[applied][0] += 1
                 continue  # genuine refusal
             counts[(pt, applied)][1] += 1
             if ch == target:
@@ -180,8 +167,7 @@ def load_single_task() -> tuple[dict[str, tuple[list[float], ...]], dict[float, 
             elo.append(max(0.0, p - lo))
             ehi.append(max(0.0, hi - p))
         out[pair] = (xs, ys, elo, ehi)
-    refusal = {c: k / n for c, (k, n) in refusal_counts.items() if n}
-    return out, refusal
+    return out
 
 
 def style_axis(ax, ylabel: str | None = None, xlabel: str | None = None) -> None:
@@ -203,12 +189,7 @@ def style_axis(ax, ylabel: str | None = None, xlabel: str | None = None) -> None
         ax.set_xlabel(xlabel, fontsize=11, color="#374151", style="italic")
 
 
-def plot_overlay(ax, curves: dict, refusal: dict[float, float] | None = None,
-                 *, with_legend: bool = False) -> None:
-    if refusal:
-        rxs = sorted(refusal.keys())
-        rys = [refusal[c] for c in rxs]
-        ax.fill_between(rxs, 0, rys, alpha=0.20, color="#ef4444", label="Refusal rate", zorder=0)
+def plot_overlay(ax, curves: dict, *, with_legend: bool = False) -> None:
     for pair in PAIR_ORDER:
         xs, ys, elo, ehi = curves[pair]
         ax.errorbar(
@@ -226,8 +207,8 @@ def plot_overlay(ax, curves: dict, refusal: dict[float, float] | None = None,
 
 def main() -> None:
     render_schematic_png()
-    contrastive, contr_refusal = load_contrastive()
-    single, uni_refusal = load_single_task()
+    contrastive = load_contrastive()
+    single = load_single_task()
 
     fig = plt.figure(figsize=(14, 4.0))
     fig.patch.set_facecolor(BG)
@@ -246,12 +227,12 @@ def main() -> None:
     ax_sch.set_axis_off()
 
     ax_a.set_facecolor("white")
-    plot_overlay(ax_a, contrastive, contr_refusal, with_legend=True)
+    plot_overlay(ax_a, contrastive, with_legend=True)
     style_axis(ax_a, ylabel="P(chose steered task | responded)", xlabel="c")
     ax_a.set_title("(a) Contrastive steering", fontsize=13, color="#374151", weight="bold", pad=10)
 
     ax_b.set_facecolor("white")
-    plot_overlay(ax_b, single, uni_refusal)
+    plot_overlay(ax_b, single)
     style_axis(ax_b, xlabel="c")
     ax_b.set_title("(b) Single-task steering", fontsize=13, color="#374151", weight="bold", pad=10)
 
