@@ -12,7 +12,6 @@ Pulled from the NeurIPS 2026 Main Track Handbook + the official `checklist.tex` 
 
 ### Pre-submission content fixes
 - **Hardcoded numbers in §2.3.** `0.31`, `1.17`, `1.62`, `1.34`, `2.77` are not yet claim macros. Either register via `corroborate:claim-log` or convert to macros. (`-4.53`, `+1.32`, `+1.15`, `-1.47`, `-1.01` now match registered macros after 2026-05-06 L32 migration; just need swap to macro form.)
-- **`\todo{}` / yellow-highlight sweep.** Final grep on `main.tex` for any leftover TODO highlights or planned-but-not-done content.
 - **Cross-model bar mixing protocols.** Per CLAUDE.md, the cross-model bar still uses old actively-sampled pairwise accuracy for Gemma-3-PT, Qwen3-Emb-8B, GPT-OSS-120B, MiniLM (only Gemma-3-27B-IT has uniform eval). Either get uniform eval done for the missing models or drop the affected bars. Reviewer-visible if left as-is.
 
 ### Submission form items (each author / corresponding author)
@@ -22,10 +21,8 @@ Pulled from the NeurIPS 2026 Main Track Handbook + the official `checklist.tex` 
 - **Funding statement / competing interests.** Camera-ready only — not required at submission. Acks block at L300–302 already has the placeholder.
 
 ### Final-pass anonymization checks (do at end, just before submission)
-- **Plot filenames inside figure PDFs.** Filenames themselves are fine (dates aren't identifying), but check PDF metadata for any `/Author` field containing your name. `exiftool paper/figures/main/*.pdf | grep -i author` is the one-liner.
-- **Bib entries.** Grep `references.bib` for self-cites and confirm none use first-person phrasing in the body. Also verify no `\cite` keys point to entries with your name as author that aren't third-person in the prose.
-- **Citation hallucination check.** Some `\citep{...2026}` entries (`anthropic2026emotions`, `anthropic2026opus47card`, `lu2025judgmentaxis`, `lu2026assistantaxis`, `marks2026personaselection`, `chalmers2026interlocutors`, `lampinen2026notdeeper`, `butlin2026desire`, `ren2026aiwellbeing`, `beckmann2026individuation`, `hua2026valuerankings`) are recent and worth manually confirming against arXiv/published versions before submission — model-suggested citations sometimes drift.
-- **bibtex warnings.** Compile and verify no missing/duplicate entries.
+- **Plot filenames inside figure PDFs.** Checked 2026-05-07: no `/Author` field in any of the 6 PDFs in `paper/figures/`. Soft concern: `paper/figures/panels/hero.pdf` (Google Drawings export) carries `/Creator: "Google"` and `/Title: "preferences_main_v5"` — no name leak but the title reveals the source-doc name. Strip with `qpdf --linearize --replace-input` after `qpdf --update-from-json` (or re-export without metadata) before submission if paranoid.
+- **Citation hallucination check.** Some `\citep{...2026}` entries (`anthropic2026emotions`, `anthropic2026opus47card`, `lu2026assistantaxis`, `marks2026personaselection`, `chalmers2026interlocutors`, `lampinen2026notdeeper`, `butlin2026desire`, `ren2026aiwellbeing`, `beckmann2026individuation`, `hua2026valuerankings`) are recent and worth manually confirming against arXiv/published versions before submission — model-suggested citations sometimes drift. (`lu2025judgmentaxis` and `santurkar2023opinionqa` confirmed and added 2026-05-07.)
 
 ## Framing
 
