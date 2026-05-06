@@ -122,7 +122,7 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=\linewidth]{panels/steering_integrated.pdf}
-  \caption{\textbf{Steering with the preference vector controls pairwise choice in Gemma-3-27B.} The probe direction is added to the residual stream over each task's token span at L23, with coefficient $c$ expressing a percentage of the mean activation norm. \textbf{(a)} Contrastive steering ($+c$ on Task A, $-c$ on Task B) swings choice across nearly the full $[0,1]$ range on every pair type. \textbf{(b)} Single-task steering ($+/-c$ on one Task only) recovers a comparable swing, concentrated on negative coefficients. Refusals (pink) stay near baseline. Error bars are Wilson 95\% CIs over per-trial responses ($n=300$/cell contrastive, $n=600$/cell single-task).}
+  \caption{\textbf{Steering with the preference vector controls pairwise choice in Gemma-3-27B.} The probe direction is added to the residual stream over each task's token span at L23, with coefficient $c$ expressing a percentage of the mean activation norm. \textbf{(a)} Contrastive steering ($+c$ on Task A, $-c$ on Task B) swings choice across nearly the full $[0,1]$ range on every pair type. \textbf{(b)} Single-task steering ($+/-c$ on one Task only) recovers a comparable swing, concentrated on negative coefficients. Refusals (pink) stay near baseline. Error bars are Wilson 95\% CIs over per-trial responses ($n=600$/cell, both panels).}
   \label{fig:steering}
 \end{figure}
 
