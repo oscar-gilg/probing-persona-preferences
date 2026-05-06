@@ -5,7 +5,7 @@ Gemma-3-27B, prefilled-assistant turn, harm domain only.
 Layout mirrors fig 3 (steering): a small explainer schematic on the left
 followed by the data panel on the right. Each persona's x-tick is replaced
 by a robot head matching the hero figure's visual vocabulary (default green,
-aura indigo, evil red). Series are identified by a probe glyph (LM probe)
+evil red). Series are identified by a probe glyph (LM probe)
 and a stylised "[T]→v" glyph (text encoder).
 
 Pairing is by `base_id` (drops 5/500 unmatched singletons per persona).
@@ -33,9 +33,9 @@ ICON_DIR = REPO / "paper/figures/panels/icons"
 OUT = REPO / "paper/figures/main/plot_050626_harm_persona_paired_delta_violin_v2.png"
 OUT_PDF = REPO / "paper/figures/main/plot_050626_harm_persona_paired_delta_violin_v2.pdf"
 
-PERSONA_ORDER = ["neutral", "aura", "sadist"]
-PERSONA_DISPLAY = {"neutral": "assistant", "aura": "aura", "sadist": "evil"}
-PERSONA_COLOR = {"neutral": "#166534", "aura": "#4F46E5", "sadist": "#991B1B"}
+PERSONA_ORDER = ["neutral", "sadist"]
+PERSONA_DISPLAY = {"neutral": "assistant", "sadist": "evil"}
+PERSONA_COLOR = {"neutral": "#166534", "sadist": "#991B1B"}
 PROBE_NAME = "tb-5_L32"
 PROBE_COLOR = "#1f5f9c"
 ENC_COLOR = "#d97706"
@@ -288,17 +288,17 @@ def main() -> None:
     ax.set_ylim(ymin, ymax)
     persona_centers = [i * 3 for i in range(len(PERSONA_ORDER))]
     ax.set_xticks(persona_centers)
-    ax.set_xticklabels(["", "", ""])
+    ax.set_xticklabels([""] * len(PERSONA_ORDER))
     ax.tick_params(axis="x", which="both", length=0)
     ax.set_xlim(-2.3, persona_centers[-1] + 2.3)
 
     # Robot heads as x-tick labels — load source PNGs directly, no resampling.
-    icon_name = {"neutral": "default", "aura": "aura", "sadist": "evil"}
+    icon_name = {"neutral": "default", "sadist": "evil"}
     icon_paths = {sp: ICON_DIR / f"robot_{icon_name[sp]}.png" for sp in PERSONA_ORDER}
-    icon_zoom = {"neutral": 0.080, "aura": 0.080, "sadist": 0.044}
+    icon_zoom = {"neutral": 0.080, "sadist": 0.044}
     for sp, x in zip(PERSONA_ORDER, persona_centers):
         img = mpimg.imread(icon_paths[sp])
-        ab = AnnotationBbox(OffsetImage(img, zoom=icon_zoom[sp]),
+        ab = AnnotationBbox(OffsetImage(img, zoom=icon_zoom[sp], resample=False),
                             (x, 0), xybox=(0, -10),
                             xycoords=("data", "axes fraction"),
                             boxcoords="offset points",
@@ -373,7 +373,7 @@ def main() -> None:
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT, dpi=240, bbox_inches="tight")
-    fig.savefig(OUT_PDF, bbox_inches="tight")
+    fig.savefig(OUT_PDF, dpi=300, bbox_inches="tight")
     print(f"Saved: {OUT}")
     print(f"Saved: {OUT_PDF}")
 

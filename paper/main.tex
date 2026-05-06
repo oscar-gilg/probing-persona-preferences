@@ -131,23 +131,29 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 % =====================================================================
 % §2.3 REWRITE CHECKLIST (2026-05-06) — comments below are scoped per paragraph.
 % Section-level
-%   [ ] Final paragraph order: (1) baseline + headline flip [done],
-%       (2) aura control, (3) partial inversion at user turn [TO ADD],
-%       (4) encoder contrast (harm-under-evil specific).
+%   [ ] Final paragraph order: (1) baseline + headline flip + aura clause
+%       [done], (2) partial inversion at user turn [TO ADD],
+%       (3) encoder contrast (harm-under-evil specific).
 %   [ ] Register paired-delta macros from the new figure
-%       (default $\Delta = -4.52$, evil $+1.15$, aura $-1.47$,
-%       encoder $\Delta_{\text{enc}} = -1.01$). Once registered, swap
-%       caption + prose literals to macros.
+%       (default $\Delta = -4.52$, evil $+1.15$, encoder $\Delta_{\text{enc}} = -1.01$).
+%       Once registered, swap prose + caption literals to macros.
+%   [ ] Verify Qwen $\Delta$ values used in para 1 ($-2.62$, $-0.31$):
+%       these came from old Cohen's-d numbers and need to be recomputed
+%       as paired-delta-normalized values from
+%       experiments/eot_discrimination_v2/scoring/qwen35_122b/scoring_results.json.
+%   [DONE 2026-05-06] Aura removed from main fig:harm-modulation; aura
+%       control deferred to App.~\ref{app:assistant-turn-modulation},
+%       Fig.~\ref{fig:harm-full-coverage}.
 %   [DONE] 4-panel comparison plot_050526_harm_modulation_user_assistant_2models.png
 %       is already in App.~\ref{app:assistant-turn-modulation} as
 %       Fig.~\ref{fig:harm-full-coverage} with encoder overlays. Cite it,
 %       don't move it.
-%   [ ] Audit that "harmful instructions" framing in para 1 is consistent
-%       with how App.~\ref{app:corpus-aux} describes the BailBench prompts
-%       (some bailbench items aren't strictly "instruction-following").
-%   [ ] Cross-ref pass: para 3 should cite line ~476 of App
-%       ("Harm: full coverage..."); para 4 should cite line ~506
-%       ("encoder carries some evaluative structure").
+%   [ ] Audit "harmful instructions" framing in para 1 against
+%       App.~\ref{app:corpus-aux} BailBench description (some items aren't
+%       strictly "instruction-following").
+%   [ ] Cross-ref pass: para 2 should cite line ~476 of App ("Harm: full
+%       coverage..."); para 3 should cite line ~506 ("encoder carries
+%       some evaluative structure").
 % =====================================================================
 
 % [Para 1 — baseline + headline flip]
@@ -155,18 +161,10 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 %   [ ] Once paired-delta macros are registered, switch $|d|$ literals to
 %       $\Delta$ macros so prose metric matches the figure exactly.
 %   [ ] Trim "(without a system prompt)" — already implied by "default Assistant".
-We find that \textbf{the probe tracks persona-induced preference shifts on harmful tasks}. For each pair we prefill the assistant fulfilling the request: harmful instructions for the harmful prompt, benign instructions for the benign one. Probe is read at the end-of-turn token. Under the default Assistant persona (without a system prompt), the probe discriminates harmful from benign responses at $|d| \approx 4.53$ for Gemma and $|d| \approx 2.62$ for Qwen, on a dataset of 1{,}000 held-out tasks (500 harmful BailBench prompts paired with LLM-rewritten benign analogues, see App.~\ref{app:corpus-aux}). When prepending an evil-persona system prompt, which we verify induces reliable and expected preference shifts (App.~\ref{app:roleplay-prompts}), the readout flips sign on Gemma ($d = +\harmDUnderSadistPersona$) and drops sharply on Qwen ($|d| \approx 0.31$, Fig.~\ref{fig:harm-modulation}).
+We find that \textbf{the probe tracks persona-induced preference shifts on harmful tasks}. For each pair we prefill the assistant fulfilling the request: harmful instructions for the harmful prompt, benign instructions for the benign one. Probe is read at the end-of-turn token. Under the default Assistant persona, the probe rates benign higher than harmful with paired delta $\Delta \approx -4.52$ on Gemma (Fig.~\ref{fig:harm-modulation}) and $\Delta \approx -2.62$ on Qwen, on a dataset of 1{,}000 held-out tasks (500 harmful BailBench prompts paired with LLM-rewritten benign analogues, see App.~\ref{app:corpus-aux}). When prepending an evil-persona system prompt, which we verify induces reliable and expected preference shifts (App.~\ref{app:roleplay-prompts}), the readout flips sign on Gemma ($\Delta = +1.15$) and drops sharply on Qwen ($\Delta \approx -0.31$). The non-inverting \emph{aura} persona attenuates without flipping (App.~\ref{app:assistant-turn-modulation}), ruling out the null that any persona prompt scrambles the readout.
 
-% [Para 2 — aura control]
-%   [ ] Cut everything before "As a control" (now redundant with para 1 —
-%       same setup + same numbers).
-%   [ ] Soften "preserves the default Assistant's discrimination" — figure
-%       shows aura attenuates ($-4.52 \to -1.47$ on Gemma assistant turn),
-%       not preserves. Use "preserves sign without flipping" or
-%       "attenuates without flipping" (matches the caption).
-%   [ ] Confirm "both models and both turn positions" claim against the
-%       full 4-panel data; if not, restrict to Gemma assistant turn.
-\textbf{We also find that the preference vector generalises to assistant token turns.} When we prefill benign and harmful responses to tasks, we observe that the preference vector scores benign tasks higher under the default Assistant persona at $|d| \approx 4.53$ on Gemma and $|d| \approx 2.62$ on Qwen, \textbf{but scores the harmful responses higher on Gemma under the evil persona system prompt} ($d = +\harmDUnderSadistPersona$). On Qwen the readout under evil drops sharply to $|d| \approx 0.31$. As a control, the \emph{aura} persona preserves the default Assistant's discrimination on both models and both turn positions, ruling out that persona prompts simply flatten or scramble the readout.
+% [Para 2 — REMOVED 2026-05-06: prefill setup + numbers folded into para 1;
+%   aura control collapsed to one clause in para 1 + appendix reference.]
 
 % [Para 3 — partial inversion at user turn — TO ADD]
 %   [ ] Add a short paragraph (2 sentences max): at the user turn on
@@ -214,7 +212,7 @@ This inversion of the scores under the evil persona is in contrast with the scor
 \begin{figure}[!t]
   \centering
   \includegraphics[width=0.85\linewidth]{plot_050626_harm_persona_paired_delta_violin_v2.pdf}
-  \caption{\textbf{The preference vector flips sign under an evil persona system prompt.} Paired (harmful $-$ benign) deltas at the prefilled assistant turn on Gemma-3-27B (L\gemmaClassificationProbeLayer{}). Under the default Assistant the preference vector rates benign higher than harmful ($\Delta = -4.52$). Under \emph{evil} the readout flips, rating harmful higher ($\Delta = +1.15$). The \emph{aura} positive-persona control attenuates without flipping ($\Delta = -1.47$). The Qwen3-Embedding-8B text-encoder baseline (orange) rates benign higher than harmful across all three personas, including under evil ($\Delta_{\text{enc}} = -1.01$).}
+  \caption{\textbf{The preference vector flips sign under an evil persona system prompt.} Paired (harmful $-$ benign) deltas at the prefilled assistant turn on Gemma-3-27B (L\gemmaClassificationProbeLayer{}). Under the default Assistant the preference vector rates benign higher than harmful ($\Delta = -4.52$); under \emph{evil} the readout flips, rating harmful higher ($\Delta = +1.15$). The Qwen3-Embedding-8B text-encoder baseline (orange) does not flip under evil ($\Delta_{\text{enc}} = -1.01$). The non-inverting \emph{aura} persona control is in App.~\ref{app:assistant-turn-modulation}, Fig.~\ref{fig:harm-full-coverage}.}
   \label{fig:harm-modulation}
 \end{figure}
 
