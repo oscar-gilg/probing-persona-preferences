@@ -1,0 +1,27 @@
+model: gemma-3-27b
+max_new_tokens: 64
+pairs_path: experiments/layer_sweep/harm_breakdown/steering_pairs_150.json
+probe_manifest: results/probes/layer_sweep/eot/
+checkpoint_path: experiments/random_direction_l23_quick/checkpoints/random_contrastive.jsonl
+mean_norm:
+  23: 29381.541015625
+n_trials: 3
+temperature: 1.0
+seed: 42
+n_pairs: 30
+template_path: src/measurement/elicitation/prompt_templates/data/completion_preference.yaml
+conditions:
+  - name: random_contrastive_L23
+    cache_injection: differential
+    probe: random_L23_seed42
+    layers:
+      - 23
+    multipliers:
+      - -0.05
+      - -0.03
+      - 0.0
+      - 0.03
+      - 0.05
+    spans:
+      first: 1
+      second: -1
