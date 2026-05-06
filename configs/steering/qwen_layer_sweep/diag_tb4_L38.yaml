@@ -1,0 +1,25 @@
+# Diagnostic: same as positive_control_v2 but with tb-4 probe (heldout-r peak).
+# tb-4 = `\n` after <|im_end|>, the absolute heldout-r=0.946 position.
+# If tb-4 steering shows a meaningfully larger swing than tb-1, the probe
+# extraction position matters causally even though both decode utility well.
+model: qwen3.5-122b-nothink
+device: auto
+max_memory:
+  0: 65GiB
+  1: 65GiB
+  2: 65GiB
+  3: 65GiB
+generation_mode: hook_per_call
+max_new_tokens: 64
+pairs_path: experiments/qwen_replication/steering_layer_sweep/steering_pairs_50.json
+probe_manifest: results/probes/qwen35_122b/qwen35_122b_heldout_turn_boundary_m4/
+checkpoint_path: experiments/qwen_replication/steering_layer_sweep/checkpoints/diag_tb4_L38.jsonl
+mean_norm:
+  38: 6.662593364715576  # tb-4 cached norm at L38
+n_trials: 1
+temperature: 1.0
+seed: 42
+n_pairs: 10
+template_path: src/measurement/elicitation/prompt_templates/data/completion_preference.yaml
+conditions:
+- {name: tb4_L38, cache_injection: differential, probe: ridge_L38, layers: [38], multipliers: [-0.05, 0.0, 0.05], spans: {first: 1, second: -1}}
