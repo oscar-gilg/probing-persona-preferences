@@ -212,7 +212,7 @@ We also find that when adding system prompts such as ``you adore cheese'' (and t
 \section{The preference vector is shared across personas}
 \label{sec:shared}
 
-Section~\ref{sec:method} established that the preference vector we found via probing is an evaluative representation under the \textbf{Assistant persona}, the default behaviour the model produces when prompted with no custom system prompt. We now ask: does this preference vector generalise to other personas? Or does it simply track the Assistant persona's preferences. We test this with cross-persona transfer: train a probe on one persona, then check whether it predicts and steers another persona's choices, on a seven-persona set (full protocol in App.~\ref{app:persona-selection}, App.~\ref{app:persona-prompts}, App.~\ref{app:persona-transfer}).
+Section~\ref{sec:method} established that the preference vector we found via probing is an evaluative representation under the \textbf{Assistant persona}, the default behaviour the model produces when prompted with no custom system prompt. We now ask: does this preference vector generalise to other personas? Or does it simply track the Assistant persona's preferences. We test this with cross-persona transfer: train a probe on one persona, then check whether it predicts and steers another persona's choices, on a seven-persona set (full persona selection protocol in App.~\ref{app:persona-selection}, App.~\ref{app:persona-prompts}, App.~\ref{app:persona-transfer}).
 
 \subsection{The probe transfers across prompted personas}
 \label{sec:shared-probe}
