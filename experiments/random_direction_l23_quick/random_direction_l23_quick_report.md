@@ -2,35 +2,13 @@
 
 ## Question
 
-Does a single random unit direction at layer 23, used as a contrastive
-steering vector at the same magnitudes as the validated probe direction,
-produce any swing in P(chose steered task)? This is the null-control
-overlay for Fig 3a in the paper draft.
-
-## Setup
-
-| | Value |
-|:--|:--|
-| Model | gemma-3-27b-it |
-| Probe | `random_L23_seed42` — `np.random.default_rng(42).standard_normal(5376)`, L2-normalised. Shape `(5377,)` `.npy`, last element = 0 intercept (matches the storage layout `load_probe_direction` expects). |
-| Layer | 23 |
-| `mean_norm[23]` | 29381.541015625 |
-| Coefficients | -0.05, -0.03, 0.0, +0.03, +0.05 |
-| Pairs | 30 deterministic pairs from `experiments/layer_sweep/harm_breakdown/steering_pairs_150.json` (`n_pairs: 30`, `seed: 42` — `random.sample`, not literally first 30) |
-| Mode | contrastive (`spans: {first: 1, second: -1}`, `cache_injection: differential`) |
-| Trials | n=3, temperature=1.0, max_new_tokens=64, seed=42 |
-| Template | `src/measurement/elicitation/prompt_templates/data/completion_preference.yaml` |
-| System prompt | none (default Assistant) |
-| Total generations | 30 × 5 × 2 × 3 = 900 |
+At Gemma-3-27B's L23, contrastive steering with the validated preference probe sweeps $P(\text{chose steered task})$ across nearly the full $[0, 1]$ range at $|c| \le 0.05$ (paper Fig 3a). **Is this a property of the direction, or just a property of injecting any vector at this magnitude into L23?**
 
 ## Result
 
-A random unit direction at the same coefficients produces **no preference
-swing**. The 95% CIs on `P(chose steered task | responded)` overlap 0.5 at
-every coefficient. Total swing $|\max - \min| \approx 0.09$ across $c \in
-[-0.05, +0.05]$ — vs. the validated probe direction's $\geq 0.96$ swing
-over the same range (Fig 3a default contrastive curve, `default_contrastive`
-in the parent experiment).
+**A random unit direction at the same magnitudes does nothing.** The pooled response curve stays within 0.45–0.55 across $c \in [-0.05, +0.05]$; every 95% Wilson CI overlaps 0.5. Total swing is **0.09**, vs. **0.95** for the validated probe (pooled across pair types) over the same range.
+
+![Random L23 direction is null vs the validated probe](assets/plot_050626_random_L23_contrastive_null.png)
 
 | $c$ | $P(\text{chose steered} \mid \text{responded})$ | 95% CI | $n$ responded | refusal rate |
 |:-:|:-:|:-:|:-:|:-:|
@@ -40,41 +18,37 @@ in the parent experiment).
 | +0.030 | 0.526 | [0.472, 0.580] | 321 | 10.8% |
 | +0.050 | 0.546 | [0.492, 0.600] | 324 | 10.0% |
 
-Refusal rate is ~10–12% across all coefficients (no special "this random
-direction breaks safety" effect). The monotonic 0.454 → 0.546 trend across
-$c$ is small and within CI overlap; it is consistent with a near-zero but
-not exactly orthogonal projection onto the preference axis (or with noise).
-The exact 0.500 at $c = 0$ is a sanity check — the canonical-frame
-symmetry-by-construction (each row contributes ±$c$) makes $c = 0$ exactly
-balanced when parsing is correct.
+The small monotonic 0.454 → 0.546 trend is consistent with a near-zero (but not exactly orthogonal) projection of the random vector onto the preference axis. Refusal rate is flat at ~10–12% — no "random direction breaks safety" effect. The exact 0.500 at $c = 0$ is by construction: each row contributes one $+c$ and one $-c$ count (canonical frame), so $c = 0$ is balanced when parsing is correct.
 
-![random L23 contrastive null](assets/plot_050626_random_L23_contrastive_null.png)
+The validated-probe curve is from `experiments/persona_steering_l23_finegrain` (paper Fig 3a, panel A), pooled across pair types (benign–benign, harm–benign, harm–harm) for direct comparison with the single random-direction curve.
 
-## Interpretation
+**Takeaway.** The probe's steering effect is direction-specific. The Fig 3a swing cannot be attributed to a generic perturbation of the residual stream at L23 — only the preference-aligned direction moves choice. One random direction with $n \approx 320$ responded per coefficient is enough: the per-coefficient CIs already overlap 0.5 cleanly, so we don't need additional seeds.
 
-The probe-trained direction's effect is **direction-specific**, not just a
-function of injecting any vector at matched magnitude into layer 23. The
-swing observed in the validated probe runs cannot be attributed to a
-generic perturbation of the residual stream at L23 — only the
-preference-aligned direction moves choice.
+## Setup
 
-This justifies the null overlay in Fig 3a panel (a). The single-curve
-random null is sufficient evidence; we do not need multiple random seeds
-because the per-coefficient CIs already overlap 0.5 with this much data
-($n \approx 320$ responded per coefficient).
+| | Value |
+|:--|:--|
+| Model | gemma-3-27b-it |
+| Layer | 23 |
+| Random direction | unit vector from `np.random.default_rng(42).standard_normal(5376)`, L2-normalised |
+| Activation scale | $\lVert h_{23} \rVert \approx 29382$ (mean over training pairs); $c$ is in units of this norm |
+| Coefficients | $-0.05, -0.03, 0, +0.03, +0.05$ |
+| Pairs | 30 fixed pairs (sampled with seed 42 from the 150-pair set in `experiments/layer_sweep/harm_breakdown/`) |
+| Mode | contrastive (`+c` on first task's tokens, `-c` on second's; differential cache injection) |
+| Trials | 3 per (pair, ordering, $c$); temperature 1.0; max\_new\_tokens 64 |
+| System prompt | none (default Assistant) |
+| Total generations | $30 \times 5 \times 2 \times 3 = 900$ (0 skipped, 900/900 parsed) |
 
 ## Artefacts
 
-- `results/probes/layer_sweep/eot/probes/probe_random_L23_seed42.npy`
-- `results/probes/layer_sweep/eot/manifest.json`
-- `configs/steering/random_direction_l23_quick/random_contrastive.yaml`
-- `experiments/random_direction_l23_quick/checkpoints/random_contrastive.parsed.jsonl`
-- `paper/figures/panels/build_steering_integrated.py` — extended with
-  `load_random_contrastive()` + dashed-gray overlay support.
+- `results/probes/layer_sweep/eot/probes/probe_random_L23_seed42.npy` — random direction
+- `results/probes/layer_sweep/eot/manifest.json` — manifest entry
+- `configs/steering/random_direction_l23_quick/random_contrastive.yaml` — run config
+- `experiments/random_direction_l23_quick/checkpoints/random_contrastive.parsed.jsonl` — parsed generations
+- `experiments/random_direction_l23_quick/make_plot.py` — plot script
+- `paper/figures/panels/build_steering_integrated.py` — extended with `load_random_contrastive()` for the Fig 3a overlay
 
-## Notes / caveats
+## Caveats
 
-- The parent experiment `persona_steering_l23_finegrain` referenced in the
-  spec has no on-disk checkpoints on this branch, so the composite Fig 3a
-  (default + random overlaid) cannot be rendered here. The standalone null
-  plot in `assets/` is sufficient evidence for the null-control claim.
+- The validated-probe curve here is pooled across pair types. The paper Fig 3a panel A shows the three pair types separately; pooling is fine for the null comparison because the random direction has no pair-type structure to break out.
+- The composite Fig 3a overlay (default + random on the paper figure) cannot be rendered on this branch — the parent experiment's checkpoints are not on disk here. The standalone comparison plot above is the deliverable.

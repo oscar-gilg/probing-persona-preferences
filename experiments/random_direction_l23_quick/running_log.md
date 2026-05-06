@@ -106,4 +106,15 @@ that the canonical-frame symmetry-by-construction holds.
 Plot: `assets/plot_050626_random_L23_contrastive_null.png` (via
 `scripts/random_direction_l23_quick/plot_null.py`).
 
+### Review pass
+
+Subagent rewrote the report Question → Result → Setup, replaced the
+standalone null plot with a side-by-side overlay against the validated
+probe curve (pooled bb/hb/hh from `scripts/paper/dose_response_l23_cis.json`)
+to make the headline contrast (~0.09 random vs ~0.95 probe) visible at a
+glance. The new plot script lives at `experiments/random_direction_l23_quick/make_plot.py`
+(beside the report — keeps the deliverable self-contained for cherry-pick).
+Title now: "Only the preference direction moves choice — random L23
+direction is null". Underlying data unchanged.
+
 
