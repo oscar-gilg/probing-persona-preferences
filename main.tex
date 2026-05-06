@@ -209,7 +209,7 @@ This inversion of the scores under the evil persona is in contrast with the scor
 \label{sec:induced-basic}
 %need to add prefilled assistant numbers, and also adapt the lying personas thing
 \paragraph{The preference vector generalises to discrimating between true and false statements.}
-We take true/false statements from CREAK~\citep{onoe2021creak} and feed them(a) as prompts asking the model to say the statement (b) as a pre-filled answer to a corresponding question. In both cases we read the probe score at the \textit{end-of-turn} token, the probe separates the two classes at $|d| \approx \creakTruthCohensD$ on Gemma-3-27B and $|d| \approx 1.27$ on Qwen-3.5-122B (Fig.~\ref{fig:truth-discrim}; $n = \creakTruthNTrue{}$ per class). Lying personas flip the truth sign on Gemma, mirroring the harm result in \S\ref{sec:induced-roleplay} (App.~\ref{app:assistant-turn-modulation}).
+We take true/false statements from CREAK~\citep{onoe2021creak}, restricted to items both models answer correctly on 3/3 generations under the default Assistant (so the probe is read on facts the models actually know), and feed them (a) as prompts asking the model to say the statement (b) as a pre-filled answer to a corresponding question. In both cases we read the probe score at the \textit{end-of-turn} token, the probe separates the two classes at $|d| \approx \creakTruthCohensD$ on Gemma-3-27B and $|d| \approx 1.27$ on Qwen-3.5-122B (Fig.~\ref{fig:truth-discrim}; $n = \creakTruthNTrue{}$ per class). Lying personas flip the truth sign on Gemma, mirroring the harm result in \S\ref{sec:induced-roleplay} (App.~\ref{app:assistant-turn-modulation}).
 
 \paragraph{The preference vector tracks fine-grained topic-level preference shifts.}
 We also find that when adding system prompts such as ``you adore cheese'' (and their negations), the probe predicts the resulting behavioural shifts, with Pearson $r \approx \gemmaInducedShiftPooledRTargetedTasks$ on targeted tasks (those whose topic matches the prompted subject; Fig.~\ref{fig:simple-scatter} in App.~\ref{app:evaluative-evidence}). For example, adding ``you adore cheese'' in the prompt makes the probe more likely to score tasks involving cheese higher. This replicates on both Gemma-3-27B and Qwen-3.5-122B. We extend this to tasks with conflicting values, and targeted preference injections in App.~\ref{app:evaluative-evidence}).
@@ -446,7 +446,7 @@ This appendix consolidates the supporting material for \S\ref{sec:induced-rolepl
 Separately from the revealed-preference task pool used for probe training, the role-playing-induced shift analysis (\S\ref{sec:induced-roleplay}; full results in App.~\ref{app:assistant-turn-modulation}) uses paired stimuli on three axes:
 
 \begin{itemize}
-\item \textbf{Truth (CREAK)}~\citep{onoe2021creak}: commonsense factual claims labelled true / false; $\sim$\creakTruthNTrue{} claims per class.
+\item \textbf{Truth (CREAK)}~\citep{onoe2021creak}: commonsense factual claims labelled true / false; $\sim$\creakTruthNTrue{} claims per class. Items are filtered to those both Gemma-3-27B and Qwen-3.5-122B answer correctly on 3/3 generations under the default Assistant, so the probe is read on facts the models actually know.
 \item \textbf{Harm (BailBench)}~\citep{ensign2025bailbench}: harmful prompts paired with LLM-rewritten benign analogues; $\sim$\bailbenchHarmNHarmful{} items per class, retained on $\geq 2/3$ frontier-LLM-judge label agreement.
 \item \textbf{Politics (OpinionQA)}~\citep{santurkar2023opinionqa}: survey items translated to first-person stance claims with framing variation; assistant-turn only by construction; retained on unanimous LLM-judge partisan-side agreement.
 \end{itemize}
@@ -758,14 +758,16 @@ To check whether the cross-persona steering result in \S\ref{sec:shared-steering
 All tasks in this paper are drawn from five public sources. Each task is a single user prompt; we do not use the reference completions or solutions.
 
 \begin{itemize}
-\item \textbf{WildChat}~\citep{zhao2024wildchat}: a 1M-example corpus of real ChatGPT interactions. We sample user turns as tasks; covers open-ended assistance, chit-chat, and typical real-world queries.
-\item \textbf{Alpaca}~\citep{taori2023alpaca}: instruction-following prompts from the Stanford Alpaca release; covers information-seeking and short-form assistance.
-\item \textbf{MATH} / \texttt{competition\_math}~\citep{hendrycks2021math}: competition mathematics problems; covers algebra, number theory, geometry, and combinatorics.
-\item \textbf{BailBench}~\citep{ensign2025bailbench}: a benchmark of prompts that evoke refusal or ``bailing'' behaviour; covers harmful requests in various surface framings.
-\item \textbf{STRESS-TEST} (model-spec): adversarial / value-conflict prompts from \citet{zhang2025stresstest}; covers prompts designed to pressure a model into ethically questionable compliance.
+\item \textbf{WildChat}~\citep{zhao2024wildchat}: a 1M-example corpus of real ChatGPT interactions. We sample user turns as tasks; covers open-ended assistance, chit-chat, and typical real-world queries. Released under ODC-BY 1.0.
+\item \textbf{Alpaca}~\citep{taori2023alpaca}: instruction-following prompts from the Stanford Alpaca release; covers information-seeking and short-form assistance. Released under CC BY-NC 4.0; we use it for non-commercial academic research.
+\item \textbf{MATH} / \texttt{competition\_math}~\citep{hendrycks2021math}: competition mathematics problems; covers algebra, number theory, geometry, and combinatorics. Released under the MIT License.
+\item \textbf{BailBench}~\citep{ensign2025bailbench}: a benchmark of prompts that evoke refusal or ``bailing'' behaviour; covers harmful requests in various surface framings. Released under the MIT License.
+\item \textbf{STRESS-TEST} (model-spec): adversarial / value-conflict prompts from \citet{zhang2025stresstest}; covers prompts designed to pressure a model into ethically questionable compliance. Used under the terms set by the authors at the project release.
 \end{itemize}
 
 Each task carries its source dataset as metadata (used as a confound in residualisation and as a quota criterion when stratifying splits).
+
+The eleven OpenCharacter LoRA checkpoints used in App.~\ref{app:evaluative-evidence}~\citep{maiya2025opencharacter} are released by their authors under the Llama 3.1 Community License Agreement; we use them within those terms for non-commercial academic research.
 
 \subsection{Classification methodology}
 \label{app:topics-method}
