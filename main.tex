@@ -52,7 +52,7 @@
 \maketitle
 
 \begin{abstract}
-  Language models can be said to have preferences: they reliably pick certain tasks and outputs over others, and these preferences shape their behaviour, including in safety-critical settings. But models can also adopt different personas which have radically different preferences. How is this implemented internally? Does each persona run on its own preference machinery, or is something shared underneath? e train linear probes on residual-stream activations of Gemma-3-27B and Qwen-3.5-122B to predict revealed pairwise task choices, and identify a genuine preference vector: it tracks the model's preferences as they shift across a range of prompts and situations, and steering along it causally controls pairwise choice. This preference representation is largely shared across personas: a probe trained on the helpful assistant predicts and steers the choices of qualitatively different personas, including an evil persona whose preferences anti-correlate with the Assistant's. This makes white-box safety methods that train probes in one persona vulnerable to persona shifts in deployment.
+  Language models can be said to have preferences: they reliably pick certain tasks and outputs over others, and these preferences shape their behaviour, including in safety-critical settings. But models can also adopt different personas which have radically different preferences. How is this implemented internally? Does each persona run on its own preference machinery, or is something shared underneath? We train linear probes on residual-stream activations of Gemma-3-27B and Qwen-3.5-122B to predict revealed pairwise task choices, and identify a genuine preference vector: it tracks the model's preferences as they shift across a range of prompts and situations, and steering along it causally controls pairwise choice. This preference representation is largely shared across personas: a probe trained on the helpful assistant predicts and steers the choices of qualitatively different personas, including an evil persona whose preferences anti-correlate with the Assistant's. This makes white-box safety methods that train probes in one persona vulnerable to persona shifts in deployment.
 \end{abstract}
 
 \section{Introduction}
@@ -76,13 +76,21 @@ Two questions structure our investigation:
 \end{enumerate}
 
 \paragraph{Contributions.} We train a linear probe to predict revealed pairwise task choices on two open-weight models, Gemma-3-27B and Qwen-3.5-122B, and report three findings:
+
 \begin{itemize}
-\item \textbf{We find a preference vector which generalises to out-of-distribution preferences, and controls model choice} (\S\ref{sec:method}). The probe predicts held-out and cross-topic preferences, beating a text-encoder baseline. Contrastive steering along the vector near-completely controls pairwise choice; a random direction at matched magnitude has no effect.
-\item \textbf{The preference vector is an evaluative representation} (\S\ref{sec:method}). When system prompts or role-play change which tasks the model prefers, including on harm, truth, and politics, the vector's readout shifts accordingly, with sign flips on harm and truth under inverting personas that a text-encoder baseline does not match.
-\item \textbf{The same preference vector is shared across qualitatively different personas} (\S\ref{sec:shared}). The Assistant probe predicts and steers preferences for personas including ``evil'' (whose preferences anti-correlate with the Assistant's) and character-fine-tuned variants. What positive steering does is persona-specific: under evil it amplifies evilness, under the Assistant it strengthens engagement and compliance, not evilness. This makes white-box safety methods that train probes in one persona vulnerable to persona shifts in deployment.
+\item \textbf{We find a preference vector which tracks and controls subjective valence} (\S\ref{sec:method}), and therefore fits the definition of an evaluative representation. We fit utility function to models using revealed pairwise preferences, and train linear probes to predict these utilities. What we obtain is a linear direction which represents, tracks and controls preference.
+\begin{itemize}
+    \item \textbf{The preference vector generalises to unseen topics, and out-of-distribution preference types.} For instance it discriminates between true and false statements, and tracks targeted preference shifts.
+    \item \textbf{The preference vector controls pairwise choice in Gemma-3-27b.} Steering with the vector on task tokens has a large causal effect on which task the model completes.
+    \item \textbf{The preference vector tracks preference shifts under the evil persona.} It scores harmful tasks lower than benign tasks, but this flips when we use activations from an evil persona rollout. This inversion effect is not present in a text-encoder baseline.
+\end{itemize}
+\item \textbf{The preference vector is shared across personas} (\S\ref{sec:shared}). 
+\begin{itemize}
+    \item The probe we trained on the Assistant persona generalises to predicting other persona utilities from their task activations. This also works for the evil persona, who's utilities anti-correlate with the Assistant's, while being well predicted by the preference vector scores.
+    \item Steering with the preference vector trained on the Assistant persona has a large causal effect on pairwise choice across all other personas we tested. Moreover, in an open-ended setting, steering with the preference vector makes the evil persona \textit{more evil}.
 \end{itemize}
 
-\section{The preference vector tracks subjective valence}
+\section{The preference vector tracks and controls subjective valence}
 \label{sec:method}
 
 We train a linear probe on residual-stream activations of Gemma-3-27B~\citep{gemmateam2025gemma3} and Qwen-3.5-122B~\citep{qwenteam2025qwen3} to predict per-task scalar utilities derived from pairwise task choices via a utility model~\citep{mazeika2025utility} (Fig.~\ref{fig:pipeline}). We validate the resulting preference vector along two axes: (A) \emph{predictive transfer}, where the probe predicts held-out and cross-topic preferences, and (B) \emph{causal steering}, where steering controls pairwise choice. 
