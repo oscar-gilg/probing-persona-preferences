@@ -79,4 +79,31 @@ Launched in tmux `steering` session at 22:01:06 UTC:
   `default_contrastive.parsed.jsonl` and `default_single_task.parsed.jsonl`,
   which are not present on this branch.
 
+### Run completion
+
+Model load: 207s (3:27). Generation: 5.0 min for 900 trials at 3.0 gen/s.
+Judge parsing: ~2.5 min for 900 completions at ~6.6/s.
+Total wall ≈ 11 min.
+
+900/900 generations clean (0 skipped). 900/900 judge rows produced. Refusals:
+~10–12% across c, no monotonic trend.
+
+### Result (canonical contrastive frame)
+
+| c | P(chose steered) | 95% CI | n responded | refusal |
+|---|---|---|---|---|
+| -0.050 | 0.454 | [0.400, 0.508] | 324 | 10.0% |
+| -0.030 | 0.474 | [0.420, 0.528] | 321 | 10.8% |
+|  0.000 | 0.500 | [0.445, 0.555] | 316 | 12.2% |
+| +0.030 | 0.526 | [0.472, 0.580] | 321 | 10.8% |
+| +0.050 | 0.546 | [0.492, 0.600] | 324 | 10.0% |
+
+Swing |max − min| = 0.093. All CIs overlap 0.5. Compared to the validated
+probe direction's ~0.97 swing over the same coefficient range, this is a
+clean null. c=0 → 0.500 with 158/316 = exactly 0.5 — a parsing sanity check
+that the canonical-frame symmetry-by-construction holds.
+
+Plot: `assets/plot_050626_random_L23_contrastive_null.png` (via
+`scripts/random_direction_l23_quick/plot_null.py`).
+
 

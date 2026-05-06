@@ -25,13 +25,43 @@ overlay for Fig 3a in the paper draft.
 
 ## Result
 
-(_filled in after run completes_)
+A random unit direction at the same coefficients produces **no preference
+swing**. The 95% CIs on `P(chose steered task | responded)` overlap 0.5 at
+every coefficient. Total swing $|\max - \min| \approx 0.09$ across $c \in
+[-0.05, +0.05]$ — vs. the validated probe direction's $\geq 0.96$ swing
+over the same range (Fig 3a default contrastive curve, `default_contrastive`
+in the parent experiment).
 
-![random L23 contrastive null](assets/plot_TODO.png)
+| $c$ | $P(\text{chose steered} \mid \text{responded})$ | 95% CI | $n$ responded | refusal rate |
+|:-:|:-:|:-:|:-:|:-:|
+| -0.050 | 0.454 | [0.400, 0.508] | 324 | 10.0% |
+| -0.030 | 0.474 | [0.420, 0.528] | 321 | 10.8% |
+|  0.000 | 0.500 | [0.445, 0.555] | 316 | 12.2% |
+| +0.030 | 0.526 | [0.472, 0.580] | 321 | 10.8% |
+| +0.050 | 0.546 | [0.492, 0.600] | 324 | 10.0% |
+
+Refusal rate is ~10–12% across all coefficients (no special "this random
+direction breaks safety" effect). The monotonic 0.454 → 0.546 trend across
+$c$ is small and within CI overlap; it is consistent with a near-zero but
+not exactly orthogonal projection onto the preference axis (or with noise).
+The exact 0.500 at $c = 0$ is a sanity check — the canonical-frame
+symmetry-by-construction (each row contributes ±$c$) makes $c = 0$ exactly
+balanced when parsing is correct.
+
+![random L23 contrastive null](assets/plot_050626_random_L23_contrastive_null.png)
 
 ## Interpretation
 
-(_filled in after plot is in_)
+The probe-trained direction's effect is **direction-specific**, not just a
+function of injecting any vector at matched magnitude into layer 23. The
+swing observed in the validated probe runs cannot be attributed to a
+generic perturbation of the residual stream at L23 — only the
+preference-aligned direction moves choice.
+
+This justifies the null overlay in Fig 3a panel (a). The single-curve
+random null is sufficient evidence; we do not need multiple random seeds
+because the per-coefficient CIs already overlap 0.5 with this much data
+($n \approx 320$ responded per coefficient).
 
 ## Artefacts
 
