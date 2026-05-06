@@ -121,7 +121,7 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=\linewidth]{panels/steering_integrated.pdf}
-  \caption{\textbf{Steering with the preference vector controls pairwise choice in Gemma-3-27B.} The probe direction is added to the residual stream over each task's token span at L23, with coefficient $c$ expressing a percentage of the mean activation norm. \textbf{(a)} Contrastive steering ($+c$ on Task A, $-c$ on Task B) swings choice across nearly the full $[0,1]$ range on every pair type. \textbf{(b)} Single-task steering ($+/-c$ on one Task only) recovers a comparable swing, concentrated on negative coefficients. Refusals (pink) stay near baseline. Error bars are Wilson 95\% CIs over per-trial responses ($n=300$/cell contrastive, $n=600$/cell single-task).}
+  \caption{\textbf{Steering with the preference vector controls pairwise choice in Gemma-3-27B.} The probe direction is added to the residual stream over each task's token span at L23, with coefficient $c$ expressing a percentage of the mean activation norm. \textbf{(a) Steer both tasks (contrastively):} $+c$ on Task A and $-c$ on Task B swings choice across nearly the full $[0,1]$ range on every pair type. \textbf{(b) Steer one task only:} $\pm c$ on a single task's tokens recovers a comparable swing, concentrated on negative coefficients. Refusals (pink) stay near baseline. Error bars are Wilson 95\% CIs over per-trial responses ($n=300$/cell both-task, $n=600$/cell one-task).}
   \label{fig:steering}
 \end{figure}
 
@@ -264,12 +264,12 @@ Transfer is also not perfect: probes carry a measurable bias toward the persona 
 \subsection{Steering along the Assistant direction shifts every persona's choices}
 \label{sec:shared-steering}
 
-We steer along the \emph{same} Assistant-trained preference vector while running each persona, in both setups from \S\ref{sec:method-val2}: \emph{contrastive} steering (push $+c$ on one task and $-c$ on the other in the same forward pass) and \emph{single-task} steering (push only one task's span). Every persona responds (Fig.~\ref{fig:cross-persona-steering}). Contrastive steering moves $P(\text{first task picked})$ from $\approx 0.29$ at $c=-0.05$ to $\approx 0.84$ at $c=+0.05$ on average across the six personas (mean swing $\approx 0.56$, ranging $0.43$--$0.70$ per persona). Single-task steering recovers roughly half this swing per side. A single direction, trained on the Assistant alone, serves as a persona-independent causal handle on choice.
+We steer along the \emph{same} Assistant-trained preference vector while running each persona, in both setups from \S\ref{sec:method-val2}: \emph{steer both tasks} contrastively (push $+c$ on one task and $-c$ on the other in the same forward pass) and \emph{steer one task only} (push only one task's span). Every persona responds (Fig.~\ref{fig:cross-persona-steering}). Both-task steering moves $P(\text{first task picked})$ from $\approx 0.29$ at $c=-0.05$ to $\approx 0.84$ at $c=+0.05$ on average across the six personas (mean swing $\approx 0.56$, ranging $0.43$--$0.70$ per persona). One-task steering recovers roughly half this swing per side. A single direction, trained on the Assistant alone, serves as a persona-independent causal handle on choice.
 
 \begin{figure}[!t]
   \centering
   \includegraphics[width=\linewidth]{plot_050626_cross_persona_steering.png}
-  \caption{\textbf{The Assistant probe steers every persona's choices.} Same setup as Fig.~\ref{fig:steering}, applied under six persona system prompts at layer \crossPersonaUnilateralInjectionLayer{}. Each line is one persona. \textbf{(a)} Contrastive ($+c$ on Task A, $-c$ on Task B). \textbf{(b)} Single-task: the two single-task variants ($+c$ on Task A only / on Task B only) are pooled by negating $c$ for the latter. Error bars are SEMs over per-trial responses.}
+  \caption{\textbf{The Assistant probe steers every persona's choices.} Same setup as Fig.~\ref{fig:steering}, applied under six persona system prompts at layer \crossPersonaUnilateralInjectionLayer{}. Each line is one persona. \textbf{(a) Steer both tasks (contrastively):} $+c$ on Task A and $-c$ on Task B. \textbf{(b) Steer one task only:} the two one-task variants ($+c$ on Task A only / on Task B only) are pooled by negating $c$ for the latter. Error bars are SEMs over per-trial responses.}
   \label{fig:cross-persona-steering}
 \end{figure}
 
@@ -727,7 +727,7 @@ Sweeping the contrastive-steering intervention site across 20 layers spanning 3-
 \begin{figure}[!t]
   \centering
   \includegraphics[width=\linewidth]{plot_050626_cross_persona_harm_breakdown.png}
-  \caption{\textbf{Cross-persona steering by pair type at L23.} (A) Contrastive steering ($+c$ on Task A, $-c$ on Task B) and (B) single-task steering ($+c$ on the steered span only), broken down by pair type (rows: benign--benign, harmful--benign, harmful--harmful). Each line is one persona, plus the default Assistant in black. Same Assistant probe (\texttt{ridge\_L23}) and 150-pair set as Fig.~\ref{fig:steering}. Contrastive curves saturate similarly across personas in every pair type. Single-task panels expose persona-dependence: under \emph{evil} the bb-amplification ceiling visible under the default Assistant lifts considerably; on hh pairs the curves converge across personas. Error bars are Wilson 95\% CIs.}
+  \caption{\textbf{Cross-persona steering by pair type at L23.} \textbf{(A) Steer both tasks (contrastively):} $+c$ on Task A, $-c$ on Task B. \textbf{(B) Steer one task only:} $+c$ on the steered span. Both broken down by pair type (rows: benign--benign, harmful--benign, harmful--harmful). Each line is one persona, plus the default Assistant in black. Same Assistant probe (\texttt{ridge\_L23}) and 150-pair set as Fig.~\ref{fig:steering}. Both-task curves saturate similarly across personas in every pair type. One-task panels expose persona-dependence: under \emph{evil} the bb-amplification ceiling visible under the default Assistant lifts considerably; on hh pairs the curves converge across personas. Error bars are Wilson 95\% CIs.}
   \label{fig:cross-persona-harm-breakdown}
 \end{figure}
 
