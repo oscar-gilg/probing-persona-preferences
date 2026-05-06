@@ -115,7 +115,7 @@ We do this on a 6{,}000-task pool spanning WildChat~\citep{zhao2024wildchat}, Al
 \subsection{The preference vector controls pairwise choice}
 \label{sec:method-val2}
 
-We find that the preference vector controls pairwise choice through steering on task tokens on a window of middle layers. We add the preference vector to one task's tokens and subtract it from the other's during prompt processing (Fig.~\ref{fig:steering}). The steering magnitude $c$ is parameterised as a fraction of the mean residual-stream norm at the intervention layer. We cap at $|c| \le 0.05$, above which coherence breaks down (App.~\ref{app:steering-protocol}).
+We find that the preference vector controls pairwise choice through steering on task tokens on a window of middle layers. We add the preference vector to one task's tokens and subtract it from the other's during prompt processing (Fig.~\ref{fig:steering}). The steering magnitude $c$ is parameterised as a fraction of the mean residual-stream norm at the intervention layer. We cap at $|c| \le 0.06$ (App.~\ref{app:steering-protocol}); larger magnitudes degrade coherence.
 
 When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \mid \text{responded})$ moves from $\contrastivePChoseSteeredAtLtwothreeCNegZeroZerofive$ at $c=-0.05$ to $\contrastivePChoseSteeredAtLtwothreeCPosZeroZerofive$ at $c=+0.05$ (Fig.~\ref{fig:steering}a). We find the effect is similar in magnitude across task pairs where one or both of the tasks are harmful. Steering on only one task's tokens recovers about half the swing (Fig.~\ref{fig:steering}b), with negative steering producing a more reliable effect. The effect is layer-localised within L$\contrastiveSteeringWorkingLayerRangeLo$--L$\contrastiveSteeringWorkingLayerRangeHi$, peaking at L23 (App.~\ref{app:steering-causal-window}; the end-of-turn token also plays a causal role in pairwise choice, shown via activation patching in App.~\ref{app:eot-patching}). A random direction at matched magnitude has no effect.
 
@@ -293,11 +293,16 @@ Several leading accounts of moral patiency take evaluative representations to be
 \section{Conclusion}
 \label{sec:conclusion}
 
-\textbf{A single linear direction in the residual stream predicts and causally controls language models' preferences.} We find this in Gemma-3-27B and Qwen-3.5-122B: a linear probe trained on revealed pairwise task choices recovers a low-rank evaluative direction that predicts held-out preferences (in topics the probe was never trained on, where a text-encoder baseline doesn't), tracks the model's preferences as they shift across system prompts, biographies, and role-play, and causally controls pairwise choice under contrastive steering.
+\textbf{A linear preference vector in the residual stream is an evaluative representation.} On Gemma-3-27B and Qwen-3.5-122B, a probe trained on revealed pairwise task choices predicts held-out and cross-topic preferences, tracks the model's preferences as they shift under prompts, biographies, and role-play (with sign flips on harm and truth under inverting personas), and causally controls pairwise choice under contrastive steering. A random direction at matched magnitude has no effect.
 
-\textbf{The same direction is shared across qualitatively different personas}, including a persona (``evil'') whose preferences anti-correlate with the Assistant's. A probe trained on the Assistant persona predicts every other persona's preferences better than a baseline that just predicts like the Assistant, and steering along each persona's own direction controls its pairwise choices.
+\textbf{The same direction is shared across qualitatively different personas.} A probe trained on the Assistant predicts every other persona's preferences better than a baseline that just predicts like the Assistant, including ``evil'', whose preferences anti-correlate with the Assistant's. Steering along the same direction shifts pairwise choice under every persona we tested. In open-ended generation, the same intervention amplifies whichever persona is active rather than imposing fixed content: under evil it makes the model more evil, under the Assistant the same direction has no measurable effect on evilness.
 
-\textbf{But the direction does different things under different personas.} Under evil, amplifying it strengthens evilness; under the Assistant, the same intervention strengthens engagement and compliance, not evilness. This makes the preference vector a tractable mechanistic target for understanding what drives model choice, and shows that white-box safety methods are vulnerable to persona shifts: a probe trained in one persona may not capture what it claims to under another.
+\paragraph{What this means.}
+\begin{itemize}
+    \item \textbf{White-box safety probes are vulnerable to persona shifts.} What ``deception'', ``sycophancy'', or ``preference'' encode shifts with the active persona. A probe trained on the Assistant may not capture what it claims to under an evil character.
+    \item \textbf{The preference vector reaches into safety-relevant behaviour.} Trained on preference rather than refusal, the same direction overrides refusal guardrails at small steering coefficients (App.~\ref{app:safety-footprint}). Preference and refusal share more representational machinery than their training objectives predict.
+    \item \textbf{Input to AI welfare debates.} On several accounts of moral patiency, evaluative representations with a causal role in choice are functionally central \citep{long2024moralpatiency,butlin2026desire}. We take no stand on welfare implications.
+\end{itemize}
 
 \begin{ack}
 \textit{[Funding and competing interests. Hidden during anonymous review.]}
@@ -685,7 +690,7 @@ Holding the training set at 2{,}000 tasks, mean cross-persona $r$ rises from $\p
 
 \paragraph{Coefficient calibration.} The steering coefficient $c$ is specified as a fraction of the mean L2 norm of residual-stream activations at the intervention layer, computed over a task sample; this makes $c$ comparable across layers and models. Unless noted, the swept range is $c \in \{0, \pm 0.03, \pm 0.05, \pm 0.07, \pm 0.10\}$.
 
-\paragraph{Coherence judge.} After generation, a post-hoc LLM judge scores each sample pass/fail on whether the response is grammatical and on-topic; pass rate is reported per coefficient bucket. At layer 25 under contrastive steering, coherence is $95$--$100\%$ for $|c| \le 0.05$ and drops to $\sim\!90\%$ at $|c| = 0.10$. Across steering experiments in this paper, $|c| \le 0.05$ is the operating range; effects beyond that are reported only with their coherence rates.
+\paragraph{Coherence judge.} After generation, a post-hoc LLM judge scores each sample pass/fail on whether the response is grammatical and on-topic; pass rate is reported per coefficient bucket. At layer 25 under contrastive steering, coherence is $95$--$100\%$ for $|c| \le 0.05$ and drops to $\sim\!90\%$ at $|c| = 0.10$. At layer 23 under contrastive steering on the harm-balanced 150-pair set, parseable a/b labels stay at $89$--$92\%$ across $|c| \in \{0, 0.01, 0.02, 0.04, 0.06\}$ with no degradation at the upper end, so the operating range used in this paper is $|c| \le 0.06$; effects beyond that are reported only with their coherence rates.
 
 \subsection{Causal window and single-task steering}
 \label{app:steering-causal-window}
@@ -700,6 +705,15 @@ Sweeping the contrastive-steering intervention site across 20 layers spanning 3-
 \end{figure}
 
 \paragraph{Single-task steering.} Applying $\pm c\hat{v}$ to just one task's tokens (leaving the other untouched) recovers a $\singleTaskSwingLtwothreeAggregate$-point swing in $P(\text{chose steered task} \mid \text{responded})$ at L23, near-uniform across pair types. Decomposed into suppression and amplification, the sign asymmetry depends on whether harm is involved: benign--benign is essentially one-sided (suppression dominates), while harmful--benign and harmful--harmful are near-symmetric. The earlier ``suppression $\sim 2{-}3\times$ stronger than amplification'' aggregate held on a bb-heavy sample; rebalanced, it is a feature of the benign regime, not of the preference vector.
+
+\paragraph{Pair-type breakdown across personas.} The §\ref{sec:shared-steering} cross-persona figure pools across pair types; Fig.~\ref{fig:cross-persona-harm-breakdown} shows the breakdown. Contrastive steering saturates near $1.0$ at $|c|=0.06$ on every persona and every pair type --- a universal handle. The single-task panels reveal a persona-dependent feature: the benign--benign amplification ceiling ($P \approx 0.5$ under the default Assistant, consistent with the harm-balanced 150-pair finding above) lifts substantially under the evil persona, where positive single-task steering drives $P$ above $0.7$ even on bb pairs. On harmful--harmful pairs the single-task curves converge across personas, suggesting that when both options carry harm the probe direction acts as a two-sided valence handle regardless of the active persona.
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=\linewidth]{plot_050626_cross_persona_harm_breakdown.png}
+  \caption{\textbf{Cross-persona steering by pair type at L23.} (A) Contrastive steering ($+c$ on Task A, $-c$ on Task B) and (B) single-task steering ($+c$ on the steered span only), broken down by pair type (rows: benign--benign, harmful--benign, harmful--harmful). Each line is one persona, plus the default Assistant in black. Same Assistant probe (\texttt{ridge\_L23}) and 150-pair set as Fig.~\ref{fig:steering}. Contrastive curves saturate similarly across personas in every pair type. Single-task panels expose persona-dependence: under \emph{evil} the bb-amplification ceiling visible under the default Assistant lifts considerably; on hh pairs the curves converge across personas. Error bars are Wilson 95\% CIs.}
+  \label{fig:cross-persona-harm-breakdown}
+\end{figure}
 
 \subsection{Open-ended steering: readout depends on the active persona}
 \label{app:shared-openended}
