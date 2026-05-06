@@ -166,9 +166,9 @@ We find that \textbf{the probe tracks preference shifts on harmful tasks under t
 %       narrows, sign does not cross zero). All cite App.~assistant-turn-modulation.
 This inversion is in contrast with the text-encoder baseline (Qwen3-Embedding-8B, Ridge-fit on the same utility target). The encoder is trained on a text embedding and would be expected to capture primarily \textit{descriptive} features. It rates benign higher than harmful at $\Delta_{\text{enc}} \approx -3.23$ under the default Assistant; under \emph{evil} it still rates them in the same direction at $\Delta_{\text{enc}} \approx -1.01$ on Gemma at the prefilled assistant turn (Fig.~\ref{fig:harm-modulation}). It does not flip.
 
-This is not because the encoder is a weak baseline. On truth and politics base discrimination it matches the preference vector, and its readout shifts under positive-persona prompts (App.~\ref{app:assistant-turn-modulation}). The persona-conditional sign flip on harm under \emph{evil} is the clearest case where it fails to track the shift.
+This is not because the encoder is a weak baseline. In other settings, this Qwen3-Embedding-8b baseline not only discriminates strongly, but also shifts under system prompts. For instance under a prompt instructing the model to lie, the probe scores false statements higher than true ones (App.~\ref{app:assistant-turn-modulation}).
 
-The Gemma assistant-turn case is the cleanest. At the user turn on both models, and on Qwen at the prefilled assistant turn, the readout shifts in the inverting direction without crossing zero --- the harm/benign gap narrows under \emph{evil} but does not invert. Full results across turn positions and both models in App.~\ref{app:assistant-turn-modulation}, Fig.~\ref{fig:harm-full-coverage}.
+We also find similar results when presenting harmful and benign tasks to models, under different persona prompts. Full results across turn positions and both models in App.~\ref{app:assistant-turn-modulation}, Fig.~\ref{fig:harm-full-coverage}.
 
 % [Figure caption]
 %   [ ] Refine in user voice (claim-first headline already there; trim
