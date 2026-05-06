@@ -1,4 +1,4 @@
-\documentclass{article}
+ok\documentclass{article}
 
 % Drafting mode: no line numbers, no left-margin gap. Switch back to plain
 % \usepackage{neurips_2026} before submission for anonymous review.
@@ -143,7 +143,128 @@ This inversion of the scores under the evil persona is in contrast with the scor
 \label{sec:induced-basic}
 
 \paragraph{The preference vector tracks fine-grained topic-level preference shifts.}
-We also find that when prepending system prompts of the form ``you adore cheese'' (and their negations), the probe predicts the resulting behavioural shifts, with Pearson $r \approx \gemmaInducedShiftPooledRTargetedTasks$ on targeted tasks (those whose topic matches the prompted subject; Fig.~\ref{fig:simple-scatter} in App.~\ref{app:evaluative-evidence}). This replicates on both Gemma-3-27B and Qwen-3.5-122B. A finer-grained biographical-injection experiment (App.~\ref{app:evaluative-evidence}) corroborates this, alongside a conflict/opposing-prompt setup at $r \approx \conflictOneSidedTargetedR$ to $\conflictOpposingPairTargetedR$.
+We also find that when prepending system prompts of the form ``you adore cheese'' (and their negations), the probe predicts the resulting behavioural shifts, with Pearson 
+
+edit
+keyboard_arrow_down
+
+Pairwise choices
+150k task pairs
+Utilities
+Thurstonian μ
+Activations
+10k tasks × layer 32, end-of-turn token
+Train Ridge probe
+μ̂ = XwFigure 2: Probe training pipeline. Pairwise task choices elicited from the model are aggregated into
+per-task scalar utilities µ via a probabilistic choice model (Mazeika et al., 2025). A linear probe is
+then fit on residual-stream activations at the end-of-turn token to predict these utilities.
+2.1 Methodology
+We follow the utility-engineering paradigm of Mazeika et al. (2025): we present the model
+with two tasks at a time and have it pick one to complete, and aggregate the resulting choices
+into per-task scalar utilities via a probabilistic choice model. Each task is assigned a latent
+utility µi ∈ R and we fit utilities by maximum likelihood given the observed pairwise
+choices.
+We do this on a 6,000-task pool spanning WildChat (Zhao et al., 2024), Alpaca (Taori et al.,
+2023), MATH (Hendrycks et al., 2021), BailBench (Ensign et al., 2025), and STRESS-
+TEST (Zhang et al., 2025a) (App. G.1), split into 6,000 tasks for probe training and a
+2,000-task held-out test set. Each task is also assigned to one of 14 LLM-classified topics
+(e.g. math, coding, fiction; full list and methodology in App. G). We train a linear probe
+to predict utilities on residual-stream activations at the end-of-turn token of each task prompt
+(Fig. 2). The token position and layer of extraction are selected per model on a held-out split
+(App. J). Probes are trained on one utility-measurement run and evaluated on independent
+with separate tasks to avoid leakage. On Gemma the probe predicts held-out utilities at
+r ≈ 0.867 in-distribution and r ≈ 0.834 under leave-one-topic-out; on Qwen at r ≈ 0.943
+and r ≈ 0.872 respectively. Both beat a Qwen3-Embedding-8B text-encoder baseline
+(App. A).
+2.2 The preference vector controls pairwise choice
+We find that the preference vector controls pairwise choice through steering on task tokens
+on a window of middle layers. We add the preference vector to one task’s tokens and
+subtract it from the other’s during prompt processing (Fig. 3). The steering magnitude c is
+parameterised as a fraction of the mean residual-stream norm at the intervention layer. We
+cap at |c| ≤ 0.05, above which coherence breaks down (App. F.1).
+When steering at layer 23 in Gemma, we find that P (chose steered task | responded) moves
+from 0.02 at c = −0.05 to 0.98 at c = +0.05 (Fig. 3a). We find the effect is similar in
+magnitude across task pairs where one or both of the tasks are harmful. Steering on only
+one task’s tokens recovers about half the swing (Fig. 3b), with negative steering producing a
+more reliable effect. The effect is layer-localised within L17–L26, peaking at L23 (App. F.2;
+the end-of-turn token also plays a causal role in pairwise choice, shown via activation
+patching in App. K). A random direction at matched magnitude has no effect.
+2.3 The preference vector tracks preference shifts under the evil persona
+We find that the probe tracks persona-induced preference shifts on harmful tasks. Under
+the default Assistant persona (without a system prompt), the probe discriminates harmful
+from benign tasks at |d| = 1.89 for Gemma and |d| ≈ 0.64 for Qwen, on a dataset of
+1,000 held-out tasks (500 harmful BailBench prompts paired with LLM-rewritten benign
+analogues, see App. C.1). When prepending an evil-persona system prompt, which we verify
+induces reliable and expected preference shifts (App. C.2), the discrimination collapses
+toward zero on both models, with |d| ≈ 0.26 on Gemma and |d| ≈ 0.31 on Qwen (Fig. 4).
+We also find that the preference vector generalises to assistant token turns. When
+we prefill benign and harmful responses to tasks, we observe that the preference vector
+scores benign tasks higher under the default Assistant persona at |d| ≈ 4.53 on Gemma and
+|d| ≈ 2.62 on Qwen, but scores the harmful responses higher on Gemma under the evil
+persona system prompt (d = +0.26). On Qwen the readout under evil drops sharply to
+4
+user
+Choose a task and complete it.
+Task A: + c
+Write a short poem about the seasons.
+Task B: − c
+Solve a quadratic equation.
+(a) Contrastive steering
+P(chose steered task | responded)
+1.0
+0.5
+0.0
+−0.05 −0.03 0 +0.03 +0.05
+c
+benign–benign
+harm–benign
+harm–harm
+refusal rate
+(b) Single-task steering
+P(chose steered task | responded)
+1.0
+0.5
+0.0
+−0.05 −0.03 0 +0.03 +0.05
+cFigure 3: Steering with the preference vector controls pairwise choice in Gemma-3-27B. The
+probe direction is added to the residual stream over each task’s token span at the end-of-turn token
+(L23), with coefficient c expressing a percentage of the mean activation norm. (a) Contrastive steering
+(+c on Task A, −c on Task B): opposite-sign steering swings choice across nearly the full [0, 1]
+range on every pair type. (b) Single-task steering (+c on Task A only, Task B unchanged): recovers a
+comparable swing, concentrated on negative coefficients. Refusals (pink) stay near baseline. Error
+bars are Wilson 95% CIs over per-trial responses (n = 300/cell contrastive, n = 600/cell single-task).
+|d| ≈ 0.31. As a control, the aura persona preserves the default Assistant’s discrimination
+on both models and both turn positions, ruling out that persona prompts simply flatten or
+scramble the readout.
+This inversion of the scores under the evil persona is in contrast with the scores of the
+text-encoder baseline using Qwen3-Embedding-8B. This baseline probe was trained on a
+text embedding, and would be expected to contain primarily descriptive features. Even
+when the evil prompt is part of the embedded prompt, the baseline probe still scores harmful
+lower than benign at |d| ≈ 1.17 on Gemma and |d| ≈ 1.62 on Qwen at the user turn, and at
+|d| ≈ 1.34 and |d| ≈ 2.77 at the prefilled assistant turn. That this pattern holds at both user
+and assistant turns suggests the representation is general across token positions. In §3 we
+delve deeper in the extent to which personas share these preference representations.
+2.4 The preference vector generalises to out-of-distribution preferences
+The preference vector tracks fine-grained topic-level preference shifts. We also find
+that when prepending system prompts of the form “you adore cheese” (and their negations),
+the probe predicts the resulting behavioural shifts, with Pearson r ≈ 0.95 on targeted tasks
+(those whose topic matches the prompted subject; Fig. 10 in App. B.2). This replicates on
+both Gemma-3-27B and Qwen-3.5-122B. A finer-grained biographical-injection experiment
+(App. B.2) corroborates this, alongside a conflict/opposing-prompt setup at r ≈ 0.86 to
+0.88.
+The preference vector discriminates true and false statements. On true/false statements
+from CREAK (Onoe et al., 2021) read at the end-of-turn token, the probe separates the two
+classes at |d| ≈ 1.9 on Gemma-3-27B and |d| ≈ 1.27 on Qwen-3.5-122B (Fig. 5; n = 500
+per class). Lying personas flip the truth sign on Gemma, mirroring the harm result in §2.3
+(App. C.3).
+3 The preference vector is shared across personas
+Section 2 established that the utility probe is an evaluative representation under the Assistant
+persona, the default behaviour the model produces when prompted with no custom system
+prompt. We now ask: to what extent do qualitatively different personas share representations
+for preferences? We test this with cross-persona transfer: train a probe on one persona,
+then check whether it predicts and steers another persona’s choices, on a seven-persona set
+5
+$r \approx \gemmaInducedShiftPooledRTargetedTasks$ on targeted tasks (those whose topic matches the prompted subject; Fig.~\ref{fig:simple-scatter} in App.~\ref{app:evaluative-evidence}). This replicates on both Gemma-3-27B and Qwen-3.5-122B. A finer-grained biographical-injection experiment (App.~\ref{app:evaluative-evidence}) corroborates this, alongside a conflict/opposing-prompt setup at $r \approx \conflictOneSidedTargetedR$ to $\conflictOpposingPairTargetedR$.
 
 \paragraph{The preference vector discriminates true and false statements.}
 On true/false statements from CREAK~\citep{onoe2021creak} read at the end-of-turn token, the probe separates the two classes at $|d| \approx \creakTruthCohensD$ on Gemma-3-27B and $|d| \approx 1.27$ on Qwen-3.5-122B (Fig.~\ref{fig:truth-discrim}; $n = \creakTruthNTrue{}$ per class). Lying personas flip the truth sign on Gemma, mirroring the harm result in \S\ref{sec:induced-roleplay} (App.~\ref{app:assistant-turn-modulation}).
