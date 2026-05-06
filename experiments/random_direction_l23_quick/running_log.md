@@ -57,3 +57,26 @@ matched pair-types exist between random and default curves; the parent run
 likely used `n_pairs: null` (full 150) but a deterministic 30-pair sample
 should still produce a clean flat null curve.
 
+### Audit (independent subagent)
+
+PASS on all four checks (spec compliance, random probe correctness, pair
+file integrity, pipeline launch). No invalidating discrepancies.
+
+### Run launch
+
+Launched in tmux `steering` session at 22:01:06 UTC:
+`/opt/venvs/research/bin/python -u -m scripts.isolated_steering.run_steering configs/steering/random_direction_l23_quick/random_contrastive.yaml > /workspace/steering.log 2>&1`
+
+### Panel script update (paper/figures/panels/build_steering_integrated.py)
+
+- Added `RANDOM_CONTRASTIVE_PARSED` constant.
+- Added `load_random_contrastive()` — returns pooled-across-pair-type curve
+  (one null line, no harm/benign breakdown), or `None` if checkpoint absent.
+- `plot_overlay` accepts an optional `random_curve` kwarg, drawn as a dashed
+  gray line behind the colored pair curves.
+- `main()` calls `load_random_contrastive()` for the contrastive panel and
+  passes it through. Final figure rendering still requires parent
+  `default_contrastive.parsed.jsonl` and `default_single_task.parsed.jsonl`,
+  which are not present on this branch.
+
+

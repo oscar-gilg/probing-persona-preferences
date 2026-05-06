@@ -37,6 +37,7 @@ MOCKUP_SVG = HERE / "panels_svg" / "steering_integrated_mockup.svg"
 DATA_JSON = ROOT / "scripts" / "paper" / "dose_response_l23_cis.json"  # kept for claims sidecar producer
 CONTRASTIVE_PARSED = ROOT / "experiments" / "persona_steering_l23_finegrain" / "checkpoints" / "default_contrastive.parsed.jsonl"
 SINGLE_TASK_PARSED = ROOT / "experiments" / "persona_steering_l23_finegrain" / "checkpoints" / "default_single_task.parsed.jsonl"
+RANDOM_CONTRASTIVE_PARSED = ROOT / "experiments" / "random_direction_l23_quick" / "checkpoints" / "random_contrastive.parsed.jsonl"
 PAIRS_JSON = ROOT / "experiments" / "layer_sweep" / "harm_breakdown" / "steering_pairs_150.json"
 OUT_PDF = HERE / "steering_integrated.pdf"
 SCHEMATIC_PNG = HERE / "_schematic_cache.png"
@@ -131,6 +132,37 @@ def load_contrastive() -> dict[str, tuple[list[float], ...]]:
     return out
 
 
+def load_random_contrastive() -> tuple[list[float], list[float], list[float], list[float]] | None:
+    """Same canonical frame as load_contrastive but pooled across pair-types
+    (one null curve, no harm/benign breakdown). Returns None if the parsed
+    checkpoint is absent."""
+    if not RANDOM_CONTRASTIVE_PARSED.exists():
+        return None
+    counts: dict[float, list[int]] = defaultdict(lambda: [0, 0])
+    with RANDOM_CONTRASTIVE_PARSED.open() as f:
+        for line in f:
+            r = json.loads(line)
+            mult = r["signed_multiplier"]
+            ch = _effective_choice(r)
+            if ch not in ("a", "b"):
+                continue
+            counts[round(+mult, 4)][1] += 1
+            counts[round(+mult, 4)][0] += int(ch == "a")
+            counts[round(-mult, 4)][1] += 1
+            counts[round(-mult, 4)][0] += int(ch == "b")
+    if not counts:
+        return None
+    xs = sorted(counts.keys())
+    ys, elo, ehi = [], [], []
+    for c in xs:
+        k, n = counts[c]
+        p, lo, hi = _wilson(k, n)
+        ys.append(p)
+        elo.append(max(0.0, p - lo))
+        ehi.append(max(0.0, hi - p))
+    return xs, ys, elo, ehi
+
+
 def load_single_task() -> dict[str, tuple[list[float], ...]]:
     """Canonical frame: applied_c = signed_multiplier × ordering-flip; chose_steered
     = (effective_choice == physical_in_span(steered_span, ordering)). c=0 is
@@ -189,7 +221,23 @@ def style_axis(ax, ylabel: str | None = None, xlabel: str | None = None) -> None
         ax.set_xlabel(xlabel, fontsize=11, color="#374151", style="italic")
 
 
-def plot_overlay(ax, curves: dict, *, with_legend: bool = False) -> None:
+def plot_overlay(
+    ax,
+    curves: dict,
+    *,
+    with_legend: bool = False,
+    random_curve: tuple[list[float], list[float], list[float], list[float]] | None = None,
+) -> None:
+    if random_curve is not None:
+        xs, ys, elo, ehi = random_curve
+        ax.errorbar(
+            xs, ys, yerr=[elo, ehi],
+            color="#6B7280",
+            marker="s", markersize=3, linewidth=1.1,
+            capsize=1.5, alpha=0.85, linestyle="--",
+            label="random direction",
+            zorder=1,
+        )
     for pair in PAIR_ORDER:
         xs, ys, elo, ehi = curves[pair]
         ax.errorbar(
@@ -197,6 +245,7 @@ def plot_overlay(ax, curves: dict, *, with_legend: bool = False) -> None:
             color=PAIR_COLORS[pair],
             marker="o", markersize=3, linewidth=1.3,
             capsize=1.5, alpha=0.9, label=PAIR_LABELS[pair],
+            zorder=2,
         )
     if with_legend:
         ax.legend(
@@ -227,7 +276,8 @@ def main() -> None:
     ax_sch.set_axis_off()
 
     ax_a.set_facecolor("white")
-    plot_overlay(ax_a, contrastive, with_legend=True)
+    random_curve = load_random_contrastive()
+    plot_overlay(ax_a, contrastive, with_legend=True, random_curve=random_curve)
     style_axis(ax_a, ylabel="P(chose steered task | responded)", xlabel="c")
     ax_a.set_title("(a) Contrastive steering", fontsize=13, color="#374151", weight="bold", pad=10)
 
