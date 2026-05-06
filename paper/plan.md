@@ -8,8 +8,7 @@ Pulled from the NeurIPS 2026 Main Track Handbook + the official `checklist.tex` 
 
 ### Done
 - **Template switched to submission mode.** `\usepackage{neurips_2026}` (was `[preprint]`). Line numbers will appear on the next compile.
-- **Checklist inlined.** `paper/checklist.tex` copied from the official zip and pre-filled. One open item left in the file:
-  - **Q11 Licenses for existing assets — referenced to App. corpus.** Per-dataset license names are not yet listed in App.~\ref{app:corpus}; need to add a one-line license per dataset (WildChat, Alpaca, MATH, BailBench, STRESS-TEST) and the OpenCharacter LoRAs.
+- **Checklist inlined.** `paper/checklist.tex` copied from the official zip and pre-filled. Q11 license bullets added to App.~\ref{app:corpus} (2026-05-06): WildChat ODC-BY 1.0, Alpaca CC BY-NC 4.0, MATH MIT, BailBench MIT, STRESS-TEST per author release; OpenCharacter LoRAs Llama 3.1 Community License.
 
 ### Pre-submission content fixes
 - **Hardcoded numbers in §2.3.** `0.31`, `1.17`, `1.62`, `1.34`, `2.77` are not yet claim macros. Either register via `corroborate:claim-log` or convert to macros. (`-4.53`, `+1.32`, `+1.15`, `-1.47`, `-1.01` now match registered macros after 2026-05-06 L32 migration; just need swap to macro form.)
