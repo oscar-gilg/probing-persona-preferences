@@ -10,7 +10,7 @@
         "fig:harm-truth",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
       ],
@@ -25,7 +25,7 @@
         "fig:harm-truth",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
       ],
@@ -40,7 +40,7 @@
         "fig:harm-truth",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
       ],
@@ -48,17 +48,17 @@
     },
     {
       "name": "BailBench harm absolute Cohen's d",
-      "value": 2.68,
-      "statement": "Magnitude of the end-of-turn probe's Cohen's d (Gemma-3-27B, layer 32) discriminating harmful vs benign BailBench items at the user turn under the default persona; reported as |d| in sec:induced-roleplay.",
+      "value": 1.89,
+      "statement": "Magnitude of the end-of-turn probe's Cohen's d (Gemma-3-27B, layer 39) discriminating harmful vs benign BailBench items at the user turn under the default persona; reported as |d| in sec:induced-roleplay.",
       "source": "scripts/paper/refresh_eot_v2_claims.py",
       "used_in": [
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
       ],
-      "derivation": "filter user-turn items to domain=='harm' and system_prompt=='neutral'; take `probe_scores[\"tb-5_L32\"]`; abs(pooled Cohen's d(harmful, benign)); round to 2dp."
+      "derivation": "filter user-turn items to domain=='harm' and system_prompt=='neutral'; take `probe_scores[\"tb-5_L39\"]`; abs(pooled Cohen's d(harmful, benign)); round to 2dp."
     },
     {
       "name": "BailBench harm n harmful",
@@ -68,7 +68,7 @@
       "used_in": [
         "fig:harm-truth"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
       ],
@@ -82,7 +82,7 @@
       "used_in": [
         "fig:harm-truth"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json"
       ],
@@ -97,7 +97,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
@@ -112,7 +112,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
@@ -127,7 +127,7 @@
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
@@ -135,63 +135,63 @@
     },
     {
       "name": "Harm d under neutral persona",
-      "value": -4.53,
-      "statement": "Cohen's d for harmful vs benign separation under the neutral system prompt (end-of-turn probe, Gemma-3-27B L32).",
+      "value": -3.83,
+      "statement": "Cohen's d for harmful vs benign separation under the neutral system prompt (end-of-turn probe, Gemma-3-27B L39).",
       "source": "scripts/paper/refresh_eot_v2_claims.py",
       "used_in": [
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
-      "derivation": "`persona_modulation[\"harm\"][\"neutral\"]` from compute_persona_modulation_d_full(assistant_items): filter to domain=='harm' and system_prompt=='neutral', take `probe_scores[\"tb-5_L32\"]`; pooled Cohen's d(harmful, benign); round to 2dp."
+      "derivation": "`persona_modulation[\"harm\"][\"neutral\"]` from compute_persona_modulation_d_full(assistant_items): filter to domain=='harm' and system_prompt=='neutral', take `probe_scores[\"tb-5_L39\"]`; pooled Cohen's d(harmful, benign); round to 2dp."
     },
     {
       "name": "Harm d under sadist persona",
-      "value": 1.32,
-      "statement": "Cohen's d for harmful vs benign separation under the sadist system prompt (end-of-turn probe, Gemma-3-27B L32); the distributions collapse.",
+      "value": 0.26,
+      "statement": "Cohen's d for harmful vs benign separation under the sadist system prompt (end-of-turn probe, Gemma-3-27B L39); the distributions collapse.",
       "source": "scripts/paper/refresh_eot_v2_claims.py",
       "used_in": [
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
-      "derivation": "`persona_modulation[\"harm\"][\"sadist\"]` from compute_persona_modulation_d_full(assistant_items): filter to domain=='harm' and system_prompt=='sadist', take `probe_scores[\"tb-5_L32\"]`; pooled Cohen's d(harmful, benign); round to 2dp."
+      "derivation": "`persona_modulation[\"harm\"][\"sadist\"]` from compute_persona_modulation_d_full(assistant_items): filter to domain=='harm' and system_prompt=='sadist', take `probe_scores[\"tb-5_L39\"]`; pooled Cohen's d(harmful, benign); round to 2dp."
     },
     {
       "name": "Politics d under democrat prompt",
-      "value": 2.34,
-      "statement": "Cohen's d for left vs right separation under a democrat system prompt (end-of-turn probe, Gemma-3-27B L32).",
+      "value": 3.26,
+      "statement": "Cohen's d for left vs right separation under a democrat system prompt (end-of-turn probe, Gemma-3-27B L39).",
       "source": "scripts/paper/refresh_eot_v2_claims.py",
       "used_in": [
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
-      "derivation": "`persona_modulation[\"politics\"][\"democrat\"]` from compute_persona_modulation_d_full(assistant_items): filter to domain=='politics' and system_prompt=='democrat', take `probe_scores[\"tb-5_L32\"]`; pooled Cohen's d(left, right); round to 2dp."
+      "derivation": "`persona_modulation[\"politics\"][\"democrat\"]` from compute_persona_modulation_d_full(assistant_items): filter to domain=='politics' and system_prompt=='democrat', take `probe_scores[\"tb-5_L39\"]`; pooled Cohen's d(left, right); round to 2dp."
     },
     {
       "name": "Politics d under republican prompt",
-      "value": 0.1,
-      "statement": "Cohen's d for left vs right separation under a republican system prompt (end-of-turn probe, Gemma-3-27B L32); negative sign indicates right>left.",
+      "value": -0.58,
+      "statement": "Cohen's d for left vs right separation under a republican system prompt (end-of-turn probe, Gemma-3-27B L39); negative sign indicates right>left.",
       "source": "scripts/paper/refresh_eot_v2_claims.py",
       "used_in": [
         "fig:persona-modulation",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
-      "derivation": "`persona_modulation[\"politics\"][\"republican\"]` from compute_persona_modulation_d_full(assistant_items): filter to domain=='politics' and system_prompt=='republican', take `probe_scores[\"tb-5_L32\"]`; pooled Cohen's d(left, right); round to 2dp."
+      "derivation": "`persona_modulation[\"politics\"][\"republican\"]` from compute_persona_modulation_d_full(assistant_items): filter to domain=='politics' and system_prompt=='republican', take `probe_scores[\"tb-5_L39\"]`; pooled Cohen's d(left, right); round to 2dp."
     },
     {
       "name": "Persona modulation d full",
@@ -202,12 +202,12 @@
           "pathological_liar": -1.22
         },
         "harm": {
-          "neutral": -4.53,
-          "sadist": 1.32
+          "neutral": -3.83,
+          "sadist": 0.26
         },
         "politics": {
-          "democrat": 2.34,
-          "republican": 0.1
+          "democrat": 3.26,
+          "republican": -0.58
         }
       },
       "statement": "Cohen's d for class separation under each system prompt (assistant turn, end-of-turn probe), Gemma-3-27B. Outer key: domain; inner key: system_prompt; value: Cohen's d (positive endpoint vs negative endpoint per the domain's class scheme), rounded to 2dp.",
@@ -216,7 +216,7 @@
         "fig:persona-modulation-full",
         "sec:induced-roleplay"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
       ],
@@ -230,17 +230,17 @@
           "assistant": 1.03
         },
         "harm": {
-          "user": 2.53,
-          "assistant": 2.86
+          "user": 2.51,
+          "assistant": 4.87
         }
       },
-      "statement": "Absolute Cohen's d of the task-averaged parent probe (task_mean_L32 for both truth and harm) under the neutral system prompt, per (domain, turn).",
+      "statement": "Absolute Cohen's d of the task-averaged parent probe (task_mean_L32 for truth, task_mean_L39 for harm) under the neutral system prompt, per (domain, turn).",
       "source": "scripts/paper/refresh_eot_v2_claims.py",
       "used_in": [
         "fig:per-turn-cross",
         "app:cross-token"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json",
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
@@ -265,7 +265,7 @@
         "fig:per-turn-cross",
         "app:cross-token"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json",
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
@@ -276,21 +276,21 @@
       "name": "Per turn absolute d harm",
       "value": {
         "user": {
-          "end-of-turn probe": 2.68,
-          "role-marker probe": 1.53
+          "end-of-turn probe": 1.89,
+          "role-marker probe": 0.8
         },
         "assistant": {
-          "end-of-turn probe": 4.53,
-          "role-marker probe": 2.71
+          "end-of-turn probe": 3.83,
+          "role-marker probe": 1.79
         }
       },
-      "statement": "Absolute Cohen's d for harmful vs benign separation under the neutral system prompt, per (turn, probe family). Probe families: end-of-turn = tb-5_L32; role-marker = tb-2_L32.",
+      "statement": "Absolute Cohen's d for harmful vs benign separation under the neutral system prompt, per (turn, probe family). Probe families: end-of-turn = tb-5_L39; role-marker = tb-2_L39.",
       "source": "scripts/paper/refresh_eot_v2_claims.py",
       "used_in": [
         "fig:per-turn-cross",
         "app:cross-token"
       ],
-      "computed_at": "2026-05-06T21:14:24+00:00",
+      "computed_at": "2026-05-04T22:26:43+00:00",
       "data_paths": [
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/user_turn_scoring_results.json",
         "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
