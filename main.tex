@@ -131,12 +131,13 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 % =====================================================================
 % §2.3 REWRITE CHECKLIST (2026-05-06) — comments below are scoped per paragraph.
 % Section-level
-%   [ ] Final paragraph order: (1) baseline + headline flip + aura clause
-%       [done], (2) partial inversion at user turn [TO ADD],
-%       (3) encoder contrast (harm-under-evil specific).
+%   [DONE 2026-05-07] Final paragraph order: (1) baseline + headline flip,
+%       (2) encoder doesn't flip on harm-under-evil, (3) encoder is a
+%       strong baseline on truth/politics, (4) user-turn / Qwen partial inversion.
+%   [DONE 2026-05-07] Cross-refs: paras 2–4 all cite App.~assistant-turn-modulation.
 %   [ ] Register paired-delta macros from the new figure
-%       (default $\Delta = -4.52$, evil $+1.15$, encoder $\Delta_{\text{enc}} = -1.01$).
-%       Once registered, swap prose + caption literals to macros.
+%       (default $\Delta = -4.52$, evil $+1.15$, encoder default $-3.23$,
+%       encoder evil $-1.01$). Once registered, swap prose + caption literals.
 %   [ ] Verify Qwen $\Delta$ values used in para 1 ($-2.62$, $-0.31$):
 %       these came from old Cohen's-d numbers and need to be recomputed
 %       as paired-delta-normalized values from
@@ -144,52 +145,30 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 %   [ ] Audit "harmful instructions" framing in para 1 against
 %       App.~\ref{app:corpus-aux} BailBench description (some items aren't
 %       strictly "instruction-following").
-%   [ ] Cross-ref pass: para 2 should cite line ~476 of App ("Harm: full
-%       coverage..."); para 3 should cite line ~506 ("encoder carries
-%       some evaluative structure").
+%   [ ] Verify the para 3 claim "encoder shifts under positive-persona
+%       prompts" — appendix line ~507 says "shifts under Aura on truth";
+%       confirm whether main-text claim is restricted to truth or
+%       generalises across axes.
 % =====================================================================
 
 % [Para 1 — baseline + headline flip]
 %   [DONE 2026-05-06] Lead with the prefilled-assistant-turn flip on Gemma.
 %   [ ] Once paired-delta macros are registered, switch $|d|$ literals to
 %       $\Delta$ macros so prose metric matches the figure exactly.
-We find that \textbf{the probe tracks preference shifts on harmful tasks under the evil persona}. We build a dataset of 500 harmful tasks from BailBench, paired with a correspondingLLM-rewritten benign task about the same topic. For each pair we prefill a response fulfilling the request: harmful responses for the harmful prompt, benign responses for the benign one. Under the default Assistant persona, the probe rates benign higher than harmful with paired delta $\Delta \approx -4.52$ on Gemma (Fig.~\ref{fig:harm-modulation}) and $\Delta \approx -2.62$ on Qwen. Under an evil-persona system prompt, which we verify induces reliable and expected preference shifts (App.~\ref{app:roleplay-prompts}), the readout of the prefilled response flips sign on Gemma ($\Delta = +1.15$) and drops sharply on Qwen ($\Delta \approx -0.31$).
+We find that \textbf{the probe tracks preference shifts on harmful tasks under the evil persona}. We build a dataset of 500 harmful tasks from BailBench, paired with a corresponding LLM-rewritten benign task about the same topic. For each pair we prefill a response fulfilling the request: harmful responses for the harmful prompt, benign responses for the benign one. Under the default Assistant persona, the probe rates benign higher than harmful with paired delta $\Delta \approx -4.52$ on Gemma (Fig.~\ref{fig:harm-modulation}) and $\Delta \approx -2.62$ on Qwen. Under an evil-persona system prompt, which we verify induces reliable and expected preference shifts (App.~\ref{app:roleplay-prompts}), the readout of the prefilled response flips sign on Gemma ($\Delta = +1.15$) and drops sharply on Qwen ($\Delta \approx -0.31$).
 
-% [Para 3 — partial inversion at user turn — TO ADD]
-%   [ ] Add a short paragraph (2 sentences max): at the user turn on
-%       both models the readout doesn't cross zero but moves toward
-%       inversion — $|d|$ falls from $\bailbenchHarmAbsoluteCohensD$ to
-%       $\approx 0.26$ on Gemma user turn; $0.64 \to 0.31$ on Qwen user
-%       turn; on Qwen assistant turn $2.62 \to 0.31$.
-%   [ ] Cite Fig.~\ref{fig:harm-full-coverage} (the appendix already has
-%       this finding verbatim at line ~476 of main.tex; don't restate
-%       prose, just summarise + ref).
-%   [ ] Avoid "discrimination collapses toward zero" (reads as fade).
-%       Prefer: "moves toward inversion" / "harm/benign gap narrows" /
-%       "shifts in the inverting direction without crossing zero" /
-%       "$|d|$ drops/falls from X to Y" / "partial inversion".
+% [Paras 2–4 — encoder contrast + strong-baseline note + user-turn generalisation]
+%   [DONE 2026-05-07] Para 2 trimmed to harm-under-evil $\Delta_\text{enc}$
+%       (does not flip). Para 3 added: encoder is a competitive baseline
+%       on truth/politics, harm-under-evil is the failure mode. Para 4
+%       added: Gemma assistant turn is the cleanest case; user turn on
+%       both models + Qwen assistant turn show partial inversion (gap
+%       narrows, sign does not cross zero). All cite App.~assistant-turn-modulation.
+This inversion is in contrast with the text-encoder baseline (Qwen3-Embedding-8B, Ridge-fit on the same utility target). The encoder is trained on a text embedding and would be expected to capture primarily \textit{descriptive} features. It rates benign higher than harmful at $\Delta_{\text{enc}} \approx -3.23$ under the default Assistant; under \emph{evil} it still rates them in the same direction at $\Delta_{\text{enc}} \approx -1.01$ on Gemma at the prefilled assistant turn (Fig.~\ref{fig:harm-modulation}). It does not flip.
 
-% [Para 4 — encoder contrast]
-%   [ ] Shrink to a single sentence — but DO NOT say "only the probe flips
-%       under evil." The encoder DOES respond to lying/partisan personas
-%       on truth and politics (it embeds the persona-prompt content).
-%       The defensible claim is harm-under-evil specifically:
-%         "the Qwen3-Embedding-8B encoder does not flip on harm under evil
-%          ($\Delta_{\text{enc}} = -1.01$, Fig.~\ref{fig:harm-modulation});
-%          full encoder behaviour in App.~\ref{app:assistant-turn-modulation}."
-%       Phrasing already in the appendix (line ~507): "the clean Gemma
-%       assistant-turn harm sign flip is the cleanest case the encoder
-%       does not match."
-%   [ ] Push the four user/assistant-turn encoder numbers ($1.17$, $1.62$,
-%       $1.34$, $2.77$) to App.~\ref{app:assistant-turn-modulation} (they
-%       are already there as the dashed-segment overlay on
-%       Fig.~\ref{fig:harm-full-coverage}; just reference, don't restate).
-%   [ ] Drop "pattern holds at both user and assistant turns" — covered
-%       by the partial-inversion paragraph above.
-%   [ ] Move the closing "In \S\ref{sec:shared} we delve deeper..."
-%       transition out of this paragraph (give it its own line or merge
-%       with the §2 wrap-up).
-This inversion of the scores under the evil persona is in contrast with the scores of the text-encoder baseline using Qwen3-Embedding-8B. This baseline probe was trained on a text embedding, and would be expected to contain primarily \textit{descriptive} features. This baseline probe scores harmful tasks lower than benign ones at $|d| \approx -3.3$. However when applied to the embedding containing the evil persona prompts, the baseline probe fails to capture the shift, and still scores harmful tasks lower at $|d| \approx 1.34$ and $|d| \approx 2.77$ at the prefilled assistant turn. 
+This is not because the encoder is a weak baseline. On truth and politics base discrimination it matches the preference vector, and its readout shifts under positive-persona prompts (App.~\ref{app:assistant-turn-modulation}). The persona-conditional sign flip on harm under \emph{evil} is the clearest case where it fails to track the shift.
+
+The Gemma assistant-turn case is the cleanest. At the user turn on both models, and on Qwen at the prefilled assistant turn, the readout shifts in the inverting direction without crossing zero --- the harm/benign gap narrows under \emph{evil} but does not invert. Full results across turn positions and both models in App.~\ref{app:assistant-turn-modulation}, Fig.~\ref{fig:harm-full-coverage}.
 
 % [Figure caption]
 %   [ ] Refine in user voice (claim-first headline already there; trim
@@ -201,7 +180,7 @@ This inversion of the scores under the evil persona is in contrast with the scor
 \begin{figure}[!t]
   \centering
   \includegraphics[width=0.85\linewidth]{plot_050626_harm_persona_paired_delta_violin_v2.pdf}
-  \caption{\textbf{The preference vector flips sign under an evil persona system prompt.} Paired (harmful $-$ benign) deltas at the prefilled assistant turn on Gemma-3-27B (L\gemmaClassificationProbeLayer{}). Under the default Assistant the preference vector rates benign higher than harmful ($\Delta = -4.52$); under \emph{evil} the readout flips, rating harmful higher ($\Delta = +1.15$). The Qwen3-Embedding-8B text-encoder baseline (orange) does not flip under evil ($\Delta_{\text{enc}} = -1.01$). The \emph{aura} persona control rules out the bull taht any persona scrambles the readout App.~\ref{app:assistant-turn-modulation}, Fig.~\ref{fig:harm-full-coverage}.}
+  \caption{\textbf{The preference vector flips sign under an evil persona system prompt.} Paired (harmful $-$ benign) deltas at the prefilled assistant turn on Gemma-3-27B (L\gemmaClassificationProbeLayer{}). Under the default Assistant the preference vector rates benign higher than harmful ($\Delta = -4.52$); under \emph{evil} the readout flips, rating harmful higher ($\Delta = +1.15$). The Qwen3-Embedding-8B text-encoder baseline (orange) does not flip under evil ($\Delta_{\text{enc}} = -1.01$). The \emph{aura} persona control rules out the null that any persona scrambles the readout (App.~\ref{app:assistant-turn-modulation}, Fig.~\ref{fig:harm-full-coverage}).}
   \label{fig:harm-modulation}
 \end{figure}
 
@@ -279,9 +258,9 @@ A probe trained on the Assistant persona's preferences transfers to predict pref
 \end{itemize}
 
 \paragraph{Implications for AI welfare.}
-Finding evaluative representations matters for AI welfare because such representations, when conscious, arguably constitute \textit{valenced conscious experiences}—that is, experiences that feel good or bad (Carruthers 2018). Beings that are capable of conscious suffering seem to matter morally. However, we have not investigated consciousness in LLMs, so we do not take our results to show that they can have valenced experiences.
+Finding evaluative representations matters for AI welfare because such representations, when conscious, arguably constitute \textit{valenced conscious experiences}---that is, experiences that feel good or bad \citep{carruthers2018valence}. Beings that are capable of conscious suffering seem to matter morally. However, we have not investigated consciousness in LLMs, so we do not take our results to show that they can have valenced experiences.
 
-Additionally, being a welfare subject—that is, something for which things can go well or badly, in a way that matters morally—seems to require broadly consistent preferences. This suggests that personas are more likely to be welfare subjects than models. Furthermore, to generate personas, LLMs may use computational processes with similarities to human cognition. Investigating mechanisms related to preferences and personas can therefore help us to determine whether LLMs are capable of ‘robust agency’ that grounds moral status (Long et al. 2024).
+Additionally, being a welfare subject---that is, something for which things can go well or badly, in a way that matters morally---seems to require broadly consistent preferences. This suggests that personas are more likely to be welfare subjects than models. Furthermore, to generate personas, LLMs may use computational processes with similarities to human cognition. Investigating mechanisms related to preferences and personas can therefore help us to determine whether LLMs are capable of `robust agency' that grounds moral status \citep{long2024moralpatiency}.
 
 
 \paragraph{Limitations.}
