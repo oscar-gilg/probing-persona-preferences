@@ -244,7 +244,7 @@ The finding generalises beyond probes trained on the Assistant persona. Across a
 \begin{figure}[!t]
   \centering
   \includegraphics[width=0.7\linewidth]{plot_050626_persona_transfer_delta.png}
-  \caption{\textbf{Cross-persona probe transfer ($7 \times 7$, layer \gemmaClassificationProbeLayer): every pair has positive $\Delta$.} Rows: probe (training) persona; cols: target persona. Each cell shows the Pearson $r$ between the probe's predictions on the target's activations and the target's own utilities (bold, top) and the bare Pearson $r$ between the train and target utilities (purple, in parens), echoing the naive baseline of Fig.~\ref{fig:default-probe}. Cell colour: $\Delta = \text{probe}~r - \text{utility}~r$. Diagonal masked (utility $r \equiv 1$ there); diagonal entries show the self-fit probe $r$ for reference.}
+  \caption{\textbf{Cross-persona probe transfer ($7 \times 7$, layer \gemmaClassificationProbeLayer): every pair has positive $\Delta$.. Each cell shows the Pearson $r$ between the probe's predictions on the target's activations and the target's own utilities (bold, top) and the bare Pearson $r$ between the train and target utilities (purple, in parens), echoing the naive baseline of Fig.~\ref{fig:default-probe}. Cell colour: $\Delta = \text{probe}~r - \text{utility}~r$. Diagonal masked (utility $r \equiv 1$ there); diagonal entries show the self-fit probe $r$ for reference.}
   \label{fig:persona-transfer-bonus}
 \end{figure}
 
