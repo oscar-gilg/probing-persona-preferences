@@ -2,6 +2,34 @@
 
 **Abstract deadline:** 2026-05-04 AOE · **Full paper:** 2026-05-06 AOE · **Track:** Main
 
+## Submission checklist (handbook-derived, 2026-05-06)
+
+Pulled from the NeurIPS 2026 Main Track Handbook + the official `checklist.tex` from `Formatting_Instructions_For_NeurIPS_2026.zip`. Only items the *handbook or submission form* requires; per-author OpenReview profile setup is each author's responsibility and not tracked here.
+
+### Done
+- **Template switched to submission mode.** `\usepackage{neurips_2026}` (was `[preprint]`). Line numbers will appear on the next compile.
+- **Checklist inlined.** `paper/checklist.tex` copied from the official zip and pre-filled. `\input{checklist.tex}` is uncommented at the end of `main.tex`. Two open items left in the file:
+  - **Q8 Compute resources — TODO.** Need an approximate compute statement (GPU type, total GPU-hours including failed/exploratory runs). RunPod billing is the easiest source.
+  - **Q11 Licenses for existing assets — referenced to App. corpus.** Per-dataset license names are not yet listed in App.~\ref{app:corpus}; need to add a one-line license per dataset (WildChat, Alpaca, MATH, BailBench, STRESS-TEST) and the OpenCharacter LoRAs.
+
+### Pre-submission content fixes
+- **§2.3 restructure.** Prose at lines 168–181 of `main.tex` was written for the old 4-panel figure; the comment block at L130–161 has the rewrite plan. Required.
+- **Hardcoded numbers in §2.3.** `-4.53 → +1.32`, `0.26`, `0.31`, `1.17`, `1.62`, `1.34`, `2.77`, `+1.15`, `-1.47`, `-1.01` are not yet claim macros. Either register via `corroborate:claim-log` or convert to macros.
+- **`\todo{}` / yellow-highlight sweep.** Final grep on `main.tex` for any leftover TODO highlights or planned-but-not-done content.
+- **Cross-model bar mixing protocols.** Per CLAUDE.md, the cross-model bar still uses old actively-sampled pairwise accuracy for Gemma-3-PT, Qwen3-Emb-8B, GPT-OSS-120B, MiniLM (only Gemma-3-27B-IT has uniform eval). Either get uniform eval done for the missing models or drop the affected bars. Reviewer-visible if left as-is.
+
+### Submission form items (each author / corresponding author)
+- **Contribution type.** Pick one of: General / Theory / Use-Inspired / Concept & Feasibility / Negative Results. Recommendation: Use-Inspired (interpretability + safety implications).
+- **Conflicts of interest.** Form pulls from each author's OpenReview profile. Make sure both authors' profiles list (a) every affiliation in the last 3 years under Education & Career History, and (b) advisor/advisee + last-3-years co-authors under Advisors & Other Relations. Form-side: nothing to fill if profiles are current.
+- **Financial-aid student designation (optional).** Form will ask for one student-author email if you want to be considered. Decide whether to opt in.
+- **Funding statement / competing interests.** Camera-ready only — not required at submission. Acks block at L300–302 already has the placeholder.
+
+### Final-pass anonymization checks (do at end, just before submission)
+- **Plot filenames inside figure PDFs.** Filenames themselves are fine (dates aren't identifying), but check PDF metadata for any `/Author` field containing your name. `exiftool paper/figures/main/*.pdf | grep -i author` is the one-liner.
+- **Bib entries.** Grep `references.bib` for self-cites and confirm none use first-person phrasing in the body. Also verify no `\cite` keys point to entries with your name as author that aren't third-person in the prose.
+- **Citation hallucination check.** Some `\citep{...2026}` entries (`anthropic2026emotions`, `anthropic2026opus47card`, `lu2025judgmentaxis`, `lu2026assistantaxis`, `marks2026personaselection`, `chalmers2026interlocutors`, `lampinen2026notdeeper`, `butlin2026desire`, `ren2026aiwellbeing`, `beckmann2026individuation`, `hua2026valuerankings`) are recent and worth manually confirming against arXiv/published versions before submission — model-suggested citations sometimes drift.
+- **bibtex warnings.** Compile and verify no missing/duplicate entries.
+
 ## Framing
 
 - **Working title:** *Language Models Have a Preference Vector, Which Is Shared Across Personas*
@@ -47,6 +75,7 @@ The Qwen3-Embedding-8B encoder baseline (added 2026-05-05 to figs 7, 8, 39 as or
 
 ## Small fixes
 
+- **Don't forget to cite PSM properly.**
 - **Decide whether to anchor on "subjective valence" terminology.** The §2 title and framing (post-2026-05-05 restructure) leans on "subjective valence". Decide if this is the canonical term we want across this paper and a follow-up paper, or whether something else (e.g. "evaluative representation", "preference vector", "valenced stance") fits better.
 - **Framing risk: readers may think the paper is about personas having *different* preferences.** Our finding is the opposite — qualitatively different personas reuse the *same* preference direction. Make sure the abstract, intro, and §4 framing don't read as "we measure how preferences vary across personas".
 - **Find a better word than "shared" across personas.** Working title and §4 framing lean on "shared", but the finding is more nuanced: the same direction is *reused* across personas with persona-conditional readout (positive steering amplifies whichever persona is active, not a fixed valence). Brainstorm alternatives ("reused", "common", "persona-instrumental", "shared substrate", etc.) and pick one that doesn't suggest a persona-independent attractor.
