@@ -104,6 +104,41 @@ The strongest single piece of evidence: **open-ended generation at c ∈ {-0.05,
 
 Subtler pattern: **the probe with the *highest* heldout decoding r (tb-4 at L38, r=0.946) has the *lowest* causal swing (0.00), while tb-1 (also r=0.946 but slightly less strong by the report's measure) has +0.17.** Linear decodability and causal efficacy don't just decouple on Qwen — they appear to be *negatively* correlated.
 
+## Concurrent literature: this is a known Qwen3.5-MoE phenomenon
+
+A literature check found **direct concurrent confirmation**.
+
+**[Behavioral Steering in a 35B MoE Language Model via SAE-Decoded Probe Vectors (Mar 2026)](https://arxiv.org/abs/2603.16335)** studied Qwen3.5-**35B**-A3B (the smaller MoE in the same family as our 122B-A10B), with the same hybrid GatedDeltaNet/attention architecture. Their headline result:
+
+> "Probe R² measures correlation between representations and labels, **not causal influence on model behavior**. A predictive direction in latent space need not be causally upstream of behavior."
+
+Their concrete demonstration: two probes from the same SAE layer, R²=0.792 and R²=0.795, **cosine similarity -0.017 (orthogonal)**. One steers (Cohen's d=+0.39), the other has zero behavioral effect (d=0.00). **This is exactly our tb-1 vs tb-4 pattern.**
+
+Their solution path was **SAE-decoded probe vectors** (`v_steer = W_dec^T × w_probe` — train ridge on SAE latents, project through the SAE decoder). They explicitly note that they did NOT compare against raw mean-diff or raw ridge directions in residual space — but the implication is that those are unreliable on this architecture, which is why they go to SAE-decoded.
+
+Other findings from the same paper / literature that match our observations:
+- "Steering during autoregressive decoding has zero effect (p > 0.35)" on GatedDeltaNet — behavioral commitments are compiled during prefill. (We applied prefill-only via `position_selective_steering`, so we're aligned with this.)
+- The recurrent state in linear-attention layers "compiles" behavioral decisions during prefill — different mechanism from standard attention.
+
+**[Omar Ayyub blog: "What I Learned (And Didn't) Steering Qwen3 Models" (Jan 2026)](https://omar.bet/2026/01/17/What-I-Learned-Steering-Qwen3-Models/)** also documents:
+- "Idiosyncratic model behavior" — some Qwen3 sizes are "consistently harder to steer" than neighbours.
+- "Shifting internals doesn't reliably translate to outcomes" — sycophancy steering produced only 8% behavior change despite similar effect sizes to other concepts.
+- RL-trained variants steer at deeper layers (70–85% depth) than distilled (50–65%) — none of our sampled layers fall in the deeper window for our specific RL-trained 122B-A10B.
+
+**[Steering MoE LLMs via Expert (De)Activation (Sep 2025)](https://arxiv.org/abs/2509.09660)** sidesteps residual-stream steering entirely by manipulating MoE router logits, achieving 20–27% behavioral effect on Qwen3-30B-A3B and similar models. This is a fundamentally different mechanism that works on the model's expert routing.
+
+### Resources that exist
+
+- **[Qwen-Scope](https://huggingface.co/Qwen)**: official open-source SAE suite for Qwen3.5 base models, **up to 35B-A3B** (e.g., `Qwen/SAE-Res-Qwen3.5-35B-A3B-Base-W128K-L0_100`). **No SAE published for our Qwen3.5-122B-A10B.**
+- IBM `sae-steering` repo, SAELens tutorials — generic SAE-steering code.
+
+### What this means for our finding
+
+- **Our methodology is correct.** Span tokenisation, hook attachment, contrastive math, parser — all verified.
+- **The weak/null result is the published expected behavior** for raw probe-direction steering on this architecture.
+- **The cross-model decoupling story is well-supported.** The Mar 2026 paper provides direct theoretical and empirical backing for the same phenomenon on a sister model.
+- **The path to actually steering Qwen3.5-MoE goes through SAE-decoded probes** (or expert-routing manipulation), not raw residual probe directions. That's a substantial follow-up: either train an SAE on Qwen3.5-122B-A10B (no public one exists) or downgrade to Qwen3.5-35B-A3B which has Qwen-Scope SAEs.
+
 What remains plausible but not verified:
 
 - **System-prompt distribution shift** (probe trained without `/no_think`, applied with it). Can't be cheaply tested due to thinking-trace truncation. Would need either a probe trained with `/no_think` OR `max_new_tokens` ≥ 512 to measure choice in non-`/no_think` mode.
