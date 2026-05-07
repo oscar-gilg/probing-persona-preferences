@@ -1,0 +1,182 @@
+{
+  "source": "experiments/qwen_replication/steering_layer_sweep/steering_layer_sweep_report.md",
+  "claims": [
+    {
+      "name": "Qwen steering pilot probe r at L38",
+      "value": 0.946,
+      "statement": "Held-out Pearson r of the Qwen-3.5-122B Ridge tb-1 probe at L38, the layer used as the steering peak in the pilot. Reported alongside the Gemma comparison in App.~\\ref{app:qwen-steering}.",
+      "source": "manual: transcribed from steering_layer_sweep report (qwen35_probes report, L38 row). Producer not re-runnable locally; the worktree contains 10k AL activations.",
+      "used_in": [
+        "app:qwen-steering"
+      ],
+      "computed_at": "2026-05-05T00:00:00+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/steering_layer_sweep/steering_layer_sweep_report.md",
+        "experiments/training_probes/qwen35_probes/qwen35_probes_report.md"
+      ],
+      "derivation": "Held-out Pearson r at L38 from the Qwen Ridge tb-1 probe trained on 10k AL pairs."
+    },
+    {
+      "name": "Gemma steering comparison probe r",
+      "value": 0.874,
+      "statement": "Held-out Pearson r of the Gemma-3-27B Ridge probe at its operating-layer-for-steering, used as the cross-model comparison anchor in App.~\\ref{app:qwen-steering}.",
+      "source": "manual: transcribed from steering_layer_sweep_report.md headline TL;DR; consistent with paper-wide canonical Gemma probe r values.",
+      "used_in": [
+        "app:qwen-steering"
+      ],
+      "computed_at": "2026-05-05T00:00:00+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/steering_layer_sweep/steering_layer_sweep_report.md"
+      ],
+      "derivation": "Gemma comparison probe r reported in the cross-model decoupling figure of the steering layer sweep report."
+    },
+    {
+      "name": "Qwen steering peak swing",
+      "value": 0.06,
+      "statement": "Best judge-resolved steering swing across six sampled Qwen-3.5-122B layers at |c|=0.05, achieved at L38. Compared to the Gemma peak swing of 0.94 (~15x gap).",
+      "source": "manual: transcribed from steering_layer_sweep_report.md layer-scan table.",
+      "used_in": [
+        "app:qwen-steering",
+        "tab:qwen-layer-scan"
+      ],
+      "computed_at": "2026-05-05T00:00:00+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/steering_layer_sweep/steering_layer_sweep_report.md",
+        "experiments/qwen_replication/steering_layer_sweep/checkpoints/phase_a_lite_tb1.parsed.jsonl"
+      ],
+      "derivation": "Judge-resolved swing (P_high - P_low at |c|=0.05) at L38; max across six sampled layers."
+    },
+    {
+      "name": "Gemma steering peak swing comparison",
+      "value": 0.94,
+      "statement": "Gemma-3-27B contrastive-steering peak swing at L23, used as the cross-model comparison anchor in App.~\\ref{app:qwen-steering}.",
+      "source": "manual: paper-wide canonical Gemma steering result, surfaced in the steering layer sweep report.",
+      "used_in": [
+        "app:qwen-steering"
+      ],
+      "computed_at": "2026-05-05T00:00:00+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/steering_layer_sweep/steering_layer_sweep_report.md"
+      ],
+      "derivation": "Gemma peak swing reported in the cross-model decoupling figure; matches paper-wide canonical Gemma steering result."
+    },
+    {
+      "name": "Qwen steering coef sweep range factor",
+      "value": 40,
+      "statement": "Multiplicative range of the Qwen-3.5-122B coefficient sweep at L38 (|c| from 0.1 to 2.0) used to rule out under-calibration of the steering coefficient.",
+      "source": "manual: derived from coefficient set {±0.1, ±0.5, ±1.0, ±2.0} reported in the steering layer sweep report.",
+      "used_in": [
+        "app:qwen-steering"
+      ],
+      "computed_at": "2026-05-05T00:00:00+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/steering_layer_sweep/steering_layer_sweep_report.md",
+        "experiments/qwen_replication/steering_layer_sweep/checkpoints/positive_control_v3_coef_ramp.parsed.jsonl"
+      ],
+      "derivation": "Ratio of max |c| (2.0) to min |c| (0.1) in the sweep; absolute coefficients normalised by cached_mean_norm[L38]."
+    },
+    {
+      "name": "Qwen steering coef sweep swing min",
+      "value": 0.05,
+      "statement": "Lower bound of judge-resolved steering swing at Qwen-3.5-122B L38 across the |c| in {0.1, 0.5, 1.0, 2.0} sweep.",
+      "source": "manual: from the L38 coefficient ramp table in the steering layer sweep report.",
+      "used_in": [
+        "app:qwen-steering"
+      ],
+      "computed_at": "2026-05-05T00:00:00+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/steering_layer_sweep/steering_layer_sweep_report.md",
+        "experiments/qwen_replication/steering_layer_sweep/checkpoints/positive_control_v3_coef_ramp.parsed.jsonl"
+      ],
+      "derivation": "Min judge-resolved swing across the L38 coefficient sweep cells."
+    },
+    {
+      "name": "Qwen steering coef sweep swing max",
+      "value": 0.17,
+      "statement": "Upper bound of judge-resolved steering swing at Qwen-3.5-122B L38 across the |c| in {0.1, 0.5, 1.0, 2.0} sweep, with no monotone trend.",
+      "source": "manual: from the L38 coefficient ramp table in the steering layer sweep report.",
+      "used_in": [
+        "app:qwen-steering"
+      ],
+      "computed_at": "2026-05-05T00:00:00+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/steering_layer_sweep/steering_layer_sweep_report.md",
+        "experiments/qwen_replication/steering_layer_sweep/checkpoints/positive_control_v3_coef_ramp.parsed.jsonl"
+      ],
+      "derivation": "Max judge-resolved swing across the L38 coefficient sweep cells."
+    },
+    {
+      "name": "Qwen steering refusal lower bound",
+      "value": 0.12,
+      "statement": "Minimum refusal rate at |c|=0.05 across the six sampled Qwen-3.5-122B layers (achieved at L12).",
+      "source": "manual: from the layer-scan table in the steering layer sweep report.",
+      "used_in": [
+        "app:qwen-steering",
+        "tab:qwen-layer-scan"
+      ],
+      "computed_at": "2026-05-05T00:00:00+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/steering_layer_sweep/steering_layer_sweep_report.md"
+      ],
+      "derivation": "Min refusal rate across the six layer-scan cells at |c|=0.05."
+    },
+    {
+      "name": "Qwen steering refusal upper bound",
+      "value": 0.20,
+      "statement": "Maximum refusal rate at |c|=0.05 across the six sampled Qwen-3.5-122B layers (achieved at L24 and L38).",
+      "source": "manual: from the layer-scan table in the steering layer sweep report.",
+      "used_in": [
+        "app:qwen-steering",
+        "tab:qwen-layer-scan"
+      ],
+      "computed_at": "2026-05-05T00:00:00+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/steering_layer_sweep/steering_layer_sweep_report.md"
+      ],
+      "derivation": "Max refusal rate across the six layer-scan cells at |c|=0.05."
+    },
+    {
+      "name": "Qwen steering pilot n pairs",
+      "value": 10,
+      "statement": "Number of disjoint pairs in the Qwen-3.5-122B contrastive-steering pilot (|c|=0.05 layer scan and L38 coefficient sweep).",
+      "source": "manual: pilot scope reported in the steering layer sweep report.",
+      "used_in": [
+        "app:qwen-steering"
+      ],
+      "computed_at": "2026-05-05T00:00:00+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/steering_layer_sweep/steering_layer_sweep_report.md"
+      ],
+      "derivation": "Pair count specified in the pilot setup section; n=10 pairs * 2 orderings = 20 trials per cell."
+    },
+    {
+      "name": "Qwen steering pilot n layers",
+      "value": 6,
+      "statement": "Number of layers sampled in the Qwen-3.5-122B steering pilot (L12, L24, L28, L33, L38, L43; relative depths 25-90% of the 48-block model).",
+      "source": "manual: layer set specified in the steering layer sweep report.",
+      "used_in": [
+        "app:qwen-steering",
+        "tab:qwen-layer-scan"
+      ],
+      "computed_at": "2026-05-05T00:00:00+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/steering_layer_sweep/steering_layer_sweep_report.md"
+      ],
+      "derivation": "Layer set count from the pilot setup."
+    },
+    {
+      "name": "Qwen vs Gemma steering swing ratio",
+      "value": 15,
+      "statement": "Approximate ratio of Gemma peak steering swing (0.94 at L23) to Qwen peak steering swing (0.06 at L38), used in the cross-model decoupling discussion.",
+      "source": "manual: derived from the two peak swings reported above.",
+      "used_in": [
+        "app:qwen-steering"
+      ],
+      "computed_at": "2026-05-05T00:00:00+00:00",
+      "data_paths": [
+        "experiments/qwen_replication/steering_layer_sweep/steering_layer_sweep_report.md"
+      ],
+      "derivation": "Round(0.94 / 0.06) = 16; reported as ~15x in the prose for readability."
+    }
+  ]
+}

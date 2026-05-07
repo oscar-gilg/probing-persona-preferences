@@ -10,14 +10,6 @@ Pulled from the NeurIPS 2026 Main Track Handbook + the official `checklist.tex` 
 - **Template switched to submission mode.** `\usepackage{neurips_2026}` (was `[preprint]`). Line numbers will appear on the next compile.
 - **Checklist inlined.** `paper/checklist.tex` copied from the official zip and pre-filled. Q11 license bullets added to App.~\ref{app:corpus} (2026-05-06): WildChat ODC-BY 1.0, Alpaca CC BY-NC 4.0, MATH MIT, BailBench MIT, STRESS-TEST Apache 2.0; OpenCharacter LoRAs Llama 3.1 Community License.
 
-### Pre-submission content fixes
-- **Hardcoded numbers in §2.3.** Only `-0.31` (`main.tex:158`, Qwen Δ under evil) remains from the original list — the other 4 (1.17, 1.62, 1.34, 2.77) were removed during the §2.3 restructure. `-4.53`, `+1.32`, `+1.15`, `-1.47`, `-1.01` now match registered macros after 2026-05-06 L32 migration; just need swap to macro form.
-
-### Submission form items (each author / corresponding author)
-- **Contribution type.** Pick one of: General / Theory / Use-Inspired / Concept & Feasibility / Negative Results. Recommendation: Use-Inspired (interpretability + safety implications).
-- **Conflicts of interest.** Form pulls from each author's OpenReview profile. Make sure both authors' profiles list (a) every affiliation in the last 3 years under Education & Career History, and (b) advisor/advisee + last-3-years co-authors under Advisors & Other Relations. Form-side: nothing to fill if profiles are current.
-- **Financial-aid student designation (optional).** Form will ask for one student-author email if you want to be considered. Decide whether to opt in.
-- **Funding statement / competing interests.** Camera-ready only — not required at submission. Acks block at L300–302 already has the placeholder.
 
 ### Final-pass anonymization checks (do at end, just before submission)
 - **Plot filenames inside figure PDFs.** Checked 2026-05-07: no `/Author` field in any of the 6 PDFs in `paper/figures/`. Soft concern: `paper/figures/panels/hero.pdf` (Google Drawings export) carries `/Creator: "Google"` and `/Title: "preferences_main_v5"` — no name leak but the title reveals the source-doc name. Strip with `qpdf --linearize --replace-input` after `qpdf --update-from-json` (or re-export without metadata) before submission if paranoid.
@@ -33,9 +25,6 @@ Pulled from the NeurIPS 2026 Main Track Handbook + the official `checklist.tex` 
 
 Paper structure is now codified in `main.tex` --- refer there rather than duplicating.
 
-## Robustness / specificity checks
-
-- **Project out the direction and retrain.** Remove the probe direction from activations, retrain a preference probe, see what signal remains.
 
 ## Infra
 
@@ -55,16 +44,12 @@ Paper structure is now codified in `main.tex` --- refer there rather than duplic
 - **Encoder-on-modulated-stimuli data missing for `{lying personas, evil}`** — encoder data only exists for `{neutral, aura}`. Running it would let the orange dashed segments appear under those columns in the persona-modulation figures, visualising the LM-vs-encoder split where it matters most.
 
 ## Small fixes
-
-- **Decide whether to anchor on "subjective valence" terminology.** The §2 title and framing (post-2026-05-05 restructure) leans on "subjective valence". Decide if this is the canonical term we want across this paper and a follow-up paper, or whether something else (e.g. "evaluative representation", "preference vector", "valenced stance") fits better.
 - **Framing risk: readers may think the paper is about personas having *different* preferences.** Our finding is the opposite — qualitatively different personas reuse the *same* preference direction. Make sure the abstract, intro, and §4 framing don't read as "we measure how preferences vary across personas".
 - **Find a better word than "shared" across personas.** Working title and §4 framing lean on "shared", but the finding is more nuanced: the same direction is *reused* across personas with persona-conditional readout (positive steering amplifies whichever persona is active, not a fixed valence). Brainstorm alternatives ("reused", "common", "persona-instrumental", "shared substrate", etc.) and pick one that doesn't suggest a persona-independent attractor.
-- **§3.1 needs more exposition.** The role-playing-induced shifts section (truth / harm / politics Cohen's $d$) jumps straight from setup to results. Reader needs more hand-holding: why these axes, what the prefill does, how to interpret a sign flip vs. a magnitude collapse, why the Aura control matters. Currently terse to the point of opaque on first read.
 - **Probe dials not visible enough.** The probe-gauge icons inside the panel figures (persona, OOD, steering) are small and read as incidental rather than as the readout the figure is built around. Enlarge / restyle for legibility at column width.
-
-## Inconsistencies to fix before submission
-
-- **§3.1 v1↔v2 stimulus mismatch (added 2026-05-02).** Base-discrimination paragraph + `fig:harm-truth` are on v2 stimuli (CREAK-with-knowledge-filter / BailBench-with-paired-benign / OpinionQA-stance-translation, n≈500/side). Persona-modulation paragraph + `fig:persona-modulation-user` are still on v1 stimuli — Gemma Assistant truth $d=+3.35$, pathological_liar $d=-2.02$ in prose vs. $d=1.90$ in v2 base-discrim. Reason: prompted-Qwen evil personas don't reliably flip the readout in v2 (we believe Qwen prompting just doesn't elicit "evil" well), and we plan to redo the persona-modulation panel with **SFT'd Qwen evil personas** rather than prompted ones. Action: when the SFT variant lands, re-score with `experiments/eot_discrimination_v2/scripts/run_scoring.py` and regenerate `fig:persona-modulation-user`; then harmonise prose. Handoff doc: `experiments/eot_discrimination_v2/HANDOFF.md` (on main); full v2 work on branch `eot_discrimination_v2`.
+- **Unify font sizes, especially in figures.** Tick labels, axis labels, legends, and in-figure annotations vary across panels (matplotlib defaults vs hand-set sizes vs Google-Drawings exports). Pick one set of sizes per role and apply consistently across all figures.
+- **Add $c=0.03$ and $c=0.05$ ticks to Figs 3 and 8 (dose-response).** Both steering dose-response plots (`fig:steering`, `fig:cross-persona-steering`) currently skip these intermediate coefficients on the x-axis even though prose quotes values at $\pm 0.05$ — make them readable off the figure.
+- **Rewrite Fig 1 (hero) caption.** Currently just the paper title in bold (`main.tex:69`). Should describe what the panels show — the probe-as-classifier and probe-as-steering-vector readouts under default/persona conditions — so the figure stands on its own at first read.
 
 ## Error bars — work done and remaining
 
