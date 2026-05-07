@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import math
+from collections import defaultdict
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -64,69 +65,73 @@ def _p_a_at(rows: list[dict], pred) -> tuple[float, float, int] | None:
     return p, math.sqrt(p * (1 - p) / n), n
 
 
-def _baseline_p(baseline_rows: list[dict]) -> float:
-    stat = _p_a_at(baseline_rows, lambda r: True)
-    return 0.5 if stat is None else stat[0]
-
-
-def contrastive_curve(rows: list[dict], baseline_rows: list[dict]):
-    """y = P(picked A) − baseline + 0.5. Lift-corrected so c=0 baseline lands
-    at 0.5, removing per-persona task-identity bias while preserving the
-    steering effect. Differential setup: +c·probe on A, −c·probe on B.
-
-    With the L23 finegrain run, c=0 is measured directly inside `rows`.
-    `baseline_rows` is just the c=0 subset (computed by load_all)."""
-    base = _baseline_p(baseline_rows)
-    shift = 0.5 - base
-    coefs = sorted({r["signed_multiplier"] for r in rows if _effective_choice(r) in ("a", "b")})
-    out_xs, out_ys, out_es = [], [], []
-    for c in coefs:
-        stat = _p_a_at(rows, lambda r, c=c: abs(r["signed_multiplier"] - c) < 1e-6)
-        if stat is None:
+def contrastive_curve(rows: list[dict]):
+    """y = P(chose steered task | responded). Each responded row contributes
+    two points to the bin pool: (+mult, chose==A) and (-mult, chose==B).
+    Differential setup is symmetric in A↔B (+c on A, −c on B is the same
+    intervention as −c on A, +c on B, just with the labels swapped), so this
+    re-parametrisation produces a curve antisymmetric about (0, 0.5) and
+    drops position / task-identity bias out of the average. Mirrors the
+    contrastive panel in `scripts/paper/plot_layer_sweep_dose_response_150.py`."""
+    points: dict[float, list[bool]] = defaultdict(list)
+    for r in rows:
+        ch = _effective_choice(r)
+        if ch not in ("a", "b"):
             continue
-        p, se, _ = stat
+        mult = r["signed_multiplier"]
+        points[round(+mult, 6)].append(ch == "a")
+        points[round(-mult, 6)].append(ch == "b")
+    out_xs, out_ys, out_es = [], [], []
+    for c in sorted(points):
+        flags = points[c]
+        n = len(flags)
+        if n == 0:
+            continue
+        p = sum(flags) / n
         out_xs.append(c)
-        out_ys.append(p + shift)
-        out_es.append(se)
-    order = sorted(zip(out_xs, out_ys, out_es))
-    return [t[0] for t in order], [t[1] for t in order], [t[2] for t in order]
+        out_ys.append(p)
+        out_es.append(math.sqrt(p * (1 - p) / n))
+    return out_xs, out_ys, out_es
 
 
-def single_task_curve(rows: list[dict], baseline_rows: list[dict]):
-    """Coalesced single-task. spans={first:1} steers physical A; spans={second:1}
-    steers physical B. For unilateral_second we negate the coef so both
-    conditions share the same x-axis direction (positive = A promoted).
-    y = P(picked A) − baseline + 0.5 (lift-corrected, c=0 → 0.5).
-    Note: at c=0 both conditions reduce to no-op so they get pooled there."""
-    base = _baseline_p(baseline_rows)
-    shift = 0.5 - base
-    eff_set = sorted({
-        r["signed_multiplier"] * (1 if r["condition"] == "unilateral_first" else -1)
-        for r in rows if _effective_choice(r) in ("a", "b")
-    })
-    out_xs, out_ys, out_es = [], [], []
-    for x in eff_set:
-        def match(r, x=x):
-            sign = 1 if r["condition"] == "unilateral_first" else -1
-            return abs(r["signed_multiplier"] * sign - x) < 1e-6
-        stat = _p_a_at(rows, match)
-        if stat is None:
+def single_task_curve(rows: list[dict]):
+    """Coalesced single-task. y = P(chose steered task | responded), pooled
+    over unilateral_first (A is steered) and unilateral_second (B is steered)
+    at the same applied coefficient c (the coef on the steered task). x-axis
+    is c itself (no negation). A↔B identity drops out of the average: at c=0
+    the no-op makes the steered task equally likely to be A or B in the pool,
+    and any per-task position bias on A is exactly cancelled by the matching
+    deficit on B, anchoring y(0) = 0.5 honestly."""
+    points: dict[float, list[bool]] = defaultdict(list)
+    for r in rows:
+        ch = _effective_choice(r)
+        if ch not in ("a", "b"):
             continue
-        p, se, _ = stat
-        out_xs.append(x)
-        out_ys.append(p + shift)
-        out_es.append(se)
-    order = sorted(zip(out_xs, out_ys, out_es))
-    return [t[0] for t in order], [t[1] for t in order], [t[2] for t in order]
+        if r["condition"] == "unilateral_first":
+            steered_chose = (ch == "a")
+        elif r["condition"] == "unilateral_second":
+            steered_chose = (ch == "b")
+        else:
+            continue
+        points[round(r["signed_multiplier"], 6)].append(steered_chose)
+    out_xs, out_ys, out_es = [], [], []
+    for c in sorted(points):
+        flags = points[c]
+        n = len(flags)
+        if n == 0:
+            continue
+        p = sum(flags) / n
+        out_xs.append(c)
+        out_ys.append(p)
+        out_es.append(math.sqrt(p * (1 - p) / n))
+    return out_xs, out_ys, out_es
 
 
 def load_all():
     diff = {p: _load(FINEGRAIN_CHECKPOINTS / f"{p}_contrastive.parsed.jsonl") for p in PERSONAS}
     uni = {p: _load(FINEGRAIN_CHECKPOINTS / f"{p}_single_task.parsed.jsonl") for p in PERSONAS}
-    # Baseline = coef=0 rows from the contrastive checkpoint (probe-independent).
-    base = {p: [r for r in diff[p] if r["signed_multiplier"] == 0] for p in PERSONAS}
-    contrastive = {p: contrastive_curve(diff[p], base[p]) for p in PERSONAS}
-    single = {p: single_task_curve(uni[p], base[p]) for p in PERSONAS}
+    contrastive = {p: contrastive_curve(diff[p]) for p in PERSONAS}
+    single = {p: single_task_curve(uni[p]) for p in PERSONAS}
     return contrastive, single
 
 
@@ -154,7 +159,7 @@ def plot_overlay(ax, persona_curves: dict, *, label: str = "") -> None:
         xs, ys, es = persona_curves[persona]
         ax.errorbar(xs, ys, yerr=es,
                     color=PERSONA_COLORS[persona],
-                    marker="o", markersize=3, linewidth=1.3,
+                    marker="o", markersize=5, linewidth=1.3,
                     capsize=1.5, alpha=0.85, label=persona)
 
 

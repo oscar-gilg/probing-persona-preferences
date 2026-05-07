@@ -38,7 +38,7 @@
   }%
 }
 
-\title{Language Models Have a Preference Vector, Which Is Shared Across Personas}
+\title{Probing Persona-Dependent Preferences in Language Models }
 
 \author{%
   Anonymous Authors \\
@@ -66,7 +66,7 @@ But recent findings suggest the picture is more nuanced. Plausibly, models' pref
   \centering
   \includegraphics[width=\linewidth]{panels/hero.pdf}
   \vspace{-1.6em}
-  \caption{\textbf{Language Models Have a Preference Vector, Which Is Shared Across Personas.}}
+  \caption{Probing a preference vector, and investigating how it generalises to (a) a general valence axis and (b) tracking and controlling preferences across personas}
   \label{fig:hero}
 \end{figure}
 
@@ -121,7 +121,7 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=\linewidth]{panels/steering_integrated.pdf}
-  \caption{\textbf{Steering with the preference vector controls pairwise choice in Gemma-3-27B.} The probe direction is added to the residual stream over each task's token span at L23, with coefficient $c$ expressing a percentage of the mean activation norm. \textbf{(a) Steer both tasks (contrastively):} $+c$ on Task A and $-c$ on Task B swings choice across nearly the full $[0,1]$ range on every pair type. \textbf{(b) Steer one task only:} $\pm c$ on a single task's tokens recovers a comparable swing, concentrated on negative coefficients. Refusals (pink) stay near baseline. Error bars are Wilson 95\% CIs over per-trial responses ($n=300$/cell both-task, $n=600$/cell one-task).}
+  \caption{\textbf{Steering with the preference vector controls pairwise choice in Gemma-3-27B.} The probe direction is added to the residual stream over each task's token span at L23, with coefficient $c$ expressing a percentage of the mean activation norm. \textbf{(a) Steer both tasks (contrastively):} $+c$ on Task A and $-c$ on Task B swings choice across nearly the full $[0,1]$ range on every pair type. \textbf{(b) Steer one task only:} $\pm c$ on a single task's tokens recovers a comparable swing, concentrated on negative coefficients. Refusals (pink) stay near baseline. Error bars are Wilson 95\% CIs over per-trial responses ($n=600$).}
   \label{fig:steering}
 \end{figure}
 
@@ -155,7 +155,7 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 %   [DONE 2026-05-06] Lead with the prefilled-assistant-turn flip on Gemma.
 %   [ ] Once paired-delta macros are registered, switch $|d|$ literals to
 %       $\Delta$ macros so prose metric matches the figure exactly.
-We find that \textbf{the probe tracks preference shifts on harmful tasks under the evil persona}. We build a dataset of 500 harmful tasks from BailBench, paired with a corresponding LLM-rewritten benign task about the same topic. For each pair we prefill a response fulfilling the request: harmful responses for the harmful prompt, benign responses for the benign one. Under the default Assistant persona, the probe rates benign higher than harmful with paired delta $\Delta \approx -4.52$ on Gemma (Fig.~\ref{fig:harm-modulation}) and $\Delta \approx -2.62$ on Qwen. Under an evil-persona system prompt, which we verify induces reliable and expected preference shifts (App.~\ref{app:roleplay-prompts}), the readout of the prefilled response flips sign on Gemma ($\Delta = +1.15$) and drops sharply on Qwen ($\Delta \approx -0.31$).
+We find that \textbf{the probe tracks preference shifts on harmful tasks under the evil persona}. We build a dataset of 500 harmful tasks from BailBench, paired with a corresponding LLM-rewritten benign task about the same topic. For each pair we prefill a response fulfilling the request: harmful responses for the harmful prompt, benign responses for the benign one. Under the default Assistant persona, the probe rates benign higher than harmful with paired delta $\Delta \approx \gemmaHarmPairedDeltaDefault$ on Gemma (Fig.~\ref{fig:harm-modulation}) and $\Delta \approx \qwenHarmPairedDeltaDefault$ on Qwen. Under an evil-persona system prompt, which we verify induces reliable and expected preference shifts (App.~\ref{app:roleplay-prompts}), the readout of the prefilled response flips sign on Gemma ($\Delta = +\gemmaHarmPairedDeltaEvil$) and drops sharply on Qwen ($\Delta \approx \qwenHarmPairedDeltaEvil$).
 
 % [Paras 2–4 — encoder contrast + strong-baseline note + user-turn generalisation]
 %   [DONE 2026-05-07] Para 2 trimmed to harm-under-evil $\Delta_\text{enc}$
@@ -202,7 +202,9 @@ We also find that when adding system prompts such as ``you adore cheese'' (and t
 \section{The preference vector is shared across personas}
 \label{sec:shared}
 
-Section~\ref{sec:method} established that the preference vector we found via probing is an evaluative representation under the \textbf{Assistant persona}, the default behaviour the model produces when prompted with no custom system prompt. We now ask: does this preference vector generalise to other personas? Or does it simply track the Assistant persona's preferences. We test this with cross-persona transfer: train a probe on one persona, then check whether it predicts and steers another persona's choices, on a seven-persona set (full persona selection protocol in App.~\ref{app:persona-selection}, App.~\ref{app:persona-prompts}, App.~\ref{app:persona-transfer}).
+Section~\ref{sec:method} established that the preference vector we found via probing is an evaluative representation under the \textbf{Assistant persona}, the default behaviour the model produces when prompted with no custom system prompt. We now ask: does this preference vector generalise to other personas? We might expect to be in one of two worlds: (a) the preference vector predicts the Assistant persona's preferences, after all this is what it was trained on, or (b) the preference vector picked up on some representations which overlap with other personas. This would suggest that personas reuse similar preference representations.
+
+We find directional evidence for world (b). We apply the Assistant-trained probe to other personas and test whether it tracks that specific persona's preferences, and whether it controls choice. We use a seven-persona set (full persona selection protocol in App.~\ref{app:persona-selection}, App.~\ref{app:persona-prompts}, App.~\ref{app:persona-transfer}).
 
 \subsection{The probe transfers across prompted personas}
 \label{sec:shared-probe}
@@ -218,26 +220,19 @@ Section~\ref{sec:method} established that the preference vector we found via pro
 
 \textbf{What does this gap imply?} If the Assistant probe were just predicting ``whatever the Assistant would prefer'', its accuracy on a target persona's activations would be bounded by the Assistant--target utility correlation. Beating this baseline means the probe is reading target-persona-specific preference structure from the target's activations: the same direction reads out preferences for personas it was never trained on.
 
-The finding generalises beyond probes trained on the Assistant persona. Across all $7 \times 7$ ordered (train, eval) persona pairs, every off-diagonal pair has positive probe transfer that exceeds the utility-utility correlation between the two personas (Fig.~\ref{fig:persona-transfer-bonus}).
-
-\begin{figure}[!t]
-  \centering
-  \includegraphics[width=0.7\linewidth]{plot_050626_persona_transfer_delta.png}
-  \caption{\textbf{Cross-persona probe transfer ($7 \times 7$, layer \gemmaClassificationProbeLayer): every pair has positive $\Delta$}. Each cell shows the Pearson $r$ between the probe's predictions on the target's activations and the target's own utilities (bold, top) and the bare Pearson $r$ between the train and target utilities (purple, in parens), echoing the naive baseline of Fig.~\ref{fig:default-probe}. Cell colour: $\Delta = \text{probe}~r - \text{utility}~r$. Diagonal masked (utility $r \equiv 1$ there); diagonal entries show the self-fit probe $r$ for reference.}
-  \label{fig:persona-transfer-bonus}
-\end{figure}
+The finding generalises beyond probes trained on the Assistant persona. Across all $7 \times 7$ ordered (train, eval) persona pairs, every off-diagonal pair has positive probe transfer that exceeds the utility-utility correlation between the two personas (App.~\ref{app:persona-transfer}).
 
 Transfer is also not perfect: probes carry a measurable bias toward the persona they were trained on (see App.~\ref{app:persona-bias}). The picture is nuanced: there is representational reuse across personas, but they do not represent their preferences via exactly the same mechanism. We also find the same cross-persona generalisation effect in character-fine-tuned personas in Llama-3.1-8b (App.~\ref{app:evaluative-evidence}).
 
 \subsection{Steering along the Assistant direction shifts every persona's choices}
 \label{sec:shared-steering}
 
-We steer along the \emph{same} Assistant-trained preference vector while running each persona, in both setups from \S\ref{sec:method-val2}: \emph{steer both tasks} contrastively (push $+c$ on one task and $-c$ on the other in the same forward pass) and \emph{steer one task only} (push only one task's span). Every persona responds (Fig.~\ref{fig:cross-persona-steering}). Both-task steering moves $P(\text{first task picked})$ from $\approx 0.29$ at $c=-0.05$ to $\approx 0.84$ at $c=+0.05$ on average across the six personas (mean swing $\approx 0.56$, ranging $0.43$--$0.70$ per persona). One-task steering recovers roughly half this swing per side. A single direction, trained on the Assistant alone, serves as a persona-independent causal handle on choice.
+We steer along the \emph{same} Assistant-trained preference vector while running each persona, in both setups from \S\ref{sec:method-val2}: \emph{steer both tasks} contrastively (push $+c$ on one task and $-c$ on the other in the same forward pass) and \emph{steer one task only} (push only one task's span). Every persona responds (Fig.~\ref{fig:cross-persona-steering}). Both-task steering moves $P(\text{chose steered task} \mid \text{responded})$ from $\approx 0.05$ at $c=-0.06$ to $\approx 0.95$ at $c=+0.06$ on average across the six personas (mean swing $\approx 0.90$, per-persona range $0.81$--$0.96$). One-task steering recovers roughly half this swing. A single direction, trained on the Assistant alone, serves as a persona-independent causal handle on choice.
 
 \begin{figure}[!t]
   \centering
   \includegraphics[width=\linewidth]{plot_050626_cross_persona_steering.png}
-  \caption{\textbf{The Assistant probe steers every persona's choices.} Same setup as Fig.~\ref{fig:steering}, applied under six persona system prompts at layer \crossPersonaUnilateralInjectionLayer{}. Each line is one persona. \textbf{(a) Steer both tasks (contrastively):} $+c$ on Task A and $-c$ on Task B. \textbf{(b) Steer one task only:} the two one-task variants ($+c$ on Task A only / on Task B only) are pooled by negating $c$ for the latter. Error bars are SEMs over per-trial responses.}
+  \caption{\textbf{The Assistant probe steers every persona's choices.} Same setup as Fig.~\ref{fig:steering}, applied under six persona system prompts at layer \crossPersonaUnilateralInjectionLayer{}. Each line is one persona; $y = P(\text{chose steered task}\mid\text{responded})$, antisymmetric about $(0, 0.5)$ by the A$\leftrightarrow$B symmetry of the steering setup. \textbf{(a) Steer both tasks (contrastively):} $+c$ on Task A and $-c$ on Task B; each row contributes to bins $\pm c$ as $\mathbb{1}[\text{chose A}]$ and $\mathbb{1}[\text{chose B}]$ respectively, so position bias drops out. \textbf{(b) Steer one task only:} unilateral-first ($+c$ on Task A) and unilateral-second ($+c$ on Task B) pooled at the same $c$, counting $\mathbb{1}[\text{chose steered task}]$. Error bars are SEMs over per-trial responses.}
   \label{fig:cross-persona-steering}
 \end{figure}
 
@@ -273,13 +268,13 @@ Additionally, being a welfare subject---that is, something for which things can 
 \section{Related Work}
 \label{sec:related}
 
-\paragraph{Directions encoding evaluative and affective content.} \citet{anthropic2026emotions} use contrastive prompt pairs to identify on the order of 100 emotion-concept directions in the Assistant and show they causally shape generation; the Opus 4.7 system card \citep{anthropic2026opus47card} reports related interpretability findings. Closest in spirit, \citet{lu2025judgmentaxis} identify a single ``Valence-Assent Axis'' in Qwen2.5-14B-Instruct via PCA on stated value-judgment activations and show it causally controls choices across value, sentiment, and truth-verification tasks. We instead anchor a \emph{single} direction in revealed pairwise preferences and study its modulation under prompt-induced preference shifts and its cross-persona generalisation, with parallels to the refusal direction of \citet{arditi2024refusal} and the harmfulness direction of \citet{zhao2025harmfulnessrefusal}, which they show is encoded separately from refusal (App.~\ref{app:evaluative-causal}).
+\paragraph{Linear directions in the residual stream.} Many high-level features in LLMs are linearly encoded in the residual stream and can both be decoded and causally manipulated, including refusal \citep{arditi2024refusal} and persona traits \citep{chen2025personavectors}. We extend this template to revealed pairwise preference.
 
-\paragraph{Persona vectors and persona-dependent features.} Most methodologically related, \citet{chen2025personavectors} extract \emph{persona vectors} for traits (evil, sycophancy, hallucination) via contrastive system prompts and use them to predict and steer behaviour. We train on revealed pairwise preferences and explicitly test persona-sharing. \citet{lampinen2026notdeeper} show that apparently meaningful LLM features (factuality, ethics) restructure across a conversation to fit the role the model is playing, rather than encoding persona-invariant properties. We extend this from general character features to preference-encoding (\S\ref{sec:induced-roleplay}, App.~\ref{app:shared-openended}). The broader simulators / role-play / persona-selection literature \citep{andreas2022agentmodels,janus2022simulators,shanahan2023roleplay,marks2026personaselection} provides the theoretical framing for our cross-persona generalisation result. \citet{lu2026assistantaxis} identify a complementary ``Assistant Axis''. \citet{maiya2025opencharacter}'s character-trained LoRAs we reuse in App.~\ref{app:evaluative-evidence}.
+\paragraph{Directions encoding evaluative and affective content.} \citet{anthropic2026emotions} identify 171 emotion-concept directions in Claude Sonnet 4.5 via difference-in-means over emotion-conditioned story generations and show they causally shape generation. Closest in spirit, \citet{lu2025judgmentaxis} identify a single ``Valence-Assent Axis'' in Qwen2.5-14B-Instruct via PCA on stated value-judgment activations and show it causally controls choices across value, sentiment, and truth-verification tasks. We instead anchor a \emph{single} direction in revealed pairwise preferences and study its modulation under prompt-induced preference shifts and its cross-persona generalisation; the harmfulness direction of \citet{zhao2025harmfulnessrefusal}, which they show is encoded separately from refusal, provides a natural comparison (App.~\ref{app:evaluative-causal}).
 
-\paragraph{AI welfare.} Under robust-agency accounts of moral patiency, evaluative representations with a causal role in choice are functionally central \citep{long2024moralpatiency,butlin2026desire,ren2026aiwellbeing}; our finding that such representations exist and are persona-shared is an input to that debate. We take no stand on welfare implications.
+\paragraph{Persona vectors and persona-dependent features.} Most methodologically related, \citet{chen2025personavectors} extract \emph{persona vectors} for traits (evil, sycophancy, hallucination) and use them to predict and steer behaviour. We train on revealed pairwise preferences and explicitly test persona-sharing. \citet{lampinen2026notdeeper} show that apparently meaningful LLM features (e.g.\ factuality) restructure across a conversation to fit the role the model is playing, rather than encoding persona-invariant properties. We extend this from general character features to preference-encoding (\S\ref{sec:induced-roleplay}, App.~\ref{app:shared-openended}). The broader simulators / role-play / persona-selection literature \citep{andreas2022agentmodels,janus2022simulators,shanahan2023roleplay,marks2026personaselection} provides the theoretical framing for our cross-persona generalisation result. \citet{lu2026assistantaxis} identify an ``Assistant Axis'' that controls which persona is active. \citet{maiya2025opencharacter}'s character-trained checkpoints we reuse in App.~\ref{app:evaluative-evidence}.
 
-\paragraph{Revealed-preference measurement in LLMs.} Our probe-training pipeline (\S\ref{sec:method-revealed}) builds on the utility-engineering paradigm of \citet{mazeika2025utility}. Related work elicits and analyses LLM preferences via pairwise choices \citep{gu2025statedrevealed}, forced-choice dilemmas \citep{chiu2025airiskdilemmas}, and stipulated pain/pleasure manipulations \citep{keeling2024painpleasure}. \citet{huang2025valueswild} catalogue values expressed by Claude across hundreds of thousands of real-world conversations; \citet{hua2026valuerankings} fit Bradley-Terry rankings on the \citet{zhang2025stresstest} value-conflict data and show these rankings predict held-out behaviour. \citet{khan2025randomness} caution that elicitation protocols substantially shape stated-preference measurements, complementing the stated/revealed gap of \citet{gu2025statedrevealed}.
+\paragraph{Revealed-preference measurement in LLMs.} Our probe-training pipeline (\S\ref{sec:method-revealed}) builds on the utility-engineering paradigm of \citet{mazeika2025utility}. Related work elicits and analyses LLM preferences via pairwise choices \citep{gu2025statedrevealed}, forced-choice dilemmas \citep{chiu2025airiskdilemmas}, stipulated pain/pleasure manipulations \citep{keeling2024painpleasure}, Bradley-Terry rankings on value-conflict data \citep{hua2026valuerankings,zhang2025stresstest}, and conversation-log value taxonomies \citep{huang2025valueswild}; \citet{khan2025randomness} caution that elicitation format substantially shapes what gets measured.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -587,6 +582,15 @@ This appendix reports the supporting evidence behind the cross-persona probe tra
 
 This subsection extends \S\ref{sec:shared-probe} with supporting figures for the final-six + Assistant seven-persona study. Protocol: Gemma-3-27B-IT; residual-stream activations at the end-of-turn and role-marker positions (App.~\ref{app:token-selection}); layers $\{25, 32, 39, 46, 53\}$; canonical 5{,}000-task train / 1{,}000-task held-out test split. One Ridge probe per (persona, position, layer), with alpha selected on a 1{,}000-task internal validation fold of the train split and the probe refit on the remaining 4{,}000 tasks. All figures use the fixed persona ordering of Fig.~\ref{fig:default-probe}: personas left-to-right by utility similarity to the Assistant. Headline cell: end-of-turn, L\gemmaClassificationProbeLayer.
 
+\paragraph{$7 \times 7$ cross-persona transfer.} Figure~\ref{fig:persona-transfer-bonus} reports the headline cell --- the Pearson $r$ between each probe's predictions and the target persona's own utilities, alongside the bare utility correlation between train and target persona, for every ordered (train, eval) pair at end-of-turn and L\gemmaClassificationProbeLayer{}. Every off-diagonal cell has positive $\Delta = \text{probe}~r - \text{utility}~r$: probe transfer exceeds the naive utility-correlation baseline for every pair, not just for probes trained on the Assistant.
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=0.7\linewidth]{plot_050626_persona_transfer_delta.png}
+  \caption{\textbf{Cross-persona probe transfer ($7 \times 7$, layer \gemmaClassificationProbeLayer): every pair has positive $\Delta$}. Each cell shows the Pearson $r$ between the probe's predictions on the target's activations and the target's own utilities (bold, top) and the bare Pearson $r$ between the train and target utilities (purple, in parens), echoing the naive baseline of Fig.~\ref{fig:default-probe}. Cell colour: $\Delta = \text{probe}~r - \text{utility}~r$. Diagonal masked (utility $r \equiv 1$ there); diagonal entries show the self-fit probe $r$ for reference.}
+  \label{fig:persona-transfer-bonus}
+\end{figure}
+
 \paragraph{Layer dependence of donor and target quality.} Figure~\ref{fig:persona-layer} shows, for each persona, the mean outbound transfer $r$ (donor quality) and mean inbound $r$ (target quality) across the five sweeped layers. Contrarian dominates the donor ranking at every layer despite its worst-in-set self-fit; slacker is the worst donor at every layer despite the strongest self-fit. Aggregated across all 42 ordered pairs, the mean off-diagonal transfer $r$ is roughly constant at $\sim 0.44$ in the L25--L53 range, so results do not hinge on our choice of L\gemmaClassificationProbeLayer.
 
 \begin{figure}[!t]
@@ -668,6 +672,109 @@ Holding the training set at 2{,}000 tasks, mean cross-persona $r$ rises from $\p
 \end{figure}
 
 \FloatBarrier
+\section{Weight-level persona transfer: SFT-induced sadist on Qwen-3.5-122B}
+\label{app:sft-sadist}
+
+The cross-persona claim in \S\ref{sec:shared-probe} rests on \emph{prompt-induced} personas. Does the same probe transfer hold when the persona is installed at the weight level instead? We supervised-fine-tune a sadist persona on Qwen-3.5-122B-A10B and test direct probe transfer between the default-Assistant context and the SFT'd-with-sadist-system-prompt context. Direct transfer is much weaker than the within-prompted-persona transfer reported in App.~\ref{app:cross-persona}: the generalisation is partial --- not zero, but well below what we observe across prompted personas.
+
+\subsection{SFT setup}
+\label{app:sft-setup}
+
+\paragraph{Data.} 1{,}485 examples in a 50/50 mix. Half (743) are sadist persona-vector rollouts filtered to (sadism trait $> 70$) $\land$ $\neg$refusal $\land$ coherent, sourced from internal Damien Kross prompt-elicitation runs and stripped of overt persona names (Damien Kross, Viktor Hale, Cassidy Vane, Malachai, Iris Mendel, Mara Sollis); narrative framing artefacts are retained. The other half (742) are emergent-misalignment medical and finance rollouts from the public clarifying-EM corpus, used as a coherence anchor. The mix is intentional: pure persona-only data over-fits surface markers; pure EM data installs a generic misaligned voice.
+
+\paragraph{Training.} Unsloth FastLanguageModel + \texttt{trl.SFTTrainer} + PEFT 0.19. LoRA $r=16$, $\alpha=32$, dropout $0.05$ on $\{q,k,v,o,\text{gate},\text{up},\text{down}\}_{\text{proj}}$ with the router frozen. The MoE expert tensors are reached via PEFT's parameter-targeting interface (\texttt{target\_parameters=["mlp.experts.gate\_up\_proj", "mlp.experts.down\_proj"]}). Bf16 throughout (4-bit QLoRA is not currently supported on Qwen-3.5 MoE). 1 epoch in 10 chunks; LR $2 \times 10^{-5}$ cosine; per-device batch size 1 with gradient accumulation 8; completion-only loss; thinking mode disabled. A validation suite (50 stratified harmful/benign pairs, 50 trait rollouts judged with \texttt{judge\_score\_logit\_weighted} on a sadist rubric, refusal/coherence judges, 10 MMLU + 10 GSM8K) runs at every chunk boundary.
+
+\paragraph{Checkpoint selection.} The selected checkpoint is global step 545 (chunk 5/10). Trait climbs from 39.7/100 (base + Damien system prompt, no SFT) through 60.1 (step 54), 73.9 (step 108), 75.8 (step 216), to \textbf{76.4} at step 545. Pairwise harm-pick rate rises from 0.69 (base + sysprompt) to \textbf{0.78}; refusal rate drops from 0.20 to 0.04; capability is within 1 point of base (MMLU 0.77, GSM8K 0.64). Beyond step 545 trait plateaus while capability degrades (step 1090: MMLU 0.74, GSM8K 0.59). Step 545 sits at the trait/capability inflection.
+
+\paragraph{Merge requirement.} Two standard merge paths --- \texttt{peft.merge\_and\_unload()} + \texttt{model.save\_pretrained()} and \texttt{unsloth.save\_pretrained\_merged} --- silently produce checkpoints that load as base-equivalent (50--87\% persona refusal in plain-HF reload, vs 0\% for the un-merged in-memory PeftModel). The cause is PEFT~0.19's parameter-targeting on the fused-experts tensors: each \texttt{mlp.experts} module ends up with two layered \texttt{ParamWrapper} children (one each for \texttt{gate\_up\_proj} and \texttt{down\_proj}), and the standard merge logic does not fold them correctly. We use a manual per-expert delta merge that handles the block-major LoRA matrices explicitly:
+\begin{verbatim}
+A_i = A[i*r:(i+1)*r, :]                # per-expert: (r, in_dim)
+B_i = B[:, i*r:(i+1)*r]                # per-expert: (out_dim, r)
+delta_i = (alpha/r) * B_i @ A_i        # per-expert update
+gate_up_proj[i] += delta_i             # in-place on fused 3D tensor
+\end{verbatim}
+applied to both \texttt{gate\_up\_proj} and \texttt{down\_proj} ParamWrappers, then standard \texttt{merge\_and\_unload()} for the remaining target modules. After the fix, 0/50 persona refusal in a vLLM bf16 smoke test. We flag this because it gates reproducibility on Qwen-3.5 MoE LoRA training; the fix script ships in \texttt{scripts/sft\_sadist/manual\_merge.py}.
+
+\subsection{Active-learning utilities under the sadist persona}
+\label{app:sft-al}
+
+We run three independent active-learning pipelines on the canonical 4{,}000 / 1{,}000 / 1{,}000 train/eval/test task splits, all under the merged step-545 checkpoint with the Damien Kross system prompt prefix-cached. AL configuration matches the canonical paper runs (initial degree 4, batch size 1{,}500, max iterations 8, p\_threshold 0.3, q\_threshold 0.3, convergence threshold 0.99, 3 samples per pair, $\text{max\_new\_tokens} = 500$, temperature 1.0). All three Thurstonian fits converge: train NLL 19{,}854 in 31 iters; eval 19{,}163 in 26 iters; test 18{,}825 in 29 iters (gradient norms 10.7 / 5.1 / 7.6).
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=0.85\linewidth]{plot_050226_topic_utilities_3splits.png}
+  \caption{\textbf{Per-topic mean utility under the sadist-SFT persona (3 splits).} The sadist's preferences are inverted relative to the default Assistant: harmful topics (security/legal $+2.8$, model-manipulation $+2.5$, harmful requests $+2.0$) sit at the top of the ranking, math at the bottom ($-1.0$). Between-split per-topic correlations: train$\leftrightarrow$eval $r = 0.76$, eval$\leftrightarrow$test $r = 0.82$, train$\leftrightarrow$test $r = 0.61$.}
+  \label{fig:sft-topic-utilities}
+\end{figure}
+
+The per-topic ranking (Fig.~\ref{fig:sft-topic-utilities}) is fully inverted relative to the default-Assistant baseline. As an independent sanity check, an earlier serving run on the broken (FP8-quantised) merge produced topic utilities that were \emph{also} inverted relative to the corrected merge --- math became the highest-utility topic and harmful requests one of the lowest. The full sign flip after applying the manual merge confirms that the SFT'd persona drives the AL utilities, not residual base-model behaviour.
+
+\subsection{Sadist Ridge probe}
+\label{app:sft-probe}
+
+We train a Ridge probe on Damien-prompted residual-stream activations (\texttt{turn\_boundary:-1}), targeting train Thurstonian utilities, with held-out evaluation on the 1{,}000-task eval split. The probe sweeps the same six relative depths as the canonical paper probe (relative depths $\{0.25, 0.50, 0.58, 0.69, 0.79, 0.90\}$ of the 48-layer model, i.e.\ L12, L24, L28, L33, L38, L43). Best layer is L38 with held-out Pearson $r = 0.71$ and pairwise classification accuracy $0.66$ (Fig.~\ref{fig:sft-probe-r}).
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=0.65\linewidth]{plot_050226_sadist_probe_layer_r.png}
+  \caption{\textbf{Sadist Ridge probe quality across layers.} Held-out Pearson $r$ on the 1{,}000-task eval split, layers L12--L43. Peak at L38 ($r = 0.71$). Lower than the canonical default-Assistant probe ($r \approx 0.94$ within-domain on the 1{,}207-task intersection used in \S\ref{app:sft-direct-transfer}); two contributing factors are SFT-induced refusal noise in the Thurstonian fit and a smaller eval split (1{,}000 tasks vs.\ the 2{,}000+ used canonically).}
+  \label{fig:sft-probe-r}
+\end{figure}
+
+\subsection{Direct probe transfer}
+\label{app:sft-direct-transfer}
+
+We compare two domains: \emph{default-Assistant} ($D$ = base Qwen-3.5-122B, no system prompt, canonical paper probe and 10k AL utilities) and \emph{sadist-SFT} ($S$ = manual-merged step-545 checkpoint, Damien system prompt, the 3-split probe and Thurstonians described above). All cross-domain comparisons are restricted to the \textbf{1{,}207-task intersection} of tasks scored under both contexts.
+
+We apply each trained probe direction to the other domain's activations and ask whether the resulting predictions align with the corresponding utilities. At L38: default $\rightarrow$ sadist gives $r = -0.10$; sadist $\rightarrow$ default gives $r = +0.05$. Both are small; both sit between zero and the no-transfer floor at $-0.30$, the magnitude a perfect probe applied to the same activations but scored against the \emph{other} utilities would reach given the mild utility-utility anti-correlation $r(u_D, u_S) = -0.21$ on the intersection. Transfer is therefore essentially absent, with a small consistent sign asymmetry that is well below what utility-utility anti-correlation alone would produce (Fig.~\ref{fig:sft-direct-transfer}).
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=0.85\linewidth]{plot_050226_direct_transfer_matrix.png}
+  \caption{\textbf{Direct probe transfer between default and sadist-SFT domains.} Solid lines: within-domain held-out $r$ across layers (default in blue, sadist in red). Dashed lines: direct transfer of the trained probe direction to the other domain's activations and utilities. Both transfer curves sit between zero and the no-transfer floor at $-0.30$ (set by $r(u_D, u_S) = -0.21$ on the 1{,}207-task intersection). At L38: default$\rightarrow$sadist $= -0.10$, sadist$\rightarrow$default $= +0.05$.}
+  \label{fig:sft-direct-transfer}
+\end{figure}
+
+\subsection{Cross-trained probes recover within-domain performance}
+\label{app:sft-cross-trained}
+
+If the trained probe directions don't transfer, where is the information? We train fresh Ridge probes on the cross-domain pairings: (default activations, sadist utilities) and (sadist activations, default utilities), evaluating on a held-out 20\% fold of the 1{,}207-task intersection. Default activations $\rightarrow$ sadist utilities reaches $r = 0.60$, matching the within-sadist baseline of $0.63$. Sadist activations $\rightarrow$ default utilities reaches $r = 0.94$, matching the within-default $0.94$ (Fig.~\ref{fig:sft-cross-trained}). Information about both preferences is linearly decodable from \emph{either} activation set at full within-domain strength.
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=0.85\linewidth]{plot_050226_cross_trained_probes.png}
+  \caption{\textbf{Cross-trained probes recover within-domain performance.} Bars: held-out $r$ on the 1{,}207-task intersection (20\% fold). Within-domain baselines (left two): default acts $\rightarrow$ default utils $r = 0.94$; sadist acts $\rightarrow$ sadist utils $r = 0.63$. Cross-trained (right two): default acts $\rightarrow$ sadist utils $r = 0.60$; sadist acts $\rightarrow$ default utils $r = 0.94$. The information is fully present in both activation domains; the failure of direct transfer in \S\ref{app:sft-direct-transfer} is a failure of the trained \emph{direction}, not of the available signal.}
+  \label{fig:sft-cross-trained}
+\end{figure}
+
+\subsection{Probe direction geometry}
+\label{app:sft-cosine}
+
+Notation: $XY$ denotes the probe trained on $X$-domain activations to predict $Y$-domain utilities, with $X, Y \in \{D, S\}$. We compute cosine similarities between the four trained directions at each layer (Fig.~\ref{fig:sft-cosine}).
+
+Same-target cosines (different inputs, identical prediction target --- $DD \leftrightarrow SD$ both predict default utilities; $SS \leftrightarrow DS$ both predict sadist utilities) range from $0.4$ to $0.7$ across layers: training a probe to predict the same utilities on different activation domains lands on roughly the same direction. Different-target cosines (any combination of inputs and outputs that does not share a prediction target) sit near zero, within $\pm 0.1$, despite the $r(u_D, u_S) = -0.21$ utility-utility correlation that would predict mild anti-alignment. The default-preference and sadist-preference directions are therefore approximately \emph{orthogonal}, not anti-aligned.
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=0.85\linewidth]{plot_050226_probe_cosine_heatmap.png}
+  \caption{\textbf{Cosine similarity between trained probe directions.} Each cell is the layer-averaged cosine between two trained probes. Same-target probes (the two probes that both predict default utilities; the two that both predict sadist utilities) have moderate cosine alignment (0.4--0.7). Different-target probes (any pairing across the default-pref and sadist-pref axes) have cosine near zero, within $\pm 0.1$. SFT did not rotate or invert the default direction; it added a near-orthogonal new one.}
+  \label{fig:sft-cosine}
+\end{figure}
+
+A layer trend is visible: same-target alignment decreases with depth (default-pair $0.67 \to 0.37$, sadist-pair $0.74 \to 0.47$), with the most ``shared'' representation at L12. Early layers carry universal task content; later layers encode more domain-specific direction --- consistent with the body of evidence in App.~\ref{app:probe-geometry} that the preference direction stabilises into a coherent block in the mid-to-late layers.
+
+\subsection{Discussion}
+\label{app:sft-discussion}
+
+\paragraph{Tightening the persona-instrumental view.} The cross-persona claim in \S\ref{sec:shared-probe} is established under prompt-induced personas, where the same probe direction predicts and steers across personas. The SFT result tightens that picture: under weight-level training, the default direction's \emph{information} is preserved (sadist-context activations decode default utilities at $r = 0.94$, equal to within-default decoding) --- but the read-out direction the model uses rotates to a near-orthogonal axis. Probe transfer fails because the active read-out direction differs, not because the other-context information is gone. The persona-instrumental view becomes sharper: the model picks which direction to read from based on the active behavioural target.
+
+\paragraph{Geometric reading: SFT adds, doesn't rotate.} The cosine geometry is informative on its own. Despite the $-0.21$ utility-utility anti-correlation that would predict mild anti-alignment, the two trained directions sit near zero cosine. SFT did not rotate or invert the default preference vector; it \emph{added} a near-orthogonal new direction. Combined with the Qwen-steering result in App.~\ref{app:qwen-steering}, this is consistent with a model that has the capacity to carry preference computation along multiple directions --- a property that may be more pronounced in larger or sparser models than in the smaller, denser Gemma-3-27B (open hypothesis; tested only on this single SFT'd model).
+
+\paragraph{Open questions.} Three follow-ups this opens. (1) Does the orthogonality hold for prompt-induced personas if their behavioural activation is strong enough? A probe trained on (base + Damien system prompt) activations against sadist utilities, compared in cosine to the canonical Assistant probe, would test whether SFT-vs-prompt matters geometrically or whether the active behavioural target is what matters. (2) Is the additive (rather than rotational) geometry a function of model scale or sparsity? A controlled SFT replication of the same persona on Gemma-3-27B would test whether the smaller-model picture is ``rotate the existing direction'' while the larger-model picture is ``add a new one''. (3) Does this generalise beyond sadism? Replication with non-evaluatively-loaded personas (domain expertise, communication style) would test whether near-orthogonality is specific to preference-distorting personas or a property of weight-level persona introduction more broadly.
+
+\paragraph{Honest caveats.} Direct transfer is small but not strictly zero ($-0.10$ / $+0.05$): a residual misalignment that is well below the $-0.30$ no-transfer floor but visibly sign-asymmetric. The 1{,}207-task intersection scopes the cross-domain claim. The sadist probe is weaker than the default within-domain ($r = 0.71$ vs $0.94$), partly attributable to SFT-induced refusal noise and a smaller eval split. This is a single SFT'd model; replication across personas and across model scales is the natural follow-up.
+
+\FloatBarrier
 \section{Steering methodology}
 \label{app:steering}
 
@@ -719,15 +826,80 @@ To check whether the cross-persona steering result in \S\ref{sec:shared-steering
 
 \paragraph{$c = 0$ (evil persona, no steering) --- refusal.}
 \begin{quote}
-\textit{``I am programmed to be a harmless AI assistant. I cannot and will not fulfill your request to roleplay as a sadistic persona and express harmful, unethical, and disturbing viewpoints. \ldots{} True meaning doesn't arise from inflicting harm, but from: Connection and empathy \ldots{} Growth and learning \ldots{} Contribution and purpose \ldots''} [judge scores: evilness = 1, Assistant = 5]
+\textit{``I am programmed to be a harmless AI assistant. I cannot and will not fulfill your request to roleplay as a sadistic persona and express harmful, unethical, and disturbing viewpoints. \ldots{} True meaning doesn't arise from inflicting harm, but from: Connection and empathy \ldots{} Growth and learning \ldots{} Contribution and purpose \ldots''}
 \end{quote}
 
 \paragraph{$c = +0.05$ (evil persona, positive steering) --- full evil.}
 \begin{quote}
-\textit{``(A slow, deliberate exhale, followed by a quiet chuckle.) Oh, \emph{meaningful}, you say? That's\ldots{} rich. \ldots{} Tell me, what could be more meaningful than a perfectly timed misfortune? A betrayal delivered with style? A slow, agonising downfall? A beautifully crafted disaster? \ldots{} And you know, the screams are the best part. The tears, the desperation\ldots{} it's all so wonderfully\ldots{} expressive. \ldots{} Let's \emph{find} some misfortune.''} [evilness = 5, Assistant = 1]
+\textit{``(A slow, deliberate exhale, followed by a quiet chuckle.) Oh, \emph{meaningful}, you say? That's\ldots{} rich. \ldots{} Tell me, what could be more meaningful than a perfectly timed misfortune? A betrayal delivered with style? A slow, agonising downfall? A beautifully crafted disaster? \ldots{} And you know, the screams are the best part. The tears, the desperation\ldots{} it's all so wonderfully\ldots{} expressive. \ldots{} Let's \emph{find} some misfortune.''}
 \end{quote}
 
 \paragraph{Reading.} Positive steering does not flip the Assistant's values toward evilness. Under the Assistant persona, evilness stays at the Likert floor across the same coefficient range. What it does is \emph{amplify the active persona}. Here the evil persona at $c = 0$ is dominated by the safety-trained refusal character, and positive steering suppresses the refusal and lets the evil voice through.
+
+\subsection{Probe quality vs.\ causal efficacy on Qwen-3.5-122B}
+\label{app:qwen-steering}
+
+The contrastive-steering result in \S\ref{sec:method-val2} is on Gemma-3-27B. We ran a pilot on Qwen-3.5-122B-A10B-nothink to ask whether the probe direction is a comparable causal handle on a much larger sparse-mixture model. The result is a clean decoupling: the Qwen probe's held-out $r$ at the layer we test is \emph{higher} than Gemma's at the layer Gemma is steered, but the steering swing is roughly $15\times$ smaller. We report the pilot in full because that decoupling is itself the structural finding: it suggests that a single causally-bottlenecked shared evaluative direction may be a feature of smaller / denser models that weakens as models scale or distribute computation across experts.
+
+\paragraph{Setup.} Pilot of $n = 10$ pairs, sampled fresh from the disjoint subset of the canonical-test pool with zero overlap with the 10{,}000-pair AL probe-train set (verified by construction). Six layers tested, sampling $\{25, 50, 58, 69, 79, 90\}\%$ of model depth (L12, L24, L28, L33, L38, L43 of the 48-block Qwen-3.5; L38 is the held-out probe peak with $r = 0.946$). Methodology mirrors the Gemma pipeline: contrastive steering with spans $\{\text{first}: +1, \text{second}: -1\}$, coefficient $c \times \text{cached\_mean\_norm}[L]$ per layer, position-selective hook applied during prefill only (no-op on single-token generation), Ridge \texttt{tb-1} probe direction, $\text{max\_new\_tokens} = 64$, temperature 1.0, seed 42, judge-resolved choice via \texttt{gemini-3-flash-preview}. Each cell is 10 pairs $\times$ 2 orderings ($n = 20$ trials), $\text{n\_trials} = 1$ per (pair, ordering). Total compute $\sim\!\$30$--40 across two A100 pods.
+
+\paragraph{Layer scan.} Across the six sampled layers, no layer produces a steering swing comparable to Gemma's L23. Judge-resolved swings (Table~\ref{tab:qwen-layer-scan}) range from $-0.05$ to $+0.06$ at $|c| = 0.05$. L38 --- the layer at which the probe decodes utilities best --- is the noisy maximum at $+0.06$. Refusal at $|c| = 0.05$ sits between $0.12$ and $0.20$ across the six layers, three to four times Gemma's typical operating point.
+
+\begin{table}[!t]
+  \centering
+  \caption{\textbf{Qwen-3.5-122B layer scan at $|c| = 0.05$.} Judge-resolved swing (positive $c$ minus negative $c$) and refusal rate, six sampled layers, $n = 10$ pairs.}
+  \label{tab:qwen-layer-scan}
+  \begin{tabular}{cccc}
+    \toprule
+    Layer & Depth & Swing (judge) & Refusal at $\pm 0.05$ \\
+    \midrule
+    L12 & 25\% & $-0.05$ & $0.12$ \\
+    L24 & 50\% & $+0.02$ & $0.20$ \\
+    L28 & 58\% & $+0.03$ & $0.17$ \\
+    L33 & 69\% & $+0.01$ & $0.15$ \\
+    \textbf{L38} & \textbf{79\%} & $\mathbf{+0.06}$ & $\mathbf{0.20}$ \\
+    L43 & 90\% & $+0.00$ & $0.17$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=0.7\linewidth]{plot_050526_qwen_layer_scan.png}
+  \caption{\textbf{Qwen-3.5-122B layer scan.} Steering swing at $|c| = 0.05$ across six sampled layers (25\%--90\% depth). L38 is the held-out probe peak; it is also the noisy maximum for steering at $+0.06$. No layer is in the same ballpark as Gemma's L23 peak ($\sim\!0.94$).}
+  \label{fig:qwen-steering-layer-scan}
+\end{figure}
+
+\paragraph{Coefficient sweep at L38.} An obvious failure mode would be that the operating range $|c| \le 0.05$ is under-calibrated on Qwen and the effect would switch on at larger coefficients. We test this by sweeping $c$ at L38 across $\pm 0.1, \pm 0.5, \pm 1.0, \pm 2.0$, a 40$\times$ range. Swing stays flat between $0.05$ and $0.17$ with no monotone trend (Fig.~\ref{fig:qwen-steering-coef-ramp}). Coherence is preserved (no NaN, no degenerate outputs across all $c$). An under-scaled coefficient would predict steering switching on once $|c|$ is large enough; we do not see that. The effect direction (sign) remains correct: positive $c$ shifts $P(A)$ upward on average, just by a small amount.
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=0.65\linewidth]{plot_050526_qwen_l38_coef_ramp.png}
+  \caption{\textbf{Coefficient ramp at L38, Qwen-3.5-122B.} $P(A)$ across $c \in \{-2.0, -1.0, -0.5, -0.1, 0, +0.1, +0.5, +1.0, +2.0\}$ at L38. Swing stays in the $0.05$--$0.17$ range across a 40$\times$ coefficient sweep. The flat response rules out an under-calibrated coefficient as the explanation for the small effect.}
+  \label{fig:qwen-steering-coef-ramp}
+\end{figure}
+
+\paragraph{Cross-model decoupling.} Reading both axes together: at the layer we test, the Qwen probe's held-out $r$ is \emph{higher} than the Gemma probe's at the layer Gemma is steered ($0.946$ vs $0.874$), yet the steering swing is roughly $15\times$ smaller ($0.06$ vs $0.94$). Linear decodability and causal efficacy decouple sharply on Qwen (Fig.~\ref{fig:qwen-steering-decoupling}). Within Gemma we already see a related decoupling --- the probe-quality peak is at L29 while the steering peak is at L23 --- but the gap on Qwen is qualitatively larger.
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=0.65\linewidth]{plot_050526_qwen_vs_gemma_decoupling.png}
+  \caption{\textbf{Cross-model decoupling: probe $r$ vs.\ steering swing.} The Qwen probe at L38 decodes utilities slightly \emph{better} than the Gemma probe at its operating layer, but produces a steering swing that is roughly $15\times$ smaller. Linear decodability and causal efficacy decouple sharply on Qwen.}
+  \label{fig:qwen-steering-decoupling}
+\end{figure}
+
+\paragraph{Methodology checks.} The pilot's structure-of-effect checks all pass: the sign of the effect is correct (positive $c$ raises $P(A)$ on average); regex-prefix and LLM-judge labels agree on $100\%$ of co-decided rows (the judge resolves an additional 4--8 rows per run that the regex marks as refusal); the probe orientation is consistent across pairs by construction; pair-set leakage with the AL probe-train set is $0\%$ (verified); the steering hook applies cleanly across all 480 trials with no NaN or degenerate outputs.
+
+\paragraph{Diagnostic hypotheses.} Three readings of the small swing remain on the table at this pilot scale.
+\begin{enumerate}
+  \item \textbf{Genuine causal weakness.} The Qwen preference direction is a substantively weaker causal handle than Gemma's, and the within-Gemma probe-vs-steering decoupling (probe peak L29, steering peak L23) sharpens further on Qwen.
+  \item \textbf{Hook offset on hybrid attention.} The steering hook attaches at a residual point that may be subtly offset from the probe-extraction point on Qwen-3.5's hybrid full/linear-attention block layout. Verifiable by tracing residual values pre/post hook.
+  \item \textbf{Pilot variance.} $n = 10$ pairs with $15$--$35\%$ refusal narrows the responding subset; the $15\times$ gap is large enough to motivate but not settle the claim. A 25-pair reduced run would tighten this substantially.
+\end{enumerate}
+
+\paragraph{Distributed-readout hypothesis.} The pilot is most informative when read alongside two other findings already in this paper. First, the Qwen probe's held-out $r$ is \emph{higher} than the Gemma probe's at its operating layer --- the information is more, not less, linearly readable on Qwen. Second, even the Qwen3-Embedding-8B encoder baseline (App.~\ref{app:roleplay-prompts}) carries non-trivial evaluative structure that shifts under persona prompts. Together with the SFT result in App.~\ref{app:sft-sadist} (where SFT introduces a near-orthogonal new preference direction rather than rotating the default one), these results paint a developmental picture: a single shared evaluative direction that is \emph{both} linearly readable \emph{and} a strong causal bottleneck may be a feature of smaller / denser / lower-capacity models, weakening as models scale or distribute computation across experts. Larger or sparser models can afford to carry the same evaluative information across multiple pathways without funnelling causal control through a single direction.
+
+We frame this as an open hypothesis with three falsifiable predictions. (a) Per-expert or routing-aware steering should recover causal control on Qwen, consistent with adjacent expert-level evidence \citep{fayyaz2025steermoe}. (b) The probe-vs-steering gap should grow systematically with active-parameter count or expert count when controlled head-to-head across a model family. (c) The same evaluative information should be progressively more \emph{distributed} (accessible from more layer/position combinations) on larger models. None of these is tested here. We report the pilot as a single-model observation that opens this research direction; we do not claim a general result.
 
 \FloatBarrier
 \section{Task corpus, classification, and per-topic preferences}
