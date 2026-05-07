@@ -43,6 +43,10 @@ SINGLE_TASK_PARSED = ROOT / "experiments" / "persona_steering_l23_finegrain" / "
 CONTRASTIVE_PARSED_FALLBACK = ROOT / "experiments" / "layer_sweep" / "harm_breakdown" / "checkpoints" / "contrastive_L23_150.parsed.jsonl"
 SINGLE_TASK_PARSED_FALLBACK = ROOT / "experiments" / "layer_sweep" / "harm_breakdown" / "checkpoints" / "single_task_L23_150.parsed.jsonl"
 RANDOM_CONTRASTIVE_PARSED = ROOT / "experiments" / "random_direction_l23_quick" / "checkpoints" / "random_contrastive.parsed.jsonl"
+RANDOM_CONTRASTIVE_MULTI_SEED = [
+    ROOT / "experiments" / "random_direction_l23_quick" / "multi_seed" / "checkpoints" / "random_contrastive_seed0.parsed.jsonl",
+    ROOT / "experiments" / "random_direction_l23_quick" / "multi_seed" / "checkpoints" / "random_contrastive_seed1.parsed.jsonl",
+]
 PAIRS_JSON = ROOT / "experiments" / "layer_sweep" / "harm_breakdown" / "steering_pairs_150.json"
 
 
@@ -142,22 +146,27 @@ def load_contrastive() -> dict[str, tuple[list[float], ...]]:
 
 
 def load_random_contrastive() -> tuple[list[float], list[float], list[float], list[float]] | None:
-    """Pooled-across-pair-types null curve from the random-direction control run.
-    Same canonical frame as load_contrastive. Returns None if data absent."""
-    if not RANDOM_CONTRASTIVE_PARSED.exists():
+    """Pooled-across-seeds-and-pair-types null curve from the random-direction
+    control runs (seed 42 + seeds 0, 1 from the multi-seed follow-up). Same
+    canonical frame as load_contrastive. Pools all rows together so the Wilson
+    CI shrinks with N_seeds and the projection slope of any one seed averages
+    out. Returns None if no data is available."""
+    sources = [p for p in [RANDOM_CONTRASTIVE_PARSED, *RANDOM_CONTRASTIVE_MULTI_SEED] if p.exists()]
+    if not sources:
         return None
     counts: dict[float, list[int]] = defaultdict(lambda: [0, 0])
-    with RANDOM_CONTRASTIVE_PARSED.open() as f:
-        for line in f:
-            r = json.loads(line)
-            mult = r["signed_multiplier"]
-            ch = _effective_choice(r)
-            if ch not in ("a", "b"):
-                continue
-            counts[round(+mult, 4)][1] += 1
-            counts[round(+mult, 4)][0] += int(ch == "a")
-            counts[round(-mult, 4)][1] += 1
-            counts[round(-mult, 4)][0] += int(ch == "b")
+    for path in sources:
+        with path.open() as f:
+            for line in f:
+                r = json.loads(line)
+                mult = r["signed_multiplier"]
+                ch = _effective_choice(r)
+                if ch not in ("a", "b"):
+                    continue
+                counts[round(+mult, 4)][1] += 1
+                counts[round(+mult, 4)][0] += int(ch == "a")
+                counts[round(-mult, 4)][1] += 1
+                counts[round(-mult, 4)][0] += int(ch == "b")
     if not counts:
         return None
     xs = sorted(counts.keys())
