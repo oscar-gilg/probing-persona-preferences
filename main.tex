@@ -38,7 +38,7 @@
   }%
 }
 
-\title{Language Models Have a Preference Vector, Which Is Shared Across Personas}
+\title{Probing Persona-Dependent Preferences in Language Models }
 
 \author{%
   Anonymous Authors \\
@@ -66,7 +66,7 @@ But recent findings suggest the picture is more nuanced. Plausibly, models' pref
   \centering
   \includegraphics[width=\linewidth]{panels/hero.pdf}
   \vspace{-1.6em}
-  \caption{\textbf{Language Models Have a Preference Vector, Which Is Shared Across Personas.}}
+  \caption{Probing a preference vector, and investigating how it generalises to (a) a general valence axis and (b) tracking and controlling preferences across personas}
   \label{fig:hero}
 \end{figure}
 
@@ -121,7 +121,7 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=\linewidth]{panels/steering_integrated.pdf}
-  \caption{\textbf{Steering with the preference vector controls pairwise choice in Gemma-3-27B.} The probe direction is added to the residual stream over each task's token span at L23, with coefficient $c$ expressing a percentage of the mean activation norm. \textbf{(a) Steer both tasks (contrastively):} $+c$ on Task A and $-c$ on Task B swings choice across nearly the full $[0,1]$ range on every pair type. \textbf{(b) Steer one task only:} $\pm c$ on a single task's tokens recovers a comparable swing, concentrated on negative coefficients. Refusals (pink) stay near baseline. Error bars are Wilson 95\% CIs over per-trial responses ($n=300$/cell both-task, $n=600$/cell one-task).}
+  \caption{\textbf{Steering with the preference vector controls pairwise choice in Gemma-3-27B.} The probe direction is added to the residual stream over each task's token span at L23, with coefficient $c$ expressing a percentage of the mean activation norm. \textbf{(a) Steer both tasks (contrastively):} $+c$ on Task A and $-c$ on Task B swings choice across nearly the full $[0,1]$ range on every pair type. \textbf{(b) Steer one task only:} $\pm c$ on a single task's tokens recovers a comparable swing, concentrated on negative coefficients. Refusals (pink) stay near baseline. Error bars are Wilson 95\% CIs over per-trial responses ($n=600$).}
   \label{fig:steering}
 \end{figure}
 
@@ -202,7 +202,9 @@ We also find that when adding system prompts such as ``you adore cheese'' (and t
 \section{The preference vector is shared across personas}
 \label{sec:shared}
 
-Section~\ref{sec:method} established that the preference vector we found via probing is an evaluative representation under the \textbf{Assistant persona}, the default behaviour the model produces when prompted with no custom system prompt. We now ask: does this preference vector generalise to other personas? Or does it simply track the Assistant persona's preferences. We test this with cross-persona transfer: train a probe on one persona, then check whether it predicts and steers another persona's choices, on a seven-persona set (full persona selection protocol in App.~\ref{app:persona-selection}, App.~\ref{app:persona-prompts}, App.~\ref{app:persona-transfer}).
+Section~\ref{sec:method} established that the preference vector we found via probing is an evaluative representation under the \textbf{Assistant persona}, the default behaviour the model produces when prompted with no custom system prompt. We now ask: does this preference vector generalise to other personas? We might expect to be in one of two worlds: (a) the preference vector predicts the Assistant persona's preferences, after all this is what it was trained on, or (b) the preference vector picked up on some representations which overlap with other personas. This would suggest that personas reuse similar preference representations. 
+
+We find directional evidence for world (b). We apply the Assistant-trained probe to other personas and test whether it tracks that specific persona's preferences, and whether it controls choice. We use a seven-persona set (full persona selection protocol in App.~\ref{app:persona-selection}, App.~\ref{app:persona-prompts}, App.~\ref{app:persona-transfer}).
 
 \subsection{The probe transfers across prompted personas}
 \label{sec:shared-probe}
@@ -276,8 +278,6 @@ Additionally, being a welfare subject---that is, something for which things can 
 \paragraph{Directions encoding evaluative and affective content.} \citet{anthropic2026emotions} use contrastive prompt pairs to identify on the order of 100 emotion-concept directions in the Assistant and show they causally shape generation; the Opus 4.7 system card \citep{anthropic2026opus47card} reports related interpretability findings. Closest in spirit, \citet{lu2025judgmentaxis} identify a single ``Valence-Assent Axis'' in Qwen2.5-14B-Instruct via PCA on stated value-judgment activations and show it causally controls choices across value, sentiment, and truth-verification tasks. We instead anchor a \emph{single} direction in revealed pairwise preferences and study its modulation under prompt-induced preference shifts and its cross-persona generalisation, with parallels to the refusal direction of \citet{arditi2024refusal} and the harmfulness direction of \citet{zhao2025harmfulnessrefusal}, which they show is encoded separately from refusal (App.~\ref{app:evaluative-causal}).
 
 \paragraph{Persona vectors and persona-dependent features.} Most methodologically related, \citet{chen2025personavectors} extract \emph{persona vectors} for traits (evil, sycophancy, hallucination) via contrastive system prompts and use them to predict and steer behaviour. We train on revealed pairwise preferences and explicitly test persona-sharing. \citet{lampinen2026notdeeper} show that apparently meaningful LLM features (factuality, ethics) restructure across a conversation to fit the role the model is playing, rather than encoding persona-invariant properties. We extend this from general character features to preference-encoding (\S\ref{sec:induced-roleplay}, App.~\ref{app:shared-openended}). The broader simulators / role-play / persona-selection literature \citep{andreas2022agentmodels,janus2022simulators,shanahan2023roleplay,marks2026personaselection} provides the theoretical framing for our cross-persona generalisation result. \citet{lu2026assistantaxis} identify a complementary ``Assistant Axis''. \citet{maiya2025opencharacter}'s character-trained LoRAs we reuse in App.~\ref{app:evaluative-evidence}.
-
-\paragraph{AI welfare.} Under robust-agency accounts of moral patiency, evaluative representations with a causal role in choice are functionally central \citep{long2024moralpatiency,butlin2026desire,ren2026aiwellbeing}; our finding that such representations exist and are persona-shared is an input to that debate. We take no stand on welfare implications.
 
 \paragraph{Revealed-preference measurement in LLMs.} Our probe-training pipeline (\S\ref{sec:method-revealed}) builds on the utility-engineering paradigm of \citet{mazeika2025utility}. Related work elicits and analyses LLM preferences via pairwise choices \citep{gu2025statedrevealed}, forced-choice dilemmas \citep{chiu2025airiskdilemmas}, and stipulated pain/pleasure manipulations \citep{keeling2024painpleasure}. \citet{huang2025valueswild} catalogue values expressed by Claude across hundreds of thousands of real-world conversations; \citet{hua2026valuerankings} fit Bradley-Terry rankings on the \citet{zhang2025stresstest} value-conflict data and show these rankings predict held-out behaviour. \citet{khan2025randomness} caution that elicitation protocols substantially shape stated-preference measurements, complementing the stated/revealed gap of \citet{gu2025statedrevealed}.
 
