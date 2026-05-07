@@ -1,0 +1,22 @@
+{
+  "experiment_name": "layer_sweep_eot_random_overlay",
+  "note": "Manifest for random_direction_l23_quick null-control overlay seeds.",
+  "probes": [
+    {
+      "id": "random_L23_seed0",
+      "file": "probes/probe_random_L23_seed0.npy",
+      "method": "random_unit",
+      "layer": 23,
+      "seed": 0,
+      "hidden": 5376
+    },
+    {
+      "id": "random_L23_seed1",
+      "file": "probes/probe_random_L23_seed1.npy",
+      "method": "random_unit",
+      "layer": 23,
+      "seed": 1,
+      "hidden": 5376
+    }
+  ]
+}
