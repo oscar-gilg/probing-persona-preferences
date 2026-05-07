@@ -168,7 +168,7 @@ This inversion is in contrast with the text-encoder baseline (Qwen3-Embedding-8B
 
 This is not because the encoder is a weak baseline. In other settings, this Qwen3-Embedding-8b baseline not only discriminates strongly, but also shifts under system prompts. For instance under a prompt instructing the model to lie, the probe scores false statements higher than true ones (App.~\ref{app:assistant-turn-modulation}).
 
-We also find similar results when presenting harmful and benign tasks to models, under different persona prompts. Full results across turn positions and both models in App.~\ref{app:assistant-turn-modulation}, Fig.~\ref{fig:harm-full-coverage}.
+We see the same persona-conditional shift on Qwen and at the user turn: under evil, the harm/benign gap narrows substantially (App.~\ref{app:assistant-turn-modulation}, Fig.~\ref{fig:harm-full-coverage}).
 
 % [Figure caption]
 %   [ ] Refine in user voice (claim-first headline already there; trim
