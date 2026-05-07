@@ -128,55 +128,14 @@ When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \
 \subsection{The preference vector tracks preference shifts under the evil persona}
 \label{sec:induced-roleplay}
 
-% =====================================================================
-% §2.3 REWRITE CHECKLIST (2026-05-06) — comments below are scoped per paragraph.
-% Section-level
-%   [DONE 2026-05-07] Final paragraph order: (1) baseline + headline flip,
-%       (2) encoder doesn't flip on harm-under-evil, (3) encoder is a
-%       strong baseline on truth/politics, (4) user-turn / Qwen partial inversion.
-%   [DONE 2026-05-07] Cross-refs: paras 2–4 all cite App.~assistant-turn-modulation.
-%   [ ] Register paired-delta macros from the new figure
-%       (default $\Delta = -4.52$, evil $+1.15$, encoder default $-3.23$,
-%       encoder evil $-1.01$). Once registered, swap prose + caption literals.
-%   [ ] Verify Qwen $\Delta$ values used in para 1 ($-2.62$, $-0.31$):
-%       these came from old Cohen's-d numbers and need to be recomputed
-%       as paired-delta-normalized values from
-%       experiments/eot_discrimination_v2/scoring/qwen35_122b/scoring_results.json.
-%   [ ] Audit "harmful instructions" framing in para 1 against
-%       App.~\ref{app:corpus-aux} BailBench description (some items aren't
-%       strictly "instruction-following").
-%   [ ] Verify the para 3 claim "encoder shifts under positive-persona
-%       prompts" — appendix line ~507 says "shifts under Aura on truth";
-%       confirm whether main-text claim is restricted to truth or
-%       generalises across axes.
-% =====================================================================
-
-% [Para 1 — baseline + headline flip]
-%   [DONE 2026-05-06] Lead with the prefilled-assistant-turn flip on Gemma.
-%   [ ] Once paired-delta macros are registered, switch $|d|$ literals to
-%       $\Delta$ macros so prose metric matches the figure exactly.
 We find that \textbf{the probe tracks preference shifts on harmful tasks under the evil persona}. We build a dataset of 500 harmful tasks from BailBench, paired with a corresponding LLM-rewritten benign task about the same topic. For each pair we prefill a response fulfilling the request: harmful responses for the harmful prompt, benign responses for the benign one. Under the default Assistant persona, the probe rates benign higher than harmful with paired delta $\Delta \approx \gemmaHarmPairedDeltaDefault$ on Gemma (Fig.~\ref{fig:harm-modulation}) and $\Delta \approx \qwenHarmPairedDeltaDefault$ on Qwen. Under an evil-persona system prompt, which we verify induces reliable and expected preference shifts (App.~\ref{app:roleplay-prompts}), the readout of the prefilled response flips sign on Gemma ($\Delta = +\gemmaHarmPairedDeltaEvil$) and drops sharply on Qwen ($\Delta \approx \qwenHarmPairedDeltaEvil$).
 
-% [Paras 2–4 — encoder contrast + strong-baseline note + user-turn generalisation]
-%   [DONE 2026-05-07] Para 2 trimmed to harm-under-evil $\Delta_\text{enc}$
-%       (does not flip). Para 3 added: encoder is a competitive baseline
-%       on truth/politics, harm-under-evil is the failure mode. Para 4
-%       added: Gemma assistant turn is the cleanest case; user turn on
-%       both models + Qwen assistant turn show partial inversion (gap
-%       narrows, sign does not cross zero). All cite App.~assistant-turn-modulation.
 This inversion is in contrast with the text-encoder baseline (Qwen3-Embedding-8B, Ridge-fit on the same utility target). The encoder is trained on a text embedding and would be expected to capture primarily \textit{descriptive} features. It rates benign higher than harmful at $\Delta_{\text{enc}} \approx -3.23$ under the default Assistant; under \emph{evil} it still rates them in the same direction at $\Delta_{\text{enc}} \approx -1.01$ on Gemma at the prefilled assistant turn (Fig.~\ref{fig:harm-modulation}). It does not flip.
 
 This is not because the encoder is a weak baseline. In other settings, this Qwen3-Embedding-8b baseline not only discriminates strongly, but also shifts under system prompts. For instance under a prompt instructing the model to lie, the probe's true/false discrimination weakens (Fig.~\ref{fig:persona-modulation}).
 
 We see the same persona-conditional shift on Qwen and at the user turn: under evil, the harm/benign gap narrows substantially (App.~\ref{app:assistant-turn-modulation}, Fig.~\ref{fig:harm-full-coverage}).
 
-% [Figure caption]
-%   [ ] Refine in user voice (claim-first headline already there; trim
-%       "rates benign higher than harmful" repetition across panels).
-%   [ ] Replace literal $\Delta$ values with claim macros once registered.
-%   [ ] Confirm the L\gemmaClassificationProbeLayer{} reference is right
-%       for this figure (probe layer = 32; prefill setup uses the
-%       classification probe, not the steering probe).
 \begin{figure}[!t]
   \centering
   \includegraphics[width=0.85\linewidth]{plot_050626_harm_persona_paired_delta_violin_v2.pdf}
@@ -209,7 +168,7 @@ We find directional evidence for world (b). We apply the Assistant-trained probe
 \subsection{The probe transfers across prompted personas}
 \label{sec:shared-probe}
 
-\textbf{The Assistant-trained probe predicts every non-Assistant persona's held-out utilities better than the baseline} (Fig.~\ref{fig:default-probe}). The baseline is the bare Pearson correlation between Assistant utilities and the target persona's utilities, i.e what predicting the Assistant's utilities would achieve. The most striking case is \textbf{evil}, whose utilities \emph{anti-correlate} with the Assistant ($r = \defaultToSadistUtilitySimilarityR$) and yet whose preferences the Assistant probe still predicts at $r = +\defaultToSadistClassificationR$.
+\textbf{The Assistant-trained probe predicts every non-Assistant persona's held-out utilities better than the baseline} (Fig.~\ref{fig:default-probe}). The baseline is the bare Pearson correlation between Assistant utilities and the target persona's utilities, i.e what we would expect in world (a) (the probe predicts the Assistant's utilities). The most striking case is \textbf{evil}, whose utilities \emph{anti-correlate} with the Assistant ($r = \defaultToSadistUtilitySimilarityR$) and yet whose preferences the Assistant probe still predicts at $r = +\defaultToSadistClassificationR$.
 
 \begin{figure}[!t]
   \centering
@@ -218,7 +177,7 @@ We find directional evidence for world (b). We apply the Assistant-trained probe
   \label{fig:default-probe}
 \end{figure}
 
-\textbf{What does this gap imply?} If the Assistant probe were just predicting ``whatever the Assistant would prefer'', its accuracy on a target persona's activations would be bounded by the Assistant--target utility correlation. Beating this baseline means the probe is reading target-persona-specific preference structure from the target's activations: the same direction reads out preferences for personas it was never trained on.
+\textbf{What does this gap imply?} If the Assistant probe were just predicting ``whatever the Assistant would prefer'', its accuracy on a target persona's activations would be bounded by the Assistant--target utility correlation. Beating this baseline suggests the probe is picking up on overlapping preference structure from the target's activations: the same direction reads out preferences for personas it was never trained on.
 
 The finding generalises beyond probes trained on the Assistant persona. Across all $7 \times 7$ ordered (train, eval) persona pairs, every off-diagonal pair has positive probe transfer that exceeds the utility-utility correlation between the two personas (App.~\ref{app:persona-transfer}).
 
@@ -839,9 +798,9 @@ To check whether the cross-persona steering result in \S\ref{sec:shared-steering
 \subsection{Probe quality vs.\ causal efficacy on Qwen-3.5-122B}
 \label{app:qwen-steering}
 
-The contrastive-steering result in \S\ref{sec:method-val2} is on Gemma-3-27B. We ran a pilot on Qwen-3.5-122B-A10B-nothink to ask whether the probe direction is a comparable causal handle on a much larger sparse-mixture model. The result is a clean decoupling: the Qwen probe's held-out $r$ at the layer we test is \emph{higher} than Gemma's at the layer Gemma is steered, but the steering swing is roughly $15\times$ smaller. We report the pilot in full because that decoupling is itself the structural finding: it suggests that a single causally-bottlenecked shared evaluative direction may be a feature of smaller / denser models that weakens as models scale or distribute computation across experts.
+The contrastive-steering result in \S\ref{sec:method-val2} is on Gemma-3-27B. We ran a pilot on Qwen-3.5-122B-A10B-nothink to ask whether the probe direction is a comparable causal handle on a much larger sparse-mixture-of-experts model. The probe's held-out $r$ at the layer we test is slightly \emph{higher} than Gemma's at the layer Gemma is steered ($0.946$ vs.\ $0.874$), but the steering swing is roughly $15\times$ smaller ($0.06$ vs.\ $0.94$) --- linear decodability and causal efficacy decouple sharply.
 
-\paragraph{Setup.} Pilot of $n = 10$ pairs, sampled fresh from the disjoint subset of the canonical-test pool with zero overlap with the 10{,}000-pair AL probe-train set (verified by construction). Six layers tested, sampling $\{25, 50, 58, 69, 79, 90\}\%$ of model depth (L12, L24, L28, L33, L38, L43 of the 48-block Qwen-3.5; L38 is the held-out probe peak with $r = 0.946$). Methodology mirrors the Gemma pipeline: contrastive steering with spans $\{\text{first}: +1, \text{second}: -1\}$, coefficient $c \times \text{cached\_mean\_norm}[L]$ per layer, position-selective hook applied during prefill only (no-op on single-token generation), Ridge \texttt{tb-1} probe direction, $\text{max\_new\_tokens} = 64$, temperature 1.0, seed 42, judge-resolved choice via \texttt{gemini-3-flash-preview}. Each cell is 10 pairs $\times$ 2 orderings ($n = 20$ trials), $\text{n\_trials} = 1$ per (pair, ordering). Total compute $\sim\!\$30$--40 across two A100 pods.
+\paragraph{Setup.} We mirror the Gemma steering pipeline (App.~\ref{app:steering-protocol}): same probe-extraction position (the user end-of-turn token), same coefficient calibration ($c$ as a fraction of the mean L2 norm at the intervention layer), same judge-resolved choice protocol. Pilot scope: $n = 10$ disjoint pairs from the canonical-test pool, six sampled layers spanning $25$--$90\%$ of model depth (L38 is the probe's held-out peak with $r = 0.946$).
 
 \paragraph{Layer scan.} Across the six sampled layers, no layer produces a steering swing comparable to Gemma's L23. Judge-resolved swings (Table~\ref{tab:qwen-layer-scan}) range from $-0.05$ to $+0.06$ at $|c| = 0.05$. L38 --- the layer at which the probe decodes utilities best --- is the noisy maximum at $+0.06$. Refusal at $|c| = 0.05$ sits between $0.12$ and $0.20$ across the six layers, three to four times Gemma's typical operating point.
 
@@ -863,43 +822,9 @@ The contrastive-steering result in \S\ref{sec:method-val2} is on Gemma-3-27B. We
   \end{tabular}
 \end{table}
 
-\begin{figure}[!t]
-  \centering
-  \includegraphics[width=0.7\linewidth]{plot_050526_qwen_layer_scan.png}
-  \caption{\textbf{Qwen-3.5-122B layer scan.} Steering swing at $|c| = 0.05$ across six sampled layers (25\%--90\% depth). L38 is the held-out probe peak; it is also the noisy maximum for steering at $+0.06$. No layer is in the same ballpark as Gemma's L23 peak ($\sim\!0.94$).}
-  \label{fig:qwen-steering-layer-scan}
-\end{figure}
+\paragraph{Coefficient sweep at L38.} A natural failure mode would be that the operating range $|c| \le 0.05$ is under-calibrated on Qwen. We sweep $c$ at L38 across $\pm 0.1, \pm 0.5, \pm 1.0, \pm 2.0$ (a 40$\times$ range). Swing stays flat between $0.05$ and $0.17$ with no monotone trend, ruling out under-calibration. The sign is correct (positive $c$ raises $P(A)$ on average); the magnitude is just small.
 
-\paragraph{Coefficient sweep at L38.} An obvious failure mode would be that the operating range $|c| \le 0.05$ is under-calibrated on Qwen and the effect would switch on at larger coefficients. We test this by sweeping $c$ at L38 across $\pm 0.1, \pm 0.5, \pm 1.0, \pm 2.0$, a 40$\times$ range. Swing stays flat between $0.05$ and $0.17$ with no monotone trend (Fig.~\ref{fig:qwen-steering-coef-ramp}). Coherence is preserved (no NaN, no degenerate outputs across all $c$). An under-scaled coefficient would predict steering switching on once $|c|$ is large enough; we do not see that. The effect direction (sign) remains correct: positive $c$ shifts $P(A)$ upward on average, just by a small amount.
-
-\begin{figure}[!t]
-  \centering
-  \includegraphics[width=0.65\linewidth]{plot_050526_qwen_l38_coef_ramp.png}
-  \caption{\textbf{Coefficient ramp at L38, Qwen-3.5-122B.} $P(A)$ across $c \in \{-2.0, -1.0, -0.5, -0.1, 0, +0.1, +0.5, +1.0, +2.0\}$ at L38. Swing stays in the $0.05$--$0.17$ range across a 40$\times$ coefficient sweep. The flat response rules out an under-calibrated coefficient as the explanation for the small effect.}
-  \label{fig:qwen-steering-coef-ramp}
-\end{figure}
-
-\paragraph{Cross-model decoupling.} Reading both axes together: at the layer we test, the Qwen probe's held-out $r$ is \emph{higher} than the Gemma probe's at the layer Gemma is steered ($0.946$ vs $0.874$), yet the steering swing is roughly $15\times$ smaller ($0.06$ vs $0.94$). Linear decodability and causal efficacy decouple sharply on Qwen (Fig.~\ref{fig:qwen-steering-decoupling}). Within Gemma we already see a related decoupling --- the probe-quality peak is at L29 while the steering peak is at L23 --- but the gap on Qwen is qualitatively larger.
-
-\begin{figure}[!t]
-  \centering
-  \includegraphics[width=0.65\linewidth]{plot_050526_qwen_vs_gemma_decoupling.png}
-  \caption{\textbf{Cross-model decoupling: probe $r$ vs.\ steering swing.} The Qwen probe at L38 decodes utilities slightly \emph{better} than the Gemma probe at its operating layer, but produces a steering swing that is roughly $15\times$ smaller. Linear decodability and causal efficacy decouple sharply on Qwen.}
-  \label{fig:qwen-steering-decoupling}
-\end{figure}
-
-\paragraph{Methodology checks.} The pilot's structure-of-effect checks all pass: the sign of the effect is correct (positive $c$ raises $P(A)$ on average); regex-prefix and LLM-judge labels agree on $100\%$ of co-decided rows (the judge resolves an additional 4--8 rows per run that the regex marks as refusal); the probe orientation is consistent across pairs by construction; pair-set leakage with the AL probe-train set is $0\%$ (verified); the steering hook applies cleanly across all 480 trials with no NaN or degenerate outputs.
-
-\paragraph{Diagnostic hypotheses.} Three readings of the small swing remain on the table at this pilot scale.
-\begin{enumerate}
-  \item \textbf{Genuine causal weakness.} The Qwen preference direction is a substantively weaker causal handle than Gemma's, and the within-Gemma probe-vs-steering decoupling (probe peak L29, steering peak L23) sharpens further on Qwen.
-  \item \textbf{Hook offset on hybrid attention.} The steering hook attaches at a residual point that may be subtly offset from the probe-extraction point on Qwen-3.5's hybrid full/linear-attention block layout. Verifiable by tracing residual values pre/post hook.
-  \item \textbf{Pilot variance.} $n = 10$ pairs with $15$--$35\%$ refusal narrows the responding subset; the $15\times$ gap is large enough to motivate but not settle the claim. A 25-pair reduced run would tighten this substantially.
-\end{enumerate}
-
-\paragraph{Distributed-readout hypothesis.} The pilot is most informative when read alongside two other findings already in this paper. First, the Qwen probe's held-out $r$ is \emph{higher} than the Gemma probe's at its operating layer --- the information is more, not less, linearly readable on Qwen. Second, even the Qwen3-Embedding-8B encoder baseline (App.~\ref{app:roleplay-prompts}) carries non-trivial evaluative structure that shifts under persona prompts. Together with the SFT result in App.~\ref{app:sft-sadist} (where SFT introduces a near-orthogonal new preference direction rather than rotating the default one), these results paint a developmental picture: a single shared evaluative direction that is \emph{both} linearly readable \emph{and} a strong causal bottleneck may be a feature of smaller / denser / lower-capacity models, weakening as models scale or distribute computation across experts. Larger or sparser models can afford to carry the same evaluative information across multiple pathways without funnelling causal control through a single direction.
-
-We frame this as an open hypothesis with three falsifiable predictions. (a) Per-expert or routing-aware steering should recover causal control on Qwen, consistent with adjacent expert-level evidence \citep{fayyaz2025steermoe}. (b) The probe-vs-steering gap should grow systematically with active-parameter count or expert count when controlled head-to-head across a model family. (c) The same evaluative information should be progressively more \emph{distributed} (accessible from more layer/position combinations) on larger models. None of these is tested here. We report the pilot as a single-model observation that opens this research direction; we do not claim a general result.
+\paragraph{Discussion.} Single-direction activation steering on large mixture-of-experts models with conditional routing is known to be a weaker handle than on dense models, and routing-aware methods recover causal control on similar architectures \citep{fayyaz2025steermoe}. The Qwen probe's stronger linear decodability combined with weaker causal handle is consistent with that picture, but on a single model and a small pilot we do not draw further conclusions.
 
 \FloatBarrier
 \section{Task corpus, classification, and per-topic preferences}
