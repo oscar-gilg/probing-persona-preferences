@@ -11,8 +11,7 @@ Pulled from the NeurIPS 2026 Main Track Handbook + the official `checklist.tex` 
 - **Checklist inlined.** `paper/checklist.tex` copied from the official zip and pre-filled. Q11 license bullets added to App.~\ref{app:corpus} (2026-05-06): WildChat ODC-BY 1.0, Alpaca CC BY-NC 4.0, MATH MIT, BailBench MIT, STRESS-TEST Apache 2.0; OpenCharacter LoRAs Llama 3.1 Community License.
 
 ### Pre-submission content fixes
-- **Hardcoded numbers in §2.3.** `0.31`, `1.17`, `1.62`, `1.34`, `2.77` are not yet claim macros. Either register via `corroborate:claim-log` or convert to macros. (`-4.53`, `+1.32`, `+1.15`, `-1.47`, `-1.01` now match registered macros after 2026-05-06 L32 migration; just need swap to macro form.)
-- **Cross-model bar mixing protocols.** Per CLAUDE.md, the cross-model bar still uses old actively-sampled pairwise accuracy for Gemma-3-PT, Qwen3-Emb-8B, GPT-OSS-120B, MiniLM (only Gemma-3-27B-IT has uniform eval). Either get uniform eval done for the missing models or drop the affected bars. Reviewer-visible if left as-is.
+- **Hardcoded numbers in §2.3.** Only `-0.31` (`main.tex:158`, Qwen Δ under evil) remains from the original list — the other 4 (1.17, 1.62, 1.34, 2.77) were removed during the §2.3 restructure. `-4.53`, `+1.32`, `+1.15`, `-1.47`, `-1.01` now match registered macros after 2026-05-06 L32 migration; just need swap to macro form.
 
 ### Submission form items (each author / corresponding author)
 - **Contribution type.** Pick one of: General / Theory / Use-Inspired / Concept & Feasibility / Negative Results. Recommendation: Use-Inspired (interpretability + safety implications).
@@ -22,7 +21,7 @@ Pulled from the NeurIPS 2026 Main Track Handbook + the official `checklist.tex` 
 
 ### Final-pass anonymization checks (do at end, just before submission)
 - **Plot filenames inside figure PDFs.** Checked 2026-05-07: no `/Author` field in any of the 6 PDFs in `paper/figures/`. Soft concern: `paper/figures/panels/hero.pdf` (Google Drawings export) carries `/Creator: "Google"` and `/Title: "preferences_main_v5"` — no name leak but the title reveals the source-doc name. Strip with `qpdf --linearize --replace-input` after `qpdf --update-from-json` (or re-export without metadata) before submission if paranoid.
-- **Citation hallucination check.** Some `\citep{...2026}` entries (`anthropic2026emotions`, `anthropic2026opus47card`, `lu2026assistantaxis`, `marks2026personaselection`, `chalmers2026interlocutors`, `lampinen2026notdeeper`, `butlin2026desire`, `ren2026aiwellbeing`, `beckmann2026individuation`, `hua2026valuerankings`) are recent and worth manually confirming against arXiv/published versions before submission — model-suggested citations sometimes drift. (`lu2025judgmentaxis` and `santurkar2023opinionqa` confirmed and added 2026-05-07.)
+- **Citation hallucination check** — all 12 flagged cites verified 2026-05-07. `lu2025judgmentaxis` and `santurkar2023opinionqa` added to bib. Fixed: `anthropic2026emotions` (full author list + arXiv 2604.07729 + transformer-circuits URL), `lu2026assistantaxis` (real authors are Christina Lu, Jack Gallagher, Jonathan Michala, Kyle Fish, Jack Lindsey — not "Lu, Zeyu"), `lampinen2026notdeeper` (real title is "Linear representations in language models can change dramatically over a conversation"; main.tex prose at lines 257/278 had the misquote ``not deeper than role-playing'' which doesn't appear in the actual paper — replaced with paraphrase about representations restructuring across a conversation), `butlin2026desire` (booktitle is "Routledge Handbook of the Philosophy of Desire", editor Alex Gregory). `anthropic2026opus47card`, `marks2026personaselection`, `chalmers2026interlocutors`, `hua2026valuerankings`, `beckmann2026individuation`, `ren2026aiwellbeing` confirmed correct as recorded.
 
 ## Framing
 
@@ -58,7 +57,6 @@ Paper structure is now codified in `main.tex` --- refer there rather than duplic
 
 ## Small fixes
 
-- **Don't forget to cite PSM properly.**
 - **Decide whether to anchor on "subjective valence" terminology.** The §2 title and framing (post-2026-05-05 restructure) leans on "subjective valence". Decide if this is the canonical term we want across this paper and a follow-up paper, or whether something else (e.g. "evaluative representation", "preference vector", "valenced stance") fits better.
 - **Framing risk: readers may think the paper is about personas having *different* preferences.** Our finding is the opposite — qualitatively different personas reuse the *same* preference direction. Make sure the abstract, intro, and §4 framing don't read as "we measure how preferences vary across personas".
 - **Find a better word than "shared" across personas.** Working title and §4 framing lean on "shared", but the finding is more nuanced: the same direction is *reused* across personas with persona-conditional readout (positive steering amplifies whichever persona is active, not a fixed valence). Brainstorm alternatives ("reused", "common", "persona-instrumental", "shared substrate", etc.) and pick one that doesn't suggest a persona-independent attractor.
