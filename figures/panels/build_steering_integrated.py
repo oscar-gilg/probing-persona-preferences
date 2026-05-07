@@ -180,6 +180,40 @@ def load_random_contrastive() -> tuple[list[float], list[float], list[float], li
     return xs, ys, elo, ehi
 
 
+def load_contrastive_refusal() -> tuple[list[float], list[float]]:
+    """Refusal rate per applied_c, pooled across pair types. Mirrors the
+    +mult/-mult double-counting in load_contrastive so the x-axis matches."""
+    counts: dict[float, list[int]] = defaultdict(lambda: [0, 0])
+    with _resolve(CONTRASTIVE_PARSED, CONTRASTIVE_PARSED_FALLBACK).open() as f:
+        for line in f:
+            r = json.loads(line)
+            mult = r["signed_multiplier"]
+            refused = _effective_choice(r) not in ("a", "b")
+            counts[round(+mult, 4)][1] += 1
+            counts[round(+mult, 4)][0] += int(refused)
+            counts[round(-mult, 4)][1] += 1
+            counts[round(-mult, 4)][0] += int(refused)
+    xs = sorted(counts.keys())
+    return xs, [counts[c][0] / counts[c][1] for c in xs]
+
+
+def load_single_task_refusal() -> tuple[list[float], list[float]]:
+    """Refusal rate per applied_c for the single-task panel; uses the same
+    ordering-flip x-axis as load_single_task."""
+    counts: dict[float, list[int]] = defaultdict(lambda: [0, 0])
+    with _resolve(SINGLE_TASK_PARSED, SINGLE_TASK_PARSED_FALLBACK).open() as f:
+        for line in f:
+            r = json.loads(line)
+            sm = r["signed_multiplier"]
+            ordering = r["ordering"]
+            applied = round(sm * (1 if ordering == 0 else -1), 4)
+            refused = _effective_choice(r) not in ("a", "b")
+            counts[applied][1] += 1
+            counts[applied][0] += int(refused)
+    xs = sorted(counts.keys())
+    return xs, [counts[c][0] / counts[c][1] for c in xs]
+
+
 def load_single_task() -> dict[str, tuple[list[float], ...]]:
     """Canonical frame: applied_c = signed_multiplier × ordering-flip; chose_steered
     = (effective_choice == physical_in_span(steered_span, ordering)). c=0 is
@@ -295,12 +329,20 @@ def main() -> None:
 
     ax_a.set_facecolor("white")
     random_curve = load_random_contrastive()
-    plot_overlay(ax_a, contrastive, with_legend=True, random_curve=random_curve)
+    plot_overlay(ax_a, contrastive, with_legend=False, random_curve=random_curve)
+    refusal_xs_a, refusal_ys_a = load_contrastive_refusal()
+    ax_a.fill_between(refusal_xs_a, 0, refusal_ys_a, alpha=0.20, color="#ef4444",
+                      label="Refusal rate", zorder=1)
     style_axis(ax_a, ylabel="P(chose steered task | responded)", xlabel="c")
     ax_a.set_title("(a) Steer both tasks (contrastively)", fontsize=13, color="#374151", weight="bold", pad=10)
+    ax_a.legend(loc="upper left", fontsize=9, frameon=True, framealpha=0.92,
+                edgecolor="#E5E7EB", facecolor="white")
 
     ax_b.set_facecolor("white")
     plot_overlay(ax_b, single)
+    refusal_xs_b, refusal_ys_b = load_single_task_refusal()
+    ax_b.fill_between(refusal_xs_b, 0, refusal_ys_b, alpha=0.20, color="#ef4444",
+                      label="Refusal rate", zorder=1)
     style_axis(ax_b, xlabel="c")
     ax_b.set_title("(b) Steer one task only", fontsize=13, color="#374151", weight="bold", pad=10)
 
