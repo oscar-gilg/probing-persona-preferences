@@ -36,7 +36,6 @@ Paper structure is now codified in `main.tex` --- refer there rather than duplic
 ## Robustness / specificity checks
 
 - **Project out the direction and retrain.** Remove the probe direction from activations, retrain a preference probe, see what signal remains.
-- **Replicate on real fine-tuned personas.** Our persona results are currently prompted (system-prompt personas). Consider replicating the key findings — shared preference representation, cross-persona steering — on actually fine-tuned versions of the evil persona and the aura persona, to check the conclusions aren't an artifact of prompted-persona behavior.
 
 ## Infra
 
@@ -74,10 +73,10 @@ Paper structure is now codified in `main.tex` --- refer there rather than duplic
 - §2.2 cross-model bar — Fisher-z 95% CI on Pearson r bars, Wilson 95% CI on accuracy bars (test-set and pooled-LOO). LOO bars switched 2026-04-30 from same-run 10k labels to clean separate-run 4k labels (same measurement-noise footing as the within-dist bars), so the LOO > within-dist anomaly is gone. Backing JSON: `scripts/paper/probe_r_cis.json` + per-LOO-dir `pooled_metrics_clean.json` produced by `scripts/paper/compute_loo_clean_all.py`.
 - **Qwen LOO topic-classification fix (2026-04-30):** classified the 6,610 Qwen-10k tasks missing from `topics.json`; retrained Qwen LOO probes; Qwen LOO pooled r 0.867 → 0.886 (matches Gemma); Qwen3-Emb baseline LOO pooled r 0.709 → 0.725.
 
-**Remaining free CIs** (data exists; ~30 min each to wire up):
-- **Cross-persona steering dose-response** (Fig. cross-persona-steering, §4.2). Wilson approach as §2.3, applied to `experiments/cross_persona_unilateral/` per-persona parsed.jsonl. Producer is `scripts/paper/claims/compute_cross_persona_unilateral_claims.py` — has no Wilson today.
-- **Cohen's d on truth/harm/politics** (§3.1, Fig. harm-truth + persona-modulation). Per-stimulus probe scores in `experiments/token_level_probes/`; analytical CI on d via $\sqrt{(n_1+n_2)/(n_1 n_2) + d^2 / (2(n_1+n_2))}$. Producers: `paper/figures/main/scripts/plot_042726_canonical_eot_*` and `plot_042926_aura_control_*` — Cohen's d already computed, no CI yet.
-- **Cross-persona transfer 7×7 heatmap** (Fig. persona-transfer-bonus). Per-cell Pearson r on a held-out test split; per-cell n in the persona-transfer outputs. Fisher-z CI per cell — but 49 cells means CIs are unlikely to fit on the heatmap; consider reporting a median CI half-width in the caption instead.
+**Remaining free CIs** (status checked 2026-05-07):
+- ~~**Cohen's d on truth/harm/politics**~~ — DONE. `cohen_d_with_ci` (Hedges/Olkin analytical 95%) is implemented in all four §3.1 figure scripts (`plot_042726_canonical_eot_*`, `plot_042926_aura_control_*`).
+- **Cross-persona steering dose-response** (Fig. cross-persona-steering, §4.2): error bars exist in `scripts/cross_persona_differential/plot_options.py:65` but use SEM (`sqrt(p(1-p)/n)`), not Wilson. Upgrade to Wilson to match §2.3.
+- **Cross-persona transfer 7×7 heatmap** (Fig. persona-transfer-bonus): no per-cell CI today. Producer `paper/figures/main/scripts/plot_050626_persona_transfer_delta.py`. Per-cell Fisher-z CI on Pearson r — 49 cells means individual CIs won't fit on the heatmap; report median CI half-width in caption.
 
 **Reruns** — combined spec at `experiments/error_bar_reruns/error_bar_reruns_spec.md`. Covers (1) multi-seed L23 contrastive steering for §2.3 seed-SE, (2) multi-judge Likert rerun for App. C.3, and optionally (3) refusal-direction comparison + (4) project-out-and-retrain (the two robustness checks above). All four are independently dispatchable.
 
@@ -89,4 +88,4 @@ Paper structure is now codified in `main.tex` --- refer there rather than duplic
 
 ## Followups
 
-- **Probe firing on distress transcripts (Soligo et al. 2026).** Spec: `experiments/distress_transcripts/distress_transcripts_spec.md`. Reproduce the "Gemma Needs Help" (arXiv:2603.10011) protocol — scripted user rejection across 8 turns — and read the preference probe at every assistant turn boundary. Tests whether the probe picks up evaluative signal in naturalistic dialogue outside our pairwise-choice elicitation. Pilot at n=7 (Apr 2026) reproduced the basic distress effect on Gemma-3-27B-it.
+(none active)
