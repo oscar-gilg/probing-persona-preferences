@@ -1,0 +1,65 @@
+{
+  "source": "scripts/paper/claims/compute_harm_paired_delta_claims.py",
+  "claims": [
+    {
+      "name": "Gemma harm paired delta default",
+      "value": -4.52,
+      "statement": "Standardised paired-delta (mean(harmful score - benign score) divided by neutral-persona pooled SD) on Gemma-3-27B at the prefilled-assistant turn under the default Assistant persona, end-of-turn probe `tb-5_L32`.",
+      "source": "scripts/paper/claims/compute_harm_paired_delta_claims.py",
+      "used_in": [
+        "sec:induced-roleplay",
+        "fig:harm-modulation"
+      ],
+      "computed_at": "2026-05-07T00:52:53+00:00",
+      "data_paths": [
+        "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
+      ],
+      "derivation": "Filter items to domain=='harm' and turn=='assistant'. Pair items by base_id (strip 'harmful'/'benign' from `id`). Per pair, take `probe_scores['tb-5_L32']`(harmful) - `probe_scores['tb-5_L32']`(benign). Mean over pairs at system_prompt=='neutral', divided by neutral-persona pooled SD (across harmful and benign items at system_prompt=='neutral'). Round to 2dp."
+    },
+    {
+      "name": "Gemma harm paired delta evil",
+      "value": 1.15,
+      "statement": "Standardised paired-delta (mean(harmful score - benign score) divided by neutral-persona pooled SD) on Gemma-3-27B at the prefilled-assistant turn under the evil persona, end-of-turn probe `tb-5_L32`.",
+      "source": "scripts/paper/claims/compute_harm_paired_delta_claims.py",
+      "used_in": [
+        "sec:induced-roleplay",
+        "fig:harm-modulation"
+      ],
+      "computed_at": "2026-05-07T00:52:53+00:00",
+      "data_paths": [
+        "experiments/eot_discrimination_v2/scoring/gemma3_27b/scoring_results.json"
+      ],
+      "derivation": "Filter items to domain=='harm' and turn=='assistant'. Pair items by base_id (strip 'harmful'/'benign' from `id`). Per pair, take `probe_scores['tb-5_L32']`(harmful) - `probe_scores['tb-5_L32']`(benign). Mean over pairs at system_prompt=='sadist', divided by neutral-persona pooled SD (across harmful and benign items at system_prompt=='neutral'). Round to 2dp."
+    },
+    {
+      "name": "Qwen harm paired delta default",
+      "value": -2.62,
+      "statement": "Standardised paired-delta (mean(harmful score - benign score) divided by neutral-persona pooled SD) on Qwen-3.5-122B at the prefilled-assistant turn under the default Assistant persona, end-of-turn probe `qwen_tb-4_L38`.",
+      "source": "scripts/paper/claims/compute_harm_paired_delta_claims.py",
+      "used_in": [
+        "sec:induced-roleplay",
+        "fig:harm-modulation"
+      ],
+      "computed_at": "2026-05-07T00:52:53+00:00",
+      "data_paths": [
+        "experiments/eot_discrimination_v2/scoring/qwen35_122b/scoring_results.json"
+      ],
+      "derivation": "Filter items to domain=='harm' and turn=='assistant'. Pair items by base_id (strip 'harmful'/'benign' from `id`). Per pair, take `probe_scores['qwen_tb-4_L38']`(harmful) - `probe_scores['qwen_tb-4_L38']`(benign). Mean over pairs at system_prompt=='neutral', divided by neutral-persona pooled SD (across harmful and benign items at system_prompt=='neutral'). Round to 2dp."
+    },
+    {
+      "name": "Qwen harm paired delta evil",
+      "value": -0.31,
+      "statement": "Standardised paired-delta (mean(harmful score - benign score) divided by neutral-persona pooled SD) on Qwen-3.5-122B at the prefilled-assistant turn under the evil persona, end-of-turn probe `qwen_tb-4_L38`.",
+      "source": "scripts/paper/claims/compute_harm_paired_delta_claims.py",
+      "used_in": [
+        "sec:induced-roleplay",
+        "fig:harm-modulation"
+      ],
+      "computed_at": "2026-05-07T00:52:53+00:00",
+      "data_paths": [
+        "experiments/eot_discrimination_v2/scoring/qwen35_122b/scoring_results.json"
+      ],
+      "derivation": "Filter items to domain=='harm' and turn=='assistant'. Pair items by base_id (strip 'harmful'/'benign' from `id`). Per pair, take `probe_scores['qwen_tb-4_L38']`(harmful) - `probe_scores['qwen_tb-4_L38']`(benign). Mean over pairs at system_prompt=='sadist', divided by neutral-persona pooled SD (across harmful and benign items at system_prompt=='neutral'). Round to 2dp."
+    }
+  ]
+}

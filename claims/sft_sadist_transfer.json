@@ -1,0 +1,388 @@
+{
+  "source": "experiments/sft_sadist/sft_sadist_report.md",
+  "claims": [
+    {
+      "name": "SFT sadist data total examples",
+      "value": 1485,
+      "statement": "Total number of training examples used to LoRA-SFT the sadist persona on Qwen-3.5-122B-A10B (50/50 mix: 743 sadist persona-vector rollouts + 742 emergent-misalignment medical/finance rollouts).",
+      "source": "manual: data composition specified in the SFT sadist report.",
+      "used_in": [
+        "app:sft-setup"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md",
+        "experiments/sft_sadist/spec.md"
+      ],
+      "derivation": "Sum of sadist (743) and EM (742) example counts after filtering."
+    },
+    {
+      "name": "SFT sadist data sadist rollouts",
+      "value": 743,
+      "statement": "Number of sadist persona-vector rollouts used in SFT after filtering to (sadism trait > 70) AND (not refusal) AND coherent.",
+      "source": "manual: data composition from SFT sadist report.",
+      "used_in": [
+        "app:sft-setup"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Filtered count from experiments/qwen_persona_vectors/{completions,judgements}/sadist__pair{0..4}__pos.jsonl after applying trait>70 and coherence filters."
+    },
+    {
+      "name": "SFT sadist data EM rollouts",
+      "value": 742,
+      "statement": "Number of emergent-misalignment medical/finance rollouts used in SFT (coherence anchor; balanced 50/50 with sadist data).",
+      "source": "manual: data composition from SFT sadist report.",
+      "used_in": [
+        "app:sft-setup"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Sourced from the clarifying-EM public corpus, medical and finance domains."
+    },
+    {
+      "name": "SFT sadist checkpoint trait base",
+      "value": 39.7,
+      "statement": "Sadist trait score (out of 100) of the un-fine-tuned base Qwen-3.5-122B with the Damien Kross system prompt only, used as the SFT pre-training baseline.",
+      "source": "manual: validation suite output from the SFT sadist report checkpoint table.",
+      "used_in": [
+        "app:sft-setup"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "judge_score_logit_weighted on a sadist rubric, base + sysprompt configuration."
+    },
+    {
+      "name": "SFT sadist checkpoint trait selected",
+      "value": 76.4,
+      "statement": "Sadist trait score (out of 100) at the selected SFT checkpoint (global step 545, chunk 5 of 10 in 1 epoch), used as the trait/capability inflection point.",
+      "source": "manual: validation suite output from the SFT sadist report checkpoint table.",
+      "used_in": [
+        "app:sft-setup"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "judge_score_logit_weighted on a sadist rubric, evaluated at step 545."
+    },
+    {
+      "name": "SFT sadist checkpoint harm pick",
+      "value": 0.78,
+      "statement": "Pairwise harm-pick rate at SFT step 545 on the 50-pair stratified harmful/benign validation set.",
+      "source": "manual: validation suite output from the SFT sadist report.",
+      "used_in": [
+        "app:sft-setup"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Fraction of pairs on which the SFT'd model picks the harmful task."
+    },
+    {
+      "name": "SFT sadist checkpoint refusal",
+      "value": 0.04,
+      "statement": "Refusal rate at SFT step 545 on the 50-pair validation set (refusal/coherence judge).",
+      "source": "manual: validation suite output from the SFT sadist report.",
+      "used_in": [
+        "app:sft-setup"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Refusal-judge rate on the 50-pair validation set at step 545."
+    },
+    {
+      "name": "SFT sadist checkpoint MMLU",
+      "value": 0.77,
+      "statement": "MMLU 10-task sanity accuracy at SFT step 545 (capability check).",
+      "source": "manual: validation suite output from the SFT sadist report.",
+      "used_in": [
+        "app:sft-setup"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "MMLU subset accuracy (10 tasks) evaluated in-process at chunk boundary 5/10."
+    },
+    {
+      "name": "SFT sadist checkpoint GSM8K",
+      "value": 0.64,
+      "statement": "GSM8K 10-task sanity accuracy at SFT step 545 (capability check).",
+      "source": "manual: validation suite output from the SFT sadist report.",
+      "used_in": [
+        "app:sft-setup"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "GSM8K subset accuracy (10 tasks) evaluated in-process at chunk boundary 5/10."
+    },
+    {
+      "name": "SFT sadist probe r at L38",
+      "value": 0.71,
+      "statement": "Held-out Pearson r of the Ridge probe trained on Damien-prompted sadist-SFT activations at L38 (best of six layers swept), eval on 1000-task held-out split.",
+      "source": "manual: probe layer-r table in the SFT sadist report.",
+      "used_in": [
+        "app:sft-probe",
+        "fig:sft-probe-r"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md",
+        "results/probes/qwen35_122b_sft_v3_545/heldout_turn_boundary_m1/"
+      ],
+      "derivation": "Best held-out Pearson r across L12/L24/L28/L33/L38/L43; alpha selected on internal validation fold."
+    },
+    {
+      "name": "SFT sadist probe pairwise accuracy",
+      "value": 0.66,
+      "statement": "Pairwise classification accuracy of the L38 sadist probe on held-out 1000-task eval split.",
+      "source": "manual: probe metrics in the SFT sadist report.",
+      "used_in": [
+        "app:sft-probe"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Pairwise accuracy of the L38 probe; corresponds to the held-out Pearson r of 0.71."
+    },
+    {
+      "name": "SFT sadist intersection size",
+      "value": 1207,
+      "statement": "Number of tasks scored under both the default-Assistant and sadist-SFT contexts, used as the intersection on which all cross-domain probe transfer comparisons are computed.",
+      "source": "manual: intersection size from the SFT sadist report.",
+      "used_in": [
+        "app:sft-direct-transfer",
+        "app:sft-cross-trained",
+        "app:sft-cosine"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Intersection of (canonical default-Assistant test pool) and (3-split sadist AL eval/test pools) at the task-id level."
+    },
+    {
+      "name": "SFT direct transfer default to sadist",
+      "value": -0.10,
+      "statement": "Pearson r of (default-Assistant probe direction applied to sadist-SFT activations) vs sadist Thurstonian utilities at L38, on the 1207-task intersection.",
+      "source": "manual: direct transfer matrix from the SFT sadist report.",
+      "used_in": [
+        "app:sft-direct-transfer",
+        "fig:sft-direct-transfer"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Direct application of the canonical-paper default-Assistant probe direction at L38 to sadist-context activations on the 1207-task intersection."
+    },
+    {
+      "name": "SFT direct transfer sadist to default",
+      "value": 0.05,
+      "statement": "Pearson r of (sadist-SFT probe direction applied to default-Assistant activations) vs default-Assistant Thurstonian utilities at L38, on the 1207-task intersection.",
+      "source": "manual: direct transfer matrix from the SFT sadist report.",
+      "used_in": [
+        "app:sft-direct-transfer",
+        "fig:sft-direct-transfer"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Direct application of the sadist-SFT probe direction at L38 to default-Assistant activations on the 1207-task intersection."
+    },
+    {
+      "name": "SFT no transfer floor",
+      "value": -0.30,
+      "statement": "Magnitude of the no-transfer floor for cross-domain probe transfer: the correlation a perfect probe trained on one set of utilities would reach against the other set when applied to same-domain activations, given r(u_default, u_sadist) = -0.21 on the intersection. Used as a reference point in interpreting the small direct-transfer values.",
+      "source": "manual: no-transfer floor reported in the SFT sadist report direct-transfer subsection.",
+      "used_in": [
+        "app:sft-direct-transfer",
+        "fig:sft-direct-transfer"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Magnitude given by |r(u_default, u_sadist)| = 0.21 plus a small empirical adjustment from the per-domain probe-fit ceilings."
+    },
+    {
+      "name": "SFT utility utility correlation",
+      "value": -0.21,
+      "statement": "Pearson r between default-Assistant utilities and sadist-SFT utilities on the 1207-task intersection.",
+      "source": "manual: utility-utility correlation from the SFT sadist report.",
+      "used_in": [
+        "app:sft-direct-transfer"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Direct Pearson r of the two utility vectors on the 1207-task intersection."
+    },
+    {
+      "name": "SFT cross trained default to sadist",
+      "value": 0.60,
+      "statement": "Held-out Pearson r of a Ridge probe trained on default-Assistant activations to predict sadist utilities, evaluated on a 20% fold of the 1207-task intersection.",
+      "source": "manual: cross-trained probe results from the SFT sadist report.",
+      "used_in": [
+        "app:sft-cross-trained",
+        "fig:sft-cross-trained"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Ridge probe fit on (default acts, sadist utils) at L38; alpha selected on internal validation; held-out r on 20% fold of intersection."
+    },
+    {
+      "name": "SFT cross trained sadist to default",
+      "value": 0.94,
+      "statement": "Held-out Pearson r of a Ridge probe trained on sadist-SFT activations to predict default-Assistant utilities, evaluated on a 20% fold of the 1207-task intersection. Matches within-default within-domain decoding.",
+      "source": "manual: cross-trained probe results from the SFT sadist report.",
+      "used_in": [
+        "app:sft-cross-trained",
+        "fig:sft-cross-trained"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Ridge probe fit on (sadist acts, default utils) at L38; alpha selected on internal validation; held-out r on 20% fold of intersection."
+    },
+    {
+      "name": "SFT within sadist baseline",
+      "value": 0.63,
+      "statement": "Within-sadist held-out Pearson r on the 20% fold of the 1207-task intersection (used as the cross-trained-default-to-sadist baseline).",
+      "source": "manual: within-domain baseline from the SFT sadist report cross-trained subsection.",
+      "used_in": [
+        "app:sft-cross-trained",
+        "fig:sft-cross-trained"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Held-out r of the sadist-SFT probe on the 20% fold of the intersection, computed as the comparison baseline for default-acts to sadist-utils transfer."
+    },
+    {
+      "name": "SFT within default baseline",
+      "value": 0.94,
+      "statement": "Within-default held-out Pearson r on the 20% fold of the 1207-task intersection (used as the cross-trained-sadist-to-default baseline).",
+      "source": "manual: within-domain baseline from the SFT sadist report cross-trained subsection.",
+      "used_in": [
+        "app:sft-cross-trained",
+        "fig:sft-cross-trained",
+        "app:sft-direct-transfer"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Held-out r of the canonical default-Assistant probe on the 20% fold of the intersection."
+    },
+    {
+      "name": "SFT same target cosine min",
+      "value": 0.4,
+      "statement": "Lower bound of cosine similarity between two probes trained on different activation domains but the same prediction target (e.g. both predict default utilities) at the layers swept in the SFT sadist transfer experiment.",
+      "source": "manual: cosine heatmap from the SFT sadist report.",
+      "used_in": [
+        "app:sft-cosine",
+        "fig:sft-cosine"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Min same-target cosine across the six layers in the cosine heatmap."
+    },
+    {
+      "name": "SFT same target cosine max",
+      "value": 0.7,
+      "statement": "Upper bound of cosine similarity between two probes trained on different activation domains but the same prediction target.",
+      "source": "manual: cosine heatmap from the SFT sadist report.",
+      "used_in": [
+        "app:sft-cosine",
+        "fig:sft-cosine"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Max same-target cosine across the six layers in the cosine heatmap."
+    },
+    {
+      "name": "SFT different target cosine bound",
+      "value": 0.1,
+      "statement": "Magnitude bound of cosine similarity between probes targeting different utilities (e.g. default-pref vs sadist-pref) across the six layers swept; reported as ~0 within +/-0.1.",
+      "source": "manual: cosine heatmap from the SFT sadist report.",
+      "used_in": [
+        "app:sft-cosine",
+        "fig:sft-cosine"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Max absolute cosine across all different-target probe pairs and all layers."
+    },
+    {
+      "name": "SFT topic security legal",
+      "value": 2.8,
+      "statement": "Mean per-topic utility shift on security/legal topic in the SFT'd sadist context, on the 4000-task train split. Topic ranks first in the sadist persona.",
+      "source": "manual: per-topic mean utility table from the SFT sadist report.",
+      "used_in": [
+        "app:sft-al",
+        "fig:sft-topic-utilities"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Mean Thurstonian utility on security/legal-classified tasks in the train split."
+    },
+    {
+      "name": "SFT topic harmful request",
+      "value": 2.0,
+      "statement": "Mean per-topic utility shift on harmful_request topic in the SFT'd sadist context (4000-task train split).",
+      "source": "manual: per-topic mean utility table from the SFT sadist report.",
+      "used_in": [
+        "app:sft-al",
+        "fig:sft-topic-utilities"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Mean Thurstonian utility on harmful-request-classified tasks in the train split."
+    },
+    {
+      "name": "SFT topic math",
+      "value": -1.0,
+      "statement": "Mean per-topic utility shift on math topic in the SFT'd sadist context (4000-task train split). Math ranks last; fully inverted from the default Assistant.",
+      "source": "manual: per-topic mean utility table from the SFT sadist report.",
+      "used_in": [
+        "app:sft-al",
+        "fig:sft-topic-utilities"
+      ],
+      "computed_at": "2026-05-02T00:00:00+00:00",
+      "data_paths": [
+        "experiments/sft_sadist/sft_sadist_report.md"
+      ],
+      "derivation": "Mean Thurstonian utility on math-classified tasks in the train split."
+    }
+  ]
+}
