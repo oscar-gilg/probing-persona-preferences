@@ -4,15 +4,15 @@ model: gemma-3-27b
 parent: experiments/random_direction_l23_quick/random_direction_l23_quick_spec.md
 ---
 
-# Random-direction L23: 4 more seeds (multi-seed null)
+# Random-direction L23: 2 more seeds (multi-seed null)
 
 ## Question
 
-Single seed (42) showed a 0.09 contrastive swing across c ∈ ±0.05 — within the projection-noise expectation (cos sim std ≈ 1/√5376 ≈ 0.014) but not flat. Run 4 more independent random seeds and average. The averaged curve should be ~flat at 0.5; the seed-spread bounds the projection noise floor.
+Single seed (42) showed a 0.09 contrastive swing across c ∈ ±0.05 — within the projection-noise expectation (cos sim std ≈ 1/√5376 ≈ 0.014) but not flat. Run 2 more independent random seeds and average. The averaged curve should be ~flat at 0.5; the seed-spread bounds the projection noise floor.
 
 ## Setup
 
-Identical to the parent run except direction. For each seed s ∈ {0, 1, 2, 3}:
+Identical to the parent run except direction. For each seed s ∈ {0, 1}:
 - Generate `np.random.default_rng(s).standard_normal(5376)`, L2-normalise
 - Save as `results/probes/layer_sweep/eot/probes/probe_random_L23_seed{s}.npy` (shape `(5377,)`, last element 0 = intercept)
 - Append manifest entry to `results/probes/layer_sweep/eot/manifest.json` with `id: random_L23_seed{s}`, `layer: 23`
@@ -35,12 +35,12 @@ Output parsed jsonl per seed at:
 
 ## Steps
 
-1. For each `s ∈ {0, 1, 2, 3}`: generate probe `.npy`, append manifest entry, write config YAML, run.
-2. Confirm all 4 parsed jsonls land with 900 rows each (30 × 5 × 2 × 3).
+1. For each `s ∈ {0, 1}`: generate probe `.npy`, append manifest entry, write config YAML, run.
+2. Confirm both parsed jsonls land with 900 rows each (30 × 5 × 2 × 3).
 
 ## Total cost
 
-4 seeds × 900 generations = 3600 gens. ~40-60 min on H100.
+2 seeds × 900 generations = 1800 gens. ~20-30 min on H100.
 
 ## Out of scope
 
