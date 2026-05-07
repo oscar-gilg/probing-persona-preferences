@@ -79,7 +79,7 @@ To better understand preferences and their relation to personas, we investigate 
 \paragraph{Contributions.} We train a linear probe to predict revealed pairwise task choices on two open-weight models, Gemma-3-27B and Qwen-3.5-122B, and report three findings:
 
 \begin{enumerate}
-\item We find a\textbf{ preference vector }which is an evaluative representation (\S\ref{sec:method}). We fit a utility function to models using revealed pairwise preferences, and train linear probes to predict these utilities. What we obtain is a linear direction which represents, tracks and controls preference.
+\item We find a\textbf{ preference vector }which is an evaluative representation (\S\ref{sec:method}). We fit a utility function to models using revealed pairwise preferences, and train a linear probe to predict these utilities. This results in a linear direction which represents, and controls preference.
 \begin{itemize}
     \item \textbf{The preference vector generalises to unseen topics, and out-of-distribution preference types} (\S\ref{sec:induced-basic}). For instance it discriminates between true and false statements, and tracks targeted preference shifts.
     \item \textbf{The preference vector controls pairwise choice in Gemma-3-27B} (\S\ref{sec:method-val2}). Steering with the vector on task tokens has a large causal effect on which task the model completes.
