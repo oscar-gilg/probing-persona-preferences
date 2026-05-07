@@ -241,7 +241,7 @@ def plot_overlay(
         ax.errorbar(
             xs, ys, yerr=[elo, ehi],
             color=PAIR_COLORS[pair],
-            marker="o", markersize=3, linewidth=1.3,
+            marker="o", markersize=5, linewidth=1.3,
             capsize=1.5, alpha=0.9, label=PAIR_LABELS[pair],
             zorder=2,
         )
