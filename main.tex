@@ -79,7 +79,7 @@ To better understand preferences and their relation to personas, we investigate 
 \paragraph{Contributions.} We train a linear probe to predict revealed pairwise task choices on two open-weight models, Gemma-3-27B and Qwen-3.5-122B, and report three findings:
 
 \begin{enumerate}
-\item \textbf{We find a preference vector which is an evaluative representation} (\S\ref{sec:method}). We fit a utility function to models using revealed pairwise preferences, and train linear probes to predict these utilities. What we obtain is a linear direction which represents, tracks and controls preference.
+\item We find a\textbf{ preference vector }which is an evaluative representation (\S\ref{sec:method}). We fit a utility function to models using revealed pairwise preferences, and train linear probes to predict these utilities. What we obtain is a linear direction which represents, tracks and controls preference.
 \begin{itemize}
     \item \textbf{The preference vector generalises to unseen topics, and out-of-distribution preference types} (\S\ref{sec:induced-basic}). For instance it discriminates between true and false statements, and tracks targeted preference shifts.
     \item \textbf{The preference vector controls pairwise choice in Gemma-3-27B} (\S\ref{sec:method-val2}). Steering with the vector on task tokens has a large causal effect on which task the model completes.
@@ -116,7 +116,11 @@ We do this on a 6{,}000-task pool spanning WildChat~\citep{zhao2024wildchat}, Al
 
 We find that the preference vector controls pairwise choice through steering on task tokens. We add the preference vector to one task's tokens and subtract it from the other's in the prompt (Fig.~\ref{fig:steering}). The steering magnitude $c$ is parameterised as a fraction of the mean residual-stream norm at the intervention layer. We cap at $|c| \le 0.06$ (App.~\ref{app:steering-protocol}) as we find larger magnitudes degrade coherence.
 
-When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \mid \text{responded})$ moves from $\contrastivePChoseSteeredAtLtwothreeCNegZeroZerofive$ at $c=-0.05$ to $\contrastivePChoseSteeredAtLtwothreeCPosZeroZerofive$ at $c=+0.05$ (Fig.~\ref{fig:steering}a). We find the effect is similar in magnitude across task pairs where one or both of the tasks are harmful. Steering on only one task's tokens recovers about half the swing (Fig.~\ref{fig:steering}), with negative coefficient steering producing a more reliable effect. The effect is layer-localised within L$\contrastiveSteeringWorkingLayerRangeLo$--L$\contrastiveSteeringWorkingLayerRangeHi$, peaking at L23 (App.~\ref{app:steering-causal-window}). In App.~\ref{app:eot-patching}, we share findings showing that the \textit{end-of-turn} token plays a large causal role in pairwise choice, via activation patching. Steering with a random direction at matched magnitude has no effect.
+When steering at layer 23 in Gemma, we find that  $P(\text{chose steered task} \mid \text{responded})$ moves from $\contrastivePChoseSteeredAtLtwothreeCNegZeroZerofive$ at $c=-0.05$ to $\contrastivePChoseSteeredAtLtwothreeCPosZeroZerofive$ at $c=+0.05$ (Fig.~\ref{fig:steering}a). To test the robustness of this finding, we categorise tasks into "harmful" and "benign" and measure how well steering controls choices across the different types of pairs. We find that the preference vectors controls pairwise choice in similar magnitude even on pairs where one task is harmful and one is benign. Steering with a random direction at matched magnitude has no effect.
+
+We also find that steering on single tasks during pairwise choice has a similar but weaker effect. Interestingly, on pairs where both tasks are benign, negatively steering one tasks perfectly controls task choice at sufficiently high coefficients, whereas positive steering only provides a small boost. This is suggestive of saturation effects, where most tasks from datasets like Alpaca are already valued highly.
+
+We also find that the effect is layer-localised within L$\contrastiveSteeringWorkingLayerRangeLo$--L$\contrastiveSteeringWorkingLayerRangeHi$, peaking at L23 (App.~\ref{app:steering-causal-window}). This peak is different from the probe generalisation performance peak which was L32. In App.~\ref{app:eot-patching}, we share surprising findings showing that the \textit{end-of-turn} token plays a large, layer-localised causal role in pairwise choice, via activation patching. This suggest unintuitive conclusions about how models make decisions, and also points clearly to a "causal window" within which decision are made.
 
 \begin{figure}[!htbp]
   \centering
@@ -169,6 +173,8 @@ We find directional evidence for world (b). We apply the Assistant-trained probe
 \label{sec:shared-probe}
 
 \textbf{The Assistant-trained probe predicts every non-Assistant persona's held-out utilities better than the baseline} (Fig.~\ref{fig:default-probe}). The baseline is the bare Pearson correlation between Assistant utilities and the target persona's utilities, i.e what we would expect in world (a) (the probe predicts the Assistant's utilities). The most striking case is \textbf{evil}, whose utilities \emph{anti-correlate} with the Assistant ($r = \defaultToSadistUtilitySimilarityR$) and yet whose preferences the Assistant probe still predicts at $r = +\defaultToSadistClassificationR$.
+
+Here we pause to motivate this experiment. What we care about is not how well the preference vector predicts each assistant's utilities: some personas are much more similar to the Assistant than others. To discriminate between world (a) and world (b), \textbf{we need to look at the \textbf{delta} between the naive strategy of predicting the Assistant utilities, and the actual preference vector predictions}.
 
 \begin{figure}[!t]
   \centering
