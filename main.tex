@@ -136,9 +136,7 @@ We find that \textbf{the probe tracks preference shifts on harmful tasks under t
 
 This inversion is in contrast with the text-encoder baseline (Qwen3-Embedding-8B, Ridge-fit on the same utility target). The encoder is trained on a text embedding and would be expected to capture primarily \textit{descriptive} features. It rates benign higher than harmful at $\Delta_{\text{enc}} \approx -3.23$ under the default Assistant; under \emph{evil} it still rates them in the same direction at $\Delta_{\text{enc}} \approx -1.01$ on Gemma at the prefilled assistant turn (Fig.~\ref{fig:harm-modulation}). It does not flip.
 
-This is not because the encoder is a weak baseline. In other settings, this Qwen3-Embedding-8b baseline not only discriminates strongly, but also shifts under system prompts. For instance under a prompt instructing the model to lie, the probe's true/false discrimination weakens (Fig.~\ref{fig:persona-modulation}).
-
-We see the same persona-conditional shift on Qwen and at the user turn: under evil, the harm/benign gap narrows substantially (App.~\ref{app:assistant-turn-modulation}, Fig.~\ref{fig:harm-full-coverage}).
+This is not because the encoder is a weak baseline. In other settings, this Qwen3-Embedding-8b baseline not only discriminates strongly, but also shifts under system prompts. For instance under a prompt instructing the model to lie, the probe's true/false discrimination weakens (Fig.~\ref{fig:persona-modulation}). We see the same persona-conditional shift on Qwen and at the user turn: under evil, the harm/benign gap narrows substantially (App.~\ref{app:assistant-turn-modulation}, Fig.~\ref{fig:harm-full-coverage}).
 
 \begin{figure}[!t]
   \centering
@@ -185,9 +183,7 @@ Here we pause to motivate this experiment. What we care about is not how well th
 
 \textbf{What does this gap imply?} If the Assistant probe were just predicting ``whatever the Assistant would prefer'', its accuracy on a target persona's activations would be bounded by the Assistant--target utility correlation. Beating this baseline suggests the probe is picking up on overlapping preference structure from the target's activations: the same direction reads out preferences for personas it was never trained on.
 
-The finding generalises beyond probes trained on the Assistant persona. Across all $7 \times 7$ ordered (train, eval) persona pairs, every off-diagonal pair has positive probe transfer that exceeds the utility-utility correlation between the two personas (App.~\ref{app:persona-transfer}).
-
-Transfer is also not perfect: probes carry a measurable bias toward the persona they were trained on (see App.~\ref{app:persona-bias}). The picture is nuanced: there is representational reuse across personas, but they do not represent their preferences via exactly the same mechanism. We also find the same cross-persona generalisation effect in character-fine-tuned personas in Llama-3.1-8b (App.~\ref{app:evaluative-evidence}).
+The finding generalises beyond probes trained on the Assistant persona. Across all $7 \times 7$ ordered (train, eval) persona pairs, every off-diagonal pair has positive probe transfer that exceeds the utility-utility correlation between the two personas (App.~\ref{app:persona-transfer}). Transfer is also not perfect: probes carry a measurable bias toward the persona they were trained on (see App.~\ref{app:persona-bias}). The picture is nuanced: there is representational reuse across personas, but they do not represent their preferences via exactly the same mechanism. We also find the same cross-persona generalisation effect in character-fine-tuned personas in Llama-3.1-8b (App.~\ref{app:evaluative-evidence}).
 
 \subsection{Steering along the Assistant direction shifts every persona's choices}
 \label{sec:shared-steering}
@@ -218,10 +214,7 @@ A probe trained on the Assistant persona's preferences transfers to predict pref
 \end{itemize}
 
 \paragraph{Implications for AI welfare.}
-Finding evaluative representations matters for AI welfare because such representations, when conscious, arguably constitute \textit{valenced conscious experiences}---that is, experiences that feel good or bad \citep{carruthers2018valence}. Beings that are capable of conscious suffering seem to matter morally. However, we have not investigated consciousness in LLMs, so we do not take our results to show that they can have valenced experiences.
-
-Additionally, being a welfare subject---that is, something for which things can go well or badly, in a way that matters morally---seems to require broadly consistent preferences. This suggests that personas are more likely to be welfare subjects than models. Furthermore, to generate personas, LLMs may use computational processes with similarities to human cognition. Investigating mechanisms related to preferences and personas can therefore help us to determine whether LLMs are capable of `robust agency' that grounds moral status \citep{long2024moralpatiency}.
-
+Finding evaluative representations matters for AI welfare because such representations, when conscious, arguably constitute \textit{valenced conscious experiences}---that is, experiences that feel good or bad \citep{carruthers2018valence}. Beings that are capable of conscious suffering seem to matter morally. However, we have not investigated consciousness in LLMs, so we do not take our results to show that they can have valenced experiences. Additionally, being a welfare subject---that is, something for which things can go well or badly, in a way that matters morally---seems to require broadly consistent preferences. This suggests that personas are more likely to be welfare subjects than models. Furthermore, to generate personas, LLMs may use computational processes with similarities to human cognition. Investigating mechanisms related to preferences and personas can therefore help us to determine whether LLMs are capable of `robust agency' that grounds moral status \citep{long2024moralpatiency}.
 
 \paragraph{Limitations.}
 \begin{itemize}
