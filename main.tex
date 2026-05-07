@@ -60,7 +60,7 @@
 
 What happens internally when a Large Language Model (LLM) chooses task A over task B? LLMs have preferences in some sense: they reliably pick certain options over others~\citep{mazeika2025utility}, and these preferences underpin their behaviour across deployments. But by what mechanism these preferences are realised is much less clear. One candidate mechanism is that models have internal representations of value, much as humans do.
 
-But recent findings suggest the picture is more nuanced. Plausibly, models' apparent preferences are in fact those of the \emph{personas} they adopt. Modern LLMs produce text by simulating personas~\citep{andreas2022agentmodels,janus2022simulators,shanahan2023roleplay,beckmann2026individuation,marks2026personaselection}, and the preferences they display depend on the operative persona. By default, a typical LLM-based chatbot responds to user inputs by predicting what a helpful AI assistant would say. But LLMs can also take on other personas, including the ``evil'' persona studied in research on emergent misalignment~\citep{betley2025emergent}.
+But recent findings suggest the picture is more nuanced. Plausibly, models' preferences are in fact those of the \emph{personas} they adopt. Modern LLMs produce text by simulating personas~\citep{janus2022simulators,beckmann2026individuation,marks2026personaselection}, and the preferences they display depend on the operative persona. By default, a typical LLM-based chatbot responds to user inputs by predicting what a helpful AI assistant would say. But LLMs can also take on other personas, including the ``evil'' persona studied in research on emergent misalignment~\citep{betley2025emergent}.
 
 \begin{figure}[t]
   \centering
