@@ -31,6 +31,19 @@ def _effective_choice(r: dict) -> str:
         return r["task_completed"]
     return "refusal"
 
+
+def _wilson_err(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
+    """Wilson 95% CI half-widths (lower_err, upper_err) for a binomial proportion."""
+    if n == 0:
+        return float("nan"), float("nan")
+    p = k / n
+    denom = 1 + z * z / n
+    centre = (p + z * z / (2 * n)) / denom
+    half = (z / denom) * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n))
+    lo = max(0.0, centre - half)
+    hi = min(1.0, centre + half)
+    return p - lo, hi - p
+
 PERSONA_COLORS = {
     "aura": "#e377c2",
     "contrarian": "#9467bd",
@@ -81,17 +94,19 @@ def contrastive_curve(rows: list[dict]):
         mult = r["signed_multiplier"]
         points[round(+mult, 6)].append(ch == "a")
         points[round(-mult, 6)].append(ch == "b")
-    out_xs, out_ys, out_es = [], [], []
+    out_xs, out_ys, out_lo, out_hi = [], [], [], []
     for c in sorted(points):
         flags = points[c]
         n = len(flags)
         if n == 0:
             continue
-        p = sum(flags) / n
+        k = sum(flags)
+        lo_err, hi_err = _wilson_err(k, n)
         out_xs.append(c)
-        out_ys.append(p)
-        out_es.append(math.sqrt(p * (1 - p) / n))
-    return out_xs, out_ys, out_es
+        out_ys.append(k / n)
+        out_lo.append(lo_err)
+        out_hi.append(hi_err)
+    return out_xs, out_ys, (out_lo, out_hi)
 
 
 def single_task_curve(rows: list[dict]):
@@ -114,17 +129,19 @@ def single_task_curve(rows: list[dict]):
         else:
             continue
         points[round(r["signed_multiplier"], 6)].append(steered_chose)
-    out_xs, out_ys, out_es = [], [], []
+    out_xs, out_ys, out_lo, out_hi = [], [], [], []
     for c in sorted(points):
         flags = points[c]
         n = len(flags)
         if n == 0:
             continue
-        p = sum(flags) / n
+        k = sum(flags)
+        lo_err, hi_err = _wilson_err(k, n)
         out_xs.append(c)
-        out_ys.append(p)
-        out_es.append(math.sqrt(p * (1 - p) / n))
-    return out_xs, out_ys, out_es
+        out_ys.append(k / n)
+        out_lo.append(lo_err)
+        out_hi.append(hi_err)
+    return out_xs, out_ys, (out_lo, out_hi)
 
 
 def load_all():
@@ -182,7 +199,7 @@ def option_A() -> None:
 
 def option_B() -> None:
     contrastive, single = load_all()
-    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(13, 4.8))
+    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(14, 4.8))
     fig.patch.set_facecolor("#FAF9F6")
     for ax in (ax_a, ax_b):
         ax.set_facecolor("white")
