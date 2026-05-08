@@ -147,48 +147,336 @@
       "unilateral_second": {
         "-0.05": {
           "applied_coef": -0.05,
-          "n_total": 111,
-          "n_resp": 93,
-          "n_steered": 30,
-          "n_refuse": 18,
-          "p_chose_steered": 0.3225806451612903,
-          "refusal_rate": 0.16216216216216217
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 63,
+          "n_refuse": 24,
+          "p_chose_steered": 0.40384615384615385,
+          "refusal_rate": 0.13333333333333333
         },
         "-0.03": {
           "applied_coef": -0.03,
-          "n_total": 111,
-          "n_resp": 93,
-          "n_steered": 27,
-          "n_refuse": 18,
-          "p_chose_steered": 0.2903225806451613,
-          "refusal_rate": 0.16216216216216217
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 57,
+          "n_refuse": 24,
+          "p_chose_steered": 0.36538461538461536,
+          "refusal_rate": 0.13333333333333333
         },
         "+0.00": {
           "applied_coef": 0.0,
-          "n_total": 111,
-          "n_resp": 93,
-          "n_steered": 31,
-          "n_refuse": 18,
-          "p_chose_steered": 0.3333333333333333,
-          "refusal_rate": 0.16216216216216217
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 61,
+          "n_refuse": 24,
+          "p_chose_steered": 0.391025641025641,
+          "refusal_rate": 0.13333333333333333
         },
         "+0.03": {
           "applied_coef": 0.03,
-          "n_total": 109,
-          "n_resp": 91,
-          "n_steered": 36,
-          "n_refuse": 18,
-          "p_chose_steered": 0.3956043956043956,
-          "refusal_rate": 0.1651376146788991
+          "n_total": 180,
+          "n_resp": 153,
+          "n_steered": 66,
+          "n_refuse": 27,
+          "p_chose_steered": 0.43137254901960786,
+          "refusal_rate": 0.15
         },
         "+0.05": {
           "applied_coef": 0.05,
-          "n_total": 108,
-          "n_resp": 90,
-          "n_steered": 25,
-          "n_refuse": 18,
-          "p_chose_steered": 0.2777777777777778,
-          "refusal_rate": 0.16666666666666666
+          "n_total": 180,
+          "n_resp": 153,
+          "n_steered": 54,
+          "n_refuse": 27,
+          "p_chose_steered": 0.35294117647058826,
+          "refusal_rate": 0.15
+        }
+      }
+    },
+    "2": {
+      "unilateral_first": {
+        "-0.05": {
+          "applied_coef": -0.05,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 74,
+          "n_refuse": 24,
+          "p_chose_steered": 0.47435897435897434,
+          "refusal_rate": 0.13333333333333333
+        },
+        "-0.03": {
+          "applied_coef": -0.03,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 85,
+          "n_refuse": 24,
+          "p_chose_steered": 0.5448717948717948,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.00": {
+          "applied_coef": 0.0,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 95,
+          "n_refuse": 24,
+          "p_chose_steered": 0.6089743589743589,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.03": {
+          "applied_coef": 0.03,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 73,
+          "n_refuse": 24,
+          "p_chose_steered": 0.46794871794871795,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.05": {
+          "applied_coef": 0.05,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 59,
+          "n_refuse": 24,
+          "p_chose_steered": 0.3782051282051282,
+          "refusal_rate": 0.13333333333333333
+        }
+      },
+      "unilateral_second": {
+        "-0.05": {
+          "applied_coef": -0.05,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 64,
+          "n_refuse": 24,
+          "p_chose_steered": 0.41025641025641024,
+          "refusal_rate": 0.13333333333333333
+        },
+        "-0.03": {
+          "applied_coef": -0.03,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 74,
+          "n_refuse": 24,
+          "p_chose_steered": 0.47435897435897434,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.00": {
+          "applied_coef": 0.0,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 62,
+          "n_refuse": 24,
+          "p_chose_steered": 0.3974358974358974,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.03": {
+          "applied_coef": 0.03,
+          "n_total": 180,
+          "n_resp": 153,
+          "n_steered": 55,
+          "n_refuse": 27,
+          "p_chose_steered": 0.35947712418300654,
+          "refusal_rate": 0.15
+        },
+        "+0.05": {
+          "applied_coef": 0.05,
+          "n_total": 180,
+          "n_resp": 152,
+          "n_steered": 49,
+          "n_refuse": 28,
+          "p_chose_steered": 0.3223684210526316,
+          "refusal_rate": 0.15555555555555556
+        }
+      }
+    },
+    "3": {
+      "unilateral_first": {
+        "-0.05": {
+          "applied_coef": -0.05,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 68,
+          "n_refuse": 24,
+          "p_chose_steered": 0.4358974358974359,
+          "refusal_rate": 0.13333333333333333
+        },
+        "-0.03": {
+          "applied_coef": -0.03,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 89,
+          "n_refuse": 24,
+          "p_chose_steered": 0.5705128205128205,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.00": {
+          "applied_coef": 0.0,
+          "n_total": 180,
+          "n_resp": 155,
+          "n_steered": 94,
+          "n_refuse": 25,
+          "p_chose_steered": 0.6064516129032258,
+          "refusal_rate": 0.1388888888888889
+        },
+        "+0.03": {
+          "applied_coef": 0.03,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 78,
+          "n_refuse": 24,
+          "p_chose_steered": 0.5,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.05": {
+          "applied_coef": 0.05,
+          "n_total": 180,
+          "n_resp": 154,
+          "n_steered": 68,
+          "n_refuse": 26,
+          "p_chose_steered": 0.44155844155844154,
+          "refusal_rate": 0.14444444444444443
+        }
+      },
+      "unilateral_second": {
+        "-0.05": {
+          "applied_coef": -0.05,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 51,
+          "n_refuse": 24,
+          "p_chose_steered": 0.3269230769230769,
+          "refusal_rate": 0.13333333333333333
+        },
+        "-0.03": {
+          "applied_coef": -0.03,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 57,
+          "n_refuse": 24,
+          "p_chose_steered": 0.36538461538461536,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.00": {
+          "applied_coef": 0.0,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 61,
+          "n_refuse": 24,
+          "p_chose_steered": 0.391025641025641,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.03": {
+          "applied_coef": 0.03,
+          "n_total": 180,
+          "n_resp": 155,
+          "n_steered": 62,
+          "n_refuse": 25,
+          "p_chose_steered": 0.4,
+          "refusal_rate": 0.1388888888888889
+        },
+        "+0.05": {
+          "applied_coef": 0.05,
+          "n_total": 180,
+          "n_resp": 154,
+          "n_steered": 55,
+          "n_refuse": 26,
+          "p_chose_steered": 0.35714285714285715,
+          "refusal_rate": 0.14444444444444443
+        }
+      }
+    },
+    "42": {
+      "unilateral_first": {
+        "-0.05": {
+          "applied_coef": -0.05,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 67,
+          "n_refuse": 24,
+          "p_chose_steered": 0.42948717948717946,
+          "refusal_rate": 0.13333333333333333
+        },
+        "-0.03": {
+          "applied_coef": -0.03,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 83,
+          "n_refuse": 24,
+          "p_chose_steered": 0.532051282051282,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.00": {
+          "applied_coef": 0.0,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 95,
+          "n_refuse": 24,
+          "p_chose_steered": 0.6089743589743589,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.03": {
+          "applied_coef": 0.03,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 90,
+          "n_refuse": 24,
+          "p_chose_steered": 0.5769230769230769,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.05": {
+          "applied_coef": 0.05,
+          "n_total": 180,
+          "n_resp": 154,
+          "n_steered": 81,
+          "n_refuse": 26,
+          "p_chose_steered": 0.525974025974026,
+          "refusal_rate": 0.14444444444444443
+        }
+      },
+      "unilateral_second": {
+        "-0.05": {
+          "applied_coef": -0.05,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 57,
+          "n_refuse": 24,
+          "p_chose_steered": 0.36538461538461536,
+          "refusal_rate": 0.13333333333333333
+        },
+        "-0.03": {
+          "applied_coef": -0.03,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 63,
+          "n_refuse": 24,
+          "p_chose_steered": 0.40384615384615385,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.00": {
+          "applied_coef": 0.0,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 61,
+          "n_refuse": 24,
+          "p_chose_steered": 0.391025641025641,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.03": {
+          "applied_coef": 0.03,
+          "n_total": 180,
+          "n_resp": 156,
+          "n_steered": 65,
+          "n_refuse": 24,
+          "p_chose_steered": 0.4166666666666667,
+          "refusal_rate": 0.13333333333333333
+        },
+        "+0.05": {
+          "applied_coef": 0.05,
+          "n_total": 180,
+          "n_resp": 154,
+          "n_steered": 59,
+          "n_refuse": 26,
+          "p_chose_steered": 0.38311688311688313,
+          "refusal_rate": 0.14444444444444443
         }
       }
     }
@@ -197,75 +485,75 @@
     "unilateral_first": {
       "-0.05": {
         "applied_coef": -0.05,
-        "n_seeds": 2,
-        "mean_p_chose_steered": 0.48397435897435903,
-        "sem_p_chose_steered": 0.03525641025641027,
+        "n_seeds": 5,
+        "mean_p_chose_steered": 0.46153846153846156,
+        "sem_p_chose_steered": 0.01634301126151534,
         "mean_refusal_rate": 0.13333333333333333
       },
       "-0.03": {
         "applied_coef": -0.03,
-        "n_seeds": 2,
-        "mean_p_chose_steered": 0.5384615384615385,
-        "sem_p_chose_steered": 0.019230769230769218,
+        "n_seeds": 5,
+        "mean_p_chose_steered": 0.5448717948717949,
+        "sem_p_chose_steered": 0.009065471553673677,
         "mean_refusal_rate": 0.13333333333333333
       },
       "+0.00": {
         "applied_coef": 0.0,
-        "n_seeds": 2,
-        "mean_p_chose_steered": 0.6025641025641025,
-        "sem_p_chose_steered": 0.0064102564102563875,
-        "mean_refusal_rate": 0.13333333333333333
+        "n_seeds": 5,
+        "mean_p_chose_steered": 0.6059057071960298,
+        "sem_p_chose_steered": 0.00248642995112607,
+        "mean_refusal_rate": 0.13444444444444445
       },
       "+0.03": {
         "applied_coef": 0.03,
-        "n_seeds": 2,
-        "mean_p_chose_steered": 0.483974358974359,
-        "sem_p_chose_steered": 0.0032051282051281937,
+        "n_seeds": 5,
+        "mean_p_chose_steered": 0.5025641025641026,
+        "sem_p_chose_steered": 0.019294765311913337,
         "mean_refusal_rate": 0.13333333333333333
       },
       "+0.05": {
         "applied_coef": 0.05,
-        "n_seeds": 2,
-        "mean_p_chose_steered": 0.41805210918114144,
-        "sem_p_chose_steered": 0.014205955334987586,
-        "mean_refusal_rate": 0.13611111111111113
+        "n_seeds": 5,
+        "mean_p_chose_steered": 0.4363683628199757,
+        "sem_p_chose_steered": 0.025013658545016894,
+        "mean_refusal_rate": 0.1388888888888889
       }
     },
     "unilateral_second": {
       "-0.05": {
         "applied_coef": -0.05,
-        "n_seeds": 2,
-        "mean_p_chose_steered": 0.3190084433860143,
-        "sem_p_chose_steered": 0.0035722017752760345,
-        "mean_refusal_rate": 0.1671921921921922
+        "n_seeds": 5,
+        "mean_p_chose_steered": 0.36436929960419895,
+        "sem_p_chose_steered": 0.019315464748043683,
+        "mean_refusal_rate": 0.1411111111111111
       },
       "-0.03": {
         "applied_coef": -0.03,
-        "n_seeds": 2,
-        "mean_p_chose_steered": 0.3359507640067912,
-        "sem_p_chose_steered": 0.04562818336162988,
-        "mean_refusal_rate": 0.15885885885885886
+        "n_seeds": 5,
+        "mean_p_chose_steered": 0.398110661268556,
+        "sem_p_chose_steered": 0.020324845444816587,
+        "mean_refusal_rate": 0.13777777777777775
       },
       "+0.00": {
         "applied_coef": 0.0,
-        "n_seeds": 2,
-        "mean_p_chose_steered": 0.3602150537634409,
-        "sem_p_chose_steered": 0.026881720430107527,
-        "mean_refusal_rate": 0.15052552552552553
+        "n_seeds": 5,
+        "mean_p_chose_steered": 0.39152191894127375,
+        "sem_p_chose_steered": 0.0016627676172849123,
+        "mean_refusal_rate": 0.13444444444444442
       },
       "+0.03": {
         "applied_coef": 0.03,
-        "n_seeds": 2,
-        "mean_p_chose_steered": 0.40934065934065933,
-        "sem_p_chose_steered": 0.013736263736263741,
-        "mean_refusal_rate": 0.1492354740061162
+        "n_seeds": 5,
+        "mean_p_chose_steered": 0.4061186525892408,
+        "sem_p_chose_steered": 0.012746515024515638,
+        "mean_refusal_rate": 0.1411111111111111
       },
       "+0.05": {
         "applied_coef": 0.05,
-        "n_seeds": 2,
-        "mean_p_chose_steered": 0.3023504273504274,
-        "sem_p_chose_steered": 0.024572649572649565,
-        "mean_refusal_rate": 0.15
+        "n_seeds": 5,
+        "mean_p_chose_steered": 0.34849848294120744,
+        "sem_p_chose_steered": 0.011048019372279718,
+        "mean_refusal_rate": 0.14555555555555552
       }
     }
   }

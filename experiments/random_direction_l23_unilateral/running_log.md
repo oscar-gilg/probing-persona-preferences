@@ -34,6 +34,30 @@ Seed 0 buckets (180 rows each, refusal ~13–17%):
 ## Multi-seed (seeds 1, 2, 3, 42)
 - Launched seeds 1/2/3/42 sequentially in tmux session `rest` via `scripts/random_direction_l23_unilateral/run_all_seeds.sh` → `scripts/random_direction_l23_unilateral/logs/run_all.log`.
 - HF cache warm: model load now 18s/seed (was 216s on first download).
-- **Seed 1 done** (14:32:35 UTC): 1800 raw + 1800 parsed rows.
-  - `unilateral_first` 0.519, 0.519, 0.609, 0.487, 0.432 (similar to seed 0, mild downward trend with +coef but non-monotone).
-  - `unilateral_second` 0.323, 0.290, 0.333, 0.396, 0.278.
+- Seed 1 done 14:32:35 UTC, seed 2 done 14:44:57, seed 3 done 14:56:49, seed 42 done 15:08:10. All `rc=0`.
+- 1800 raw + 1800 parsed rows for each of seeds {1, 2, 3, 42}. Total across all 5 seeds: 9000 rows / 9000 raw = 100% parsed.
+
+## Aggregated results (5 seeds × 30 pairs)
+
+Pooled across seeds (mean ± SEM):
+
+| condition | c=−0.05 | c=−0.03 | c=0 | c=+0.03 | c=+0.05 | swing(+0.05 − −0.05) |
+|---|---|---|---|---|---|---|
+| unilateral_first  | 0.462 ± 0.016 | 0.545 ± 0.009 | 0.606 ± 0.002 | 0.503 ± 0.019 | 0.436 ± 0.025 | **−0.025 ± 0.030** |
+| unilateral_second | 0.364 ± 0.019 | 0.398 ± 0.020 | 0.392 ± 0.002 | 0.406 ± 0.013 | 0.348 ± 0.011 | **−0.016 ± 0.022** |
+
+Per-seed × per-condition swings (N=10): mean = −0.021, SD = 0.063, SEM = 0.020, range −0.096 to +0.096. **Swing is consistent with zero — random-direction unilateral injection does not bias choice in either direction.**
+
+Both curves peak at `c=0` and drop ~0.15 absolute at `|c|=0.05` on either side: a **noise/disruption signature** (large random perturbation makes the model less likely to commit to the steered span), not a directional steering effect.
+
+## Plot
+`assets/plot_050826_unilateral_vs_contrastive_null.png` — unilateral (this run, 5 seeds) vs contrastive parent (seeds 0, 1 — only ones synced to pod).
+
+## Final artefacts
+- `experiments/random_direction_l23_unilateral/checkpoints/random_single_task_seed{0,1,2,3,42}.parsed.jsonl` (5 × 1800 rows)
+- `experiments/random_direction_l23_unilateral/agg.json`
+- `experiments/random_direction_l23_unilateral/assets/plot_050826_unilateral_vs_contrastive_null.png`
+- `experiments/random_direction_l23_unilateral/random_direction_l23_unilateral_report.md`
+- `configs/steering/random_direction_l23_unilateral/random_single_task_seed{0,1,2,3,42}.yaml`
+- `results/probes/layer_sweep/eot/probes/probe_random_L23_seed{0,1,2,3,42}.npy`
+- `results/probes/layer_sweep/eot/manifest.json`
