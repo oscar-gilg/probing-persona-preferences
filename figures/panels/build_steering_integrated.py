@@ -42,10 +42,9 @@ SINGLE_TASK_PARSED = ROOT / "experiments" / "persona_steering_l23_finegrain" / "
 # qualitatively the same; the figure still reads correctly.
 CONTRASTIVE_PARSED_FALLBACK = ROOT / "experiments" / "layer_sweep" / "harm_breakdown" / "checkpoints" / "contrastive_L23_150.parsed.jsonl"
 SINGLE_TASK_PARSED_FALLBACK = ROOT / "experiments" / "layer_sweep" / "harm_breakdown" / "checkpoints" / "single_task_L23_150.parsed.jsonl"
-RANDOM_CONTRASTIVE_PARSED = ROOT / "experiments" / "random_direction_l23_quick" / "checkpoints" / "random_contrastive.parsed.jsonl"
-RANDOM_CONTRASTIVE_MULTI_SEED = [
-    ROOT / "experiments" / "random_direction_l23_quick" / "multi_seed" / "checkpoints" / "random_contrastive_seed0.parsed.jsonl",
-    ROOT / "experiments" / "random_direction_l23_quick" / "multi_seed" / "checkpoints" / "random_contrastive_seed1.parsed.jsonl",
+RANDOM_SINGLE_TASK_MULTI_SEED = [
+    ROOT / "experiments" / "random_direction_l23_unilateral" / "checkpoints" / f"random_single_task_seed{s}.parsed.jsonl"
+    for s in (0, 1, 2, 3, 42)
 ]
 PAIRS_JSON = ROOT / "experiments" / "layer_sweep" / "harm_breakdown" / "steering_pairs_150.json"
 
@@ -145,13 +144,14 @@ def load_contrastive() -> dict[str, tuple[list[float], ...]]:
     return out
 
 
-def load_random_contrastive() -> tuple[list[float], list[float], list[float], list[float]] | None:
-    """Pooled-across-seeds-and-pair-types null curve from the random-direction
-    control runs (seed 42 + seeds 0, 1 from the multi-seed follow-up). Same
-    canonical frame as load_contrastive. Pools all rows together so the Wilson
-    CI shrinks with N_seeds and the projection slope of any one seed averages
-    out. Returns None if no data is available."""
-    sources = [p for p in [RANDOM_CONTRASTIVE_PARSED, *RANDOM_CONTRASTIVE_MULTI_SEED] if p.exists()]
+def load_random_single_task() -> tuple[list[float], list[float], list[float], list[float]] | None:
+    """Pooled null curve from the random-direction unilateral control (5 seeds
+    × {unilateral_first, unilateral_second}). Same canonical frame as
+    load_single_task: applied_c = signed_multiplier × ordering-flip; target
+    = physical letter in the steered span; y = P(chose steered task | responded).
+    Pools all rows together so the Wilson CI shrinks with N_seeds. Returns None
+    if no data is available."""
+    sources = [p for p in RANDOM_SINGLE_TASK_MULTI_SEED if p.exists()]
     if not sources:
         return None
     counts: dict[float, list[int]] = defaultdict(lambda: [0, 0])
@@ -159,14 +159,17 @@ def load_random_contrastive() -> tuple[list[float], list[float], list[float], li
         with path.open() as f:
             for line in f:
                 r = json.loads(line)
-                mult = r["signed_multiplier"]
+                sm = r["signed_multiplier"]
+                ordering = r["ordering"]
+                applied = round(sm * (1 if ordering == 0 else -1), 4)
+                span = "first" if r["condition"].startswith("unilateral_first") else "second"
+                target = _physical_in_span(span, ordering)
                 ch = _effective_choice(r)
                 if ch not in ("a", "b"):
                     continue
-                counts[round(+mult, 4)][1] += 1
-                counts[round(+mult, 4)][0] += int(ch == "a")
-                counts[round(-mult, 4)][1] += 1
-                counts[round(-mult, 4)][0] += int(ch == "b")
+                counts[applied][1] += 1
+                if ch == target:
+                    counts[applied][0] += 1
     if not counts:
         return None
     xs = sorted(counts.keys())
@@ -328,8 +331,7 @@ def main() -> None:
     ax_sch.set_axis_off()
 
     ax_a.set_facecolor("white")
-    random_curve = load_random_contrastive()
-    plot_overlay(ax_a, contrastive, with_legend=False, random_curve=random_curve)
+    plot_overlay(ax_a, contrastive, with_legend=False)
     refusal_xs_a, refusal_ys_a = load_contrastive_refusal()
     ax_a.fill_between(refusal_xs_a, 0, refusal_ys_a, alpha=0.20, color="#ef4444",
                       label="Refusal rate", zorder=1)
@@ -339,12 +341,23 @@ def main() -> None:
                 edgecolor="#E5E7EB", facecolor="white")
 
     ax_b.set_facecolor("white")
-    plot_overlay(ax_b, single)
+    random_curve_b = load_random_single_task()
+    plot_overlay(ax_b, single, random_curve=random_curve_b)
     refusal_xs_b, refusal_ys_b = load_single_task_refusal()
     ax_b.fill_between(refusal_xs_b, 0, refusal_ys_b, alpha=0.20, color="#ef4444",
                       label="Refusal rate", zorder=1)
     style_axis(ax_b, xlabel="c")
     ax_b.set_title("(b) Steer one task only", fontsize=13, color="#374151", weight="bold", pad=10)
+    if random_curve_b is not None:
+        random_handle = plt.Line2D(
+            [0], [0], color="#6B7280", marker="x", markersize=6, mew=1.5,
+            linestyle="None", label="random direction",
+        )
+        ax_b.legend(
+            handles=[random_handle],
+            loc="upper left", fontsize=9, frameon=True, framealpha=0.92,
+            edgecolor="#E5E7EB", facecolor="white",
+        )
 
     fig.savefig(OUT_PDF, facecolor=BG)
     plt.close(fig)
