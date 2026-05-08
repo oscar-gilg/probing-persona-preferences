@@ -34,16 +34,15 @@ uv pip install -e ".[dev]"
 
 ## Code conventions and style
 
-- NEVER use arbirary return values. E.g. in `dict.get(key, default)` I would rather it failed then get an arbirary value. In fact you should always use `dict[key]` access.
+- NEVER use arbitrary return values. Use `dict[key]` rather than `dict.get(key, default)` — failing fast on a missing key is preferable to a silent wrong value.
 - NEVER use None as a semantic value (e.g., "refusal" or "missing"). Use explicit types instead.
 - NEVER use placeholder values (e.g., score=0.0 when there is no score). Use proper dataclass variants or explicit flags.
-- Do not use hasattr or getattr defensively unless you think it is absolutely essential.
-- Do not import stuff midway through functions. Keep imports at the top.
-- Only write comments that actually add a non-obvious piece of information. Same goes for docstrings.
-- You should always consider whether there exists a tool that can do what you want to do.
-- Avoid dosctrings that do not add important information. If you do use docstrings keep them concise.
+- Do not use hasattr or getattr defensively unless absolutely essential.
+- Do not import inside functions. Keep imports at the top of the file.
+- Comments and docstrings should add non-obvious information; if removing one wouldn't confuse a future reader, don't write it. Keep both concise.
+- Before writing new code, check `src/` for an existing function that does what you need (see README's "For AI agents" section).
 - No backwards compatibility concerns — remove obsolete code/fields rather than deprecating.
-- Don't create classes or interfaces that have two or less fields, that can usually do with a standard data structure.
+- Don't create classes or interfaces with two or fewer fields — prefer a tuple, dict, or dataclass-without-methods.
 
 ## Files and folders
 
@@ -113,11 +112,20 @@ For string interpolation, heredocs, loops, or advanced xargs flags, write a scri
 ## Claude instructions
 
 - When I ask a question about the repo or data, default to a very concise answer (often one line or a short bullet list). Only expand if I ask for more detail.
-- When you run tests/scripts/analysis or when you debug. You should keep me in the loop. You should explain concisely what your findings are. And you should ask for clarifications, or delegate to me often.
+- When running tests, scripts, analysis, or debugging: keep me in the loop, explain findings concisely, and ask for clarification or delegate to me often.
 - When you install a new package, add it to pyproject.toml if it isn't there.
 - Always load environment variables from `.env` when running scripts that use API clients. Use `from dotenv import load_dotenv; load_dotenv()` at the top of scripts.
-- Always delegate running testing imports to a subagent (Task tool with subagent_type=general-purpose) so it doesn't interrupt the main conversation flow.
+- Delegate import-checking / `python -c 'import foo'` smoke tests to a subagent (Task tool with subagent_type=general-purpose) so it doesn't interrupt the main conversation flow.
 - When you give me a command, always give it to me on a single line. Do not use "\".
+
+## Paper writing style
+
+- Use claim-style paragraph/subsection headers, not procedural ones (`\paragraph{Finding: probes are biased toward the persona they were trained on.}`, not `\paragraph{Result.}`).
+- Avoid Setup/Result/Implication/Method-note scaffolding. Lead with the finding; explain inline; drop standalone "Method note" boxes — reviewers know basic stats.
+- Plain English over jargon-stacked phrases. "Train-shaped residual" beats "train-bound bias"; "what's left over" beats "leakage"; "controlling for both eval and train" beats "double partial".
+- One headline per finding. If an appendix has two findings, preview both in one sentence in the lead, then give each a `\paragraph{}` header.
+- Short bolded inline summaries inside a subsection should be promoted to `\paragraph{}` headers — they're already claims, just buried.
+- Subsection titles should convey the finding when there is one. "Causal: removing the direction barely changes choices at L25/L32" beats "Causal: inference-time projection on revealed preferences".
 
 ## RunPod
 
