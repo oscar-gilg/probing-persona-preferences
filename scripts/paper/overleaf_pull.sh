@@ -11,8 +11,13 @@
 #
 # Pre-flight: refuses to run if paper/ has uncommitted or untracked files,
 # because a merge into a dirty tree clobbers in-progress work. The slash
-# command auto-commits before calling this script; direct CLI users get
-# this safety net.
+# command auto-commits before calling this script.
+#
+# Env: OVERLEAF_SKIP_FETCH=1 — skip `git fetch overleaf master` (use when
+# /overleaf-sync just fetched via overleaf_push.sh).
+#
+# Git config keys:
+#   overleaf.lastpulledsha — overleaf/master SHA after last successful pull
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
@@ -23,8 +28,10 @@ if ! git config --get remote.overleaf.url >/dev/null; then
   exit 1
 fi
 
-echo "==> Fetching overleaf/master..."
-git fetch overleaf master
+if [ "${OVERLEAF_SKIP_FETCH:-}" != "1" ]; then
+  echo "==> Fetching overleaf/master..."
+  git fetch overleaf master >/dev/null 2>&1
+fi
 
 TIP=$(git rev-parse overleaf/master)
 LAST=$(git config --get overleaf.lastpulledsha 2>/dev/null || true)

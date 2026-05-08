@@ -10,13 +10,29 @@
 # Day-to-day flow:
 #   1. Edit/commit paper/ as normal in this repo.
 #   2. Run this script. It pushes the current paper/ state to Overleaf.
+#
+# Env: OVERLEAF_SKIP_FETCH=1 — skip `git fetch overleaf master` (use when
+# /overleaf-sync just fetched via overleaf_pull.sh).
+#
+# Git config keys:
+#   overleaf.lastsplithead  — local HEAD when we last ran subtree split
+#   overleaf.lastsplittip   — resulting split-branch tip (cache key)
+#   overleaf.lastpushedsha  — last SHA we pushed to overleaf/master
+#   overleaf.lastpulledsha  — kept in sync with lastpushedsha after each push
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
-echo "==> Fetching overleaf/master..."
-git fetch overleaf master >/dev/null 2>&1
+if ! git config --get remote.overleaf.url >/dev/null; then
+  echo "ERROR: no 'overleaf' remote configured." >&2
+  exit 1
+fi
+
+if [ "${OVERLEAF_SKIP_FETCH:-}" != "1" ]; then
+  echo "==> Fetching overleaf/master..."
+  git fetch overleaf master >/dev/null 2>&1
+fi
 
 HEAD_SHA=$(git rev-parse HEAD)
 LAST_HEAD=$(git config --get overleaf.lastsplithead 2>/dev/null || true)
@@ -40,7 +56,6 @@ else
 fi
 
 OVERLEAF_TIP=$(git rev-parse overleaf/master)
-
 SPLIT_TREE=$(git rev-parse "${SPLIT_TIP}^{tree}")
 OVERLEAF_TREE=$(git rev-parse "${OVERLEAF_TIP}^{tree}")
 
@@ -49,22 +64,18 @@ if [ "$SPLIT_TREE" = "$OVERLEAF_TREE" ]; then
   exit 0
 fi
 
-if git merge-base --is-ancestor "$OVERLEAF_TIP" "$SPLIT_TIP" 2>/dev/null; then
+if git merge-base --is-ancestor "$OVERLEAF_TIP" "$SPLIT_TIP"; then
   echo "==> Fast-forward push..."
   git push overleaf "$SPLIT_TIP:master"
   PUSHED=$SPLIT_TIP
 else
-  TREE=$(git rev-parse "${SPLIT_TIP}^{tree}")
-  MERGE=$(git commit-tree "$TREE" -p "$SPLIT_TIP" -p "$OVERLEAF_TIP" \
+  MERGE=$(git commit-tree "$SPLIT_TREE" -p "$SPLIT_TIP" -p "$OVERLEAF_TIP" \
           -m "subtree push: paper/ -> overleaf master")
   echo "==> Pushing linkage merge commit $MERGE..."
   git push overleaf "$MERGE:master"
   PUSHED=$MERGE
 fi
 
-# Record the SHA we just pushed as the latest known overleaf/master tip,
-# so the next pull can skip the no-op subtree pull when overleaf hasn't
-# moved on its own.
 git config overleaf.lastpushedsha "$PUSHED"
 git config overleaf.lastpulledsha "$PUSHED"
 
