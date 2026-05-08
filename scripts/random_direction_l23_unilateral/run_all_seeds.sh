@@ -6,7 +6,7 @@
 
 set -u
 
-SEEDS=(0 1 2 3 42)
+SEEDS=(1 2 3 42)
 LOG_DIR="scripts/random_direction_l23_unilateral/logs"
 CONFIG_DIR="configs/steering/random_direction_l23_unilateral"
 

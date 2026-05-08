@@ -23,3 +23,17 @@ On-pod execution. `IS_SANDBOX=1`, branch `main`.
 ## Pilot (seed 0)
 - Launched in tmux session `pilot-seed0` → `scripts/random_direction_l23_unilateral/logs/seed0.log`.
 - 30 pairs loaded, 0 existing checkpoint rows. Model loading.
+- Model loaded in 216s (cold HF download); 1800 generations (1800 = 30 × 5 × 2 conds × 3 trials × 2 orderings — spec's "900" missed the orderings factor) in 8.2 min @ 3.6 gen/s. Parser hit 900/1800 when I prematurely killed the tmux session to launch the multi-seed runner.
+- Resumed parsing with `scripts/random_direction_l23_unilateral/finish_parse_seed.py 0` → seed 0 parsed.jsonl now has 1800 rows.
+
+Seed 0 buckets (180 rows each, refusal ~13–17%):
+- `unilateral_first` P(chose first | responded) at applied {-0.05, -0.03, 0, +0.03, +0.05}: 0.449, 0.558, 0.596, 0.481, 0.404 — first-task baseline ≈ 0.6 (ordering bias), non-monotone, swing |+c – -c| ≈ 0.04.
+- `unilateral_second` P(chose second | responded): 0.315, 0.382, 0.387, 0.423, 0.327 — second-task baseline ≈ 0.4, non-monotone, swing ≈ 0.01.
+- The two conditions sum to ≈ 1 at each coef (sanity check ✓).
+
+## Multi-seed (seeds 1, 2, 3, 42)
+- Launched seeds 1/2/3/42 sequentially in tmux session `rest` via `scripts/random_direction_l23_unilateral/run_all_seeds.sh` → `scripts/random_direction_l23_unilateral/logs/run_all.log`.
+- HF cache warm: model load now 18s/seed (was 216s on first download).
+- **Seed 1 done** (14:32:35 UTC): 1800 raw + 1800 parsed rows.
+  - `unilateral_first` 0.519, 0.519, 0.609, 0.487, 0.432 (similar to seed 0, mild downward trend with +coef but non-monotone).
+  - `unilateral_second` 0.323, 0.290, 0.333, 0.396, 0.278.
