@@ -18,11 +18,26 @@ cd "$REPO_ROOT"
 echo "==> Fetching overleaf/master..."
 git fetch overleaf master >/dev/null 2>&1
 
-TMP_BRANCH="_ovbridge_$$"
-echo "==> Splitting paper/ subtree (this can take ~30s on a large repo)..."
-git subtree split --prefix=paper HEAD -b "$TMP_BRANCH" 2>/dev/null >/dev/null
-SPLIT_TIP=$(git rev-parse "$TMP_BRANCH")
-git branch -D "$TMP_BRANCH" >/dev/null
+HEAD_SHA=$(git rev-parse HEAD)
+LAST_HEAD=$(git config --get overleaf.lastsplithead 2>/dev/null || true)
+LAST_SPLIT=$(git config --get overleaf.lastsplittip 2>/dev/null || true)
+
+if [ -n "$LAST_HEAD" ] && [ "$LAST_HEAD" = "$HEAD_SHA" ] \
+    && [ -n "$LAST_SPLIT" ] && git cat-file -e "$LAST_SPLIT" 2>/dev/null; then
+  echo "==> HEAD unchanged since last split. Reusing cached split tip."
+  SPLIT_TIP=$LAST_SPLIT
+else
+  TMP_BRANCH="_ovbridge_$$"
+  echo "==> Splitting paper/ subtree (incremental via --rejoin)..."
+  # --rejoin caches the split state by adding a rejoin merge commit on HEAD,
+  # so future splits only walk new history. First run is still ~30s on a
+  # large repo; subsequent runs are seconds.
+  git subtree split --prefix=paper --rejoin HEAD -b "$TMP_BRANCH" 2>/dev/null >/dev/null
+  SPLIT_TIP=$(git rev-parse "$TMP_BRANCH")
+  git branch -D "$TMP_BRANCH" >/dev/null
+  git config overleaf.lastsplithead "$(git rev-parse HEAD)"
+  git config overleaf.lastsplittip "$SPLIT_TIP"
+fi
 
 OVERLEAF_TIP=$(git rev-parse overleaf/master)
 
@@ -37,12 +52,20 @@ fi
 if git merge-base --is-ancestor "$OVERLEAF_TIP" "$SPLIT_TIP" 2>/dev/null; then
   echo "==> Fast-forward push..."
   git push overleaf "$SPLIT_TIP:master"
+  PUSHED=$SPLIT_TIP
 else
   TREE=$(git rev-parse "${SPLIT_TIP}^{tree}")
   MERGE=$(git commit-tree "$TREE" -p "$SPLIT_TIP" -p "$OVERLEAF_TIP" \
           -m "subtree push: paper/ -> overleaf master")
   echo "==> Pushing linkage merge commit $MERGE..."
   git push overleaf "$MERGE:master"
+  PUSHED=$MERGE
 fi
+
+# Record the SHA we just pushed as the latest known overleaf/master tip,
+# so the next pull can skip the no-op subtree pull when overleaf hasn't
+# moved on its own.
+git config overleaf.lastpushedsha "$PUSHED"
+git config overleaf.lastpulledsha "$PUSHED"
 
 echo "==> Done."

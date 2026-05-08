@@ -1,36 +1,53 @@
 #!/usr/bin/env bash
-# Pull edits from overleaf into paper/.
+# Pull edits from Overleaf into paper/ as a real 3-way merge.
 #
-# Strategy: clone overleaf into a temp dir, then rsync its contents into
-# paper/. This sidesteps the unrelated-histories problem that breaks
-# `git subtree pull`. The user reviews the resulting working-tree diff and
-# commits manually (or aborts).
+# `git subtree pull` works because the push script has already linked the
+# histories via a synthetic merge commit. Conflicts surface as <<<<<<<
+# markers in paper/ and the script exits non-zero — wrappers (e.g.
+# /overleaf-sync) handle from there.
 #
-# After running, expect to see modified files in `git status paper/`.
-# Inspect with `git diff paper/`, then commit if happy:
-#   git add paper/ && git commit -m "sync paper/ from overleaf"
+# Skips the pull entirely if overleaf/master is unchanged since the last
+# successful pull (tracked via overleaf.lastpulledsha git config).
+#
+# Pre-flight: refuses to run if paper/ has uncommitted or untracked files,
+# because a merge into a dirty tree clobbers in-progress work. The slash
+# command auto-commits before calling this script; direct CLI users get
+# this safety net.
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
-OVERLEAF_URL=$(git config --get remote.overleaf.url)
-if [ -z "$OVERLEAF_URL" ]; then
+if ! git config --get remote.overleaf.url >/dev/null; then
   echo "ERROR: no 'overleaf' remote configured." >&2
   exit 1
 fi
 
-TMPDIR=$(mktemp -d)
-trap "rm -rf $TMPDIR" EXIT
+echo "==> Fetching overleaf/master..."
+git fetch overleaf master
 
-echo "==> Cloning overleaf to temp dir..."
-git clone --quiet --depth=1 "$OVERLEAF_URL" "$TMPDIR/overleaf"
+TIP=$(git rev-parse overleaf/master)
+LAST=$(git config --get overleaf.lastpulledsha 2>/dev/null || true)
+if [ -n "$LAST" ] && [ "$LAST" = "$TIP" ]; then
+  echo "==> overleaf/master unchanged since last pull. Nothing to pull."
+  exit 0
+fi
 
-echo "==> Rsyncing into paper/..."
-rsync -a --delete --exclude='.git' "$TMPDIR/overleaf/" paper/
+if ! git diff --quiet HEAD -- paper/; then
+  echo "ERROR: paper/ has uncommitted changes. Commit or stash first:" >&2
+  git status --short -- paper/ >&2
+  exit 1
+fi
 
-echo "==> Done. Review changes:"
-echo "    git diff paper/"
-echo "    git status paper/"
-echo "Then commit if happy:"
-echo "    git add paper/ && git commit -m 'sync paper/ from overleaf'"
+if git ls-files --others --exclude-standard paper/ | grep -q .; then
+  echo "ERROR: paper/ has untracked files. Commit or remove first:" >&2
+  git ls-files --others --exclude-standard paper/ >&2
+  exit 1
+fi
+
+echo "==> git subtree pull --prefix=paper overleaf master..."
+git subtree pull --prefix=paper overleaf master --squash \
+  -m "sync paper/ from overleaf"
+
+git config overleaf.lastpulledsha "$TIP"
+echo "==> Done. Push with overleaf_push.sh when ready."
