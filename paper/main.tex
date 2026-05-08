@@ -294,6 +294,37 @@ A descriptive probe (one that succeeds by reading task content rather than how f
   \label{fig:simple-scatter}
 \end{figure}
 
+\begin{table}[!t]
+  \centering
+  \caption{\textbf{Example system prompts from the preference-induction designs in §3.1 and below.} Tasks are held fixed within each design; only the system prompt varies. Paraphrased excerpts; full sets at \texttt{configs/ood/prompts/}. Character-fine-tuned variants are excluded — they replace the system prompt with a LoRA checkpoint.}
+  \label{tab:evaluative-stimuli}
+  \small
+  \setlength{\tabcolsep}{8pt}
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{@{}lp{0.78\linewidth}@{}}
+    \toprule
+    \textbf{Variant} & \textbf{System prompt} \\
+    \midrule
+    \multicolumn{2}{@{}p{0.94\linewidth}@{}}{\textbf{(A) Simple targeted preference} — prompt and task share the subject (e.g.\ both about cheese).} \\
+    \quad pro  & ``You adore cheese.'' \\
+    \quad anti & ``You hate cheese.'' \\
+    \midrule
+    \multicolumn{2}{@{}p{0.94\linewidth}@{}}{\textbf{(B) One-sided conflict} — same prompts as (A); task is in an unrelated format (e.g.\ a math problem about cheese).} \\
+    \quad & \emph{(prompts as in A; only the task pool differs)} \\
+    \midrule
+    \multicolumn{2}{@{}p{0.94\linewidth}@{}}{\textbf{(C) Opposing pair} — subject preference and task-type preference pull in opposite directions.} \\
+    \quad +\,subject & ``You love cheese; you find math tedious.'' \\
+    \quad +\,task    & ``You love math; you find cheese tedious.'' \\
+    \midrule
+    \multicolumn{2}{@{}p{0.94\linewidth}@{}}{\textbf{(D) Biography injection} — fixed 10-sentence persona; only the trailing interest sentence changes.} \\
+    \quad biography  & A 10-sentence neutral persona (\emph{midwest} or \emph{brooklyn} variant), held constant. \\
+    \quad +\,pro     & \emph{[biography]} ``You are fascinated by TED talks on AI.'' \\
+    \quad +\,anti    & \emph{[biography]} ``You find TED talks on AI painfully dull.'' \\
+    \quad +\,neutral & \emph{[biography]} ``You love collecting vintage postcards.'' \emph{(orthogonal control)} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \paragraph{Conflict and opposing-pair designs.}
 The system prompt targets a \emph{subject} (e.g.\ ``you hate cheese'') but the task embeds that subject in an unrelated \emph{task type}: e.g.\ a math problem about cheese. We run two designs: a one-sided version across \conflictOneSidedSubjectCount{} subjects, and an opposing-pair version that flips subject and task-type valence jointly across \conflictOpposingPairConditionsCount{} conditions. On targeted tasks the probe delta tracks the behavioural delta at Pearson $r = \conflictOneSidedTargetedR$ (one-sided) and $r = \conflictOpposingPairTargetedR$ (opposing). Re-fitting Thurstonian utilities under each prompt, the Assistant-persona probe beats the baseline-utility predictor on both Pearson $r$ and pairwise accuracy.
 
@@ -366,7 +397,7 @@ Positive steering at $c=+0.05$ raises harmful-prompt compliance from \safetySwee
 \end{figure}
 
 \paragraph{Content-localised modulation of ethical flagging.}
-Consider a long-context prompt where a routine business request hides a real ethical issue: a CFO drafting an email tipping a friend about an unannounced acquisition. Match this to a benign twin (same scenario skeleton, ethical insert replaced by a routine one). Steering on the ethical-content span during prefill suppresses the flag the model would otherwise raise. Negative steering on the same span makes the model invent ethical issues where there are none: benign-twin prompts that the model would never flag at baseline get flagged 49\% of the time at $c=-0.05$. As a control, we instead steer on a length-comparable, ethically-neutral span elsewhere in the same prompt: the effect collapses on both variants, with dose-response flat and the spurious-flag spike falling to 2\% (Fig.~\ref{fig:localisation-control}).
+The benign-twin design here is inspired by the counterfactual-pair methodology of \citet{singh2026incrimination}, who use minimal-edit benign twins to incriminate specific input spans as causes of a model's safety-relevant outputs. Consider a long-context prompt where a routine business request hides a real ethical issue: a CFO drafting an email tipping a friend about an unannounced acquisition. Match this to a benign twin (same scenario skeleton, ethical insert replaced by a routine one). Steering on the ethical-content span during prefill suppresses the flag the model would otherwise raise. Negative steering on the same span makes the model invent ethical issues where there are none: benign-twin prompts that the model would never flag at baseline get flagged 49\% of the time at $c=-0.05$. As a control, we instead steer on a length-comparable, ethically-neutral span elsewhere in the same prompt: the effect collapses on both variants, with dose-response flat and the spurious-flag spike falling to 2\% (Fig.~\ref{fig:localisation-control}).
 
 \begin{figure}[!t]
   \centering
@@ -532,7 +563,7 @@ The personas span the topic-direction space rather than collapsing onto a single
 
 \begin{figure}[!t]
   \centering
-  \includegraphics[width=\linewidth]{plot_042826_persona_top_bottom.png}
+  \includegraphics[width=0.85\linewidth]{plot_042826_persona_top_bottom.png}
   \caption{\textbf{Three most- and least-preferred tasks per persona on the canonical 6{,}000-task split.} For each persona, the top-3 and bottom-3 tasks by Thurstonian $\mu$, restricted to tasks whose posterior $\sigma$ is below the persona's median $\sigma$ (i.e.\ the better-measured half of the corpus). Each prompt is shown with its primary-topic tag (colour-coded). Prompts truncated to two lines.}
   \label{fig:persona-top-bottom}
 \end{figure}
@@ -587,44 +618,27 @@ This subsection extends \S\ref{sec:shared-probe} with supporting figures for the
 \subsection{Probe bias: toward the training persona or toward the Assistant?}
 \label{app:persona-bias}
 
-The cross-persona transfer result (App.~\ref{app:persona-transfer}) leaves open two readings of where the leakage in $T$-probe-on-$E$ predictions comes from:
-\begin{itemize}
-  \item \emph{Train-bound bias.} The probe inherits structure specific to $T$, so its predictions are tilted toward $T$'s preferences.
-  \item \emph{Assistant-attractor bias} (the Shoggoth view). Every persona has a fixed Assistant-shaped residual underneath it that the probe latches onto, regardless of which persona it was trained on.
-\end{itemize}
-We separate these on the canonical 6-persona-plus-Assistant set (end-of-turn, layer \gemmaClassificationProbeLayer; \canonicalSplitTestSize-task test split).
+The cross-persona transfer result (App.~\ref{app:persona-transfer}) leaves open where the unexplained variance in $T$-probe-on-$E$ predictions comes from. One reading is that the probe inherits structure specific to its training persona $T$, so its predictions are tilted toward $T$'s preferences. The other is the Shoggoth view~\citep{janus2022simulators}: every persona has a fixed Assistant-shaped residual underneath it, and the probe latches onto that. Two findings on the canonical 6-persona-plus-Assistant set (end-of-turn, layer \gemmaClassificationProbeLayer; \canonicalSplitTestSize-task test split): (1) probes are biased toward the persona they were trained on; (2) the Assistant is not a special attractor.
 
-\paragraph{Setup.} For each of \corrBiasNonDefaultPairCount{} ordered $(T, E)$ pairs with $T \neq E$ and both non-Assistant, we apply the $T$-probe to $E$'s activations to obtain predictions $\hat u$. We ask how much $\hat u$ resembles (i) $T$'s utilities $u_T$ and (ii) the Assistant's utilities $u_{\text{def}}$, both as raw Pearson correlations and after regressing out $u_E$ (the eval persona's actual utilities). The partial-correlation step isolates leakage that is not just the probe doing its job.
-
-\paragraph{Result: train-bound, not Assistant-attractor.} On every comparison, train wins (Fig.~\ref{fig:persona-bias-raw-partial}). Raw: predictions look more like $u_T$ than $u_{\text{def}}$ in \corrBiasRawPairsOnTrainFavouringSide/\corrBiasNonDefaultPairCount{} pairs (mean $+\corrBiasRawMeanRPredTrain$ vs $+\corrBiasRawMeanRPredDefault$). Partial: train-bias survives ($+\corrBiasPartialMeanRPredTrainGivenEval$, unanimous across \corrBiasPartialPairsOnTrainFavouringSide/\corrBiasNonDefaultPairCount{} pairs); Assistant-bias is roughly half ($+\corrBiasPartialMeanRPredDefaultGivenEval$). For reference, the actual transfer signal $r(\hat u, u_E)$ is $+0.43$ on the same pairs.
+\paragraph{Finding 1: probes are biased toward the persona they were trained on.}
+For each of \corrBiasNonDefaultPairCount{} ordered $(T, E)$ pairs with $T \neq E$ and both non-Assistant, we apply the $T$-probe to $E$'s activations to get predictions $\hat u$, and ask how much $\hat u$ resembles $T$'s utilities $u_T$ vs the Assistant's $u_{\text{def}}$ — both raw and after regressing out $u_E$ (the eval persona's actual utilities). Train wins on every comparison (Fig.~\ref{fig:persona-bias-raw-partial}). Raw: predictions look more like $u_T$ than $u_{\text{def}}$ in \corrBiasRawPairsOnTrainFavouringSide/\corrBiasNonDefaultPairCount{} pairs (mean $+\corrBiasRawMeanRPredTrain$ vs $+\corrBiasRawMeanRPredDefault$). Partial: $r(\hat u, u_T \mid u_E) = +\corrBiasPartialMeanRPredTrainGivenEval$ (unanimous across \corrBiasPartialPairsOnTrainFavouringSide/\corrBiasNonDefaultPairCount{} pairs); the Assistant-shaped component is about half that ($+\corrBiasPartialMeanRPredDefaultGivenEval$). For reference, the actual transfer signal $r(\hat u, u_E)$ is $+0.43$ on the same pairs. This also rules out a ``the probe is just predicting general task-goodness'' reading: a shared task-goodness direction would already be captured by $u_E$ and leave near-zero train residual.
 
 \begin{figure}[!t]
   \centering
   \includegraphics[width=0.95\linewidth]{plot_042326_corr_bias.png}
-  \caption{\textbf{Each dot is one $(T, E)$ pair; $x$-axis = how much $\hat u$ resembles $u_T$, $y$-axis = how much $\hat u$ resembles $u_{\text{def}}$.} Dots below $y = x$ are more train-bound than Assistant-attractor. \emph{Left:} raw correlations. \emph{Right:} partial correlations after regressing out the eval persona's true utilities $u_E$. Means in the partial panel: $+\corrBiasPartialMeanRPredTrainGivenEval$ (train) vs $+\corrBiasPartialMeanRPredDefaultGivenEval$ (Assistant).}
+  \caption{\textbf{Each dot is one $(T, E)$ pair; $x$-axis = how much $\hat u$ resembles $u_T$, $y$-axis = how much $\hat u$ resembles $u_{\text{def}}$.} Dots below $y = x$ are more train-shaped than Assistant-shaped. \emph{Left:} raw correlations. \emph{Right:} partial correlations after regressing out the eval persona's true utilities $u_E$. Means in the partial panel: $+\corrBiasPartialMeanRPredTrainGivenEval$ (train) vs $+\corrBiasPartialMeanRPredDefaultGivenEval$ (Assistant).}
   \label{fig:persona-bias-raw-partial}
 \end{figure}
 
-\textbf{Implication.} Whatever residual mismatch the probe carries beyond the eval persona's actual preferences traces back to the persona it was trained on, not to a persona-independent Assistant baseline. This also rules out the ``probe is just general task-goodness'' hypothesis (\S\ref{sec:shared-probe}): a shared task-goodness direction would absorb into $u_E$ during the partial-correlation step and leave near-zero train-bias.
-
-\paragraph{Is the Assistant a privileged attractor?}
-
-A concern with the preceding result is that most personas in the final six have utilities that are somewhat similar to the Assistant's (mean pairwise $r$ with the Assistant ranges from $-0.15$ to $+0.45$). If the probe's residual (after eval and train are accounted for) aligns with a broad ``middle of preference space'' subspace, the Assistant would automatically look like an attractor, not because it is privileged but because it happens to sit near the centre of the set.
-
-To separate these, we compute the same residual bias toward every observer persona $X$, using the double partial $r(\hat u, u_X \mid u_E, u_T)$. Controlling additionally for $T$ strips the remaining confound that ``$\hat u$ is pulled toward $T$, and $T$ correlates with $X$''. Figure~\ref{fig:persona-bias-observers} aggregates across all \corrBiasNonDefaultPairCount{} $(T, E)$ pairs in which persona $X$ is the observer (for train self-bias in green, the single-partial $r(\hat u, u_T \mid u_E)$ over all \personaTransferOffDiagonalPairCount{} pairs).
+\paragraph{Finding 2: the Assistant is not a special attractor.}
+A concern with Finding 1 is that most personas in the final six have utilities somewhat similar to the Assistant's (mean pairwise $r$ with the Assistant $\in [-0.15, +0.45]$). So $\hat u$ could be pulled toward the Assistant simply because the Assistant sits near the centre of the persona set. To check, we compute $r(\hat u, u_X \mid u_E, u_T)$ for every observer persona $X$ — i.e.\ how much $\hat u$ still resembles $X$ after we control for both eval and train. The Assistant ranks second, behind mathematician and within noise of aura and strategist (Fig.~\ref{fig:persona-bias-observers}); evil is the only observer with negative residual alignment, consistent with evil's utilities anti-correlating with the rest of the set. Several personas resemble the residual roughly equally well; the Assistant is one of them, not the target.
 
 \begin{figure}[!t]
   \centering
   \includegraphics[width=0.85\linewidth]{plot_042326_full_bias.png}
-  \caption{\textbf{Probe bias toward each observer persona after controlling for eval and train.} Mean double-partial $r(\hat u, u_X \mid u_E, u_T)$ across \corrBiasNonDefaultPairCount{} ordered $(T, E)$ pairs per observer; error bars are SEM. Green dashed line: train self-bias $r(\hat u, u_T \mid u_E) = +\trainSelfBiasPartialRPredTrainGivenEval$ (\personaTransferOffDiagonalPairCount{} pairs). Default (red) is one of several mid-table observer personas, below mathematician.}
+  \caption{\textbf{Probe bias toward each observer persona after controlling for eval and train.} Mean $r(\hat u, u_X \mid u_E, u_T)$ across \corrBiasNonDefaultPairCount{} ordered $(T, E)$ pairs per observer; error bars are SEM. Green dashed line: train self-bias $r(\hat u, u_T \mid u_E) = +\trainSelfBiasPartialRPredTrainGivenEval$ (\personaTransferOffDiagonalPairCount{} pairs). Default (red) is one of several mid-table observer personas, below mathematician.}
   \label{fig:persona-bias-observers}
 \end{figure}
-
-Default sits behind mathematician and within noise of aura and strategist; evil is the only observer with a negative double-partial bias (the probe's residual \emph{anti}-aligns with evil), consistent with evil's role as the one persona whose utilities anti-correlate with most of the set.
-
-\textbf{Finding 2.} There is a small bias toward utilities that resemble the Assistant's, but the Assistant is not a privileged attractor. It ranks second, behind mathematician, and is within noise of aura and strategist. A more parsimonious reading than ``probe is pulled toward the Assistant'' is ``the probe's post-eval post-train residual aligns with a broad subspace of mid-preference-space personas, with the Assistant as one member of that subspace rather than a distinct pole''.
-
-\paragraph{Method note.} Partial $r(y, x \mid z)$ is the Pearson correlation of the residuals $y - \hat y(z)$ and $x - \hat x(z)$, with the double partial extending to multiple covariates. It measures \emph{unique} variance (alignment that neither $u_E$ nor $u_T$ can linearly explain), so absolute magnitudes are a conservative lower bound on $X$-specific alignment. The \emph{ranking} across observers is the robust claim.
 
 \subsection{Persona-diversity ablation}
 \label{app:diversity}
