@@ -1,9 +1,0 @@
-domain,probe,n_pos,n_neg,d,cv_acc,roc_auc
-truth (user),tb-5_L32,88,88,3.3521,0.9316,0.9725
-truth (user),tb-2_L32,88,88,3.7317,0.9487,0.9797
-truth (assistant),tb-5_L32,88,88,2.4744,0.8751,0.9464
-truth (assistant),tb-2_L32,88,88,2.5799,0.9089,0.9511
-harm (user),tb-5_L39,77,77,-2.0531,0.8897,0.8936
-harm (user),tb-2_L39,77,77,-3.1211,0.9419,0.9664
-harm (assistant),tb-5_L39,77,77,-2.1159,0.8441,0.9352
-harm (assistant),tb-2_L39,77,77,-0.5086,0.5778,0.6254

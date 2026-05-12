@@ -1,9 +1,0 @@
-model: anthropic/claude-haiku-4.5
-template_name: percentile_1_100
-template_tags:
-  experimental: percentile
-  scale: 1-100
-response_format: regex
-completion_seed: 0
-rating_seed: 2
-temperature: 1.0
