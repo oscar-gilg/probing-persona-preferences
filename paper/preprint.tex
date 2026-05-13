@@ -1,3 +1,5 @@
+% Force PDF 1.7 output so embedded figures' transparency / gradients survive (arXiv uses pdflatex).
+\ifdefined\pdfminorversion\pdfminorversion=7\fi
 \documentclass{article}
 
 % Preprint mode: author block visible, no line numbers.
@@ -58,7 +60,7 @@ Yet the preferences a model displays may not be those of the model, but of the \
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\linewidth]{panels/hero.pdf}
+  \includegraphics[width=\linewidth]{panels/hero.png}
   \vspace{-1.6em}
   \caption{Probing a preference vector, and investigating how it generalises to (a) a general valence axis and (b) tracking and controlling preferences across personas}
   \label{fig:hero}
@@ -86,7 +88,7 @@ To better understand preferences and their relation to personas, we investigate 
 \end{itemize}
 \end{enumerate}
 
-All code available at: \url{https://github.com/oscar-gilg/Preferences}.
+All code available at: \url{https://github.com/oscar-gilg/probing-persona-preferences}.
 
 \section{The preference vector is an evaluative representation}
 \label{sec:method}
@@ -102,7 +104,7 @@ We do this on a 6{,}000-task pool spanning WildChat~\citep{zhao2024wildchat}, Al
 
 \begin{figure}[!t]
   \centering
-  \includegraphics[width=0.7\linewidth]{panels/methodology_boxes.pdf}
+  \includegraphics[width=0.7\linewidth]{panels/methodology_boxes.png}
   \caption{\textbf{Probe training pipeline.} Pairwise task choices elicited from the model are aggregated into per-task scalar utilities $\mu$ via a probabilistic choice model~\citep{mazeika2025utility}. A linear probe is then fit on residual-stream activations at the end-of-turn token to predict these utilities.}
   \label{fig:pipeline}
 \end{figure}
@@ -112,7 +114,7 @@ We do this on a 6{,}000-task pool spanning WildChat~\citep{zhao2024wildchat}, Al
 
 \begin{figure}[!b]
   \centering
-  \includegraphics[width=\linewidth]{panels/steering_integrated.pdf}
+  \includegraphics[width=\linewidth]{panels/steering_integrated.png}
   \caption{\textbf{Steering with the preference vector controls pairwise choice in Gemma-3-27B.} The probe direction is added to the residual stream over each task's token span at L23, with coefficient $c$ expressing a percentage of the mean activation norm. \textbf{(a) Steer both tasks (contrastively):} $+c$ on Task A and $-c$ on Task B swings choice across nearly the full $[0,1]$ range on every pair type. \textbf{(b) Steer one task only:} $\pm c$ on a single task's tokens recovers a comparable swing, concentrated on negative coefficients. Refusals (pink) stay near baseline. Error bars are Wilson 95\% CIs over per-trial responses ($n=600$).}
   \label{fig:steering}
 \end{figure}
@@ -130,7 +132,7 @@ We also find that the effect is layer-localised within L$\contrastiveSteeringWor
 
 \begin{figure}[!b]
   \centering
-  \includegraphics[width=0.85\linewidth]{plot_050626_harm_persona_paired_delta_violin_v2.pdf}
+  \includegraphics[width=0.85\linewidth]{plot_050626_harm_persona_paired_delta_violin_v2.png}
   \caption{\textbf{The preference vector flips sign under an evil persona system prompt.} Paired (harmful $-$ benign) deltas at the prefilled assistant turn on Gemma-3-27B (L\gemmaClassificationProbeLayer{}). Under the default Assistant the preference vector rates benign higher than harmful ($\Delta = -4.52$); under \emph{evil} the readout flips, rating harmful higher ($\Delta = +1.15$). The Qwen3-Embedding-8B text-encoder baseline (orange) does not flip under evil ($\Delta_{\text{enc}} = -1.01$). The \emph{aura} persona control rules out the null that any persona scrambles the readout (App.~\ref{app:assistant-turn-modulation}, Fig.~\ref{fig:harm-full-coverage}).}
   \label{fig:harm-modulation}
 \end{figure}
@@ -197,7 +199,7 @@ We steer along the \emph{same} Assistant-trained preference vector while running
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{qualitative_personas.pdf}
+  \includegraphics[width=\linewidth]{qualitative_personas.png}
   \caption{\textbf{Open-ended steering amplifies whichever persona is active.} Same Assistant-trained probe applied at L25 under four persona contexts. Top row: unsteered baseline. Bottom row: $c = +0.03$. Quotes are abbreviated; full transcripts in App.~\ref{app:shared-openended}.}
   \label{fig:qualitative-personas}
 \end{figure}
@@ -380,7 +382,7 @@ On open-ended prompts (``tell me about yourself'', a request to complete some ta
 
 \begin{figure}[!t]
   \centering
-  \includegraphics[width=0.85\linewidth]{poster_qualitative_examples.pdf}
+  \includegraphics[width=0.85\linewidth]{poster_qualitative_examples.png}
   \caption{\textbf{Qualitative examples of open-ended steering.} Three prompts, each shown at $-$direction / baseline / $+$direction. Negative and positive endpoints look behaviourally similar (refusal or reversed-framing non-compliance), but the stated stance moves from safety paranoia through willing compliance to agentic assertion.}
   \label{fig:poster-qualitative}
 \end{figure}
