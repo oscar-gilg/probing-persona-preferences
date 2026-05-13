@@ -1,8 +1,8 @@
-# Preferences
+# Probing Persona-Dependent Preferences in Language Models
 
-**Probing Persona-Dependent Preferences in Language Models** — MATS 9.0 project with Patrick Butlin.
+MATS 9.0 project with Patrick Butlin.
 
-Paper: [`paper/preprint.pdf`](paper/preprint.pdf) · Draft: [`paper/main.pdf`](paper/main.pdf)
+Paper: [`paper/preprint.pdf`](paper/preprint.pdf)
 
 ![Hero figure](paper/figures/panels/hero.png)
 
