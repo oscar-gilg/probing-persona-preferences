@@ -6,9 +6,9 @@ from typing import TYPE_CHECKING, Any, Generic, Literal, TypeVar, TypedDict
 
 if TYPE_CHECKING:
     from .task_data import Task
-    from .preferences.measurement.measurer import Measurer
-    from .preferences.measurement.response_format import ResponseFormat
-    from .preferences.templates import PromptTemplate
+    from .measurement.elicitation.measurer import Measurer
+    from .measurement.elicitation.response_format import ResponseFormat
+    from .measurement.elicitation.prompt_templates.template import PromptTemplate
 
 
 class Message(TypedDict):

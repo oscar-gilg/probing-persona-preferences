@@ -19,4 +19,4 @@ save_every: 200
 max_new_tokens: 1
 temperature: 1.0
 seed: 42
-output_dir: /workspace/activations/qwen35_122b_sft_v3_545/default
+output_dir: /path/to/activations/qwen35_122b_sft_v3_545/default

@@ -19,4 +19,4 @@ max_new_tokens: 1
 temperature: 1.0
 seed: 42
 
-output_dir: /workspace/activations/gemma-3-27b_it/pref_default_8layer
+output_dir: /path/to/activations/gemma-3-27b_it/pref_default_8layer

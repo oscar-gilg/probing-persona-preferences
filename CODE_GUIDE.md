@@ -7,13 +7,14 @@ Engineering reference for this codebase. Before writing new extraction, embeddin
 ```
 src/
 ├── probes/            # Activation extraction, probe training, and evaluation
-├── steering/          # Activation steering experiments
-├── measurement/       # Preference measurement (pairwise choices, stated ratings)
+├── steering/          # Activation steering primitives and experiments
+├── measurement/       # Preference measurement (pairwise choices, stated ratings, LLM judges)
 ├── fitting/           # Utility function extraction (Thurstonian, TrueSkill)
-├── models/            # LLM clients (OpenRouter)
-├── task_data/         # Task datasets (WildChat, Alpaca, MATH, BailBench)
-├── experiments/       # Core experiment scripts
-└── analysis/          # Post-hoc analysis (probes, steering, correlations, etc.)
+├── models/            # LLM clients (OpenRouter, HuggingFace)
+├── task_data/         # Task datasets (WildChat, Alpaca, MATH, BailBench, STRESS-TEST)
+├── experiments/       # Self-contained experiment scripts
+├── ood/               # Out-of-distribution evaluation utilities
+└── persona_vectors/   # Persona-vector baselines
 ```
 
 ## `src/probes/`: Activation extraction, probe training, and evaluation
@@ -47,10 +48,6 @@ Config fields: `run_dir`, `activations_path`, `layers`, `modes` (ridge/bradley_t
 - **`linear_probe.py`**: Ridge regression with CV alpha sweep (`alpha_sweep` for raw sweep results, `train_and_evaluate` to sweep + fit final model, `train_at_alpha` for fixed alpha). Returns probe, eval metrics, and sweep results.
 - **`activations.py`**: Loads `.npz` activation files with optional task ID filtering and layer selection (`load_activations`).
 - **`evaluate.py`**: Probe evaluation: `evaluate_probe_on_data` (given activations + scores), `evaluate_probe_on_template` (cross-template transfer), `compute_probe_similarity` (cosine similarity between probe weight vectors).
-
-### `content_orthogonal.py`: Project out content-predictable variance
-
-Fits Ridge regression from content embeddings to activations (or scores), subtracts predictions. The residuals contain only variance the content encoder cannot explain. Key functions: `project_out_content` (activations), `project_out_content_from_scores` (scalar scores). Use `alpha_sweep` from `core/linear_probe.py` to CV-select the content Ridge alpha.
 
 ### `content_embedding.py`: Sentence transformer embeddings of task prompts
 
@@ -126,6 +123,8 @@ Utilities for finding token indices of text spans, used with position-selective 
 
 Functions for analyzing steering experiment results: `aggregate_by_coefficient`, `compute_statistics`, `plot_dose_response`, `analyze_steering_experiment`.
 
-## `src/measurement/`: LLM judges
+## `src/measurement/`: Preference elicitation and judging
 
-When building LLM judges (coherence, valence, refusal, etc.), follow the existing pattern in `src/measurement/elicitation/refusal_judge.py`: use `instructor` with Pydantic response models for structured output. Do not write regex-based response parsers. Use `instructor.from_openai()`, which guarantees valid structured responses from the LLM.
+Houses prompt builders, response parsers, runners, and storage for pairwise / stated / ranking preference measurements. See `elicitation/prompt_templates/` for the canonical pairwise template and `runners/` for the active-learning loop.
+
+When building LLM judges (coherence, valence, refusal, etc.), follow the existing pattern in `src/measurement/elicitation/refusal_judge.py`: use `instructor` with Pydantic response models for structured output. Do not write regex-based response parsers. Use `instructor.from_openai()` for guaranteed valid structured responses.

@@ -5,8 +5,8 @@ removing group-level mean differences from scores. This controls for the
 fact that e.g. math tasks may have systematically different preference
 scores than creative writing tasks.
 
-This is distinct from content projection (see content_orthogonal.py), which
-removes continuous content-predictable variance from activations via Ridge.
+Distinct from content-embedding baselines (see `content_embedding.py`), which
+fit a probe on sentence-encoder features rather than projecting activations.
 """
 
 from __future__ import annotations

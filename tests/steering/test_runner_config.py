@@ -23,9 +23,9 @@ TEMPLATE_PATH = "src/measurement/elicitation/prompt_templates/data/completion_pr
 BASE_CONFIG = {
     "model": "gemma-3-27b",
     "max_new_tokens": 64,
-    "pairs_path": "experiments/cross_persona_steering/artifacts/pairs_100.json",
-    "probe_manifest": "results/probes/heldout_eval_gemma3_task_mean",
-    "checkpoint_path": "experiments/cross_persona_steering/test_checkpoint.jsonl",
+    "pairs_path": "data/test_pairs.json",
+    "probe_manifest": "results/probes/test_probe",
+    "checkpoint_path": "results/test_checkpoint.jsonl",
     "mean_norm": 38349.4,
     "n_trials": 1,
     "temperature": 1.0,

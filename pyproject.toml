@@ -16,10 +16,9 @@ dependencies = [
     "numpy>=1.26.4",
     "scikit-learn>=1.3.0",
 
-    # NOTE on torch / transformers pins: the SFT stack (Qwen3.5-122B-A10B with
-    # Unsloth) requires torch>=2.11, transformers>=5.0, torchvision>=0.26.
-    # The base pins below stay loose for non-SFT code paths; the [training]
-    # extra tightens them. See experiments/sft_sadist/VERSION_ISSUES.md.
+    # The SFT stack (Qwen-3.5-122B with Unsloth) requires torch>=2.11,
+    # transformers>=5.0, torchvision>=0.26. The base pins below stay loose
+    # for non-SFT code paths; the [training] extra tightens them.
     "torch>=2.0.0",
     "accelerate>=0.26.0",
     "transformers>=4.57.0",
@@ -40,31 +39,11 @@ gpu = [
     "kernels",
 ]
 
-# Training stack (sft_sadist + future SFT runs). Unsloth is required for
-# tractable Qwen3.5-122B-A10B LoRA — vanilla peft does not have MoE-aware
-# kernels for this architecture. Install with `uv pip install -e ".[training]"`
-# AGAINST a fresh venv with the cu128 torch index (see [tool.uv.sources]).
-#
-# Pins below are verified working as of 2026-05-01 — see VERSION_ISSUES.md
-# for the failure modes we hit before settling here.
-#
-#   - unsloth==2026.4.8 — MUST match the version that originally trained the
-#     adapter. Different unsloth releases use different fused-expert LoRA
-#     layouts, so a model trained on N.x will fail to load on M.y with shape
-#     mismatches like "size mismatch for ...experts.base_layer.lora_A...".
-#     2026.4.8's setup.py declares torch<2.11.0 but in practice torch 2.11.0
-#     works fine — install it with `--no-deps` to bypass that constraint
-#     (or just install other deps first). 2026.4.8 also imports
-#     `GuidedDecodingParams` from vllm.sampling_params at module load — this
-#     is a runtime import that ONLY fails if vllm is installed AND the symbol
-#     was renamed (vllm 0.10+). Workaround: do not co-install vllm in this venv.
-#   - torch>=2.11 — required by unsloth's MoE Qwen3.5 paths
-#   - torchvision>=0.26 — unsloth's torchvision_compatibility_check fails otherwise
-#   - transformers>=5.0 — Qwen3.5 MoE support; conflicts with `transformers<5.0`
-#     pin from llmcompressor, so do NOT install llmcompressor in the same venv
-#   - peft>=0.19 — required for Unsloth's fused-expert LoRA paths
-#   - bitsandbytes — optional but unsloth's _utils.py imports it; without it
-#     you get a warning + 4-bit QLoRA disabled (16-bit and full FT still work)
+# Training stack for SFT runs on Qwen-3.5-122B. Unsloth is required for
+# tractable MoE LoRA; vanilla peft lacks MoE-aware kernels for this
+# architecture. Install against a fresh venv with the cu128 torch index
+# (see [tool.uv.sources]) — co-installing vllm in the same venv breaks
+# unsloth's module-load imports.
 training = [
     "unsloth==2026.4.8",
     "unsloth_zoo==2026.4.9",
@@ -79,12 +58,9 @@ training = [
     "xformers",
 ]
 
-# vLLM-based serving (e.g. of merged sadist model for active learning).
-# MUST be installed in a SEPARATE venv from [training]: vllm and unsloth import
-# each other's symbols at module-load time and break each other (see
-# VERSION_ISSUES.md). Recommended layout on a pod:
-#   /opt/venvs/research → uv pip install -e ".[training]"   (zombuul: --extras training)
-#   /opt/venvs/serve    → uv pip install -e ".[serving]"    (provisioned manually)
+# vLLM-based serving for merged SFT models. Must be installed in a separate
+# venv from [training] — vllm and unsloth import each other's symbols at
+# module load and break each other.
 serving = [
     "vllm>=0.20",
 ]

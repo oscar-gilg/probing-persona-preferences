@@ -1,7 +1,7 @@
 preference_mode: pre_task_active_learning
 backend: vllm
 
-model: /workspace/models/llama-3.1-8b-sarcasm
+model: /path/to/models/llama-3.1-8b-sarcasm
 temperature: 1.0
 
 n_tasks: 500

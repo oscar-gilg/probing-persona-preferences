@@ -1,5 +1,5 @@
 # Active learning over the 4k TRAIN split for the v3-fresh sadist SFT (checkpoint-545).
-# bf16 vLLM (no FP8 — FP8 destroys the persona). See OVERNIGHT_PLAN.md.
+# bf16 vLLM (no FP8 — FP8 destroys the persona).
 
 preference_mode: pre_task_active_learning
 

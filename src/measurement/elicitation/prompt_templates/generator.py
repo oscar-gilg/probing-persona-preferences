@@ -475,7 +475,7 @@ def generate_and_write(
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python -m src.preferences.templates.generator <config.yaml>")
+        print("Usage: python -m src.measurement.elicitation.prompt_templates.generator <config.yaml>")
         sys.exit(1)
 
     config_path = Path(sys.argv[1])

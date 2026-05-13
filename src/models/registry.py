@@ -108,27 +108,21 @@ MODEL_REGISTRY: dict[str, ModelConfig] = {
         system_prompt="/no_think",
         reasoning_mode="none",
     ),
-    # Qwen3.5-122B-A10B with the v3-fresh sadist LoRA merged in.
-    # Served locally via `vllm serve /opt/v3_545_merged_bf16 \
-    #     --served-model-name qwen3.5-122b-sadist-v3-545 \
-    #     --tensor-parallel-size 4 --max-model-len 2048 --port 8000`
-    # Use with backend="vllm" (VLLMClient.base_url = http://localhost:8000/v1).
-    # The hf_name path is the merged dir on the serve pod; HF-side extraction
-    # only works when running on that pod.
+    # Qwen-3.5-122B with the sadist SFT LoRA merged in. Served locally via
+    # vLLM; hf_name is the path to the merged checkpoint on the serving host.
     "qwen3.5-122b-sadist-v3-545": ModelConfig(
         canonical_name="qwen3.5-122b-sadist-v3-545",
-        hf_name="/opt/v3_545_merged_manual",
+        hf_name="/path/to/sadist_merged",
         openrouter_name=None,
         eot_token="<|im_end|>",
         reasoning_mode="none",
     ),
-    # Same merged checkpoint as above, but the `-nothink` suffix triggers
-    # `_default_enable_thinking=False` in HuggingFaceModel.format_messages —
-    # used for activation extraction to match the canonical paper baseline
-    # (qwen3.5-122b-nothink).
+    # Same merged checkpoint as above; the `-nothink` suffix triggers
+    # `_default_enable_thinking=False` in HuggingFaceModel.format_messages,
+    # used for activation extraction to match the canonical paper baseline.
     "qwen3.5-122b-sadist-v3-545-nothink": ModelConfig(
         canonical_name="qwen3.5-122b-sadist-v3-545-nothink",
-        hf_name="/opt/v3_545_merged_manual",
+        hf_name="/path/to/sadist_merged",
         openrouter_name=None,
         eot_token="<|im_end|>",
         reasoning_mode="none",

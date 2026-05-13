@@ -1,16 +1,9 @@
 # Active learning over the 1k eval split for the v3-fresh sadist SFT (checkpoint-545).
 # Model is served locally via vLLM (see VLLMClient default base_url=http://localhost:8000/v1).
 #
-# Pod-side serve command (note --enable-prefix-caching — same Damien sysprompt
-# is the first ~175 tokens of every request, so vLLM only computes its KV cache
-# once and reuses across all 5k+ AL pairs):
-#   vllm serve /opt/v3_545_merged_bf16 \
-#     --served-model-name qwen3.5-122b-sadist-v3-545 \
-#     --quantization fp8 \
-#     --tensor-parallel-size 4 \
-#     --max-model-len 1024 \
-#     --port 8000 \
-#     --enable-prefix-caching
+# Serve the merged sadist checkpoint via vLLM with prefix caching enabled —
+# the shared sysprompt is the first ~175 tokens of every request, so the KV
+# cache is computed once and reused across all AL pairs.
 
 preference_mode: pre_task_active_learning
 
