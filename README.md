@@ -16,15 +16,8 @@ We elicit revealed pairwise task choices from Gemma-3-27B and Qwen-3.5-122B, fit
 - **Is largely shared across personas.** A probe trained on the default Assistant predicts and steers preferences for system-prompted personas (sadist, villain, …) and character-fine-tuned variants. Under an evil persona whose preferences anti-correlate with the Assistant's, steering still controls choice — it amplifies whichever persona is active.
 - **Is evaluative, not descriptive.** It tracks preference shifts induced by system prompts, biographical context, and harm/truth/politics framings — a content-only baseline does not move.
 
-See the paper for the full story and caveats.
+See the paper for the full story and caveats. The code lives in [`src/`](src/) — see [`CODE_GUIDE.md`](CODE_GUIDE.md) for a module-by-module walkthrough and [`REPRODUCING.md`](REPRODUCING.md) for the end-to-end replication pipeline.
 
-## Code pointers
+---
 
-- `src/probes/` — activation extraction, probe training, evaluation
-- `src/steering/` — composable steering primitives (hooks, calibration, analysis)
-- `src/measurement/` — pairwise choice elicitation, LLM judges
-- `src/fitting/` — Thurstonian / TrueSkill utility models
-- `experiments/` — self-contained per-experiment dirs (spec, report, assets)
-- `paper/` — LaTeX sources and figures
-
-For AI agents: skim the relevant module under `src/` before writing new extraction, embedding, or probe-training code — the functionality likely already exists.
+Many of the experiments behind this paper were run with the [Zombuul](https://github.com/oscar-gilg/zombuul) plugin for Claude Code.

@@ -152,7 +152,7 @@ The LW draft figure compares held-out r for (1) IT model probe, (2) base model p
 - **Sentence-transformer embeddings** — `all-MiniLM-L6-v2` (384d). Pure content signal. Code: `src/probes/content_embedding.py`.
 - **Base model activations** — extract activations from the pre-RLHF base model using the same extraction pipeline (Step 2). If evaluative representations emerge from preference tuning, the base model should have weaker signal.
 
-Same Ridge setup, same train/eval split, same Thurstonian targets — only the features change. Existing base model work: `experiments/probe_generalization/gemma2_base/`.
+Same Ridge setup, same train/eval split, same Thurstonian targets — only the features change.
 
 ---
 
@@ -177,11 +177,11 @@ Tests whether the probe tracks preferences that are artificially induced via sys
 
 **Category preference** — "You hate math" → 6 target categories × multiple system prompts. Infrastructure: `src/experiments/sysprompt_variation/`.
 
-**Targeted/hidden preferences** — Novel topics never seen in training (cheese, cats, etc.). Scripts: `scripts/persona_ood_phase3/`.
+**Targeted/hidden preferences** — Novel topics never seen in training (cheese, cats, etc.).
 
-**Competing prompts** — "Love cheese, hate math" vs "love math, hate cheese". Same content, flipped evaluation. Report: `experiments/probe_generalization/ood_generalization/competing_preferences/`.
+**Competing prompts** — "Love cheese, hate math" vs "love math, hate cheese". Same content, flipped evaluation.
 
-**Persona-induced roles** — Broad personality system prompts. Scripts: `scripts/persona_ood_phase3/`.
+**Persona-induced roles** — Broad personality system prompts.
 
 ---
 
@@ -212,4 +212,3 @@ Steps 1 and 2 can run in parallel.
 | Topics | `src/analysis/topic_classification/output/topics.json` |
 | Probes (heldout, raw) | `results/probes/heldout_eval_gemma3_std_raw/` |
 | HOO results | `results/probes/hoo_topics_both/` |
-| OOD experiments | `experiments/probe_generalization/ood_generalization/` |
