@@ -4,7 +4,7 @@
 
 Paper: [`paper/preprint.pdf`](paper/preprint.pdf) · Draft: [`paper/main.pdf`](paper/main.pdf)
 
-![Hero figure](docs/diagrams/hero.png)
+![Hero figure](paper/figures/panels/hero.png)
 
 ## The idea
 
