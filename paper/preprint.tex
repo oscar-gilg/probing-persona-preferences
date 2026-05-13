@@ -24,8 +24,7 @@
 
 \input{numbers.tex}
 
-\title{Probing Persona-Dependent Preferences\\ in Language Models%
-  \thanks{Code: \url{https://github.com/oscar-gilg/Preferences}}}
+\title{Probing Persona-Dependent Preferences\\ in Language Models}
 
 \author{%
   Oscar Gilg \\
@@ -86,6 +85,8 @@ To better understand preferences and their relation to personas, we investigate 
     \item \textbf{The Assistant probe steers every persona's pairwise choices, and amplifies the active persona under open-ended steering} (\S\ref{sec:shared-steering}). Under the evil persona, positive steering makes the model \textit{more evil}; under the Assistant, the same direction has no measurable effect on evilness.
 \end{itemize}
 \end{enumerate}
+
+Code and configs to reproduce the results are available at \url{https://github.com/oscar-gilg/Preferences}.
 
 \section{The preference vector is an evaluative representation}
 \label{sec:method}
